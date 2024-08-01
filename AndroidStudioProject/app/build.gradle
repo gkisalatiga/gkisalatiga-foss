@@ -118,6 +118,10 @@ dependencies {
     // SOURCE: https://stackoverflow.com/a/65665564
     implementation "androidx.compose.material:material-icons-extended"
 
+    // Allow lifecycle observation and activity/fragment watching.
+    // SOURCE: http://stackoverflow.com/questions/52369540/ddg#53669865
+    // implementation "android.arch.lifecycle:extensions:1.1.1"
+
     // Enable global storing, accessing, and writing of variables inside composable elements.
     // SOURCE: https://github.com/GuyMichael/Reactdroid
     // SOURCE: https://medium.com/nerd-for-tech/android-jetpackcompose-with-global-state-3a0b3c0f0b30

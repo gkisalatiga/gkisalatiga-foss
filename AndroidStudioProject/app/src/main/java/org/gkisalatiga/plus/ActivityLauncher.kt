@@ -28,6 +28,8 @@
 package org.gkisalatiga.plus
 
 import android.annotation.SuppressLint
+import android.app.Application
+import android.app.Application.ActivityLifecycleCallbacks
 import android.content.ClipboardManager
 import android.os.Bundle
 import android.util.Log
@@ -87,8 +89,23 @@ import java.util.concurrent.TimeUnit
 
 class ActivityLauncher : ComponentActivity() {
 
+    override fun onPause() {
+        super.onPause()
+        GlobalSchema.isRunningInBackground.value = true
+        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ActivityLauncher.onPause] App is now in background.")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        GlobalSchema.isRunningInBackground.value = false
+        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ActivityLauncher.onResume] App has been restored to foreground.")
+    }
+
     @SuppressLint("MutableCollectionMutableState")
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // SOURCE: https://stackoverflow.com/a/53669865
+        // ProcessLifecycleOwner.get().lifecycle.addObserver(this);
 
         // Initializes the app's internally saved preferences.
         initPreferences()
@@ -117,7 +134,7 @@ class ActivityLauncher : ComponentActivity() {
         val defaultScreenLaunch = NavigationRoutes().SCREEN_MAIN
         val defaultFragmentLaunch = NavigationRoutes().FRAG_MAIN_HOME
         val defaultServicesSubmenu = NavigationRoutes().SUB_BLANK
-        val defaultNewTopBarBackground = R.drawable.topbar_greetings_home
+        val defaultNewTopBarBackground = R.drawable.topbar_greetings_background
 
         // Setting some of the most important default values of the global schema.
         // (i.e., the composable navigation direction.)

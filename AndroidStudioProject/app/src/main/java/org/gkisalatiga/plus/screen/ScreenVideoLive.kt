@@ -50,6 +50,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +72,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleObserver
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.FullscreenListener
@@ -117,6 +119,17 @@ class ScreenVideoLive : ComponentActivity() {
             BackHandler {
                 GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
                 GlobalSchema.ytView!!.release()
+            }
+        }
+
+        // Disabling background YouTube playback.
+        LaunchedEffect(GlobalSchema.isRunningInBackground.value) {
+            if (GlobalSchema.isRunningInBackground.value) {
+                try {
+                    GlobalSchema.ytPlayer!!.pause()
+                } catch (e: Exception) {
+                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ScreenVideoLive.getNormalPlayer] Error detected when trying to pause the video: $e")
+                }
             }
         }
 
@@ -228,6 +241,7 @@ class ScreenVideoLive : ComponentActivity() {
      */
     @Composable
     private fun getNormalPlayer() {
+        val ctx = LocalContext.current
         Scaffold (
             topBar = { this.getTopBar() },
             floatingActionButton = {
@@ -261,6 +275,15 @@ class ScreenVideoLive : ComponentActivity() {
                     AndroidView(factory = {
                         GlobalSchema.ytView = YouTubePlayerView(it)
 
+                        // This destroys the video player upon exiting the activity.
+                        // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player?tab=readme-ov-file#lifecycleobserver
+                        lifecycle.addObserver(GlobalSchema.ytView!!)
+
+                        // Ensures that we don't play the YouTube video player in background
+                        // so that we can pass the Google Play Store screening.
+                        // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player?tab=readme-ov-file#lifecycleobserver
+                        GlobalSchema.ytView!!.enableBackgroundPlayback(false)
+
                         // We need to initialize manually in order to pass IFramePlayerOptions to the player
                         GlobalSchema.ytView!!.enableAutomaticInitialization = false
 
@@ -286,6 +309,8 @@ class ScreenVideoLive : ComponentActivity() {
                         GlobalSchema.ytView!!.initialize(
                             object : AbstractYouTubePlayerListener() {
                                 override fun onReady(youTubePlayer: YouTubePlayer) {
+                                    GlobalSchema.ytPlayer = youTubePlayer
+
                                     super.onReady(youTubePlayer)
                                     youTubePlayer.loadVideo(youtubeVideoID!!, currentSecond.floatValue)
                                     youTubePlayer.addListener(GlobalSchema.ytTracker)

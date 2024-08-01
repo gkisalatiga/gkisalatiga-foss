@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.mutableStateOf
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import org.json.JSONObject
@@ -145,6 +146,9 @@ class GlobalSchema : Application() {
         /* The global YouTubeViewer element. */
         var ytView: YouTubePlayerView? = null
 
+        /* The YouTube player object. */
+        var ytPlayer: YouTubePlayer? = null
+
         /* The global YouTube tracker. */
         val ytTracker: YouTubePlayerTracker = YouTubePlayerTracker()
 
@@ -161,6 +165,12 @@ class GlobalSchema : Application() {
 
         // The status of internet connection.
         var isConnectedToInternet: Boolean = false
+
+        /* ------------------------------------------------------------------------------------ */
+        /* The following variables are related to the app's activity and back-end functionalities. */
+
+        // The status of internet connection.
+        var isRunningInBackground = mutableStateOf(false)
 
         /* ------------------------------------------------------------------------------------ */
         /* Initializing the global schema that does not directly trigger recomposition. */
