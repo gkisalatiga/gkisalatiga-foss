@@ -1,6 +1,6 @@
 # GKI Salatiga+ Changelog
 
-## Next Alpha Release
+## v0.1.9-alpha (16) --- 2024-08-02
 
 - Info: The YouTube player now automatically pauses when the app is minimized to background
 - New: The YouTube video viewer now has a fully functional full screen player.

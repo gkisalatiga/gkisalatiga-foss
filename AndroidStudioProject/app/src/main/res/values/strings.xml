@@ -1,7 +1,7 @@
 <resources>
     <!-- Constant strings for app-related names -->
-    <string name="app_name">GKI Salatiga Plus (Alpha)</string>
-    <string name="app_name_alias">GKI Salatiga+ (Alpha)</string>
+    <string name="app_name">GKI Salatiga+ (Alpha)</string>
+    <string name="app_name_alias">GKI Salatiga Plus (Alpha)</string>
     <string name="title_activity_main">GKI Salatiga+</string>
 
     <!-- Constant strings for ScreenMain and FragmentMain. -->
