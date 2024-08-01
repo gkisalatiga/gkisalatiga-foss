@@ -12,11 +12,10 @@ The developmental project of GKI Salatiga's mobile church application
 - [ ] Replace the implementation of "GlobalSchema.context" with "LocalContext.current" to prevent memory leak
 - [ ] Replace debug toasts with "if (debug)" expressions, in which "debug" variable can be toggled manually
 - [X] Fix bottom nav not scrolling the horizontal pager issue
-- [ ] (Optional) Add scroll bar to some scrollable views
+- [X] (Optional) Add scroll bar to some scrollable views
 
 ### Pre-release to-do
 
-- [X] (Temporary) Lock orientation to portrait-only
 - [X] (Temporary) Disable dark mode
 
 ## License of Materials Used

@@ -13,17 +13,20 @@
         android:theme="@style/Theme.GKISalatigaPlus"
         tools:targetApi="31">
 
+        <!-- To save state upon orientation change, use "android:configChanges". -->
+        <!-- SOURCE: https://developer.android.com/guide/topics/resources/runtime-changes -->
+        <!-- SOURCE: https://stackoverflow.com/a/63746043 -->
         <activity
             android:name=".ActivityLauncher"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.GKISalatigaPlus"
             android:usesCleartextTraffic="true"
-            android:screenOrientation="sensorPortrait"
+            android:screenOrientation="sensor"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

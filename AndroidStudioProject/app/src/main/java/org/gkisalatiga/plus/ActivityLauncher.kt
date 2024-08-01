@@ -28,8 +28,6 @@
 package org.gkisalatiga.plus
 
 import android.annotation.SuppressLint
-import android.app.Application
-import android.app.Application.ActivityLifecycleCallbacks
 import android.content.ClipboardManager
 import android.os.Bundle
 import android.util.Log
@@ -56,6 +54,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -109,6 +110,11 @@ class ActivityLauncher : ComponentActivity() {
 
         // Initializes the app's internally saved preferences.
         initPreferences()
+
+        // Configure the behavior of the hidden system bars and configure the immersive mode (hide status bar and navigation bar).
+        // SOURCE: https://developer.android.com/develop/ui/views/layout/immersive
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
         // Enable transparent status bar.
         // SOURCE: https://youtu.be/Ruu44ZUhkBM?si=KTtR2GjZdqMa-rBs
@@ -168,6 +174,16 @@ class ActivityLauncher : ComponentActivity() {
             GlobalSchema.fragmentHomeScrollState = rememberScrollState()
             GlobalSchema.fragmentServicesScrollState = rememberScrollState()
             GlobalSchema.fragmentInfoScrollState = rememberScrollState()
+
+            // Listen to the request to hide the phone's bars.
+            // SOURCE: https://developer.android.com/develop/ui/views/layout/immersive
+            key (GlobalSchema.phoneBarsVisibility.value) {
+                if (GlobalSchema.phoneBarsVisibility.value) {
+                    windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+                } else {
+                    windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+                }
+            }
 
             GKISalatigaPlusTheme {
 

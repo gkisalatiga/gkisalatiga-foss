@@ -17,7 +17,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
@@ -152,6 +152,10 @@ class GlobalSchema : Application() {
         /* The global YouTube tracker. */
         val ytTracker: YouTubePlayerTracker = YouTubePlayerTracker()
 
+        /* The YouTube video player states. */
+        val ytIsFullscreen = mutableStateOf(false)
+        val ytCurrentSecond = mutableFloatStateOf(0.0f)
+
         /* The remembered scroll states. */
         var fragmentHomeScrollState: ScrollState? = null
         var fragmentServicesScrollState: ScrollState? = null
@@ -170,7 +174,13 @@ class GlobalSchema : Application() {
         /* The following variables are related to the app's activity and back-end functionalities. */
 
         // The status of internet connection.
-        var isRunningInBackground = mutableStateOf(false)
+        val isRunningInBackground = mutableStateOf(false)
+
+        // Current app's screen orientation.
+        val isPortraitMode = mutableStateOf(true)
+
+        // Current app's bars (both status bar and navigation bar) state of visibility.
+        val phoneBarsVisibility = mutableStateOf(true)
 
         /* ------------------------------------------------------------------------------------ */
         /* Initializing the global schema that does not directly trigger recomposition. */

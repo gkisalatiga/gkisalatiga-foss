@@ -113,6 +113,7 @@ dependencies {
     // SOURCE: https://dev.to/mozeago/jetpack-compose-loadinghow-to-load-a-youtube-video-or-youtube-livestream-channel-to-your-android-application-4ffc
     // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:custom-ui:12.1.0")
 
     // Add more material icons.
     // SOURCE: https://stackoverflow.com/a/65665564
