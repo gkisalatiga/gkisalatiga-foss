@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "org.gkisalatiga.plus"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 24
         versionName "0.4.1-beta"
 

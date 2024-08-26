@@ -2,6 +2,8 @@
 
 ## v0.4.1-beta (24) --- 2024-08-25
 
+- Release Note: General bug fixes and visual improvement
+
 - Improved: Changed the banners on menus: "Warta", "Liturgi", "YKB", "Agenda", and "Forms" by @KimJoZer
 - Improved: Changed dependency from "Compose RichText" to "Compose Markdown" for more advanced functionalities
 - Improved: The "profile info" static content now has sub-folders and nested content support

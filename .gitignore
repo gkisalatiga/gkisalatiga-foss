@@ -23,6 +23,7 @@
 hs_err_pid*
 replay_pid*
 
-# Let's pledge to manually publish and upload APKs.
+# Let's pledge to manually publish and upload APKs and Android app bundles.
 # Well only upload the uncompiled source codes in the main branch of GitHub.
 *.apk
+*.aab
