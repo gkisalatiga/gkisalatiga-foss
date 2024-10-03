@@ -17,4 +17,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "GKI Salatiga"
-include ':app'
+include ':app_fdroid'

@@ -7,12 +7,12 @@ GKI Salatiga's free and open source Android church application based on Jetpack 
 
 The application is designed to handle URLs matching `gkisalatiga.org` URI with `https` scheme.
 
-The application specifically use the `https://gkisalatiga.org/plus/deeplink` URI pattern to handle navigations and patterns for internal uses (e.g., notification user-click action). This means we assume the path `/plus/deeplink` should not exist in `gkisalatiga.org`'s actual website root, so that we can handle internal intent deep-linkings.
+The application specifically use the `https://gkisalatiga.org/app/deeplink` URI pattern to handle navigations and patterns for internal uses (e.g., notification user-click action). This means we assume the path `/app/deeplink` should not exist in `gkisalatiga.org`'s actual website root, so that we can handle internal intent deep-linkings.
 
 Currently, the list of registered deeplinks in this app is as follows:
 
-- **`https://gkisalatiga.org/plus/deeplink/saren`:** Opens the "SaRen" video playlist menu
-- **`https://gkisalatiga.org/plus/deeplink/ykb`:** Opens the list of YKB daily devotionals
+- **`https://gkisalatiga.org/app/deeplink/saren`:** Opens the "SaRen" video playlist menu
+- **`https://gkisalatiga.org/app/deeplink/ykb`:** Opens the list of YKB daily devotionals
 
 Any URI with `gkisalatiga.org` host that does not match the above registered deeplink will automatically trigger the WebView and display the link in the app's WebView.
 
@@ -23,7 +23,9 @@ In the most recent update, GKI Salatiga activates the following scheduled notifi
 - **04:00:05 (Daily):** The SaRen devotional video
 - **12:00:05 (Daily):** The YKB devotional article reminder
 
-## B. To-Do
+## B. Roadmap
+
+### September 2024
 
 - [X] Add splash screen at launch
 - [X] Add change log to the "About" screen
@@ -35,11 +37,21 @@ In the most recent update, GKI Salatiga activates the following scheduled notifi
 - [X] Replace the implementation of "GlobalSchema.context" with "LocalContext.current" to prevent memory leak
 - [X] Replace debug toasts with "if (debug)" expressions, in which "debug" variable can be toggled manually
 - [X] Fix bottom nav not scrolling the horizontal pager issue
+
+### October 2024
+
+- [ ] Add background feed fetcher (data updater) using `WorkManager`
+- [ ] Add "ruang berbagi" (promotional) feature
+- [ ] Add search content feature
 - [ ] Create the wiki page and migrate documentations from `README.md` to the respective wiki pages
+- [ ] Fix "Carousel not displaying the latest data"
+- [ ] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
+- [ ] Fix "Notification appears at exact time of the day, but at both AM and PM"
+- [ ] Remove ambiguous "upload date" of videos in "Content" tab
 
 ## C. Privacy Policy
 
-The latest privacy policy document of GKI Salatiga+ can be read in this [GitHub repository file](https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/PRIVACY_POLICY.md). However, this **README** file has summarized the privacy policy as follows:
+The latest privacy policy document of GKI Salatiga can be read in this [GitHub repository file](https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/PRIVACY_POLICY.md). However, this **README** file has summarized the privacy policy as follows:
 
 - GKI Salatiga is open source
 - GKI Salatiga collects personally identifiable data, such as (but not limited to): email, name, age, gender, address, date of birth, profile photo, location, and phone number
@@ -47,7 +59,7 @@ The latest privacy policy document of GKI Salatiga+ can be read in this [GitHub 
 
 ## D. Attribution
 
-This repository was migrated from the original repo, [GKI Salatiga Plus](https://https://github.com/gkisalatiga/gki-salatiga-plus). You will see throughout this repo that some codes still refer to GKI Salatiga **_Plus_** instead of just GKI Salatiga. This is minor and does not affect the overall experience of the app.
+This repository was migrated from the original repo, [GKI Salatiga Plus](https://https://github.com/gkisalatiga/gki-salatiga-plus), which has now been made a public archive. You will see throughout this repo that some codes still refer to GKI Salatiga **_Plus_** instead of just GKI Salatiga. This is minor and does not affect the overall experience of the app.
 
 ### License of Materials Used
 
@@ -57,7 +69,8 @@ This repository was migrated from the original repo, [GKI Salatiga Plus](https:/
 - Android YouTube Player, Pierfrancesco Soffritti (C) 2023 (MIT) [Link](https://github.com/PierfrancescoSoffritti/android-youtube-player)
 - Compose Markdown, Jeziel Lago (C) 2024 (MIT) [Link](https://github.com/jeziellago/compose-markdown)
 - Jetpack Compose Material3, The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.0-beta04)
-- Material Symbols & Icons - Google Fonts, The Android Open Source Project (c) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
+- Material Symbols & Icons - Google Fonts, The Android Open Source Project (C) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
+- Phosphor, Phosphor Icons (C) 2024 (MIT) [Link 1](https://icon-sets.iconify.design/ph), [Link 2](https://github.com/phosphor-icons/core)
 - RemixIcon Icon Set, Remix-Design (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/ri), [Link 2](https://github.com/Remix-Design/RemixIcon)
 - UnzipUtil, Nitin Praksh (C) 2021 (Apache 2.0) [Link 1](https://prakashnitin.medium.com/unzipping-files-in-android-kotlin-2a2a2d5eb7ae), [Link 2](https://gist.github.com/NitinPraksash9911/dea21ec4b8ae7df068f8f891187b6d1e)
 - WorkManager Kotlin Extensions (C) 2024 (Apache 2.0) [Link](https://mvnrepository.com/artifact/androidx.work/work-runtime-ktx)
