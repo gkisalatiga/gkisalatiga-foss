@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        // Composable markdown support using "compose-markdown"
+        // SOURCE: https://github.com/jeziellago/compose-markdown
+        maven { url 'https://jitpack.io' }
+    }
+}
+rootProject.name = "GKI Salatiga Plus"
+include ':app'

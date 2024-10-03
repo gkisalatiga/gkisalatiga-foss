@@ -1,0 +1,142 @@
+<resources>
+    <!-- Constant strings for app-related names -->
+    <string name="app_name">GKI Salatiga+ (Beta)</string>
+    <string name="app_name_alias">GKI Salatiga Plus (Beta)</string>
+    <string name="app_description">Congregation information system media and internal communications to support congregation development at GKI Salatiga</string>
+    <string name="title_activity_main">GKI Salatiga+ (Beta)</string>
+
+    <!-- Constant strings for ScreenMain and FragmentMain. -->
+    <string name="bottomnav_menu_home">Home</string>
+    <string name="bottomnav_menu_services">Content</string>
+    <string name="bottomnav_menu_info">About</string>
+    <string name="bottomnav_menu_events">Events</string>
+
+    <!-- Constant strings for screen titles. -->
+    <string name="screenabout_title">About</string>
+    <string name="screenattrib_title">Open Source Libraries</string>
+    <string name="screendev_title">Developer\'s Menu</string>
+    <string name="screenprofile_title">Profile</string>
+    <string name="screenwebview_title">WebView</string>
+    <string name="screenvideo_title">YouTube Videos (Pre-Recorded)</string>
+    <string name="screenprerecord_title">GKI Salatiga+ Series</string>
+    <string name="screenlive_title">GKI Salatiga+ Live Stream</string>
+    <string name="screenforms_title">Form</string>
+    <string name="screenoffertory_title">Offertory</string>
+    <string name="screengallery_title">GKI Salatiga Gallery</string>
+    <string name="screenagenda_title">Weekly Events</string>
+    <string name="screenykb_title">Yayasan Komunikasi Bersama</string>
+    <string name="screenmedia_title">GKI Salatiga Video Media</string>
+    <string name="screenwarta_title">Congregation News</string>
+    <string name="screenliturgi_title">Worship Order</string>
+    <string name="screensaren_title">Morning Greetings and Reflections</string>
+
+    <!-- Constant strings used in submenus. -->
+    <string name="submenu_services_umum">Sunday Service</string>
+    <string name="submenu_services_es">English Service</string>
+    <string name="submenu_services_saren">Morning Greetings and Reflections</string>
+    <string name="submenu_services_kml">KML Production</string>
+
+    <!-- Constant strings for the main menu's action buttons -->
+    <string name="btn_mainmenu_wj">Congregation News</string>
+    <string name="btn_mainmenu_liturgi">Worship Order</string>
+    <string name="btn_mainmenu_agenda">Weekly Events</string>
+    <string name="btn_mainmenu_saren">Morning Greetings and Reflections</string>
+    <string name="btn_mainmenu_ykb">YKB reflections</string>
+    <string name="btn_mainmenu_kml">Songs of Praise</string>
+    <string name="btn_mainmenu_offertory">Offertory</string>
+    <string name="btn_mainmenu_form">Form</string>
+    <string name="btn_mainmenu_gallery">Gallery</string>
+    <string name="btn_mainmenu_media">Media</string>
+
+    <!-- Constant strings for image description of the main menu's action buttons -->
+    <string name="btn_desc_mainmenu_wj">Open the congregation news menu</string>
+    <string name="btn_desc_mainmenu_liturgi">Open the liturgy menu</string>
+    <string name="btn_desc_mainmenu_agenda">Open the weekly events</string>
+    <string name="btn_desc_mainmenu_saren">Open the morning greetings and reflections</string>
+    <string name="btn_desc_mainmenu_ykb">Open the YKB reflections</string>
+    <string name="btn_desc_mainmenu_kml">Open the songs of praise</string>
+    <string name="btn_desc_mainmenu_offertory">Open the offertory menu</string>
+    <string name="btn_desc_mainmenu_form">Open the form menu</string>
+    <string name="btn_desc_mainmenu_gallery">Open the gallery menu</string>
+    <string name="btn_desc_mainmenu_media">Open the media menu</string>
+
+    <!-- Constant string for describing the banner image in the "Info/About Church" fragment. -->
+    <string name="info_church_img_description">Indonesian Christian Church of Salatiga</string>
+
+    <!-- Constant string for the labeling of each card in the "church info" fragment. -->
+    <string name="card_info_church_profile">GKI Salatiga Profile</string>
+    <string name="card_info_church_pastor">Pastorship</string>
+    <string name="card_info_church_assembly">Congregational Assembly</string>
+    <string name="card_info_church_ministry">Ministry Body</string>
+    <string name="card_info_church_biblestudy">Regional Bible Study</string>
+    <string name="card_info_church_contact">Contacts and Social Media</string>
+
+    <!-- Constant string for describing the card icons in the "church info" fragment. -->
+    <string name="card_desc_info_church_profile">Open the GKI Salatiga profile info</string>
+    <string name="card_desc_info_church_pastor">Open the pastorship info</string>
+    <string name="card_desc_info_church_assembly">Open the congregational assembly info</string>
+    <string name="card_desc_info_church_ministry">Open the ministry body info</string>
+    <string name="card_desc_info_church_biblestudy">Open the regional bible study info</string>
+    <string name="card_desc_info_church_contact">Open the contacts and social media info</string>
+
+    <!-- Constant string used in ScreenWebView. -->
+    <string name="webview_visit_link_confirmation_title">Visit the external site?</string>
+    <string name="webview_visit_link_confirmation_subtitle">You will be redirected to the following site via your phone\'s browser:</string>
+    <string name="webview_visit_link_cancel_btn">Cancel</string>
+    <string name="webview_visit_link_proceed_btn">Continue</string>
+    <string name="webview_visit_link_link_copied">Link successfully copied!</string>
+
+    <!-- Constant string used in poster displayer. -->
+    <string name="poster_dialog_close_text">Close</string>
+
+    <!-- Constant string used in pre-recorded and live video view. -->
+    <string name="yt_visit_link_confirmation_title">Open in YouTube player?</string>
+    <string name="yt_visit_link_confirmation_subtitle">You will be redirected to the YouTube app on your phone from the following link:</string>
+    <string name="yt_visit_link_cancel_btn">Cancel</string>
+    <string name="yt_visit_link_proceed_btn">Continue</string>
+    <string name="yt_visit_link_link_copied">Video link copied successfully!</string>
+
+    <!-- Constant string used in the offertory view. -->
+    <string name="section_title_qris">QRIS GKI Salatiga</string>
+    <string name="section_title_other_payment_method">Bank Transfer Method</string>
+    <string name="section_title_offertory_code">Offertory Unique Code</string>
+    <string name="offertory_number_copied">Account number copied successfully!</string>
+    <string name="offertory_code_copied">Offertory unique code copied successfully!</string>
+    <string name="offertory_code_desc">Add the following unique code at the end of the amount to be offered.\n\nFor instance, if you want to offer IDR 50.000 for the Christmas service, transfer IDR 50.050 to the GKI Salatiga bank account.</string>
+
+    <!-- Constant string used in the new top bar layout. -->
+    <string name="new_topbar_greetings">Shalom!</string>
+    <string name="new_topbar_person_name">Dear congregation and sympathizers</string>
+
+    <!-- Confirmation string for "press again to exit". -->
+    <string name="exit_confirmation_toast_string">Press again to exit the application.</string>
+
+    <!-- The app copyright notice. -->
+    <string name="about_copyright_notice">Copyright \u00A9 Infrastructure and Multimedia Commission\nGKI Salatiga 2024</string>
+
+    <!-- Email chooser intent. -->
+    <string name="email_chooser_title">Send email with ...</string>
+
+    <!-- Applicable in ScreenAbout. -->
+    <string name="screen_about_tentang_aplikasi">About Applications</string>
+    <string name="screen_about_lisensi">License</string>
+    <string name="screen_about_kebijakan_privasi">Privacy Policy</string>
+    <string name="screen_about_atribusi_pihak_ketiga">Open Source Attribution</string>
+    <string name="screen_about_kode_sumber">Source Code</string>
+    <string name="screen_about_log_perubahan">Change Log</string>
+    <string name="screen_about_tentang_pengembang">About Developer</string>
+    <string name="screen_about_kontributor">Contributor</string>
+    <string name="screen_about_kontak">Contact</string>
+    <string name="screen_about_license_dismiss">Understand</string>
+    <string name="screen_about_license_dismiss_ok">OK</string>
+    <string name="screen_about_license_confirm">Open Full Text</string>
+    <string name="screen_persembahan_ok">OK</string>
+
+    <string name="not_connected_to_internet">You are not connected to the internet!</string>
+    <string name="screen_dev_trigger_all_notifs">Trigger All Notifications</string>
+    <string name="screen_dev_quick_action_title">Quick Action</string>
+    <string name="screen_dev_trigger_minutely_work_manager">Trigger Minutely WorkManager</string>
+    <string name="screen_dev_welcome_developer">Welcome in the developer menu!</string>
+    <string name="screen_dev_title">Developer\'s Menu</string>
+    <string name="screen_dev_desc">Welcome back, Trio Developer!\nSam, Jeffrey, dan Joa \uD83D\uDDFF</string>
+</resources>

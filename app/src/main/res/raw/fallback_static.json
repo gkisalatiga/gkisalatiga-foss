@@ -1,0 +1,82 @@
+{
+    "meta": {
+        "update-count": 3,
+        "last-update": 1724387161,
+        "last-actor": "SIMON_PETRUS",
+        "schema-version": "0.1.0"
+    },
+    "static": [
+        {
+            "banner": "http://gkisalatiga.org/wp-content/uploads/2020/10/00_profil_gereja.webp",
+            "content": [
+                {
+                    "featured-image": "http://gkisalatiga.org/wp-content/uploads/2020/10/00_profil_gereja.webp",
+                    "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Church Profile</title>\n    <style>\n    * {\n    margin: 0;\n    padding: 0;\n    box-sizing: border-box;\n}\n\nbody {\n    font-family: Arial, sans-serif;\n    line-height: 1.6;\n    color: #333;\n}\n\nheader {\n    background: url('http://gkisalatiga.org/wp-content/uploads/2020/10/gkisalatiga-2024.jpg') no-repeat center center/cover;\n    position: relative;\n    color: white;\n    text-align: center;\n    height: 300px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    width: 100vw; /* Ensure the header spans the full viewport width */\n    margin-left: calc(-50vw + 50%); /* Fix centering issues on smaller screens */\n    margin-right: calc(-50vw + 50%); /* Fix centering issues on smaller screens */\n}\n\nheader .overlay {\n    background: rgb(74,42,4);\n    background: linear-gradient(180deg, rgba(64, 37, 3, 0.472) 0%, rgba(228, 225, 218, 0.46) 54%, rgba(249,248,248,0.8477766106442577) 84%, rgba(252,252,252,1) 100%);\n    position: relative;\n    color: #ffffff;\n    font-family: Verdana, Geneva, Tahoma, sans-serif;\n    font-weight: bold;\n    text-align: center;\n    text-shadow: 0px 1px 5px rgb(81, 81, 81);\n    width:auto;\n    height: 300px;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    justify-content: center;\n    width: 100%; /* Ensure the overlay spans the full width of the header */\n    max-width: 1200px; /* Optional max-width to keep content manageable */\n    margin: 0 auto; /* Center the overlay content */\n}\n\nheader h1 {\n    margin-bottom: 0.5rem;\n}\nheader h2 {\n    margin-bottom: 0.5rem;\n    margin-inline: 70px;\n    font-size:70%;\n    line-height:17px;\n}\nheader img{\n    max-width: 35%;\n    max-height: 35%;\n}\n\nnav ul {\n    list-style: none;\n    padding: 0;\n}\n\nnav ul li {\n    display: inline;\n    margin: 0 0.5rem;\n}\n\nnav ul li a {\n    color: #333;\n    text-decoration: none;\n}\n\nmain {\n    padding: 1rem;\n    margin-left: 15px;\n    margin-right: 15px;\n}\n\ndiv {    \n    text-align: justify;\n    text-justify:auto;\n}\nsection {\n    margin-bottom: 1rem;\n}\n\nmain .quotes{\n    text-align: center;\n}\n\nsection h2 {\n    border-bottom: 2px solid #4CAF50;\n    padding-bottom: 0.5rem;\n    margin-bottom: 1rem;\n}\n\nform label {\n    display: block;\n    margin: 0.5rem 0 0.2rem;\n}\n\nform input, form textarea {\n    width: 100%;\n    padding: 0.5rem;\n    margin-bottom: 1rem;\n    border: 1px solid #ccc;\n    border-radius: 4px;\n}\n\nform button {\n    background-color: #4CAF50;\n    color: white;\n    border: none;\n    padding: 0.5rem 1rem;\n    cursor: pointer;\n    border-radius: 4px;\n}\n\nform button:hover {\n    background-color: #45a049;\n}\n\n@media (min-width: 768px) {\n    header, main, footer {\n        max-width: 600px;\n        margin: 0 auto;\n    }\n\n    nav ul li {\n        margin: 0 1rem;\n    }\n}\n\n    </style>\n</head>\n<body>\n    <header>\n        <div class=\"overlay\">\n            <img src=\"http://gkisalatiga.org/wp-content/uploads/2020/10/logo-gki-putih.png\">\n            <h1>GKI Salatiga</h1>\n            <h2>Jl. Jend. Sudirman No.111b, Kutowinangun Kidul, Kec. Tingkir, Kota Salatiga, Jawa Tengah 50742</h2>\n    </header>\n    <main>\n        <div class=\"quotes\">\n        <section id=\"quotes\">\n            <p style=\"font-weight: bold;\">\"Kamu semua adalah tubuh Kristus dan kamu masing-masing adalah anggotanya.\"</p>\n                <p>1 Korintus 12: 27</p>\n        </section>\n        </div>\n        <div id=\"content\">\n        <section id=\"visi\">\n            <h2>Visi</h2>\n            <p>Mewujudkan damai sejahtera di tengah masyarakat Indonesia, khususnya Gereja Kristen Indonesia Salatiga menjadi mitra Allah dalam di Kota Salatiga yang pluralistis.</p>\n        </section>\n        <section id=\"misi\">\n            <h2>Misi</h2>\n            <p>1. Mengembangkan spiritualitas yang berpusat pada hubungan yang hidup dengan Allah</p>\n            <p>2. Mewujudkan dan meningkatkan persekutuan orang-orang percaya yang kohesif.</p>\n            <p>3. Meningkatkan kecintaan anggota jemaat terhadap GKI sebagai tubuh Kristus.</p>\n            <p>4. Mengembangkan kesaksian dan pelayanan di tengah masyarakat.</p>\n            <p>5. Memperjuangkan perwujudan keesaan gereja dan persaudaraan umat manusia.</p>\n            <p>6. Meningkatkan pertumbuhan anggota jemaat dan pertumbuhan Jemaat.</p>\n            <p>7. Mengembangkan SDM yang memadai bagi kepemimpinan gereja dan aktivis pelayanan gereja pada umumnya, dengan memperhatikan kemandirian teologi dan kesetaraan gender.</p>\n        </section>\n        </div>\n    </main>\n</body>\n</html>",
+                    "subtitle": "",
+                    "title": "Visi dan Misi"
+                },
+                {
+                    "featured-image": "http://gkisalatiga.org/wp-content/uploads/2020/10/gkisalatiga-2024.jpg",
+                    "html": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Dummy Lorem Ipsum Page</title>\n    <style>\n    body {\n    font-family: Arial, sans-serif;\n    margin: 0;\n    padding: 0;\n    display: flex;\n    flex-direction: column;\n    min-height: 100vh;\n}\n\nheader {\n    background-color: #333;\n    color: #fff;\n    padding: 1em;\n    text-align: center;\n}\n\nmain {\n    flex-grow: 1;\n}\n\n.content {\n    padding: 2em;\n}\n\nfooter {\n    background-color: #333;\n    color: #fff;\n    padding: 1em;\n    text-align: center;\n}\n\n    </style>\n</head>\n<body>\n    <header>\n        <h1>Dummy Lorem Ipsum Page</h1>\n        <img src=\"http://gkisalatiga.org/wp-content/uploads/2024/07/Cuplikan-layar-2024-07-13-154156.webp\" width=\"50%\" />\n    </header>\n    <main>\n        <section class=\"content\">\n            <button id=\"clickable\">Click Me!</button>\n            <p id=\"clickable-action\"></p>\n            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Nulla quis lorem ut libero malesuada feugiat. Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta.</p>\n            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Nulla quis lorem ut libero malesuada feugiat. Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta.</p>\n            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Nulla quis lorem ut libero malesuada feugiat. Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta.</p>\n            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet nulla auctor, vestibulum magna sed, convallis ex. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>\n            <p>Nulla quis lorem ut libero malesuada feugiat. Donec rutrum congue leo eget malesuada. Cras ultricies ligula sed magna dictum porta.</p>\n        </section>\n    </main>\n    <footer>\n        <p>&copy; 2024 Dummy Lorem Ipsum Page</p>\n    </footer>\n    <script type=\"text/javascript\">\n    // Example JavaScript code\nconsole.log(\"Hello, World!\");\n// alert(\"Hello world\");\ndocument.getElementById(\"clickable\").onclick = function() {\n    document.getElementById(\"clickable-action\").innerHTML = \"You just clicked the dummy button.\"\n};\n\n    </script>\n</body>\n</html>",
+                    "subtitle": "",
+                    "title": "Apa Itu Cinta?"
+                }
+            ],
+            "title": "Profil GKI Salatiga"
+        },
+        {
+            "banner": "http://gkisalatiga.org/wp-content/uploads/2020/10/30_badan_pelayanan.webp",
+            "content": [
+                {
+                    "featured-image": "http://gkisalatiga.org/wp-content/uploads/2020/10/40_pa_wilayah.webp",
+                    "html": "<b>ahuehfe</b>",
+                    "subtitle": "-",
+                    "title": "Contoh Saja"
+                },
+                {
+                    "featured-image": "http://gkisalatiga.org/wp-content/uploads/2020/10/00_profil_gereja.webp",
+                    "html": "<b>ahuehfe</b>",
+                    "subtitle": "-",
+                    "title": "Contoh Saja 2"
+                }
+            ],
+            "title": "Badan Pelayanan (Bapel)"
+        },
+        {
+            "banner": "http://gkisalatiga.org/wp-content/uploads/2020/10/20_majelis_jemaat.webp",
+            "content": [
+                {
+                    "featured-image": "http://gkisalatiga.org/wp-content/uploads/2020/10/40_pa_wilayah.webp",
+                    "html": "<b>ahuehfe</b>",
+                    "subtitle": "-",
+                    "title": "Contoh Saja"
+                },
+                {
+                    "featured-image": "http://gkisalatiga.org/wp-content/uploads/2020/10/00_profil_gereja.webp",
+                    "html": "<b>ahuehfe</b>",
+                    "subtitle": "-",
+                    "title": "Contoh Saja 2"
+                },
+                {
+                    "featured-image": "https://wefefwf",
+                    "html": "<!DOCTYPE html>\n        <html>\n        <head>\n          <title>Custom HTML Page</title>\n        </head>\n        <body>\n          <h1>Welcome to my custom HTML page!</h1>\n          <p>This is a sample HTML page displayed in a PyQt5 application.</p>\n          <p><a href=\"https://www.perplexity.ai/search/python-markdown-renderer-with-rBKW8FRJSsyXNA3esinIKQ\">link to</a></p>\n          <p><img alt=\"image to\" src=\"https://raw.githubusercontent.com/tanthehack/noted/master/Icons/small_Logo.png\" /></p>\n        </body>\n        </html>",
+                    "subtitle": "wiefjiawjeofjoawjfiowjeiofj",
+                    "title": "O tan jou bi"
+                }
+            ],
+            "title": "Apa hayo?"
+        },
+        {
+            "banner": "http://gkisalatiga.org/wp-content/uploads/2024/08/17an-2024.webp",
+            "content": [
+                {
+                    "featured-image": "http://gkisalatiga.org/wp-content/uploads/2024/08/WARTA-JEMAAT-MINGGU-4-AGUSTUS-2024.jpg",
+                    "html": "Hello World!\n\n<img src=\"http://gkisalatiga.org/wp-content/uploads/2024/08/WARTA-JEMAAT-MINGGU-4-AGUSTUS-2024.jpg\" style=\"width: 100%;\"/>\n\n<h1>Nice to see you!</h1>",
+                    "subtitle": "asd",
+                    "title": "Sejarah Drum di GKI Salatiga"
+                }
+            ],
+            "title": "Komisi Musik dan Drum"
+        }
+    ]
+}
