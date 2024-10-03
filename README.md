@@ -1,4 +1,4 @@
-# gkisalatiga-fdroid
+# gkisalatiga-foss
 GKI Salatiga's free and open source Android church application based on Jetpack Compose, distributed for F-Droid.
 
 ## A. Documentation
@@ -39,7 +39,7 @@ In the most recent update, GKI Salatiga activates the following scheduled notifi
 
 ## C. Privacy Policy
 
-The latest privacy policy document of GKI Salatiga+ can be read in this [GitHub repository file](https://github.com/gkisalatiga/gkisalatiga-fdroid/blob/main/PRIVACY_POLICY.md). However, this **README** file has summarized the privacy policy as follows:
+The latest privacy policy document of GKI Salatiga+ can be read in this [GitHub repository file](https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/PRIVACY_POLICY.md). However, this **README** file has summarized the privacy policy as follows:
 
 - GKI Salatiga is open source
 - GKI Salatiga collects personally identifiable data, such as (but not limited to): email, name, age, gender, address, date of birth, profile photo, location, and phone number
