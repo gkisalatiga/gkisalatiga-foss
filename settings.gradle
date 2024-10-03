@@ -16,5 +16,5 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "GKI Salatiga Plus"
+rootProject.name = "GKI Salatiga"
 include ':app'

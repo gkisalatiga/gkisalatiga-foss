@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'org.gkisalatiga.plus'
+    namespace 'org.gkisalatiga.fdroid'
     compileSdk 34
 
     defaultConfig {
-        applicationId "org.gkisalatiga.plus"
+        applicationId "org.gkisalatiga.fdroid"
         minSdk 21
         targetSdk 34
         versionCode 27
