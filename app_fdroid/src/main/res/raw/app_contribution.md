@@ -1,10 +1,7 @@
 
-### Lead Developer
+### Developer Team
 
 - Samarthya Lykamanuella
-
-### Co-Developers
-
 - Joaquim Pulitzer Agung
 - Natanael Jeffrey Susanto
 
