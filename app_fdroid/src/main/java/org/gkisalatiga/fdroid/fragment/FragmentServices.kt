@@ -132,8 +132,8 @@ class FragmentServices : ComponentActivity() {
                 // Display the list of videos in this playlist.
                 GlobalSchema.videoListContentArray = playlistContentList
                 GlobalSchema.videoListTitle = sectionTitle
-                GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_VIDEO_LIST
-                GlobalSchema.ytVideoListDispatcher = NavigationRoutes().SCREEN_MAIN
+                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
+                GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MAIN
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Some desc", modifier = Modifier.fillMaxSize().aspectRatio(1.0f).padding(0.dp))
             }
@@ -171,8 +171,8 @@ class FragmentServices : ComponentActivity() {
                         GlobalSchema.ytViewerParameters["date"] = date
                         GlobalSchema.ytViewerParameters["desc"] = desc
                         GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                        GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
-                        GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_LIVE
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
                     },
                     //modifier = Modifier.fillMaxHeight().width(320.dp).height(232.dp).padding(horizontal = 5.dp),
                     modifier = Modifier.width(320.dp).aspectRatio(1.33334f).padding(horizontal = 5.dp),

@@ -121,13 +121,13 @@ class ScreenStaticContentList : ComponentActivity() {
                             if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Set this screen as the anchor point for "back"
-                            GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_STATIC_CONTENT_LIST
-                            GlobalSchema.popBackDoubleScreen.value = NavigationRoutes().SCREEN_MAIN
+                            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_STATIC_CONTENT_LIST
+                            GlobalSchema.popBackDoubleScreen.value = NavigationRoutes.SCREEN_MAIN
 
                             // Display the church profile content folder list.
                             GlobalSchema.targetHTMLContent = it.getString("html")
                             GlobalSchema.internalWebViewTitle = it.getString("title")
-                            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_INTERNAL_HTML
+                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_INTERNAL_HTML
                         },
 
                         modifier = Modifier.padding(bottom = 10.dp).aspectRatio(2.4f).fillMaxWidth()

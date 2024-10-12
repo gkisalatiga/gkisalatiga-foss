@@ -69,14 +69,14 @@ class FragmentHome : ComponentActivity() {
     // The following defines the visible menu buttons shown in the main menu,
     // as well as their corresponding navigation targets.
     private val btnRoutes = listOf(
-        NavigationRoutes().SCREEN_WARTA,
-        NavigationRoutes().SCREEN_LITURGI,
-        NavigationRoutes().SCREEN_AGENDA,
-        NavigationRoutes().SCREEN_PERSEMBAHAN,
-        NavigationRoutes().SCREEN_YKB,
-        NavigationRoutes().SCREEN_FORMS,
-        NavigationRoutes().SCREEN_GALERI,
-        NavigationRoutes().SCREEN_MEDIA,
+        NavigationRoutes.SCREEN_WARTA,
+        NavigationRoutes.SCREEN_LITURGI,
+        NavigationRoutes.SCREEN_AGENDA,
+        NavigationRoutes.SCREEN_PERSEMBAHAN,
+        NavigationRoutes.SCREEN_YKB,
+        NavigationRoutes.SCREEN_FORMS,
+        NavigationRoutes.SCREEN_GALERI,
+        NavigationRoutes.SCREEN_MEDIA,
     )
 
     // The following defines the label of each visible menu button.
@@ -206,10 +206,10 @@ class FragmentHome : ComponentActivity() {
                                     // Navigate to the WebView viewer.
                                     GlobalSchema.webViewTargetURL = url
                                     GlobalSchema.webViewTitle = title
-                                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_WEBVIEW
+                                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_WEBVIEW
 
                                     // Set this screen as the anchor point for "back"
-                                    GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
+                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
                                 }
                                 "poster" -> {
                                     showPosterDialog.value = true
@@ -232,8 +232,8 @@ class FragmentHome : ComponentActivity() {
                                     GlobalSchema.ytViewerParameters["date"] = StringFormatter().convertDateFromJSON(date)
                                     GlobalSchema.ytViewerParameters["desc"] = desc!!
                                     GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                                    GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
-                                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_LIVE
+                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
                                 }
                             }
                         }
@@ -278,7 +278,7 @@ class FragmentHome : ComponentActivity() {
                     // The individual card item.
                     Card (modifier = Modifier.padding(10.dp).fillMaxWidth().weight(1f), onClick = {
                         // This will be triggered when the main menu button is clicked.
-                        if (btnRoutes[index] != NavigationRoutes().SCREEN_BLANK) {
+                        if (btnRoutes[index] != NavigationRoutes.SCREEN_BLANK) {
                             GlobalSchema.pushScreen.value = btnRoutes[index]
                         }
                     }) {
@@ -320,8 +320,8 @@ class FragmentHome : ComponentActivity() {
                         Button (
                             onClick = {
                                 // This will be triggered when the main menu button is clicked.
-                                if (btnRoutes[offsetIndex] != NavigationRoutes().SCREEN_BLANK) {
-                                    GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
+                                if (btnRoutes[offsetIndex] != NavigationRoutes.SCREEN_BLANK) {
+                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
                                     GlobalSchema.pushScreen.value = btnRoutes[offsetIndex]
                                 }
                             },
@@ -406,8 +406,8 @@ class FragmentHome : ComponentActivity() {
                         Spacer(Modifier.height(15.dp))
                         Surface (modifier = Modifier.fillMaxWidth().height(150.dp), color = Color.Transparent, onClick = {
                             showPosterDialog.value = false
-                            GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
-                            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_POSTER_VIEWER
+                            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_POSTER_VIEWER
                         }, shape = RoundedCornerShape(20.dp)) {
                             AsyncImage(
                                 model = posterDialogImageSource.value,

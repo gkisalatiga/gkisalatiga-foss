@@ -136,11 +136,11 @@ class ScreenGaleri : ComponentActivity() {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery folder year: $it", Toast.LENGTH_SHORT).show()
 
                         // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_GALERI
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI
 
                         // Navigate to the WebView viewer.
                         GlobalSchema.targetGalleryYear = it
-                        GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_GALERI_YEAR
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_GALERI_YEAR
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                 ) {

@@ -144,7 +144,7 @@ class ScreenGaleriView : ComponentActivity() {
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
             GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-            GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_GALERI_YEAR
+            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI_YEAR
             scope.launch {
                 GlobalSchema.fragmentGalleryListScrollState!!.scrollToItem(horizontalPagerState.currentPage)
             }
@@ -279,7 +279,7 @@ class ScreenGaleriView : ComponentActivity() {
                 navigationIcon = {
                     IconButton(onClick = {
                         GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                        GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_GALERI_YEAR
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI_YEAR
                         scope.launch {
                             GlobalSchema.fragmentGalleryListScrollState!!.scrollToItem(horizontalPagerState.currentPage)
                         }

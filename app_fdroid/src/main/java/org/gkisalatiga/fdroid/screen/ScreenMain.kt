@@ -93,7 +93,6 @@ import org.gkisalatiga.fdroid.fragment.FragmentHome
 import org.gkisalatiga.fdroid.fragment.FragmentInfo
 import org.gkisalatiga.fdroid.fragment.FragmentServices
 import org.gkisalatiga.fdroid.global.GlobalSchema
-
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.services.DataUpdater
 import org.gkisalatiga.fdroid.ui.theme.Brown1
@@ -106,9 +105,9 @@ class ScreenMain : ComponentActivity() {
 
     // Enlists all of the fragments that will be displayed in this particular screen.
     private val fragRoutes = listOf(
-        NavigationRoutes().FRAG_MAIN_HOME,
-        NavigationRoutes().FRAG_MAIN_SERVICES,
-        NavigationRoutes().FRAG_MAIN_INFO,
+        NavigationRoutes.FRAG_MAIN_HOME,
+        NavigationRoutes.FRAG_MAIN_SERVICES,
+        NavigationRoutes.FRAG_MAIN_INFO,
     )
 
     // The calculated status bar's height, for determining the "top bar"'s top padding. (Also the bottom nav bar.)
@@ -348,7 +347,7 @@ class ScreenMain : ComponentActivity() {
             val localContext = LocalContext.current
             BackHandler {
                 val curRoute = GlobalSchema.lastMainScreenPagerPage.value
-                if (curRoute == NavigationRoutes().FRAG_MAIN_HOME) {
+                if (curRoute == NavigationRoutes.FRAG_MAIN_HOME) {
 
                     // Ensure "double tap the back button to exit".
                     if (backPressedTime + 2000 > System.currentTimeMillis()) {
@@ -363,8 +362,8 @@ class ScreenMain : ComponentActivity() {
                     backPressedTime = System.currentTimeMillis()
 
                 } else if (
-                    curRoute == NavigationRoutes().FRAG_MAIN_INFO ||
-                    curRoute == NavigationRoutes().FRAG_MAIN_SERVICES
+                    curRoute == NavigationRoutes.FRAG_MAIN_INFO ||
+                    curRoute == NavigationRoutes.FRAG_MAIN_SERVICES
                 ) {
                     // Since we are in the main screen but not at fragment one,
                     // navigate the app to fragment one.
@@ -498,7 +497,7 @@ class ScreenMain : ComponentActivity() {
                             if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You will open the about app.", Toast.LENGTH_SHORT).show()
 
                             // Opens the "About app" screen.
-                            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_ABOUT
+                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
                         }
                     ) {
                         Row (

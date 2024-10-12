@@ -14,7 +14,7 @@ import org.json.JSONObject
 class DeepLinkHandler {
     companion object {
         fun handleSaRen() {
-            GlobalSchema.defaultScreen.value = NavigationRoutes().SCREEN_VIDEO_LIST
+            GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
 
             // The "pinned playlist" section.
             val pinnedList: JSONArray = GlobalSchema.globalJSONObject!!.getJSONObject("yt").getJSONArray("pinned")
@@ -40,13 +40,13 @@ class DeepLinkHandler {
             // Display the list of SaRen videos.
             GlobalSchema.videoListContentArray = playlistContentList
             GlobalSchema.videoListTitle = sarenPlaylistTitle
-            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_VIDEO_LIST
-            GlobalSchema.ytVideoListDispatcher = NavigationRoutes().SCREEN_MAIN
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
+            GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MAIN
         }
 
         fun handleYKB() {
-            GlobalSchema.defaultScreen.value = NavigationRoutes().SCREEN_YKB
-            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_YKB
+            GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_YKB
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_YKB
         }
 
         /**
@@ -54,15 +54,15 @@ class DeepLinkHandler {
          */
         fun openDomainURL(url: String, title: String = "GKI Salatiga") {
             // Set the WebView as the default screen.
-            GlobalSchema.defaultScreen.value = NavigationRoutes().SCREEN_WEBVIEW
+            GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_WEBVIEW
 
             // Set the "backPressed" anchor point
-            GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
+            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
 
             // Navigate to the WebView viewer.
             GlobalSchema.webViewTargetURL = url
             GlobalSchema.webViewTitle = title
-            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_WEBVIEW
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_WEBVIEW
         }
     }
 }

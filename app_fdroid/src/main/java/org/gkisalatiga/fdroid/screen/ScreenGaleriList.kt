@@ -95,7 +95,7 @@ class ScreenGaleriList : ComponentActivity() {
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
             GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-            GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_GALERI
+            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI
         }
 
     }
@@ -154,7 +154,7 @@ class ScreenGaleriList : ComponentActivity() {
                 navigationIcon = {
                     IconButton(onClick = {
                         GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                        GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_GALERI
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,

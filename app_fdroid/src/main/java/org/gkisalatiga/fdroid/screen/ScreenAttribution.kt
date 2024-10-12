@@ -80,7 +80,7 @@ class ScreenAttribution : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_ABOUT
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
         }
 
     }
@@ -145,7 +145,7 @@ class ScreenAttribution : ComponentActivity() {
             },
             navigationIcon = {
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_ABOUT
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,

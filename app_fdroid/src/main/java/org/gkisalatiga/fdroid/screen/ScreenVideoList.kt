@@ -64,7 +64,6 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
-
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.lib.StringFormatter
 import org.gkisalatiga.fdroid.services.DataUpdater
@@ -186,7 +185,7 @@ class ScreenVideoList : ComponentActivity() {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_VIDEO_LIST
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Log.d("Groaker", "Opening YouTube stream: $url.")
@@ -197,7 +196,7 @@ class ScreenVideoList : ComponentActivity() {
                         GlobalSchema.ytViewerParameters["desc"] = desc
                         GlobalSchema.ytViewerParameters["thumbnail"] = thumbnail
                         GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                        GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_LIVE
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
                     }
                 ) {
                     AsyncImage(
@@ -229,7 +228,7 @@ class ScreenVideoList : ComponentActivity() {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_VIDEO_LIST
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Log.d("Groaker", "Opening YouTube stream: $url.")
@@ -240,7 +239,7 @@ class ScreenVideoList : ComponentActivity() {
                         GlobalSchema.ytViewerParameters["desc"] = desc
                         GlobalSchema.ytViewerParameters["thumbnail"] = thumbnail
                         GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                        GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_LIVE
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                 ) {

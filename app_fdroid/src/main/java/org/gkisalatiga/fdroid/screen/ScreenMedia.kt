@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
-
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.json.JSONArray
 import org.json.JSONObject
@@ -76,7 +75,7 @@ class ScreenMedia : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_MAIN
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
         }
 
     }
@@ -150,8 +149,8 @@ class ScreenMedia : ComponentActivity() {
                 // Display the list of videos in this playlist.
                 GlobalSchema.videoListContentArray = playlistContentList
                 GlobalSchema.videoListTitle = sectionTitle
-                GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_VIDEO_LIST
-                GlobalSchema.ytVideoListDispatcher = NavigationRoutes().SCREEN_MEDIA
+                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
+                GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MEDIA
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Some desc", modifier = Modifier.fillMaxSize().aspectRatio(1.0f).padding(0.dp))
             }
@@ -166,8 +165,8 @@ class ScreenMedia : ComponentActivity() {
                     // Display the list of videos in this playlist.
                     GlobalSchema.videoListContentArray = playlistContentList
                     GlobalSchema.videoListTitle = sectionTitle
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_VIDEO_LIST
-                    GlobalSchema.ytVideoListDispatcher = NavigationRoutes().SCREEN_MEDIA
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
+                    GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MEDIA
                 }
             ) {
                 AsyncImage(
@@ -203,7 +202,7 @@ class ScreenMedia : ComponentActivity() {
             },
             navigationIcon = {
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_MAIN
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,

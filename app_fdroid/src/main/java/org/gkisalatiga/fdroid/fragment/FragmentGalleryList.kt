@@ -62,8 +62,8 @@ class FragmentGalleryList : ComponentActivity() {
                         Surface(
                             onClick = {
                                 GlobalSchema.galleryViewerStartPage = index
-                                GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_GALERI_VIEW
-                                GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_GALERI_LIST
+                                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_GALERI_VIEW
+                                GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI_LIST
                             },
                             modifier = Modifier
                                 .aspectRatio(1f)

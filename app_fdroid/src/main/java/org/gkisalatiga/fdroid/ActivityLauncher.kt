@@ -78,8 +78,8 @@ import org.gkisalatiga.fdroid.lib.AppGallery
 import org.gkisalatiga.fdroid.lib.AppPreferences
 import org.gkisalatiga.fdroid.lib.GallerySaver
 
-import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.lib.AppStatic
+import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.screen.ScreenAbout
 import org.gkisalatiga.fdroid.screen.ScreenAgenda
 import org.gkisalatiga.fdroid.screen.ScreenAttribution
@@ -202,9 +202,9 @@ class ActivityLauncher : ComponentActivity() {
 
         // Determine the default screen, fragment, and submenu to open upon first app launch,
         // as well as other pre-determined default values.
-        val defaultScreenLaunch = NavigationRoutes().SCREEN_MAIN
-        val defaultFragmentLaunch = NavigationRoutes().FRAG_MAIN_HOME
-        val defaultServicesSubmenu = NavigationRoutes().SUB_BLANK
+        val defaultScreenLaunch = NavigationRoutes.SCREEN_MAIN
+        val defaultFragmentLaunch = NavigationRoutes.FRAG_MAIN_HOME
+        val defaultServicesSubmenu = NavigationRoutes.SUB_BLANK
         val defaultNewTopBarBackground = R.drawable.topbar_greetings_background
 
         // Set the default selected day in "Agenda" menu.
@@ -317,21 +317,21 @@ class ActivityLauncher : ComponentActivity() {
                                 /* Nothing matches, start the app from the beginning.*/
                                 } else {
                                     // This isn't a URI action call. Open the app regularly.
-                                    GlobalSchema.defaultScreen.value = NavigationRoutes().SCREEN_MAIN
+                                    GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_MAIN
                                     initSplashScreen(splashNavController)
                                 }
                             }  // --- end of navigation composable.
 
                             composable ("main_screen") {
                                 // Just display the main graphic directly.
-                                GlobalSchema.defaultScreen.value = NavigationRoutes().SCREEN_MAIN
+                                GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_MAIN
                                 initMainGraphic()
                             }  // --- end of navigation composable.
                         }  // --- end of NavHost.
                     }
                 } else {
                     // Just display the main graphic directly.
-                    GlobalSchema.defaultScreen.value = NavigationRoutes().SCREEN_MAIN
+                    GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_MAIN
                     initMainGraphic()
                 }
             }  // --- end of GKISalatigaPlusTheme.
@@ -392,30 +392,30 @@ class ActivityLauncher : ComponentActivity() {
         // SOURCE: https://composables.com/tutorials/deeplinks
         val mainNavController = rememberNavController()
         NavHost(navController = mainNavController, startDestination = GlobalSchema.defaultScreen.value) {
-            composable(NavigationRoutes().SCREEN_MAIN) { ScreenMain().getComposable() }
-            composable(NavigationRoutes().SCREEN_ABOUT) { ScreenAbout().getComposable() }
-            composable(NavigationRoutes().SCREEN_ATTRIBUTION) { ScreenAttribution().getComposable() }
-            composable(NavigationRoutes().SCREEN_PRIVACY) { ScreenPrivacy().getComposable() }
-            composable(NavigationRoutes().SCREEN_LICENSE) { ScreenLicense().getComposable() }
-            composable(NavigationRoutes().SCREEN_CONTRIB) { ScreenContrib().getComposable() }
-            composable(NavigationRoutes().SCREEN_LIVE) { ScreenVideoLive().getComposable() }
-            composable(NavigationRoutes().SCREEN_FORMS) { ScreenForms().getComposable() }
-            composable(NavigationRoutes().SCREEN_DEV) { ScreenDev().getComposable() }
-            composable(NavigationRoutes().SCREEN_AGENDA) { ScreenAgenda().getComposable() }
-            composable(NavigationRoutes().SCREEN_PERSEMBAHAN) { ScreenPersembahan().getComposable() }
-            composable(NavigationRoutes().SCREEN_GALERI) { ScreenGaleri().getComposable() }
-            composable(NavigationRoutes().SCREEN_GALERI_LIST) { ScreenGaleriList().getComposable() }
-            composable(NavigationRoutes().SCREEN_GALERI_VIEW) { ScreenGaleriView().getComposable() }
-            composable(NavigationRoutes().SCREEN_GALERI_YEAR) { ScreenGaleriYear().getComposable() }
-            composable(NavigationRoutes().SCREEN_MEDIA) { ScreenMedia().getComposable() }
-            composable(NavigationRoutes().SCREEN_YKB) {ScreenYKB().getComposable()}
-            composable(NavigationRoutes().SCREEN_VIDEO_LIST) { ScreenVideoList().getComposable() }
-            composable(NavigationRoutes().SCREEN_WARTA) { ScreenWarta().getComposable() }
-            composable(NavigationRoutes().SCREEN_LITURGI) { ScreenLiturgi().getComposable() }
-            composable(NavigationRoutes().SCREEN_WEBVIEW) { ScreenWebView().getComposable() }
-            composable(NavigationRoutes().SCREEN_INTERNAL_HTML) { ScreenInternalHTML().getComposable() }
-            composable(NavigationRoutes().SCREEN_POSTER_VIEWER) { ScreenPosterViewer().getComposable() }
-            composable(NavigationRoutes().SCREEN_STATIC_CONTENT_LIST) { ScreenStaticContentList().getComposable() }
+            composable(NavigationRoutes.SCREEN_MAIN) { ScreenMain().getComposable() }
+            composable(NavigationRoutes.SCREEN_ABOUT) { ScreenAbout().getComposable() }
+            composable(NavigationRoutes.SCREEN_ATTRIBUTION) { ScreenAttribution().getComposable() }
+            composable(NavigationRoutes.SCREEN_PRIVACY) { ScreenPrivacy().getComposable() }
+            composable(NavigationRoutes.SCREEN_LICENSE) { ScreenLicense().getComposable() }
+            composable(NavigationRoutes.SCREEN_CONTRIB) { ScreenContrib().getComposable() }
+            composable(NavigationRoutes.SCREEN_LIVE) { ScreenVideoLive().getComposable() }
+            composable(NavigationRoutes.SCREEN_FORMS) { ScreenForms().getComposable() }
+            composable(NavigationRoutes.SCREEN_DEV) { ScreenDev().getComposable() }
+            composable(NavigationRoutes.SCREEN_AGENDA) { ScreenAgenda().getComposable() }
+            composable(NavigationRoutes.SCREEN_PERSEMBAHAN) { ScreenPersembahan().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI) { ScreenGaleri().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_LIST) { ScreenGaleriList().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_VIEW) { ScreenGaleriView().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_YEAR) { ScreenGaleriYear().getComposable() }
+            composable(NavigationRoutes.SCREEN_MEDIA) { ScreenMedia().getComposable() }
+            composable(NavigationRoutes.SCREEN_YKB) {ScreenYKB().getComposable()}
+            composable(NavigationRoutes.SCREEN_VIDEO_LIST) { ScreenVideoList().getComposable() }
+            composable(NavigationRoutes.SCREEN_WARTA) { ScreenWarta().getComposable() }
+            composable(NavigationRoutes.SCREEN_LITURGI) { ScreenLiturgi().getComposable() }
+            composable(NavigationRoutes.SCREEN_WEBVIEW) { ScreenWebView().getComposable() }
+            composable(NavigationRoutes.SCREEN_INTERNAL_HTML) { ScreenInternalHTML().getComposable() }
+            composable(NavigationRoutes.SCREEN_POSTER_VIEWER) { ScreenPosterViewer().getComposable() }
+            composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST) { ScreenStaticContentList().getComposable() }
         }
 
         // Watch for the state change in the parameter "pushScreen".

@@ -140,7 +140,7 @@ class ScreenAbout : ComponentActivity() {
                                     /* Opens the easter egg. */
                                     if (easterEggCurrentClicks >= easterEggMinClicks) {
                                         easterEggCurrentClicks = 0
-                                        GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_DEV
+                                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_DEV
                                         Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
                                     } else {
                                         easterEggCurrentClicks += 1
@@ -187,7 +187,7 @@ class ScreenAbout : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_MAIN
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
         }
 
     }
@@ -216,7 +216,7 @@ class ScreenAbout : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_LICENSE
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LICENSE
                 }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -230,7 +230,7 @@ class ScreenAbout : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_PRIVACY
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_PRIVACY
                 }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -244,7 +244,7 @@ class ScreenAbout : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_ATTRIBUTION
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ATTRIBUTION
                 }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -298,7 +298,7 @@ class ScreenAbout : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_CONTRIB
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_CONTRIB
                 }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -349,7 +349,7 @@ class ScreenAbout : ComponentActivity() {
             },
             navigationIcon = {
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_MAIN
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,

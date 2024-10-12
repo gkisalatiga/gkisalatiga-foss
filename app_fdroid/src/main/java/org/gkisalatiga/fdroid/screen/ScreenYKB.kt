@@ -55,7 +55,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
-
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.json.JSONObject
 
@@ -77,7 +76,7 @@ class ScreenYKB : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_MAIN
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
         }
 
     }
@@ -146,12 +145,12 @@ class ScreenYKB : ComponentActivity() {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_YKB
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB
 
                         // Navigate to the WebView viewer.
                         GlobalSchema.webViewTargetURL = url!!
                         GlobalSchema.webViewTitle = title!!
-                        GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_WEBVIEW
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_WEBVIEW
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                 ) {
@@ -185,7 +184,7 @@ class ScreenYKB : ComponentActivity() {
             },
             navigationIcon = {
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_MAIN
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,

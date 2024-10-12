@@ -73,7 +73,7 @@ class ScreenGaleriYear : ComponentActivity() {
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
             GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-            GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
+            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
         }
 
     }
@@ -132,14 +132,14 @@ class ScreenGaleriYear : ComponentActivity() {
                             if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery album year: $title", Toast.LENGTH_SHORT).show()
 
                             // Set this screen as the anchor point for "back"
-                            GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_GALERI_YEAR
+                            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI_YEAR
 
                             // Navigate to the WebView viewer.
                             GlobalSchema.displayedAlbumTitle = title
                             GlobalSchema.displayedAlbumStory = it["story"].toString()
                             GlobalSchema.displayedFeaturedImageID = featuredImageID
                             GlobalSchema.targetAlbumContent = it["photos"] as JSONArray
-                            GlobalSchema.pushScreen.value = NavigationRoutes().SCREEN_GALERI_LIST
+                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_GALERI_LIST
                         },
                         modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                     ) {
@@ -181,7 +181,7 @@ class ScreenGaleriYear : ComponentActivity() {
             navigationIcon = {
                 IconButton(onClick = {
                     GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                    GlobalSchema.popBackScreen.value = NavigationRoutes().SCREEN_MAIN
+                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
