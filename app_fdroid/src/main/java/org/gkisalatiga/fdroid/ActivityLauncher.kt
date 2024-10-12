@@ -83,6 +83,7 @@ import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.screen.ScreenAbout
 import org.gkisalatiga.fdroid.screen.ScreenAgenda
 import org.gkisalatiga.fdroid.screen.ScreenAttribution
+import org.gkisalatiga.fdroid.screen.ScreenBible
 import org.gkisalatiga.fdroid.screen.ScreenContrib
 import org.gkisalatiga.fdroid.screen.ScreenDev
 import org.gkisalatiga.fdroid.screen.ScreenForms
@@ -91,6 +92,7 @@ import org.gkisalatiga.fdroid.screen.ScreenGaleriList
 import org.gkisalatiga.fdroid.screen.ScreenGaleriView
 import org.gkisalatiga.fdroid.screen.ScreenGaleriYear
 import org.gkisalatiga.fdroid.screen.ScreenInternalHTML
+import org.gkisalatiga.fdroid.screen.ScreenLibrary
 import org.gkisalatiga.fdroid.screen.ScreenLicense
 import org.gkisalatiga.fdroid.screen.ScreenLiturgi
 import org.gkisalatiga.fdroid.screen.ScreenMain
@@ -98,6 +100,7 @@ import org.gkisalatiga.fdroid.screen.ScreenMedia
 import org.gkisalatiga.fdroid.screen.ScreenPersembahan
 import org.gkisalatiga.fdroid.screen.ScreenPosterViewer
 import org.gkisalatiga.fdroid.screen.ScreenPrivacy
+import org.gkisalatiga.fdroid.screen.ScreenPukatBerkat
 import org.gkisalatiga.fdroid.screen.ScreenStaticContentList
 import org.gkisalatiga.fdroid.screen.ScreenVideoList
 import org.gkisalatiga.fdroid.screen.ScreenVideoLive
@@ -409,6 +412,9 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_GALERI_YEAR) { ScreenGaleriYear().getComposable() }
             composable(NavigationRoutes.SCREEN_MEDIA) { ScreenMedia().getComposable() }
             composable(NavigationRoutes.SCREEN_YKB) {ScreenYKB().getComposable()}
+            composable(NavigationRoutes.SCREEN_BIBLE) {ScreenBible().getComposable()}
+            composable(NavigationRoutes.SCREEN_LIBRARY) {ScreenLibrary().getComposable()}
+            composable(NavigationRoutes.SCREEN_PUKAT_BERKAT) {ScreenPukatBerkat().getComposable()}
             composable(NavigationRoutes.SCREEN_VIDEO_LIST) { ScreenVideoList().getComposable() }
             composable(NavigationRoutes.SCREEN_WARTA) { ScreenWarta().getComposable() }
             composable(NavigationRoutes.SCREEN_LITURGI) { ScreenLiturgi().getComposable() }

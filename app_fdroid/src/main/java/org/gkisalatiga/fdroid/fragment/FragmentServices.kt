@@ -31,6 +31,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -92,6 +93,19 @@ class FragmentServices : ComponentActivity() {
                 // Displaying the relevant YouTube-based church services.
                 getServicesUI(str, pinnedPlaylistContent[index])
             }
+
+            // Opens the non-pinned video playlist.
+            // TODO: String extraction and visual improvement of the button.
+            Surface(modifier = Modifier.fillMaxWidth(), onClick = {
+                GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MEDIA
+            }) {
+                Text("[TEST] Tampilkan video lainnya")
+            }
+
+            /* Displaying redundant spacer for visual neatness. */
+            Spacer(modifier = Modifier.height(20.dp))
+
         }
 
     }

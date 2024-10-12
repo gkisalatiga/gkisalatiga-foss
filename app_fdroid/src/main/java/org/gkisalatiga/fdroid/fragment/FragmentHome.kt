@@ -76,7 +76,9 @@ class FragmentHome : ComponentActivity() {
         NavigationRoutes.SCREEN_YKB,
         NavigationRoutes.SCREEN_FORMS,
         NavigationRoutes.SCREEN_GALERI,
-        NavigationRoutes.SCREEN_MEDIA,
+        NavigationRoutes.SCREEN_BIBLE,
+        NavigationRoutes.SCREEN_LIBRARY,
+        NavigationRoutes.SCREEN_PUKAT_BERKAT,
     )
 
     // The following defines the label of each visible menu button.
@@ -94,7 +96,9 @@ class FragmentHome : ComponentActivity() {
         R.drawable.ph__book_open_text_bold,
         R.drawable.ph__paper_plane_tilt_bold,
         R.drawable.ph__images_square_bold,
-        R.drawable.ph__monitor_play_bold
+        R.drawable.ph__cross_bold,
+        R.drawable.ph__books_bold,
+        R.drawable.ph__shopping_cart_bold,
     )
 
     @Composable
@@ -110,7 +114,9 @@ class FragmentHome : ComponentActivity() {
             ctx.resources.getString(R.string.btn_mainmenu_ykb),
             ctx.resources.getString(R.string.btn_mainmenu_form),
             ctx.resources.getString(R.string.btn_mainmenu_gallery),
-            ctx.resources.getString(R.string.btn_mainmenu_media),
+            ctx.resources.getString(R.string.btn_mainmenu_bible),
+            ctx.resources.getString(R.string.btn_mainmenu_library),
+            ctx.resources.getString(R.string.btn_mainmenu_pukatberkat),
         )
         btnDescriptions = listOf(
             ctx.resources.getString(R.string.btn_desc_mainmenu_wj),
@@ -121,6 +127,9 @@ class FragmentHome : ComponentActivity() {
             ctx.resources.getString(R.string.btn_desc_mainmenu_form),
             ctx.resources.getString(R.string.btn_desc_mainmenu_gallery),
             ctx.resources.getString(R.string.btn_desc_mainmenu_media),
+            ctx.resources.getString(R.string.btn_desc_mainmenu_bible),
+            ctx.resources.getString(R.string.btn_desc_mainmenu_library),
+            ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat),
         )
 
         // Prepare the poster dialog.

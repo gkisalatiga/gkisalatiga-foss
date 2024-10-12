@@ -7,7 +7,7 @@
 
     <!-- Constant strings for ScreenMain and FragmentMain. -->
     <string name="bottomnav_menu_home">Beranda</string>
-    <string name="bottomnav_menu_services">Konten</string>
+    <string name="bottomnav_menu_services">Siaran</string>
     <string name="bottomnav_menu_info">Tentang</string>
     <string name="bottomnav_menu_events">Acara</string>
 
@@ -15,6 +15,9 @@
     <string name="screenabout_title">Tentang</string>
     <string name="screenattrib_title">Atribusi</string>
     <string name="screenprivacy_title">Kebijakan Privasi</string>
+    <string name="screenbible_title">Alkitab</string>
+    <string name="screenlibrary_title">E-Perpus</string>
+    <string name="screenpukatberkat_title">Pukat Berkat</string>
     <string name="screenlicense_title">Lisensi</string>
     <string name="screencontrib_title">Kontributor</string>
     <string name="screendev_title">Menu Pengembang</string>
@@ -28,7 +31,7 @@
     <string name="screengallery_title">Galeri GKI Salatiga</string>
     <string name="screenagenda_title">Agenda Mingguan</string>
     <string name="screenykb_title">Yayasan Komunikasi Bersama</string>
-    <string name="screenmedia_title">Media Video GKI Salatiga</string>
+    <string name="screenmedia_title">Video Lainnya</string>
     <string name="screenwarta_title">Warta Jemaat</string>
     <string name="screenliturgi_title">Tata Ibadah</string>
     <string name="screensaren_title">Sapaan dan Renungan Pagi</string>
@@ -50,6 +53,9 @@
     <string name="btn_mainmenu_form">Formulir</string>
     <string name="btn_mainmenu_gallery">Galeri</string>
     <string name="btn_mainmenu_media">Media</string>
+    <string name="btn_mainmenu_bible">Alkitab</string>
+    <string name="btn_mainmenu_library">E-Perpus</string>
+    <string name="btn_mainmenu_pukatberkat">Pukat Berkat</string>
 
     <!-- Constant strings for image description of the main menu's action buttons -->
     <string name="btn_desc_mainmenu_wj">Buka menu warta jemaat</string>
@@ -62,6 +68,9 @@
     <string name="btn_desc_mainmenu_form">Buka menu formulir</string>
     <string name="btn_desc_mainmenu_gallery">Buka menu galeri</string>
     <string name="btn_desc_mainmenu_media">Buka menu media</string>
+    <string name="btn_desc_mainmenu_bible">Buka menu Alkitab</string>
+    <string name="btn_desc_mainmenu_library">Buka menu E-Perpus</string>
+    <string name="btn_desc_mainmenu_pukatberkat">Buka menu Pukat Berkat</string>
 
     <!-- Constant string for describing the banner image in the "Info/About Church" fragment. -->
     <string name="info_church_img_description">Gereja Kristen Indonesia Salatiga</string>
