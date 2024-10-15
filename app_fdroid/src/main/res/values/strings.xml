@@ -118,6 +118,11 @@
     <string name="offertory_code_copied">Kode unik berhasil disalin!</string>
     <string name="offertory_code_desc">Tambahkan kode unik pada akhir nominal persembahan yang akan diberikan.\n\nMisalnya, jika Anda ingin memberikan persembahan DKK sebanyak Rp. 50.000, maka Anda perlu mentransfer sebesar Rp. 50.033 ke rekening bank GKI Salatiga.</string>
 
+    <!-- Constant string used in the "Pukat Berkat" section. -->
+    <string name="pukatberkat_section_food">Makanan</string>
+    <string name="pukatberkat_section_goods">Barang</string>
+    <string name="pukatberkat_section_service">Jasa</string>
+
     <!-- Constant string used in the new top bar layout. -->
     <string name="new_topbar_greetings">Syalom!</string>
     <string name="new_topbar_person_name">Sobat GKIS terkasih</string>

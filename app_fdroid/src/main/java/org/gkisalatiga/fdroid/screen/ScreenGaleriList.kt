@@ -84,9 +84,7 @@ class ScreenGaleriList : ComponentActivity() {
         }
 
         // Integrate the horizontal pager with the top tab.
-        //LaunchedEffect(key1 = horizontalPagerState.currentPage, horizontalPagerState.isScrollInProgress) {
         LaunchedEffect(horizontalPagerState.currentPage) {
-            // if (!horizontalPagerState.isScrollInProgress)
             selectedTabIndex.intValue = horizontalPagerState.currentPage
         }
 

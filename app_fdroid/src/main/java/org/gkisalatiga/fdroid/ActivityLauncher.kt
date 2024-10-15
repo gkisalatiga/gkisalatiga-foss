@@ -102,6 +102,7 @@ import org.gkisalatiga.fdroid.screen.ScreenPersembahan
 import org.gkisalatiga.fdroid.screen.ScreenPosterViewer
 import org.gkisalatiga.fdroid.screen.ScreenPrivacy
 import org.gkisalatiga.fdroid.screen.ScreenPukatBerkat
+import org.gkisalatiga.fdroid.screen.ScreenPukatBerkatCompanion
 import org.gkisalatiga.fdroid.screen.ScreenSearch
 import org.gkisalatiga.fdroid.screen.ScreenSettings
 import org.gkisalatiga.fdroid.screen.ScreenStaticContentList
@@ -277,6 +278,9 @@ class ActivityLauncher : ComponentActivity() {
             GlobalSchema.screenGaleriScrollState = rememberScrollState()
             GlobalSchema.screenMediaScrollState = rememberScrollState()
             GlobalSchema.screenPersembahanScrollState = rememberScrollState()
+
+            // Pre-assign pager states of non-main menus.
+            ScreenPukatBerkatCompanion.pukatBerkatPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
 
             // Prepare the pull-to-refresh (PTR) state globally.
             GlobalSchema.globalPTRState = rememberPullToRefreshState()
