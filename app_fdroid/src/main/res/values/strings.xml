@@ -8,7 +8,7 @@
     <!-- Constant strings for ScreenMain and FragmentMain. -->
     <string name="bottomnav_menu_home">Beranda</string>
     <string name="bottomnav_menu_services">Siaran</string>
-    <string name="bottomnav_menu_info">Tentang</string>
+    <string name="bottomnav_menu_info">Gereja</string>
     <string name="bottomnav_menu_events">Acara</string>
 
     <!-- Constant strings for screen titles. -->
@@ -17,6 +17,8 @@
     <string name="screenprivacy_title">Kebijakan Privasi</string>
     <string name="screenbible_title">Alkitab</string>
     <string name="screenlibrary_title">E-Perpus</string>
+    <string name="screensearch_title">Pencarian</string>
+    <string name="screensettings_title">Pengaturan</string>
     <string name="screenpukatberkat_title">Pukat Berkat</string>
     <string name="screenlicense_title">Lisensi</string>
     <string name="screencontrib_title">Kontributor</string>
@@ -118,7 +120,7 @@
 
     <!-- Constant string used in the new top bar layout. -->
     <string name="new_topbar_greetings">Shalom!</string>
-    <string name="new_topbar_person_name">Jemaat dan simpatisan terkasih</string>
+    <string name="new_topbar_person_name">Sobat GKIS terkasih</string>
 
     <!-- Confirmation string for "press again to exit". -->
     <string name="exit_confirmation_toast_string">Tekan sekali lagi untuk keluar dari aplikasi.</string>

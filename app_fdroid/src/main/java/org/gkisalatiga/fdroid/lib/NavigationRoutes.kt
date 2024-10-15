@@ -9,6 +9,7 @@
 
 package org.gkisalatiga.fdroid.lib
 
+// TODO: Make this class enum.
 class NavigationRoutes {
     companion object {
         // The individual Composable "screens" of the app.
@@ -24,6 +25,8 @@ class NavigationRoutes {
         const val SCREEN_BIBLE: String = "nav_screen_bible"
         const val SCREEN_LIBRARY: String = "nav_screen_library"
         const val SCREEN_PUKAT_BERKAT: String = "nav_screen_store"
+        const val SCREEN_SETTINGS: String = "nav_screen_prefs"
+        const val SCREEN_SEARCH: String = "nav_screen_search"
         const val SCREEN_FORMS: String = "nav_screen_forms"
         const val SCREEN_YKB: String = "nav_screen_ykb"
         const val SCREEN_WARTA: String = "nav_screen_wj"

@@ -16,5 +16,16 @@ class AppColors {
         const val AGENDA_ITEM_TIME_BACKGROUND = 0xff482505
         const val AGENDA_ITEM_CHIP_SELECTED_BACKGROUND = 0xff482505
         const val LIGHT_THEME_WHITE = 0xffffffff
+        const val MAIN_TOP_BAR_COLOR = 0xff825303
+
+        /* This is how we can theoretically create a color-changing scheme based on theme: */
+        /*
+        // Cannot use "const" with "when"
+        val ABC = when (Theme) {
+            Theme1 -> Color1
+            Theme2 -> Color2
+            else -> ColorDefault
+        }
+        */
     }
 }

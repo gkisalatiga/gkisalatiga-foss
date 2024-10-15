@@ -101,6 +101,8 @@ import org.gkisalatiga.fdroid.screen.ScreenPersembahan
 import org.gkisalatiga.fdroid.screen.ScreenPosterViewer
 import org.gkisalatiga.fdroid.screen.ScreenPrivacy
 import org.gkisalatiga.fdroid.screen.ScreenPukatBerkat
+import org.gkisalatiga.fdroid.screen.ScreenSearch
+import org.gkisalatiga.fdroid.screen.ScreenSettings
 import org.gkisalatiga.fdroid.screen.ScreenStaticContentList
 import org.gkisalatiga.fdroid.screen.ScreenVideoList
 import org.gkisalatiga.fdroid.screen.ScreenVideoLive
@@ -415,6 +417,8 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_BIBLE) {ScreenBible().getComposable()}
             composable(NavigationRoutes.SCREEN_LIBRARY) {ScreenLibrary().getComposable()}
             composable(NavigationRoutes.SCREEN_PUKAT_BERKAT) {ScreenPukatBerkat().getComposable()}
+            composable(NavigationRoutes.SCREEN_SETTINGS) {ScreenSettings().getComposable()}
+            composable(NavigationRoutes.SCREEN_SEARCH) {ScreenSearch().getComposable()}
             composable(NavigationRoutes.SCREEN_VIDEO_LIST) { ScreenVideoList().getComposable() }
             composable(NavigationRoutes.SCREEN_WARTA) { ScreenWarta().getComposable() }
             composable(NavigationRoutes.SCREEN_LITURGI) { ScreenLiturgi().getComposable() }

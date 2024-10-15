@@ -3,6 +3,12 @@ GKI Salatiga's free and open source Android church application based on Jetpack 
 
 ## A. Documentation
 
+### Coding Convention
+
+- `const val` types should be written in uppercase (e.g., `MAIN_TOP_BAR_COLOR`), while `val` types should not.
+- Mutable composable variable name should have `mutable` name prefix.
+- Inline comments in a companion object should use the `/* */` syntax.
+
 ### Deep link URI pattern handling
 
 The application is designed to handle URLs matching `gkisalatiga.org` URI with `https` scheme.
@@ -22,6 +28,16 @@ In the most recent update, GKI Salatiga activates the following scheduled notifi
 
 - **04:00:05 (Daily):** The SaRen devotional video
 - **12:00:05 (Daily):** The YKB devotional article reminder
+
+### UI Class
+
+User interface classes are categorized into two main classifications: **Screen** and **Fragment**.
+
+A **Screen** is similar to an activity in the conventional Android ViewModel. It occupies the whole screen and can be navigated to/from another screen. Each screen UI in GKI Salatiga should be registered in `lib.NavigationRoutes` so that the navigator can handle the composition of the screen.
+
+A **Fragment** is any reusable or dynamically rendered composable inside a screen. It cannot be navigated to/from another fragment or screen, and must be explicitly called in a UI composable class in order to be displayed.
+
+Each UI class file should bear a global companion object, useful in passing data and arguments between screens and to expose the current UI's state to the rest of the app. The companion object's class should be prefixed with the word "companion." For instance, `ScreenMainCompanion` and `FragmentHomeCompanion`. The companion class should be stored within the same file wherein the respective UI class (e.g., `ScreenMain`) resides.
 
 ## B. Roadmap
 
@@ -47,7 +63,7 @@ In the most recent update, GKI Salatiga activates the following scheduled notifi
 - [ ] Fix "Carousel not displaying the latest data"
 - [ ] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
 - [ ] Fix "Notification appears at exact time of the day, but at both AM and PM"
-- [ ] Remove ambiguous "upload date" of videos in "Content" tab
+- [X] Remove ambiguous "upload date" of videos in "Content" tab
 
 ## C. Privacy Policy
 

@@ -19,15 +19,18 @@
 package org.gkisalatiga.fdroid.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,17 +44,25 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Church
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Subscriptions
+import androidx.compose.material.icons.outlined.Church
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Subscriptions
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
@@ -59,20 +70,27 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -97,6 +115,27 @@ import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.services.DataUpdater
 import org.gkisalatiga.fdroid.ui.theme.Brown1
 import java.util.concurrent.TimeUnit
+
+class ScreenMainCompanion : Application () {
+    companion object {
+        val mutableTopBarContainerTransparency = mutableStateOf(0.0f)
+        val topBarContainerColor = Color(0xff82f1c2)
+        val topBarTitleContentColor = Color(0xff000000)
+
+        /* The calculated top bar padding of the scaffolding. */
+        var calculatedTopBarPadding = 0.dp
+
+        /* The top offset of fragments in the ScreenMain. */
+        const val MIN_SCREEN_MAIN_TOP_OFFSET = 0.0f
+        const val MAX_SCREEN_MAIN_TOP_OFFSET = 325.0f
+        val mutableScreenMainContentTopOffset = mutableFloatStateOf(MAX_SCREEN_MAIN_TOP_OFFSET)
+
+        /* The top offset of the main menu's welcome image (in the top bar). */
+        const val MIN_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET = -(MAX_SCREEN_MAIN_TOP_OFFSET - MIN_SCREEN_MAIN_TOP_OFFSET) / 2
+        const val MAX_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET = 0.0f
+        val mutableScreenMainWelcomeImageTopOffset = mutableFloatStateOf(MAX_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET)
+    }
+}
 
 class ScreenMain : ComponentActivity() {
 
@@ -158,7 +197,9 @@ class ScreenMain : ComponentActivity() {
 
         Scaffold (
             bottomBar = { getBottomBar() },
-            topBar = { /* The "top bar" is now merged with the scaffold content. */ },
+            topBar = {
+                getTopBar()
+            },
             snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButton =  { },
             floatingActionButtonPosition = FabPosition.Center,
@@ -182,6 +223,9 @@ class ScreenMain : ComponentActivity() {
             calculatedTopPadding = it.calculateTopPadding()
             calculatedBottomPadding = it.calculateBottomPadding()
 
+            // Expose the value.
+            ScreenMainCompanion.calculatedTopBarPadding = calculatedTopPadding
+
             // Setting up the layout of all of the fragments.
             // Then wrap each fragment in AnimatedVisibility so that we can manually control their visibility.
             Box (Modifier.padding(bottom = calculatedBottomPadding)) {
@@ -189,10 +233,10 @@ class ScreenMain : ComponentActivity() {
                 // Using nested scroll to handle mutliple scrolling surfaces.
                 // SOURCE: https://medium.com/androiddevelopers/understanding-nested-scrolling-in-jetpack-compose-eb57c1ea0af0
                 // SOURCE: https://developer.android.com/develop/ui/compose/touch-input/pointer-input/scroll#nested-scrolling
-                val minContentOffset = GlobalSchema.minScreenMainTopOffset
-                val maxContentOffset = GlobalSchema.maxScreenMainTopOffset
-                val minImageOffset = GlobalSchema.minScreenMainWelcomeImageTopOffset
-                val maxImageOffset = GlobalSchema.maxScreenMainWelcomeImageTopOffset
+                val minContentOffset = ScreenMainCompanion.MIN_SCREEN_MAIN_TOP_OFFSET + ScreenMainCompanion.calculatedTopBarPadding.value
+                val maxContentOffset = ScreenMainCompanion.MAX_SCREEN_MAIN_TOP_OFFSET
+                val minImageOffset = ScreenMainCompanion.MIN_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET + (ScreenMainCompanion.calculatedTopBarPadding.value/2)
+                val maxImageOffset = ScreenMainCompanion.MAX_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET
                 val nestedScrollConnection = remember {
                     object : NestedScrollConnection {
                         override fun onPreScroll(
@@ -205,18 +249,18 @@ class ScreenMain : ComponentActivity() {
                             val isDeltaNegative = if (delta < 0) true else false
 
                             // Calculating the top offset of the main content.
-                            val currentContentOffset = GlobalSchema.screenMainContentTopOffset.floatValue
+                            val currentContentOffset = ScreenMainCompanion.mutableScreenMainContentTopOffset.floatValue
                             val targetContentOffset = (currentContentOffset + delta / 2).coerceIn(minContentOffset, maxContentOffset)
 
                             // Applying the main content's top offset.
-                            if (isDeltaNegative) GlobalSchema.screenMainContentTopOffset.floatValue = targetContentOffset
+                            if (isDeltaNegative) ScreenMainCompanion.mutableScreenMainContentTopOffset.floatValue = targetContentOffset
 
                             // Calculating the top offset of the welcome image.
-                            val currentImageOffset = GlobalSchema.screenMainWelcomeImageTopOffset.floatValue
+                            val currentImageOffset = ScreenMainCompanion.mutableScreenMainWelcomeImageTopOffset.floatValue
                             val targetImageOffset = (currentImageOffset + delta / 4).coerceIn(minImageOffset, maxImageOffset)
 
                             // Applying the welcome image's top offset.
-                            if (isDeltaNegative) GlobalSchema.screenMainWelcomeImageTopOffset.floatValue = targetImageOffset
+                            if (isDeltaNegative) ScreenMainCompanion.mutableScreenMainWelcomeImageTopOffset.floatValue = targetImageOffset
 
                             // Determining how much delta should be spared to be consumed by the fragment's scrollable.
                             val returnDelta =
@@ -242,23 +286,27 @@ class ScreenMain : ComponentActivity() {
                             val isDeltaNegative = if (delta < 0) true else false
 
                             // Calculating the top offset of the main content.
-                            val currentContentOffset = GlobalSchema.screenMainContentTopOffset.floatValue
+                            val currentContentOffset = ScreenMainCompanion.mutableScreenMainContentTopOffset.floatValue
                             val targetContentOffset = (currentContentOffset + delta / 2).coerceIn(minContentOffset, maxContentOffset)
 
                             // Applying the main content's top offset.
-                            if (!isDeltaNegative) GlobalSchema.screenMainContentTopOffset.floatValue = targetContentOffset
+                            if (!isDeltaNegative) ScreenMainCompanion.mutableScreenMainContentTopOffset.floatValue = targetContentOffset
 
                             // Calculating the top offset of the welcome image.
-                            val currentImageOffset = GlobalSchema.screenMainWelcomeImageTopOffset.floatValue
+                            val currentImageOffset = ScreenMainCompanion.mutableScreenMainWelcomeImageTopOffset.floatValue
                             val targetImageOffset = (currentImageOffset + delta / 4).coerceIn(minImageOffset, maxImageOffset)
 
                             // Applying the welcome image's top offset.
-                            if (!isDeltaNegative) GlobalSchema.screenMainWelcomeImageTopOffset.floatValue = targetImageOffset
+                            if (!isDeltaNegative) ScreenMainCompanion.mutableScreenMainWelcomeImageTopOffset.floatValue = targetImageOffset
 
                             val returnDelta =
                                 if (!isDeltaNegative && currentContentOffset == maxContentOffset) 0.0f
                                 else if (isDeltaNegative) 0.0f
                                 else delta
+
+                            // Changing the top bar's transparency.
+                            val targetTopBarTransparency = 1 - ((currentContentOffset - ScreenMainCompanion.calculatedTopBarPadding.value) / ( ScreenMainCompanion.MAX_SCREEN_MAIN_TOP_OFFSET - ScreenMainCompanion.calculatedTopBarPadding.value))
+                            ScreenMainCompanion.mutableTopBarContainerTransparency.value = targetTopBarTransparency
 
                             // Debugging the output values.
                             // if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) Log.d("Groaker-Dump", "[Post-Scroll] y-consumed: ${consumed.y}, y-available: ${available.y}")
@@ -286,7 +334,7 @@ class ScreenMain : ComponentActivity() {
 
                     // Shows the main content.
                     Surface (
-                        modifier = Modifier.offset(y = (GlobalSchema.screenMainContentTopOffset.floatValue).dp).fillMaxSize().zIndex(10f),
+                        modifier = Modifier.offset(y = (ScreenMainCompanion.mutableScreenMainContentTopOffset.floatValue).dp).fillMaxSize().zIndex(10f),
                         // modifier = Modifier.padding(top = LocalContext.current.resources.getDimension(R.dimen.new_topbar_content_top_y_offset).dp).fillMaxSize().zIndex(10f),
                         shape = RoundedCornerShape(25.dp, 25.dp, 0.dp, 0.dp)
                     ) {
@@ -298,7 +346,7 @@ class ScreenMain : ComponentActivity() {
                                 .fillMaxSize()
                                 .padding(top = 0.dp)
                                 // This needs to be set as a "side effect" of setting a non-zero value to "minScreenMainTopOffset"
-                                .padding(bottom = GlobalSchema.minScreenMainTopOffset.dp),
+                                .padding(bottom = ScreenMainCompanion.MIN_SCREEN_MAIN_TOP_OFFSET.dp + ScreenMainCompanion.calculatedTopBarPadding),
                             // Without this property, the left-right page scrolling would be insanely laggy!
                             beyondViewportPageCount = 2
                         ) { page ->
@@ -389,15 +437,15 @@ class ScreenMain : ComponentActivity() {
         // Enlists the bottom nav bar item icons. (On selected.)
         val bottomNavItemIconsSelected = listOf(
             Icons.Filled.Home,
-            Icons.Filled.PlayArrow,
-            Icons.Filled.Info
+            Icons.Filled.Subscriptions,
+            Icons.Filled.Church
         )
 
         // Enlists the bottom nav bar item icons. (When inactive.)
         val bottomNavItemIconsInactive = listOf(
             Icons.Outlined.Home,
-            Icons.Outlined.PlayArrow,
-            Icons.Outlined.Info
+            Icons.Outlined.Subscriptions,
+            Icons.Outlined.Church
         )
 
         BottomAppBar {
@@ -444,8 +492,8 @@ class ScreenMain : ComponentActivity() {
         /* Drawing canvas for the new top bar layout. */
         Box ( modifier = Modifier
             .fillMaxWidth()
-            .height((GlobalSchema.maxScreenMainTopOffset + 100).dp)
-            .offset(y = GlobalSchema.screenMainWelcomeImageTopOffset.floatValue.dp)
+            .height((ScreenMainCompanion.MAX_SCREEN_MAIN_TOP_OFFSET + 100).dp)
+            .offset(y = ScreenMainCompanion.mutableScreenMainWelcomeImageTopOffset.floatValue.dp)
         ) {
 
             /* Drawing the top bar greetings banner background. */
@@ -488,29 +536,6 @@ class ScreenMain : ComponentActivity() {
                         )
                     )
 
-                    // This text will trigger the "About App" screen.
-                    val ctx = LocalContext.current
-                    Surface (
-                        color = Color.Transparent,
-                        modifier = Modifier.padding(bottom = 10.dp),
-                        onClick = {
-                            if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You will open the about app.", Toast.LENGTH_SHORT).show()
-
-                            // Opens the "About app" screen.
-                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
-                        }
-                    ) {
-                        Row (
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // The app title.
-                            Text(topBannerTitle, fontSize = 14.sp, fontWeight = FontWeight.Normal, color = Color.White)
-                            Spacer(Modifier.width(20.dp))
-                            // The "next" button.
-                            Icon(Icons.AutoMirrored.Default.KeyboardArrowRight, "", tint = Color.White)
-                        }
-                    }
-
                     // The overlaying greetings text.
                     Text(stringResource(R.string.new_topbar_greetings), fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.White, style = shadowTextStyle)
                     Text(stringResource(R.string.new_topbar_person_name), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White, style = shadowTextStyle)
@@ -519,5 +544,59 @@ class ScreenMain : ComponentActivity() {
 
         }
 
+    }
+
+    @Composable
+    @OptIn(ExperimentalMaterial3Api::class)
+    private fun getTopBar() {
+        TopAppBar (
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = ScreenMainCompanion.topBarContainerColor
+                    .copy(ScreenMainCompanion.mutableTopBarContainerTransparency.value),
+                titleContentColor = ScreenMainCompanion.topBarTitleContentColor
+            ),
+            title = {
+                Row (horizontalArrangement = Arrangement.Start) {
+                    Image(painterResource(R.drawable.app_typography), stringResource(R.string.app_name_alias),
+                        modifier = Modifier.aspectRatio(5.68817f).weight(2.0f),
+                        contentScale = ContentScale.Crop,
+                    )
+                    Spacer(Modifier.weight(1.0f))
+                }
+            },
+            navigationIcon = {},
+            actions = {
+                IconButton(onClick = {
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_SEARCH
+                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.screensearch_title),
+                        tint = Color(0xff000000)
+                    )
+                }
+                IconButton(onClick = {
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_SETTINGS
+                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = stringResource(R.string.screensettings_title),
+                        tint = Color(0xff000000)
+                    )
+                }
+                IconButton(onClick = {
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
+                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = stringResource(R.string.screenabout_title),
+                        tint = Color(0xff000000)
+                    )
+                }
+            },
+        )
     }
 }
