@@ -119,7 +119,7 @@
     <string name="offertory_code_desc">Tambahkan kode unik pada akhir nominal persembahan yang akan diberikan.\n\nMisalnya, jika Anda ingin memberikan persembahan DKK sebanyak Rp. 50.000, maka Anda perlu mentransfer sebesar Rp. 50.033 ke rekening bank GKI Salatiga.</string>
 
     <!-- Constant string used in the new top bar layout. -->
-    <string name="new_topbar_greetings">Shalom!</string>
+    <string name="new_topbar_greetings">Syalom!</string>
     <string name="new_topbar_person_name">Sobat GKIS terkasih</string>
 
     <!-- Confirmation string for "press again to exit". -->

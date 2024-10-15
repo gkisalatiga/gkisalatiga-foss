@@ -80,6 +80,7 @@ import org.gkisalatiga.fdroid.lib.GallerySaver
 
 import org.gkisalatiga.fdroid.lib.AppStatic
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
+import org.gkisalatiga.fdroid.lib.PreferenceKeys
 import org.gkisalatiga.fdroid.screen.ScreenAbout
 import org.gkisalatiga.fdroid.screen.ScreenAgenda
 import org.gkisalatiga.fdroid.screen.ScreenAttribution
@@ -349,11 +350,14 @@ class ActivityLauncher : ComponentActivity() {
      */
     private fun initPreferences() {
         // Initializes the preferences.
-        AppPreferences(this).readAllPreferences()
+        val appPref = AppPreferences(this)
+
+        // Initializes the default/fallback preferences if this is a first launch.
+        if ((appPref.getPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS) as Int) < 0) appPref.initDefaultPreferences()
 
         // Increment the number of counts.
-        val now = GlobalSchema.preferencesKeyValuePairs[GlobalSchema.PREF_KEY_LAUNCH_COUNTS] as Int
-        AppPreferences(this).writePreference(GlobalSchema.PREF_KEY_LAUNCH_COUNTS, now + 1)
+        val now = appPref.getPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS) as Int
+        appPref.setPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS, now + 1)
         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
     }
 
@@ -467,7 +471,7 @@ class ActivityLauncher : ComponentActivity() {
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.
-        val launches = GlobalSchema.preferencesKeyValuePairs[GlobalSchema.PREF_KEY_LAUNCH_COUNTS] as Int
+        val launches = AppPreferences(this).getPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS) as Int
 
         // Get fallback data only if first launch.
         if (launches == 0) {

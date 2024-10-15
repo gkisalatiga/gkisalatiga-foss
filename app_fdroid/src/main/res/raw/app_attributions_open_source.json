@@ -25,6 +25,14 @@
             "link": "https://github.com/jeziellago/compose-markdown"
         },
         {
+            "title": "Compose UI - Coil",
+            "license": "Apache License 2.0",
+            "license-url": "https://spdx.org/licenses/Apache-2.0.html",
+            "year": "2024",
+            "author": "Coil Contributors",
+            "link": "https://github.com/coil-kt/coil"
+        },
+        {
             "title": "Jetpack Compose Material3",
             "license": "Apache License 2.0",
             "license-url": "https://spdx.org/licenses/Apache-2.0.html",

@@ -123,7 +123,7 @@ class GlobalSchema : Application() {
         const val DEBUG_ENABLE_EASTER_EGG = true
 
         // Whether to display the debugger's toast.
-        const val DEBUG_ENABLE_TOAST = false
+        const val DEBUG_ENABLE_TOAST = true
 
         // Whether to display the debugger's logcat logging.
         const val DEBUG_ENABLE_LOG_CAT = true
@@ -313,6 +313,8 @@ class GlobalSchema : Application() {
         /* This is the clipboard manager. */
         var clipManager: ClipboardManager? = null
 
+        // TODO: Remove this code block. It is now replaced with lib.AppPreferences's sleek preference management.
+        /*
         /* ------------------------------------------------------------------------------------ */
         /* The following is the app-wide, private preferences stored across launches.
          * All variables below must start with "pref" prefix.
@@ -343,7 +345,7 @@ class GlobalSchema : Application() {
             PREF_KEY_LAST_STATIC_DATA_UPDATE to Long.MIN_VALUE,
             PREF_KEY_LAST_CAROUSEL_BANNER_UPDATE to Long.MIN_VALUE,
             PREF_KEY_LAUNCH_COUNTS to -1
-        )
+        )*/
 
     }
 }

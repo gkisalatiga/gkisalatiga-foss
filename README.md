@@ -5,7 +5,7 @@ GKI Salatiga's free and open source Android church application based on Jetpack 
 
 ### Coding Convention
 
-- `const val` types should be written in uppercase (e.g., `MAIN_TOP_BAR_COLOR`), while `val` types should not.
+- `const val` types should be written in uppercase (e.g., `MAIN_TOP_BAR_COLOR`). Meanwhile `val` types can be written in lowercase, if preferred.
 - Mutable composable variable name should have `mutable` name prefix.
 - Inline comments in a companion object should use the `/* */` syntax.
 
@@ -21,6 +21,10 @@ Currently, the list of registered deeplinks in this app is as follows:
 - **`https://gkisalatiga.org/app/deeplink/ykb`:** Opens the list of YKB daily devotionals
 
 Any URI with `gkisalatiga.org` host that does not match the above registered deeplink will automatically trigger the WebView and display the link in the app's WebView.
+
+### Debug Logging
+
+- Every debug message should clarify the class name where the logging comes from. This can be done conveniently by prepending `[${this::class.qualifiedName}]` in the logger's message string argument.
 
 ### Notification
 
@@ -75,25 +79,32 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 
 ## D. Attribution
 
-This repository was migrated from the original repo, [GKI Salatiga Plus](https://https://github.com/gkisalatiga/gki-salatiga-plus), which has now been made a public archive. You will see throughout this repo that some codes still refer to GKI Salatiga **_Plus_** instead of just GKI Salatiga. This is minor and does not affect the overall experience of the app.
+This repository was migrated from the original repo, [GKI Salatiga Plus](https://github.com/gkisalatiga/gki-salatiga-plus), which has now been made a public archive. You will see throughout this repo that some codes still refer to GKI Salatiga **_Plus_** instead of just GKI Salatiga. This is minor and does not affect the overall experience of the app.
 
 ### License of Materials Used
 
 #### Open source materials used as hard-coded parts of the application
 
-- Android Studio Asset Studio Icon Library, The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/studio/write/create-app-icons)
-- Android YouTube Player, Pierfrancesco Soffritti (C) 2023 (MIT) [Link](https://github.com/PierfrancescoSoffritti/android-youtube-player)
-- Compose Markdown, Jeziel Lago (C) 2024 (MIT) [Link](https://github.com/jeziellago/compose-markdown)
-- Jetpack Compose Material3, The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.0-beta04)
-- Material Symbols & Icons - Google Fonts, The Android Open Source Project (C) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
-- Phosphor, Phosphor Icons (C) 2024 (MIT) [Link 1](https://icon-sets.iconify.design/ph), [Link 2](https://github.com/phosphor-icons/core)
-- RemixIcon Icon Set, Remix-Design (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/ri), [Link 2](https://github.com/Remix-Design/RemixIcon)
-- UnzipUtil, Nitin Praksh (C) 2021 (Apache 2.0) [Link 1](https://prakashnitin.medium.com/unzipping-files-in-android-kotlin-2a2a2d5eb7ae), [Link 2](https://gist.github.com/NitinPraksash9911/dea21ec4b8ae7df068f8f891187b6d1e)
-- WorkManager Kotlin Extensions (C) 2024 (Apache 2.0) [Link](https://mvnrepository.com/artifact/androidx.work/work-runtime-ktx)
-- ZoomableBox, Sean (C) 2022 (CC BY-SA 4.0) [Link](https://stackoverflow.com/a/72528056)
+- Android Studio Asset Studio Icon Library; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/studio/write/create-app-icons)
+- Android YouTube Player; Pierfrancesco Soffritti (C) 2023 (MIT) [Link](https://github.com/PierfrancescoSoffritti/android-youtube-player)
+- Compose Markdown; Jeziel Lago (C) 2024 (MIT) [Link](https://github.com/jeziellago/compose-markdown)
+- Compose UI - Coil; Coil Contributors  (C) 2024 (Apache 2.0) [Link](https://github.com/coil-kt/coil)
+- Jetpack Compose Material3; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.0-beta04)
+- Material Symbols & Icons - Google Fonts; The Android Open Source Project (C) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
+- Phosphor; Phosphor Icons (C) 2024 (MIT) [Link 1](https://icon-sets.iconify.design/ph), [Link 2](https://github.com/phosphor-icons/core)
+- RemixIcon Icon Set; Remix-Design (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/ri), [Link 2](https://github.com/Remix-Design/RemixIcon)
+- UnzipUtil; Nitin Praksh (C) 2021 (Apache 2.0) [Link 1](https://prakashnitin.medium.com/unzipping-files-in-android-kotlin-2a2a2d5eb7ae), [Link 2](https://gist.github.com/NitinPraksash9911/dea21ec4b8ae7df068f8f891187b6d1e)
+- WorkManager Kotlin Extensions; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://mvnrepository.com/artifact/androidx.work/work-runtime-ktx)
+- ZoomableBox; Sean (C) 2022 (CC BY-SA 4.0) [Link](https://stackoverflow.com/a/72528056)
 
 #### Open source materials dynamically used in the WebView
 
-- Framacarte, Framasoft (C) 2024 (CC BY-SA 4.0) [Link](https://framacarte.org/abc/en/)
-- OpenStreetMap, OpenStreetMap Foundation (OSMF) (C) 2024 (ODbL 1.0) [Link](https://www.openstreetmap.org)
-- Plus Jakarta Sans, Tokotype (C) 2020 (OFL 1.1) [Link](https://fonts.google.com/specimen/Plus+Jakarta+Sans?query=plus+jakarta+sans)
+- Framacarte; Framasoft (C) 2024 (CC BY-SA 4.0) [Link](https://framacarte.org/abc/en/)
+- OpenStreetMap; OpenStreetMap Foundation (OSMF) (C) 2024 (ODbL 1.0) [Link](https://www.openstreetmap.org)
+- Plus Jakarta Sans; Tokotype (C) 2020 (OFL 1.1) [Link](https://fonts.google.com/specimen/Plus+Jakarta+Sans?query=plus+jakarta+sans)
+
+#### License of biblical materials and electronic books used in the app per user's download consent
+
+- Alkitab Yang Terbuka; Yayasan Lembaga SABDA (YLSA) (C) 2011-2024 (CC-BY-NC-SA-4.0) [Link 1](https://ebible.org/details.php?id=indayt) [Link 2](https://ayt.co)
+- Bible in Basic English; Samuel Henry Hooke, Cambridge Press (Public Domain) [Link](https://ebible.org/find/show.php?id=engBBE)
+- World English Bible; Michael Paul Johnson (Public Domain) [Link 1](https://ebible.org/find/show.php?id=engwebp) [Link 2](https://worldenglish.bible)

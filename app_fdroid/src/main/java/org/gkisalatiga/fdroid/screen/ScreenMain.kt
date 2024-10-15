@@ -111,31 +111,11 @@ import org.gkisalatiga.fdroid.fragment.FragmentHome
 import org.gkisalatiga.fdroid.fragment.FragmentInfo
 import org.gkisalatiga.fdroid.fragment.FragmentServices
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.AppColors
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.services.DataUpdater
 import org.gkisalatiga.fdroid.ui.theme.Brown1
 import java.util.concurrent.TimeUnit
-
-class ScreenMainCompanion : Application () {
-    companion object {
-        val mutableTopBarContainerTransparency = mutableStateOf(0.0f)
-        val topBarContainerColor = Color(0xff82f1c2)
-        val topBarTitleContentColor = Color(0xff000000)
-
-        /* The calculated top bar padding of the scaffolding. */
-        var calculatedTopBarPadding = 0.dp
-
-        /* The top offset of fragments in the ScreenMain. */
-        const val MIN_SCREEN_MAIN_TOP_OFFSET = 0.0f
-        const val MAX_SCREEN_MAIN_TOP_OFFSET = 325.0f
-        val mutableScreenMainContentTopOffset = mutableFloatStateOf(MAX_SCREEN_MAIN_TOP_OFFSET)
-
-        /* The top offset of the main menu's welcome image (in the top bar). */
-        const val MIN_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET = -(MAX_SCREEN_MAIN_TOP_OFFSET - MIN_SCREEN_MAIN_TOP_OFFSET) / 2
-        const val MAX_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET = 0.0f
-        val mutableScreenMainWelcomeImageTopOffset = mutableFloatStateOf(MAX_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET)
-    }
-}
 
 class ScreenMain : ComponentActivity() {
 
@@ -560,6 +540,7 @@ class ScreenMain : ComponentActivity() {
                     Image(painterResource(R.drawable.app_typography), stringResource(R.string.app_name_alias),
                         modifier = Modifier.aspectRatio(5.68817f).weight(2.0f),
                         contentScale = ContentScale.Crop,
+                        colorFilter = ColorFilter.tint(ScreenMainCompanion.topBarTitleContentColor)
                     )
                     Spacer(Modifier.weight(1.0f))
                 }
@@ -573,7 +554,7 @@ class ScreenMain : ComponentActivity() {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = stringResource(R.string.screensearch_title),
-                        tint = Color(0xff000000)
+                        tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
                 IconButton(onClick = {
@@ -583,7 +564,7 @@ class ScreenMain : ComponentActivity() {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(R.string.screensettings_title),
-                        tint = Color(0xff000000)
+                        tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
                 IconButton(onClick = {
@@ -593,10 +574,35 @@ class ScreenMain : ComponentActivity() {
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = stringResource(R.string.screenabout_title),
-                        tint = Color(0xff000000)
+                        tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
             },
         )
+    }
+}
+
+/**
+ * This companion class stores every static information related to this class file.
+ * It is globally readable, exposing any values assigned to public variables stored in it.
+ */
+class ScreenMainCompanion : Application () {
+    companion object {
+        val mutableTopBarContainerTransparency = mutableStateOf(0.0f)
+        val topBarContainerColor = Color(AppColors.MAIN_TOP_BAR_COLOR)
+        val topBarTitleContentColor = Color(AppColors.MAIN_TOP_BAR_CONTENT_COLOR)
+
+        /* The calculated top bar padding of the scaffolding. */
+        var calculatedTopBarPadding = 0.dp
+
+        /* The top offset of fragments in the ScreenMain. */
+        const val MIN_SCREEN_MAIN_TOP_OFFSET = 0.0f
+        const val MAX_SCREEN_MAIN_TOP_OFFSET = 325.0f
+        val mutableScreenMainContentTopOffset = mutableFloatStateOf(MAX_SCREEN_MAIN_TOP_OFFSET)
+
+        /* The top offset of the main menu's welcome image (in the top bar). */
+        const val MIN_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET = -(MAX_SCREEN_MAIN_TOP_OFFSET - MIN_SCREEN_MAIN_TOP_OFFSET) / 2
+        const val MAX_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET = 0.0f
+        val mutableScreenMainWelcomeImageTopOffset = mutableFloatStateOf(MAX_SCREEN_MAIN_WELCOME_IMAGE_TOP_OFFSET)
     }
 }
