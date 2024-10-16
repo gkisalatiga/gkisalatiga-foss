@@ -16,17 +16,19 @@ class DeepLinkHandler {
         fun handleSaRen() {
             GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
 
-            // The "pinned playlist" section.
-            val pinnedList: JSONArray = GlobalSchema.globalJSONObject!!.getJSONObject("yt").getJSONArray("pinned")
+            // The "all playlist" section.
+            val allVideoPlaylists: JSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("yt")
 
             // Enlist the SaRen video lists to be shown in the video list.
             var sarenPlaylistTitle = ""
             var sarenPlaylistContent = JSONArray()
-            for (i in 0 until pinnedList.length()) {
+
+            // Find the SaRen playlist.
+            for (i in 0 until allVideoPlaylists.length()) {
                 // Do it specifically for SaRen.
-                if ((pinnedList[i] as JSONObject).getString("title") == "Sapaan dan Renungan Pagi") {
-                    sarenPlaylistTitle = (pinnedList[i] as JSONObject).getString("title")
-                    sarenPlaylistContent = (pinnedList[i] as JSONObject).getJSONArray("content")
+                if ((allVideoPlaylists[i] as JSONObject).getString("title") == "Sapaan dan Renungan Pagi") {
+                    sarenPlaylistTitle = (allVideoPlaylists[i] as JSONObject).getString("title")
+                    sarenPlaylistContent = (allVideoPlaylists[i] as JSONObject).getJSONArray("content")
                     break
                 }
             }
