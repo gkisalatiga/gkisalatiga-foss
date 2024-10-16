@@ -83,8 +83,20 @@ class ScreenMedia : ComponentActivity() {
     @Composable
     private fun getMainContent() {
 
+        // The "all video playlists" JSON array.
+        val allVideoPlaylistArray = GlobalSchema.globalJSONObject!!.getJSONArray("yt")
+
+        // Get the non-pinned video playlists.
+        val ordinaryPlaylistDictionary: MutableList<JSONObject> = mutableListOf()
+        for (i in 0 until allVideoPlaylistArray.length()) {
+            if (allVideoPlaylistArray.getJSONObject(i).getInt("pinned") == 0) {
+                ordinaryPlaylistDictionary.add(allVideoPlaylistArray[i] as JSONObject)
+            }
+        }
+
+        // TODO: Remove this obsolescence.
         // The "pinned playlist" section.
-        val pinnedList: JSONArray = GlobalSchema.globalJSONObject!!.getJSONObject("yt").getJSONArray("standard")
+        /*val pinnedList: JSONArray = GlobalSchema.globalJSONObject!!.getJSONObject("yt").getJSONArray("standard")
 
         // Enlist the cards to be shown in this fragment.
         // This is equivalent to this fragment's particular JSON node.
@@ -100,7 +112,7 @@ class ScreenMedia : ComponentActivity() {
             )
         }
         // pinnedPlaylistTitle.removeAt(0)
-        // pinnedPlaylistContent.removeAt(0)
+        // pinnedPlaylistContent.removeAt(0)*/
 
         // Enabling vertical scrolling, and setting the layout to center both vertically and horizontally.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
@@ -115,9 +127,9 @@ class ScreenMedia : ComponentActivity() {
                 .padding(20.dp)
         ) {
             // Assumes both "pinnedPlaylistTitle" and "pinnedPlaylistContent" have the same list size.
-            pinnedPlaylistTitle.forEachIndexed { index, str ->
+            ordinaryPlaylistDictionary.forEach { obj ->
                 // Displaying the relevant YouTube-based church services.
-                getMediaUI(str, pinnedPlaylistContent[index])
+                getMediaUI((obj as JSONObject).getString("title"), (obj as JSONObject).getJSONArray("content"))
             }
         }
 

@@ -16,8 +16,9 @@
 - Changed the logo to reflect the "new look" of GKI Salatiga
 - Changed the main menu logo to "Phosphor" icon sets for a better look
 - Converted the license, privacy policy, and contributor meta-information page from dialog to screen
-- Removed the "upload date" text from the video list in the main menu because it looks confusing
 - Improved the agenda menu by introducing paging and material cards
+- Removed the "upload date" text from the video list in the main menu because it looks confusing
+- Upgraded the JSON schema version of the main data to `v2.0`
 
 :hammer_and_wrench: **FIX**
 

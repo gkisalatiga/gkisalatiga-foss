@@ -57,7 +57,19 @@ class FragmentServices : ComponentActivity() {
     @Composable
     fun getComposable() {
 
-        // The "pinned playlist" section.
+        // The "all video playlists" JSON array.
+        val allVideoPlaylistArray = GlobalSchema.globalJSONObject!!.getJSONArray("yt")
+
+        // Get the pinned video playlists.
+        val pinnedPlaylistDictionary: MutableList<JSONObject> = mutableListOf()
+        for (i in 0 until allVideoPlaylistArray.length()) {
+            if (allVideoPlaylistArray.getJSONObject(i).getInt("pinned") == 1) {
+                pinnedPlaylistDictionary.add(allVideoPlaylistArray[i] as JSONObject)
+            }
+        }
+
+        // TODO: Remove this obsolescence.
+        /*// The "pinned playlist" section.
         val pinnedList: JSONArray = GlobalSchema.globalJSONObject!!.getJSONObject("yt").getJSONArray("pinned")
 
         // Enlist the cards to be shown in this fragment.
@@ -72,7 +84,7 @@ class FragmentServices : ComponentActivity() {
             pinnedPlaylistContent.add(
                 (pinnedList[i] as JSONObject).getJSONArray("content")
             )
-        }
+        }*/
         // pinnedPlaylistTitle.removeAt(0)
         // pinnedPlaylistContent.removeAt(0)
 
@@ -89,9 +101,9 @@ class FragmentServices : ComponentActivity() {
                 .padding(20.dp)
         ) {
             // Assumes both "pinnedPlaylistTitle" and "pinnedPlaylistContent" have the same list size.
-            pinnedPlaylistTitle.forEachIndexed { index, str ->
+            pinnedPlaylistDictionary.forEach { obj ->
                 // Displaying the relevant YouTube-based church services.
-                getServicesUI(str, pinnedPlaylistContent[index])
+                getServicesUI((obj as JSONObject).getString("title"), obj.getJSONArray("content"))
             }
 
             // Opens the non-pinned video playlist.

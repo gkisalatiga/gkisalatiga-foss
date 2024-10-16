@@ -143,7 +143,7 @@ class FragmentHome : ComponentActivity() {
         )
 
         // Get the number of carousel banners.
-        val actualPageCount = GlobalSchema.carouselJSONKey.size
+        val actualPageCount = GlobalSchema.globalJSONObject!!.getJSONArray("carousel").length()
 
         // Retrieving the global state.
         val carouselPagerState = GlobalSchema.fragmentHomeCarouselPagerState!!
@@ -193,7 +193,8 @@ class FragmentHome : ComponentActivity() {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     // Navigate to the current iteration's JSON node.
-                    val currentNode = GlobalSchema.carouselJSONObject[it % actualPageCount]
+                    // val currentNode = GlobalSchema.carouselJSONObject[it % actualPageCount]
+                    val currentNode = GlobalSchema.globalJSONObject!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
 
                     /* Display the carousel banner image. */
                     Surface (

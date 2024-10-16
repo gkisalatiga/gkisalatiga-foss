@@ -63,10 +63,10 @@ class GlobalSchema : Application() {
         /* ------------------------------------------------------------------------------------ */
         /* The following parameter determines which JSON API source to look up to in order to update the application content.
          * It cannot and should not be changed arbitrarily within the app code. */
-        val JSONSource = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/gkisplus.json"
+        val JSONSource = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-main.min.json"
 
         // This is the filename which will save the above JSON source.
-        val JSONSavedFilename = "gkisplus.json"
+        val JSONSavedFilename = "gkisplus-main.json"
 
         // Stores the absolute path of the downloaded (into internal app storage) JSON metadata
         var absolutePathToJSONMetaData = ""
@@ -107,9 +107,10 @@ class GlobalSchema : Application() {
         /* The following parameter determines which zipped carousel data should be loaded into the main screen.
          * It cannot and should not be changed arbitrarily within the app code. */
 
+        // TODO: Remove this unused code block.
         // The variable associated with the string values and resource paths.
-        var carouselJSONObject: ArrayList<JSONObject> = ArrayList<JSONObject>()
-        var carouselJSONKey: ArrayList<String> = ArrayList<String>()
+        // var carouselJSONObject: ArrayList<JSONObject> = ArrayList<JSONObject>()
+        // var carouselJSONKey: ArrayList<String> = ArrayList<String>()
 
         /* ------------------------------------------------------------------------------------ */
         /* Values and constants used in the "offertory" menu. */
@@ -144,6 +145,11 @@ class GlobalSchema : Application() {
 
         // Whether to disable downloading the carousel data zip file from the GitHub repository.
         const val DEBUG_DISABLE_DOWNLOADING_CAROUSEL_DATA = false
+
+        /* ------------------------------------------------------------------------------------ */
+        /* Controls the internal downloader. */
+
+        const val FILE_CREATOR_TARGET_DOWNLOAD_DIR = "Downloads"
 
         /* ------------------------------------------------------------------------------------ */
         /* These parameters are used to navigate across screens, fragments, and submenus in the composables.
