@@ -23,6 +23,9 @@ import java.util.concurrent.Executors
  */
 class Downloader(private val ctx: Context) {
 
+    // The file creator to create the private file.
+    private val fileCreator = ctx.getDir(GlobalSchema.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
+
     /**
      * Downloads and initiates the main JSON data source file from the CDN.
      * This function will then assign the downloaded JSON path to the appropriate global variable.
@@ -47,7 +50,6 @@ class Downloader(private val ctx: Context) {
                 val decodedData: ByteArray = streamIn.readBytes()
 
                 // Creating the private file.
-                val fileCreator = ctx.getDir("Downloads", Context.MODE_PRIVATE)
                 val privateFile = File(fileCreator, GlobalSchema.JSONSavedFilename)
 
                 // Writing into the file.
@@ -57,7 +59,6 @@ class Downloader(private val ctx: Context) {
                 out.close()
 
                 // Notify all the other functions about the JSON file path.
-                GlobalSchema.absolutePathToJSONMetaData = privateFile.absolutePath
                 GlobalSchema.isJSONMainDataInitialized.value = true
                 if (autoReloadGlobalData) GlobalSchema.globalJSONObject = AppDatabase(ctx).getMainData()
 
@@ -97,7 +98,6 @@ class Downloader(private val ctx: Context) {
                 val decodedData: ByteArray = streamIn.readBytes()
 
                 // Creating the private file.
-                val fileCreator = ctx.getDir("Downloads", Context.MODE_PRIVATE)
                 val privateFile = File(fileCreator, GlobalSchema.gallerySavedFilename)
 
                 // Writing into the file.
@@ -107,7 +107,6 @@ class Downloader(private val ctx: Context) {
                 out.close()
 
                 // Notify all the other functions about the JSON file path.
-                GlobalSchema.absolutePathToGalleryData = privateFile.absolutePath
                 GlobalSchema.isGalleryDataInitialized.value = true
                 if (autoReloadGlobalData) GlobalSchema.globalGalleryObject = AppGallery(ctx).getGalleryData()
 
@@ -147,7 +146,6 @@ class Downloader(private val ctx: Context) {
                 val decodedData: ByteArray = streamIn.readBytes()
 
                 // Creating the private file.
-                val fileCreator = ctx.getDir("Downloads", Context.MODE_PRIVATE)
                 val privateFile = File(fileCreator, GlobalSchema.staticSavedFilename)
 
                 // Writing into the file.
@@ -157,7 +155,6 @@ class Downloader(private val ctx: Context) {
                 out.close()
 
                 // Notify all the other functions about the JSON file path.
-                GlobalSchema.absolutePathToStaticData = privateFile.absolutePath
                 GlobalSchema.isStaticDataInitialized.value = true
                 if (autoReloadGlobalData) GlobalSchema.globalStaticObject = AppStatic(ctx).getStaticData()
 

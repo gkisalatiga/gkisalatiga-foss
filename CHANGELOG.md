@@ -21,6 +21,7 @@
 
 :hammer_and_wrench: **FIX**
 
+- Fixed carousel not displaying the latest data, even after data download
 - Fixed notification cannot be removed and does not call any action upon click
 - Fixed the "About" menu content list does not save scroll state
 - Now notifications show up at an exact time of the day; fixed random notification appearance

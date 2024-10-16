@@ -30,6 +30,7 @@ package org.gkisalatiga.fdroid
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -117,6 +118,8 @@ import org.gkisalatiga.fdroid.services.DeepLinkHandler
 import org.gkisalatiga.fdroid.services.NotificationService
 import org.gkisalatiga.fdroid.services.WorkScheduler
 import org.gkisalatiga.fdroid.ui.theme.GKISalatigaPlusTheme
+import java.io.File
+import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 class ActivityLauncher : ComponentActivity() {
@@ -463,15 +466,33 @@ class ActivityLauncher : ComponentActivity() {
         WorkScheduler.scheduleYKBReminder(this)
     }
 
+    private fun testABC123 (func: () -> Unit, mesg: String) {
+        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "" +
+                "CURRENT: ${func.javaClass.enclosingMethod?.name} ::: " +
+                "WITH CLASS: ${func.javaClass.enclosingClass?.name} ::: " +
+                "AND CUSTOM STRING: $mesg"
+        )
+    }
+
     /**
      * This app prepares the downloading of JSON metadata.
      * It should always be performed at the beginning of app to ensure updated content.
-     * This function initializes the GZip-compressed Tarfile archive containing
-     * the static data of GKI Salatiga Plus.
+     * This function initializes the zip archive files containing
+     * the app data of GKI Salatiga Plus.
      * ---
      * This function does not need to become a composable function since it requires no UI.
      */
     private fun initData() {
+
+        // The file creator to create the private file.
+        val fileCreator = this.getDir(GlobalSchema.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
+
+        // Setting up the downloaded JSON's absolute paths.
+        testABC123({}, "Yoruga")
+        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_INIT) Log.d("Groaker-Init", "[${this::class.qualifiedName}.${object {}.javaClass.enclosingMethod?.name}] Initializing the downloaded JSON paths ...")
+        GlobalSchema.absolutePathToJSONMetaData = File(fileCreator, GlobalSchema.JSONSavedFilename).absolutePath
+        GlobalSchema.absolutePathToGalleryData = File(fileCreator, GlobalSchema.gallerySavedFilename).absolutePath
+        GlobalSchema.absolutePathToStaticData = File(fileCreator, GlobalSchema.staticSavedFilename).absolutePath
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.
@@ -506,7 +527,8 @@ class ActivityLauncher : ComponentActivity() {
         val scope = rememberCoroutineScope()
         scope.run {
 
-            /* Read the carousel JSON object. */
+            // TODO: Remove this obsolete code block.
+            /*/* Read the carousel JSON object. */
             // First, we clear the array list.
             GlobalSchema.carouselJSONObject.clear()
             GlobalSchema.carouselJSONKey.clear()
@@ -518,7 +540,7 @@ class ActivityLauncher : ComponentActivity() {
 
                 // Get the carousel JSON object key strings.
                 GlobalSchema.carouselJSONKey.add(l)
-            }
+            }*/
 
             /**********************************************************************/
 
@@ -530,7 +552,7 @@ class ActivityLauncher : ComponentActivity() {
 
             // Necessary variables for the infinite-page carousel.
             // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
-            val actualPageCount = GlobalSchema.carouselJSONKey.size
+            val actualPageCount = GlobalSchema.globalJSONObject!!.getJSONArray("carousel").length()
             val carouselPageCount = actualPageCount * baseInfiniteScrollingPages
             GlobalSchema.fragmentHomeCarouselPagerState = rememberPagerState(
                 initialPage = carouselPageCount / 2,
