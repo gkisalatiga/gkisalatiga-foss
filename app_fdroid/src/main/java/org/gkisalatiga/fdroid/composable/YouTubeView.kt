@@ -21,6 +21,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 
 class YouTubeView {
     companion object {
@@ -28,7 +29,7 @@ class YouTubeView {
          * This function handles the action when the "fullscreen" button is pressed.
          */
         fun handleFullscreenStateChange(ctx: Context) {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[YouTubeView.handleFullscreenStateChange] Fullscreen button is clicked.")
+            Logger.log({}, "Fullscreen button is clicked.")
             GlobalSchema.ytCurrentSecond.floatValue = GlobalSchema.ytTracker.currentSecond
             GlobalSchema.ytIsFullscreen.value = !GlobalSchema.ytIsFullscreen.value
 

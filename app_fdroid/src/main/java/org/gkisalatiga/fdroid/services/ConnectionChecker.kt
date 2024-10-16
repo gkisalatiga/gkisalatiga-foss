@@ -13,6 +13,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
+import org.gkisalatiga.fdroid.lib.LoggerType
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -29,7 +31,7 @@ class ConnectionChecker(private val ctx: Context) {
      * Runs the network connectivity checker indefinitely.
      */
     fun execute() {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ConnectionChecker.execute] Initiating the network checker ...")
+        Logger.log({}, "Initiating the network checker ...")
 
         // Use coroutine instead of regular single-thread for efficiency.
         // SOURCE: https://discuss.kotlinlang.org/t/how-can-i-use-co-routines-to-single-thread-asynchronous-responses/23045/15
@@ -42,10 +44,10 @@ class ConnectionChecker(private val ctx: Context) {
                 if (networkInfo != null && networkInfo.isConnected) {
                     // We are connected to the internet!
                     GlobalSchema.isConnectedToInternet.value = true
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_CONN_TEST) Log.i("Groaker-ConnectionTest", "ONLINE::0")
+                    Logger.logConnTest({}, "ONLINE::0", LoggerType.INFO)
                 } else {
                     GlobalSchema.isConnectedToInternet.value = false
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_CONN_TEST) Log.e("Groaker-ConnectionTest", "OFFLINE::1")
+                    Logger.logConnTest({}, "OFFLINE::1", LoggerType.INFO)
                 }
 
                 // Wait for a certain time before re-checking the internet connection again.

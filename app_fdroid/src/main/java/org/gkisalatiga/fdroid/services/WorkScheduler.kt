@@ -12,6 +12,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 import org.gkisalatiga.fdroid.lib.Tags
 import org.gkisalatiga.fdroid.worker.DebugNotificationWorker
 import org.gkisalatiga.fdroid.worker.SarenNotificationWorker
@@ -29,7 +30,7 @@ class WorkScheduler {
     companion object {
 
         fun scheduleMinutelyDebugReminder(ctx: Context) {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[WorkScheduler.scheduleMinutelyDebugReminder] Scheduling the worker reminder ...")
+            Logger.logWorker({}, "Scheduling the worker reminder ...")
 
             // Get the current time.
             val now = Calendar.getInstance()
@@ -59,12 +60,12 @@ class WorkScheduler {
                 oneTimeWorkRequest
             )
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[WorkScheduler.scheduleMinutelyDebugReminder] What do we have here? What's the result? ${request.result}")
+            Logger.logWorker({}, "What do we have here? What's the result? ${request.result}")
 
         }  // --- end of fun().
 
         fun scheduleSarenReminder(ctx: Context) {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[WorkScheduler.scheduleSarenReminder] Scheduling the worker reminder ...")
+            Logger.logWorker({}, "Scheduling the worker reminder ...")
 
             // Get the current time.
             val now = Calendar.getInstance()
@@ -96,12 +97,12 @@ class WorkScheduler {
                 oneTimeWorkRequest
             )
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[WorkScheduler.scheduleSarenReminder] What do we have here? What's the result? ${request.result}")
+            Logger.logWorker({}, "What do we have here? What's the result? ${request.result}")
 
         }  // --- end of fun().
 
         fun scheduleYKBReminder(ctx: Context) {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[WorkScheduler.scheduleYKBReminder] Scheduling the worker reminder ...")
+            Logger.logWorker({}, "Scheduling the worker reminder ...")
 
             // Get the current time.
             val now = Calendar.getInstance()
@@ -133,7 +134,7 @@ class WorkScheduler {
                 oneTimeWorkRequest
             )
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[WorkScheduler.scheduleYKBReminder] What do we have here? What's the result? ${request.result}")
+            Logger.logWorker({}, "What do we have here? What's the result? ${request.result}")
 
         }  // --- end of fun().
 

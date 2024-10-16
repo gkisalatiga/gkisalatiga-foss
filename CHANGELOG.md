@@ -19,6 +19,7 @@
 - Improved the agenda menu by introducing paging and material cards
 - Removed the "upload date" text from the video list in the main menu because it looks confusing
 - Upgraded the JSON schema version of the main data to `v2.0`
+- (Back-End) Standardized the logcat logging mechanism by introducing `lib.Logger`, which verboses method and class names
 
 :hammer_and_wrench: **FIX**
 

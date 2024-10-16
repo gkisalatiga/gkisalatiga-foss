@@ -74,6 +74,7 @@ import kotlinx.coroutines.launch
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.composable.YouTubeView
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 
 
 class ScreenVideoLive : ComponentActivity() {
@@ -99,7 +100,7 @@ class ScreenVideoLive : ComponentActivity() {
         val ctx = LocalContext.current
         scope = rememberCoroutineScope()
 
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ScreenVideoLive.getComposable] Are we full screen?: ${GlobalSchema.ytIsFullscreen.value}. Duration: ${GlobalSchema.ytCurrentSecond.floatValue}")
+        Logger.log({}, "Are we full screen?: ${GlobalSchema.ytIsFullscreen.value}. Duration: ${GlobalSchema.ytCurrentSecond.floatValue}")
 
         // Ensures that we only initialize the ytView once.
         GlobalSchema.ytComposable!!.initYouTubeView()
@@ -140,7 +141,7 @@ class ScreenVideoLive : ComponentActivity() {
                 try {
                     GlobalSchema.ytPlayer!!.pause()
                 } catch (e: Exception) {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ScreenVideoLive.getNormalPlayer] Error detected when trying to pause the video: $e")
+                    Logger.log({}, "Error detected when trying to pause the video: $e")
                 }
             }
         }

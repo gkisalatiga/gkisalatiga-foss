@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.json.JSONArray
 import org.json.JSONObject
@@ -152,7 +153,7 @@ class ScreenMedia : ComponentActivity() {
         // playlistContentList.removeAt(0)
 
         // Testing and debugging.
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "[ScreenMedia] Size of the JSONObject's parsed list is: ${playlistContentList.size}")
+        Logger.logTest({}, "Size of the JSONObject's parsed list is: ${playlistContentList.size}")
 
         /* Displaying the section title. */
         Row (modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp).padding(horizontal = 10.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {

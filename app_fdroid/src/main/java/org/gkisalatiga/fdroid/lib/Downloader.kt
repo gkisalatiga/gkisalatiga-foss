@@ -38,7 +38,7 @@ class Downloader(private val ctx: Context) {
         val executor = Executors.newSingleThreadExecutor()
 
         // Fetching the data
-        Log.d("Groaker", "Attempting to download the JSON metadata file ...")
+        Logger.log({}, "Attempting to download the JSON metadata file ...")
         executor.execute {
 
             try {
@@ -62,11 +62,11 @@ class Downloader(private val ctx: Context) {
                 GlobalSchema.isJSONMainDataInitialized.value = true
                 if (autoReloadGlobalData) GlobalSchema.globalJSONObject = AppDatabase(ctx).getMainData()
 
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "JSON metadata was successfully downloaded into: ${privateFile.absolutePath}")
+                Logger.log({}, "JSON metadata was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
                 GlobalSchema.isConnectedToInternet.value = false
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Network unreachable during download: $e")
+                Logger.log({}, "Network unreachable during download: $e", LoggerType.ERROR)
             }
 
             // Break free from this thread.
@@ -86,7 +86,7 @@ class Downloader(private val ctx: Context) {
         val executor = Executors.newSingleThreadExecutor()
 
         // Fetching the data
-        Log.d("Groaker", "Attempting to download the gallery JSON file ...")
+        Logger.log({}, "Attempting to download the gallery JSON file ...")
         executor.execute {
 
             try {
@@ -110,11 +110,11 @@ class Downloader(private val ctx: Context) {
                 GlobalSchema.isGalleryDataInitialized.value = true
                 if (autoReloadGlobalData) GlobalSchema.globalGalleryObject = AppGallery(ctx).getGalleryData()
 
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Gallery was successfully downloaded into: ${privateFile.absolutePath}")
+                Logger.log({}, "Gallery was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
                 GlobalSchema.isConnectedToInternet.value = false
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Network unreachable when downloading the gallery data: $e")
+                Logger.log({}, "Network unreachable when downloading the gallery data: $e", LoggerType.ERROR)
             }
 
             // Break free from this thread.
@@ -134,7 +134,7 @@ class Downloader(private val ctx: Context) {
         val executor = Executors.newSingleThreadExecutor()
 
         // Fetching the data
-        Log.d("Groaker", "Attempting to download the static JSON file ...")
+        Logger.log({}, "Attempting to download the static JSON file ...")
         executor.execute {
 
             try {
@@ -158,11 +158,11 @@ class Downloader(private val ctx: Context) {
                 GlobalSchema.isStaticDataInitialized.value = true
                 if (autoReloadGlobalData) GlobalSchema.globalStaticObject = AppStatic(ctx).getStaticData()
 
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Static data was successfully downloaded into: ${privateFile.absolutePath}")
+                Logger.log({}, "Static data was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
                 GlobalSchema.isConnectedToInternet.value = false
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Network unreachable when downloading the static data: $e")
+                Logger.log({}, "Network unreachable when downloading the static data: $e", LoggerType.ERROR)
             }
 
             // Break free from this thread.

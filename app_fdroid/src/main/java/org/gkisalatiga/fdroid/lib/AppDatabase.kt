@@ -112,14 +112,14 @@ class AppDatabase(private val ctx: Context) {
             this.loadJSON(GlobalSchema.absolutePathToJSONMetaData)
 
             // Debugger logging.
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "[AppDatabase.getMainData] Reading local/downloaded JSON main data ...")
+            Logger.logTest({}, "Reading local/downloaded JSON main data ...")
 
             // The JSONObject main data.
             val mainData = JSONObject(this._parsedJSONString).getJSONObject("data")
             GlobalSchema.globalJSONObject = mainData
             return mainData
         } else {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "[AppDatabase.getMainData] Reverting to the fallback data of the JSON schema ...")
+            Logger.logTest({}, "Reverting to the fallback data of the JSON schema ...")
             return getFallbackMainData()
         }
 

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 // import coil.compose.AsyncImage
 import org.gkisalatiga.fdroid.lib.StringFormatter
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
@@ -138,10 +139,6 @@ class FragmentServices : ComponentActivity() {
         }
         // playlistContentList.removeAt(0)
 
-        // Testing and debugging.
-        // if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "[FragmentServices] Size of the JSONObject's parsed list is: ${playlistContentList.size}")
-        // if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) Log.d("Groaker-Dump", "[FragmentServices] The dumped JSON array: ${playlistContentList}")
-
         // Only show the "N" most recent videos.
         val recentVideoList: MutableList<JSONObject> = mutableListOf()
         val videoCount = 3
@@ -190,7 +187,7 @@ class FragmentServices : ComponentActivity() {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "The card $title is clicked", Toast.LENGTH_SHORT).show()
 
                         // Trying to switch to the YouTube viewer and open the stream.
-                        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Opening the YouTube stream: $url.")
+                        Logger.log({}, "Opening the YouTube stream: $url.")
                         GlobalSchema.ytViewerParameters["yt-link"] = url
                         GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter().getYouTubeIDFromUrl(url)
                         GlobalSchema.ytViewerParameters["title"] = title

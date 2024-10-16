@@ -19,6 +19,7 @@ package org.gkisalatiga.fdroid.lib.external
 
 import android.util.Log
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -76,7 +77,7 @@ class UnzipUtils {
      */
     @Throws(IOException::class)
     private fun extractFile(inputStream: InputStream, destFilePath: String) {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker-Zip", "[UnzipUtils.extractFile] Extracting file into: $destFilePath")
+        Logger.log({}, "Extracting file into: $destFilePath")
 
         // Create the file if not exists.
         // SOURCE: https://stackoverflow.com/a/3090789

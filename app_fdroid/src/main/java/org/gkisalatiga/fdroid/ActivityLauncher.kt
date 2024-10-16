@@ -80,6 +80,8 @@ import org.gkisalatiga.fdroid.lib.AppPreferences
 import org.gkisalatiga.fdroid.lib.GallerySaver
 
 import org.gkisalatiga.fdroid.lib.AppStatic
+import org.gkisalatiga.fdroid.lib.Logger
+import org.gkisalatiga.fdroid.lib.LoggerType
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.lib.PreferenceKeys
 import org.gkisalatiga.fdroid.screen.ScreenAbout
@@ -119,7 +121,6 @@ import org.gkisalatiga.fdroid.services.NotificationService
 import org.gkisalatiga.fdroid.services.WorkScheduler
 import org.gkisalatiga.fdroid.ui.theme.GKISalatigaPlusTheme
 import java.io.File
-import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 class ActivityLauncher : ComponentActivity() {
@@ -127,20 +128,20 @@ class ActivityLauncher : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         GlobalSchema.isRunningInBackground.value = true
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ActivityLauncher.onPause] App is now in background.")
+        Logger.log({}, "App is now in background.")
     }
 
     override fun onResume() {
         super.onResume()
         GlobalSchema.isRunningInBackground.value = false
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[ActivityLauncher.onResume] App has been restored to foreground.")
+        Logger.log({}, "App has been restored to foreground.")
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         /* Handles deep-linking. */
         intent?.data?.let {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "[ActivityLauncher.onNewIntent] Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
+            Logger.logTest({}, "Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
             if (it.host == "gkisalatiga.org" || it.host == "www.gkisalatiga.org") {
                 when (it.encodedPath) {
                     "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
@@ -164,7 +165,7 @@ class ActivityLauncher : ComponentActivity() {
                 val outputStream = contentResolver.openOutputStream(uri)
 
                 // Perform operations on the document using its URI.
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) Log.d("Groaker-Dump", uri.path!!)
+                Logger.logDump({}, uri.path!!)
                 GallerySaver().onSAFPathReceived(outputStream!!)
             }
         }
@@ -205,7 +206,7 @@ class ActivityLauncher : ComponentActivity() {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
         // Preamble logging to the terminal.
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
+        Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
 
         // Call the superclass. (The default behavior. DO NOT CHANGE!)
         super.onCreate(savedInstanceState)
@@ -247,7 +248,7 @@ class ActivityLauncher : ComponentActivity() {
             if (GlobalSchema.globalJSONObject != null && GlobalSchema.globalGalleryObject != null && GlobalSchema.globalStaticObject != null) {
                 break
             } else {
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_SPAM) Log.w("Groaker-Spam", "[ActivityLauncher.onCreate] Still initializing data ...")
+                Logger.logRapidTest({}, "Still initializing data ...", LoggerType.WARNING)
             }
         }
 
@@ -315,7 +316,7 @@ class ActivityLauncher : ComponentActivity() {
                                 /* Handles deep-linking. */
                                 if (intent?.data != null) {
                                     intent?.data?.let {
-                                        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "[ActivityLauncher.onCreate] Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
+                                        Logger.logTest({}, "Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
                                         if (it.host == "gkisalatiga.org" || it.host == "www.gkisalatiga.org") {
                                             when (it.encodedPath) {
                                                 "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
@@ -374,7 +375,7 @@ class ActivityLauncher : ComponentActivity() {
      */
     @Composable
     private fun initSplashScreen(splashNavController: NavHostController) {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Loading splash screen of the app ...")
+        Logger.log({}, "Loading splash screen of the app ...")
 
         val scale = remember { androidx.compose.animation.core.Animatable(1.6f) }
         LaunchedEffect(key1 = true) {
@@ -397,10 +398,8 @@ class ActivityLauncher : ComponentActivity() {
      */
     @Composable
     private fun initMainGraphic() {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) {
-            Log.d("Groaker", "Initializing main graphic ...")
-            Log.d("Groaker", "Obtained 'pushScreen' value: ${GlobalSchema.pushScreen.value}")
-        }
+        Logger.log({}, "Initializing main graphic ...")
+        Logger.log({}, "Obtained 'pushScreen' value: ${GlobalSchema.pushScreen.value}")
 
         // We use nav. host because it has built-in support for transition effect/animation.
         // We also use nav. host so that we can handle URI deep-linking,
@@ -466,14 +465,6 @@ class ActivityLauncher : ComponentActivity() {
         WorkScheduler.scheduleYKBReminder(this)
     }
 
-    private fun testABC123 (func: () -> Unit, mesg: String) {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "" +
-                "CURRENT: ${func.javaClass.enclosingMethod?.name} ::: " +
-                "WITH CLASS: ${func.javaClass.enclosingClass?.name} ::: " +
-                "AND CUSTOM STRING: $mesg"
-        )
-    }
-
     /**
      * This app prepares the downloading of JSON metadata.
      * It should always be performed at the beginning of app to ensure updated content.
@@ -488,8 +479,7 @@ class ActivityLauncher : ComponentActivity() {
         val fileCreator = this.getDir(GlobalSchema.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
 
         // Setting up the downloaded JSON's absolute paths.
-        testABC123({}, "Yoruga")
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_INIT) Log.d("Groaker-Init", "[${this::class.qualifiedName}.${object {}.javaClass.enclosingMethod?.name}] Initializing the downloaded JSON paths ...")
+        Logger.logInit({}, "Initializing the downloaded JSON paths ...")
         GlobalSchema.absolutePathToJSONMetaData = File(fileCreator, GlobalSchema.JSONSavedFilename).absolutePath
         GlobalSchema.absolutePathToGalleryData = File(fileCreator, GlobalSchema.gallerySavedFilename).absolutePath
         GlobalSchema.absolutePathToStaticData = File(fileCreator, GlobalSchema.staticSavedFilename).absolutePath
@@ -501,19 +491,19 @@ class ActivityLauncher : ComponentActivity() {
         // Get fallback data only if first launch.
         if (launches == 0) {
             // Let's apply the fallback JSON data until the actual, updated JSON metadata is downloaded.
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_INIT) Log.d("Groaker-Init", "[ActivityLauncher.initData] Loading the fallback JSON metadata ...")
+            Logger.logInit({}, "Loading the fallback JSON metadata ...")
             AppDatabase(this).initFallbackGalleryData()
 
             // Loading the fallback gallery data.
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_INIT) Log.d("Groaker-Init", "[ActivityLauncher.initData] Loading the fallback gallery JSON file ...")
+            Logger.logInit({}, "Loading the fallback gallery JSON file ...")
             AppGallery(this).initFallbackGalleryData()
 
             // Loading the fallback static data.
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_INIT) Log.d("Groaker-Init", "[ActivityLauncher.initData] Loading the fallback static JSON file ...")
+            Logger.logInit({}, "Loading the fallback static JSON file ...")
             AppStatic(this).initFallbackStaticData()
 
         } else {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_INIT) Log.d("Groaker-Init", "[ActivityLauncher.initData] This is not first launch.")
+            Logger.logInit({}, "This is not first launch.")
         }
 
         // At last, update the data to the latest whenever possible.

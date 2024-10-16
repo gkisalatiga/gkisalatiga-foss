@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 // import coil.compose.AsyncImage
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.json.JSONObject
@@ -129,9 +130,6 @@ class FragmentInfo : ComponentActivity() {
                     // For some reason, coil cannot render non-HTTPS images.
                     if (bannerURL.startsWith("http://")) bannerURL = bannerURL.replaceFirst("http://", "https://")
 
-                    // DEBUG.
-                    // if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "BannerURL: $bannerURL, Title: $title")
-
                     Card(
                         onClick = {
                             if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
@@ -208,7 +206,7 @@ class FragmentInfo : ComponentActivity() {
                 socialMediaIcons.forEachIndexed { index, drawableIcon ->
 
                     Surface(Modifier.weight(1.0f).clickable(onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "[FragmentInfo.getComposable] Selected node: ${socialMediaNodeTitles[index]}")
+                        Logger.log({}, "Selected node: ${socialMediaNodeTitles[index]}")
 
                         if (socialMediaNodeTitles[index] == "email") {
                             // SOURCE: https://www.geeksforgeeks.org/how-to-send-an-email-from-your-android-app/

@@ -55,8 +55,6 @@ class ScreenLicense : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
 
-        Log.d("Groaker", "Last selected fragment of main screen: ${GlobalSchema.lastMainScreenPagerPage.value}")
-
         Scaffold (topBar = { getTopBar() }) {
 
             Column (

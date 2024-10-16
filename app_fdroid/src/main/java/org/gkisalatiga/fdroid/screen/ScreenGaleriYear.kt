@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.lib.StringFormatter
 import org.json.JSONArray
@@ -89,7 +90,7 @@ class ScreenGaleriYear : ComponentActivity() {
         val galleryYearList = galleryNode.getJSONArray(GlobalSchema.targetGalleryYear)
 
         // DEBUG. Always comment out.
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "Current object (1): ${galleryYearList}")
+        Logger.logTest({}, "Current object (1): ${galleryYearList}")
 
         // Convert JSONArray to regular list. (JSONArray iterates from 1, not 0.)
         val enumeratedGalleryList: MutableList<JSONObject> =  mutableListOf(JSONObject())
@@ -98,7 +99,7 @@ class ScreenGaleriYear : ComponentActivity() {
             enumeratedGalleryList.add(curNode)
 
             // DEBUG. Always comment out.
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "Current object (2): ${curNode}")
+            Logger.logTest({}, "Current object (2): ${curNode}")
         }
 
         // Remove the first item; JSONArrays start at 1.
@@ -114,11 +115,11 @@ class ScreenGaleriYear : ComponentActivity() {
             // Display the main content.
             Column (Modifier.fillMaxSize().padding(20.dp)) {
 
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "Current object (3): ${enumeratedGalleryList}")
+                Logger.logTest({}, "Current object (3): ${enumeratedGalleryList}")
 
                 /* Draw the form selection elements. */
                 enumeratedGalleryList.forEach {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "Current object (4): ${it}")
+                    Logger.logTest({}, "Current object (4): ${it}")
 
                     // Determining the text title.
                     val title = it["title"].toString()

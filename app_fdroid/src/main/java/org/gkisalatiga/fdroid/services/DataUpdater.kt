@@ -16,6 +16,8 @@ import org.gkisalatiga.fdroid.lib.AppDatabase
 import org.gkisalatiga.fdroid.lib.AppGallery
 import org.gkisalatiga.fdroid.lib.AppStatic
 import org.gkisalatiga.fdroid.lib.Downloader
+import org.gkisalatiga.fdroid.lib.Logger
+import org.gkisalatiga.fdroid.lib.LoggerType
 import org.json.JSONObject
 import java.io.InputStream
 import java.net.UnknownHostException
@@ -45,17 +47,15 @@ class DataUpdater(private val ctx: Context) {
      * in order to determine whether we should update the data or not.
      */
     private fun getMostRecentFeeds() : JSONObject {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.d("Groaker-Updater", "[DataUpdater.getMostRecentFeeds] Fetching the update feeds ...")
+        Logger.logUpdate({}, "Fetching the update feeds ...")
         val streamInput: InputStream = java.net.URL(FEEDS_JSON_SOURCE).openStream()
         val inputAsString: String = streamInput.bufferedReader().use { it.readText() }
 
         // Dumps the JSON string, and compare them with the currently cached JSON last update values.
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) Log.d("Groaker-Dump", inputAsString)
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) {
-            Log.d("Groaker-Dump", "Last Main Data Update: ${getLastMainDataUpdate()}")
-            Log.d("Groaker-Dump", "Last Gallery Data Update: ${getLastGalleryUpdate()}")
-            Log.d("Groaker-Dump", "Last Static Data Update: ${getLastStaticUpdate()}")
-        }
+        Logger.logDump({}, inputAsString)
+        Logger.logTest({}, "Last Main Data Update: ${getLastMainDataUpdate()}")
+        Logger.logTest({}, "Last Gallery Data Update: ${getLastGalleryUpdate()}")
+        Logger.logTest({}, "Last Static Data Update: ${getLastStaticUpdate()}")
 
         // Returns the feeds data.
         return JSONObject(inputAsString).getJSONObject("feeds")
@@ -69,7 +69,7 @@ class DataUpdater(private val ctx: Context) {
         // This is all done in a multi-thread so that we do not interrupt the main GUI.
         val executor = Executors.newSingleThreadExecutor()
         executor.execute {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.d("Groaker-Updater", "[DataUpdater.updateData] Attempting to update and assign the latest JSON files ...")
+            Logger.logUpdate({}, "Attempting to update and assign the latest JSON files ...")
 
             try {
                 // Retrieving the feed JSON file to check if update is even necessary.
@@ -78,31 +78,31 @@ class DataUpdater(private val ctx: Context) {
                 // Set the flag to "false" to signal that we need to have the new data now,
                 // then make the attempt to download the JSON files.
                 if (getLastMainDataUpdate() < feedJSONObject.getInt("last-maindata-update")) {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.i("Groaker-Updater", "[DataUpdater.updateData] Updating main data ...")
+                    Logger.logUpdate({}, "Updating main data ...", LoggerType.INFO)
                     GlobalSchema.isJSONMainDataInitialized.value = false
                     Downloader(ctx).initMainData(autoReloadGlobalData = true)
                 } else {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.i("Groaker-Updater", "[DataUpdater.updateData] Main data is up-to-date!")
+                    Logger.logUpdate({}, "Main data is up-to-date!", LoggerType.INFO)
                 }
 
                 if (getLastGalleryUpdate() < feedJSONObject.getInt("last-gallery-update")) {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.i("Groaker-Updater", "[DataUpdater.updateData] Updating gallery data ...")
+                    Logger.logUpdate({}, "Updating gallery data ...", LoggerType.INFO)
                     GlobalSchema.isGalleryDataInitialized.value = false
                     Downloader(ctx).initGalleryData(autoReloadGlobalData = true)
                 } else {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.i("Groaker-Updater", "[DataUpdater.updateData] Gallery data is up-to-date!")
+                    Logger.logUpdate({}, "Gallery data is up-to-date!", LoggerType.INFO)
                 }
 
                 if (getLastStaticUpdate() < feedJSONObject.getInt("last-static-update")) {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.i("Groaker-Updater", "[DataUpdater.updateData] Updating static data ...")
+                    Logger.logUpdate({}, "Updating static data ...", LoggerType.INFO)
                     GlobalSchema.isStaticDataInitialized.value = false
                     Downloader(ctx).initStaticData(autoReloadGlobalData = true)
                 } else {
-                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) Log.i("Groaker-Updater", "[DataUpdater.updateData] Static data is up-to-date!")
+                    Logger.logUpdate({}, "Static data is up-to-date!", LoggerType.INFO)
                 }
 
             } catch (e: UnknownHostException) {
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.e("Groaker-Test", "[DataUpdater.updateData] Network error! Cannot retrieve the latest feeds JSON file data!")
+                Logger.logTest({}, "Network error! Cannot retrieve the latest feeds JSON file data!", LoggerType.ERROR)
             }
 
             // Assign the JSON data globally.

@@ -35,7 +35,7 @@ class GallerySaver {
         intent.type = "image/*"
         intent.putExtra(Intent.EXTRA_TITLE, imageName)
         startActivityForResult(ctx as Activity, intent, GlobalSchema.GALLERY_SAVER_CODE, null)
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "Is this block executed? (2)")
+        Logger.logTest({}, "Is this block executed? (2)")
     }
 
     fun onSAFPathReceived(outputStream: OutputStream) {
@@ -48,7 +48,7 @@ class GallerySaver {
 
             try {
                 // Opening the file download stream.
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) Log.d("Groaker-Dump", GlobalSchema.targetGoogleDrivePhotoURL)
+                Logger.logDump({}, GlobalSchema.targetGoogleDrivePhotoURL)
                 val streamIn = java.net.URL(GlobalSchema.targetGoogleDrivePhotoURL).openStream()
 
                 // Coverting input stream (bytes) to string.
@@ -66,7 +66,7 @@ class GallerySaver {
                 GlobalSchema.showScreenGaleriViewAlertDialog.value = true
 
             } catch (e: UnknownHostException) {
-                if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Network unreachable when downloading the gallery data: $e")
+                Logger.log({}, "Network unreachable when downloading the gallery data: $e", LoggerType.ERROR)
 
                 // Show some failure alert.
                 GlobalSchema.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"

@@ -60,6 +60,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.lib.StringFormatter
 import kotlin.math.ceil
@@ -235,7 +236,7 @@ class FragmentHome : ComponentActivity() {
                                     val desc = currentNode.getString("yt-desc")
 
                                     // Trying to switch to the YouTube viewer and open the stream.
-                                    if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) Log.d("Groaker", "Opening the YouTube stream: $url.")
+                                    Logger.log({}, "Opening the YouTube stream: $url.")
                                     GlobalSchema.ytViewerParameters["yt-link"] = url
                                     GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter().getYouTubeIDFromUrl(url)
                                     GlobalSchema.ytViewerParameters["title"] = title!!

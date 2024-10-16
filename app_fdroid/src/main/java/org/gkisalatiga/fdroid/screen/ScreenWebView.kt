@@ -54,6 +54,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import org.gkisalatiga.fdroid.R
 
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 import org.gkisalatiga.fdroid.lib.StringFormatter
 
 class ScreenWebView : ComponentActivity() {
@@ -149,7 +150,7 @@ class ScreenWebView : ComponentActivity() {
                         url: String?
                     ): Boolean {
                         // Prevents redirection from Google Drive into Google login page.
-                        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) Log.d("Groaker-Test", "Redirection URL: ${url.toString()}")
+                        Logger.logTest({}, "Redirection URL: ${url.toString()}")
                         if (url!!.startsWith("https://drive.google.com")) {
                             wv.loadUrl(StringFormatter().getGoogleDrivePreview(url))
                         }

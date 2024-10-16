@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 import org.gkisalatiga.fdroid.services.NotificationService
 import org.gkisalatiga.fdroid.services.WorkScheduler
 
@@ -20,12 +21,12 @@ import org.gkisalatiga.fdroid.services.WorkScheduler
  */
 class YKBNotificationWorker(private val context: Context, private val params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[YKBNotificationWorker.doWork] Carrying out the YKBNotificationWorker ...")
+        Logger.logWorker({}, "Carrying out the YKBNotificationWorker ...")
 
         // Perform the work.
         NotificationService.showYKBHarianNotification(context)
 
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) Log.d("Groaker-Worker", "[YKBNotificationWorker.doWork] What do we have here? ${params.tags}")
+        Logger.logWorker({}, "What do we have here? ${params.tags}")
 
         // Carry out the rescheduling.
         WorkScheduler.scheduleYKBReminder(context)

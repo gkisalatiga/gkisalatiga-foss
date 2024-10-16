@@ -112,6 +112,8 @@ import org.gkisalatiga.fdroid.fragment.FragmentInfo
 import org.gkisalatiga.fdroid.fragment.FragmentServices
 import org.gkisalatiga.fdroid.global.GlobalSchema
 import org.gkisalatiga.fdroid.lib.AppColors
+import org.gkisalatiga.fdroid.lib.Logger
+import org.gkisalatiga.fdroid.lib.LoggerType
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.services.DataUpdater
 import org.gkisalatiga.fdroid.ui.theme.Brown1
@@ -249,7 +251,7 @@ class ScreenMain : ComponentActivity() {
                                 else delta
 
                             // Debugging the output values.
-                            // if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) Log.d("Groaker-Dump", "[PreScroll] delta: $delta, currentOffset: $currentContentOffset, minOffset: $minContentOffset, maxOffset: $maxContentOffset, targetOffset: $targetContentOffset, returnDelta: $returnDelta")
+                            Logger.logRapidTest({}, "[PreScroll] delta: $delta, currentOffset: $currentContentOffset, minOffset: $minContentOffset, maxOffset: $maxContentOffset, targetOffset: $targetContentOffset, returnDelta: $returnDelta", LoggerType.VERBOSE)
 
                             // Give out the delta to the fragment's scrollable.
                             return Offset(0.0f, returnDelta)
@@ -289,7 +291,7 @@ class ScreenMain : ComponentActivity() {
                             ScreenMainCompanion.mutableTopBarContainerTransparency.value = targetTopBarTransparency
 
                             // Debugging the output values.
-                            // if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) Log.d("Groaker-Dump", "[Post-Scroll] y-consumed: ${consumed.y}, y-available: ${available.y}")
+                            Logger.logRapidTest({}, "[Post-Scroll] y-consumed: ${consumed.y}, y-available: ${available.y}", LoggerType.VERBOSE)
 
                             // Give out the delta to the fragment's scrollable.
                             return Offset(0.0f, returnDelta)

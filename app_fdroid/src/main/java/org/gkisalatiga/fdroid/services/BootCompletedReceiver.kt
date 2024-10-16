@@ -11,12 +11,13 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.Logger
 
 class BootCompletedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_BOOT)  Log.d("Groaker-Boot", "BootCompletedReceiver got triggered.")
+        Logger.logBoot({}, "BootCompletedReceiver got triggered.")
         if (intent!!.action == "android.intent.action.BOOT_COMPLETED") {
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_BOOT) Log.d("Groaker-Boot", "BOOT_COMPLETED received! Carrying out appropriate actions ...")
+            Logger.logBoot({}, "BOOT_COMPLETED received! Carrying out appropriate actions ...")
 
             // Restart the workers.
             WorkScheduler.scheduleYKBReminder(context!!)

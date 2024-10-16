@@ -24,7 +24,8 @@ Any URI with `gkisalatiga.org` host that does not match the above registered dee
 
 ### Debug Logging
 
-- Every debug message should clarify the class name where the logging comes from. This can be done conveniently by prepending `[${this::class.qualifiedName}]` in the logger's message string argument.
+- Every debug message should clarify the class name where the logging comes from. Use `lib.Logger` logging methods do perform back-end logcat loggings. These methods automatically handle verbosing of enclosing class and method names. For instance, `Logger.log({}, "Hello World!")` to print out "Hello World" in the logcat display while also verbosing the class and method names where the logging takes place.
+- Logging and `android.util.Log`-calling must only be done through `lib.Logger` class methods, for consistency and neatness.
 
 ### Notification
 
