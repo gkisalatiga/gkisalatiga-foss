@@ -11,6 +11,7 @@ package org.gkisalatiga.fdroid.lib
 
 import android.net.UrlQuerySanitizer
 
+// TODO: Make this class static/companion.
 class StringFormatter {
 
     // List of local month names in Indonesian.

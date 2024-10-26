@@ -29,6 +29,7 @@ class NavigationRoutes {
         const val SCREEN_SEARCH: String = "nav_screen_search"
         const val SCREEN_FORMS: String = "nav_screen_forms"
         const val SCREEN_YKB: String = "nav_screen_ykb"
+        const val SCREEN_YKB_LIST: String = "nav_screen_ykblist"
         const val SCREEN_WARTA: String = "nav_screen_wj"
         const val SCREEN_LITURGI: String = "nav_screen_liturgi"
         const val SCREEN_VIDEO_LIST: String = "nav_screen_saren"

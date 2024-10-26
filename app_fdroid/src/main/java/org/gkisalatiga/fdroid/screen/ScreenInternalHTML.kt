@@ -11,12 +11,14 @@
 package org.gkisalatiga.fdroid.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.util.Base64
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -58,7 +60,6 @@ class ScreenInternalHTML : ComponentActivity() {
             GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
             GlobalSchema.popBackScreen.value = GlobalSchema.popBackDoubleScreen.value
         }
-
     }
 
     @Composable
@@ -66,7 +67,7 @@ class ScreenInternalHTML : ComponentActivity() {
     private fun getMainContent() {
 
         // Declare the HTML code to display in the viewer.
-        var HTMLBody = GlobalSchema.targetHTMLContent
+        var HTMLBody = ScreenInternalHTMLCompanion.targetHTMLContent
 
         // Allow for displaying mixed-content images.
          HTMLBody = HTMLBody.replace("http://", "https://")
@@ -115,7 +116,7 @@ class ScreenInternalHTML : ComponentActivity() {
             ),
             title = {
                 Text(
-                    GlobalSchema.internalWebViewTitle,
+                    ScreenInternalHTMLCompanion.internalWebViewTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -136,4 +137,14 @@ class ScreenInternalHTML : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenInternalHTMLCompanion : Application() {
+    companion object {
+        /* What should we display in the HTML web view? */
+        var targetHTMLContent: String = String()
+
+        /* The title of the WebView. */
+        var internalWebViewTitle: String = String()
+    }
 }

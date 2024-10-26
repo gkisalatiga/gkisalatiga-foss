@@ -293,12 +293,6 @@ class GlobalSchema : Application() {
         var videoListContentArray: MutableList<JSONObject> = mutableListOf()
         var videoListTitle: String = ""
 
-        // Determines the "data/static" JSON schema node to display in the ScreenInternalHTML view,
-        // as well as its content title.
-        var targetIndexHTMLPath: String = ""
-        var targetHTMLContent: String = ""
-        var internalWebViewTitle: String = ""
-
         // Determines which gallery folder year to display in the "gallery" menu.
         var targetGalleryYear: String = ""
 

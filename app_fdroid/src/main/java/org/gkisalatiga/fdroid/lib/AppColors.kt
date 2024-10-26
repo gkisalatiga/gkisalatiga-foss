@@ -20,6 +20,7 @@ class AppColors {
         const val LIGHT_THEME_WHITE = 0xffffffff
         const val MAIN_TOP_BAR_COLOR = 0xff482505
         const val MAIN_TOP_BAR_CONTENT_COLOR = 0xffffffff
+        const val YKB_ARCHIVE_BUTTON_COLOR = 0xff482505
 
         /* This is how we can theoretically create a color-changing scheme based on theme: */
         /*

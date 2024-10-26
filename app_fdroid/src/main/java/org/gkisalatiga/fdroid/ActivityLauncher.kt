@@ -34,7 +34,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -96,6 +95,7 @@ import org.gkisalatiga.fdroid.screen.ScreenGaleriList
 import org.gkisalatiga.fdroid.screen.ScreenGaleriView
 import org.gkisalatiga.fdroid.screen.ScreenGaleriYear
 import org.gkisalatiga.fdroid.screen.ScreenInternalHTML
+import org.gkisalatiga.fdroid.screen.ScreenInternalHTMLCompanion
 import org.gkisalatiga.fdroid.screen.ScreenLibrary
 import org.gkisalatiga.fdroid.screen.ScreenLicense
 import org.gkisalatiga.fdroid.screen.ScreenLiturgi
@@ -114,6 +114,9 @@ import org.gkisalatiga.fdroid.screen.ScreenVideoLive
 import org.gkisalatiga.fdroid.screen.ScreenWarta
 import org.gkisalatiga.fdroid.screen.ScreenWebView
 import org.gkisalatiga.fdroid.screen.ScreenYKB
+import org.gkisalatiga.fdroid.screen.ScreenYKBCompanion
+import org.gkisalatiga.fdroid.screen.ScreenYKBList
+import org.gkisalatiga.fdroid.screen.ScreenYKBListCompanion
 import org.gkisalatiga.fdroid.services.ConnectionChecker
 import org.gkisalatiga.fdroid.services.DataUpdater
 import org.gkisalatiga.fdroid.services.DeepLinkHandler
@@ -282,6 +285,8 @@ class ActivityLauncher : ComponentActivity() {
             GlobalSchema.screenGaleriScrollState = rememberScrollState()
             GlobalSchema.screenMediaScrollState = rememberScrollState()
             GlobalSchema.screenPersembahanScrollState = rememberScrollState()
+            ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
+            ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
 
             // Pre-assign pager states of non-main menus.
             ScreenPukatBerkatCompanion.pukatBerkatPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
@@ -424,6 +429,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_GALERI_YEAR) { ScreenGaleriYear().getComposable() }
             composable(NavigationRoutes.SCREEN_MEDIA) { ScreenMedia().getComposable() }
             composable(NavigationRoutes.SCREEN_YKB) {ScreenYKB().getComposable()}
+            composable(NavigationRoutes.SCREEN_YKB_LIST) {ScreenYKBList().getComposable()}
             composable(NavigationRoutes.SCREEN_BIBLE) {ScreenBible().getComposable()}
             composable(NavigationRoutes.SCREEN_LIBRARY) {ScreenLibrary().getComposable()}
             composable(NavigationRoutes.SCREEN_PUKAT_BERKAT) {ScreenPukatBerkat().getComposable()}

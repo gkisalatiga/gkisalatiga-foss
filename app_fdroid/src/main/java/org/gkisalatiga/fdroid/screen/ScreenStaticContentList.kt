@@ -125,8 +125,10 @@ class ScreenStaticContentList : ComponentActivity() {
                             GlobalSchema.popBackDoubleScreen.value = NavigationRoutes.SCREEN_MAIN
 
                             // Display the church profile content folder list.
-                            GlobalSchema.targetHTMLContent = it.getString("html")
-                            GlobalSchema.internalWebViewTitle = it.getString("title")
+                            ScreenInternalHTMLCompanion.targetHTMLContent = it.getString("html")
+                            ScreenInternalHTMLCompanion.internalWebViewTitle = it.getString("title")
+
+                            // Switching screens.
                             GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_INTERNAL_HTML
                         },
 

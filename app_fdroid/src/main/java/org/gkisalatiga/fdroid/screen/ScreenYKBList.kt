@@ -14,7 +14,6 @@ import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,7 +63,7 @@ import org.gkisalatiga.fdroid.lib.StringFormatter
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ScreenYKB : ComponentActivity() {
+class ScreenYKBList : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -83,7 +81,7 @@ class ScreenYKB : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
+            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
         }
 
     }
@@ -95,7 +93,7 @@ class ScreenYKB : ComponentActivity() {
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
-        val scrollState = ScreenYKBCompanion.rememberedScrollState!!
+        val scrollState = ScreenYKBListCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -104,68 +102,36 @@ class ScreenYKB : ComponentActivity() {
                 .verticalScroll(state = scrollState)
                 .padding(20.dp)
         ) {
-            /* Display the banner image. */
-            val imgSource = R.drawable.banner_ykb
-            val imgDescription = "Menu banner"
-            Surface (
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.aspectRatio(1.77778f)
-            ) {
-                Image(
-                    painter = painterResource(imgSource),
-                    contentDescription = imgDescription,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            /* Add a visually dividing divider :D */
-            HorizontalDivider(Modifier.padding(vertical = 20.dp))
-
             /* Retrieve the list of devotionals. */
-            val ykbListAsJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("ykb")
+            val ykbListAsJSONArray = ScreenYKBListCompanion.targetYKBArchiveList!!
 
             /* Enumerate and enlist the individual card. */
-            val enumeratedYKBList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
+            val enumeratedYKBList: MutableList<JSONObject> =  mutableListOf()
             for (i in 0 until ykbListAsJSONArray.length()) {
-                val curNode = ykbListAsJSONArray[i] as JSONObject
-                enumeratedYKBList.add(mapOf(
-                    "title" to curNode.getString("title"),
-                    "url" to curNode.getString("url"),
-                    "posts" to curNode.getJSONArray("posts")
-                ))
+                enumeratedYKBList.add(ykbListAsJSONArray[i] as JSONObject)
             }
-
-            // For some reason, we must pop the 0-th item in cardsList
-            // because JSONArray iterates from 1, not 0.
-            enumeratedYKBList.removeAt(0)
 
             /* Draw the devotional selection elements. */
             enumeratedYKBList.forEach {
 
-                // The first post of this devotion's list.
-                val postsList = it["posts"] as JSONArray
-                val firstPostObject = postsList.get(0) as JSONObject
-
                 // Preparing the arguments.
-                val title = it["title"] as String
-                val url = it["url"] as String
-                val firstPostThumbnail = firstPostObject.getString("featured-image")
-                val firstPostTitle = firstPostObject.getString("title")
-                val firstPostDate = StringFormatter().convertDateFromJSON(firstPostObject.getString("date"))
-                val firstPostHTML = firstPostObject.getString("html")
+                val title = it.getString("title")
+                val thumbnail = it.getString("featured-image")
+                val date = StringFormatter().convertDateFromJSON(it.getString("date"))
+                val html = it.getString("html")
 
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title", Toast.LENGTH_SHORT).show()
 
                         // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB_LIST
+                        GlobalSchema.popBackDoubleScreen.value = NavigationRoutes.SCREEN_YKB
 
                         // Navigate to the WebView viewer.
-                        ScreenInternalHTMLCompanion.internalWebViewTitle = title
-                        ScreenInternalHTMLCompanion.targetHTMLContent = firstPostHTML
+                        ScreenInternalHTMLCompanion.internalWebViewTitle = ScreenYKBListCompanion.screenYKBListTitle
+                        ScreenInternalHTMLCompanion.targetHTMLContent = html
 
                         // Pushing the screen.
                         GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_INTERNAL_HTML
@@ -177,7 +143,7 @@ class ScreenYKB : ComponentActivity() {
                             // The first post thumbnail.
                             Surface (shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1.0f).fillMaxHeight().padding(start = 5.dp)) {
                                 AsyncImage(
-                                    firstPostThumbnail,
+                                    thumbnail,
                                     contentDescription = "",
                                     error = painterResource(R.drawable.thumbnail_loading_stretched),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
@@ -186,28 +152,10 @@ class ScreenYKB : ComponentActivity() {
                             }
                             Column(modifier = Modifier.weight(5.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Center) {
                                 // The post title.
-                                Text(firstPostTitle, fontSize = 21.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                Text(title, fontSize = 21.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
                                 // The post date.
-                                Text(firstPostDate, fontSize = 18.sp, fontWeight = FontWeight.Normal, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(date, fontSize = 18.sp, fontWeight = FontWeight.Normal, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             }
-                        }
-                        // The devotion title + archive button.
-                        TextButton(
-                            modifier = Modifier.padding(top = 8.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(AppColors.YKB_ARCHIVE_BUTTON_COLOR)
-                            ),
-                            onClick = {
-                                // Set the content list.
-                                ScreenYKBListCompanion.targetYKBArchiveList = postsList
-                                ScreenYKBListCompanion.screenYKBListTitle = title
-
-                                // Set the navigation.
-                                GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB
-                                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_YKB_LIST
-                            }
-                        ) {
-                            Text(title.uppercase())
                         }
                     }
                 }
@@ -228,14 +176,14 @@ class ScreenYKB : ComponentActivity() {
             ),
             title = {
                 Text(
-                    stringResource(R.string.screenykb_title),
+                    ScreenYKBListCompanion.screenYKBListTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             },
             navigationIcon = {
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
+                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -249,9 +197,15 @@ class ScreenYKB : ComponentActivity() {
     }
 }
 
-class ScreenYKBCompanion : Application() {
+class ScreenYKBListCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* The screen's target name. */
+        var screenYKBListTitle: String = String()
+
+        /* The JSONArray which enlists the devotional posts to display in this screen. */
+        var targetYKBArchiveList: JSONArray? = null
     }
 }

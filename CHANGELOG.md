@@ -17,6 +17,7 @@
 - Changed the main menu logo to "Phosphor" icon sets for a better look
 - Converted the license, privacy policy, and contributor meta-information page from dialog to screen
 - Improved the agenda menu by introducing paging and material cards
+- Improved the YKB menu by adding daily "feed" and YKB devotional archives
 - Removed the "upload date" text from the video list in the main menu because it looks confusing
 - Upgraded the JSON schema version of the main data to `v2.0`
 - (Back-End) Standardized the logcat logging mechanism by introducing `lib.Logger`, which verboses method and class names
