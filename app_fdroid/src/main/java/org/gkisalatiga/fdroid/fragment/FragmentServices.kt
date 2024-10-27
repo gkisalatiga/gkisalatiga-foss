@@ -177,7 +177,7 @@ class FragmentServices : ComponentActivity() {
                 val desc = recentVideoList[it].getString("desc")
 
                 // Format the date.
-                val date = StringFormatter().convertDateFromJSON(recentVideoList[it].getString("date"))
+                val date = StringFormatter.convertDateFromJSON(recentVideoList[it].getString("date"))
 
                 // Retrieving the video thumbnail.
                 val thumbnail = recentVideoList[it].getString("thumbnail")
@@ -189,7 +189,7 @@ class FragmentServices : ComponentActivity() {
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening the YouTube stream: $url.")
                         GlobalSchema.ytViewerParameters["yt-link"] = url
-                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter().getYouTubeIDFromUrl(url)
+                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
                         GlobalSchema.ytViewerParameters["title"] = title
                         GlobalSchema.ytViewerParameters["date"] = date
                         GlobalSchema.ytViewerParameters["desc"] = desc

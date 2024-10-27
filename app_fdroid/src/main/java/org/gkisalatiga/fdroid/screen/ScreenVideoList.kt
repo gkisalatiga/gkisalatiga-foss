@@ -177,7 +177,7 @@ class ScreenVideoList : ComponentActivity() {
                     onClick = {
                         // Preparing the arguments.
                         val title = listOfVideoContent[0].getString("title")
-                        val date = StringFormatter().convertDateFromJSON(listOfVideoContent[0].getString("date"))
+                        val date = StringFormatter.convertDateFromJSON(listOfVideoContent[0].getString("date"))
                         val url = listOfVideoContent[0].getString("link")
                         val desc = listOfVideoContent[0].getString("desc")
                         val thumbnail = listOfVideoContent[0].getString("thumbnail")
@@ -191,7 +191,7 @@ class ScreenVideoList : ComponentActivity() {
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
                         GlobalSchema.ytViewerParameters["yt-link"] = url
-                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter().getYouTubeIDFromUrl(url)
+                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
                         GlobalSchema.ytViewerParameters["title"] = title!!
                         GlobalSchema.ytViewerParameters["date"] = date
                         GlobalSchema.ytViewerParameters["desc"] = desc
@@ -218,7 +218,7 @@ class ScreenVideoList : ComponentActivity() {
 
                 // Preparing the arguments.
                 val title = it.getString("title")
-                val date = StringFormatter().convertDateFromJSON(it.getString("date"))
+                val date = StringFormatter.convertDateFromJSON(it.getString("date"))
                 val url = it.getString("link")
                 val desc = it.getString("desc")
                 val thumbnail = it.getString("thumbnail")
@@ -234,7 +234,7 @@ class ScreenVideoList : ComponentActivity() {
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
                         GlobalSchema.ytViewerParameters["yt-link"] = url
-                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter().getYouTubeIDFromUrl(url)
+                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
                         GlobalSchema.ytViewerParameters["title"] = title!!
                         GlobalSchema.ytViewerParameters["date"] = date
                         GlobalSchema.ytViewerParameters["desc"] = desc

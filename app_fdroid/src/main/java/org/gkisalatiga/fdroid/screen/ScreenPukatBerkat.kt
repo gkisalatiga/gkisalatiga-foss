@@ -11,46 +11,49 @@ package org.gkisalatiga.fdroid.screen
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Article
-import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.VolunteerActivism
 import androidx.compose.material.icons.outlined.Category
-import androidx.compose.material.icons.outlined.PhotoCamera
-import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.VolunteerActivism
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
@@ -58,21 +61,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.jeziellago.compose.markdowntext.MarkdownText
+import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.fdroid.R
-import org.gkisalatiga.fdroid.fragment.FragmentGalleryList
-import org.gkisalatiga.fdroid.fragment.FragmentGalleryStory
 import org.gkisalatiga.fdroid.global.GlobalSchema
+import org.gkisalatiga.fdroid.lib.AppColors
+import org.gkisalatiga.fdroid.lib.Logger
+import org.gkisalatiga.fdroid.lib.StringFormatter
+import org.json.JSONObject
 
 class ScreenPukatBerkat : ComponentActivity() {
 
@@ -87,7 +92,7 @@ class ScreenPukatBerkat : ComponentActivity() {
 
     // The horizontal pager tab selections.
     private val topBarTitle = GlobalSchema.displayedAlbumTitle
-    private val tabs = listOf(
+    private val sectionTabName = listOf(
         R.string.pukatberkat_section_food,
         R.string.pukatberkat_section_goods,
         R.string.pukatberkat_section_service,
@@ -157,27 +162,138 @@ class ScreenPukatBerkat : ComponentActivity() {
             // Without this property, the left-right page scrolling would be insanely laggy!
             beyondViewportPageCount = 2
         ) {
-            getSectionUI(pukatBerkatDictIndices[it])
+            getSectionUI(pukatBerkatDictIndices[it], it)
         }
 
     }
 
     @Composable
-    private fun getSectionUI(dictIndex: String) {
-        // Display the markdown text.
-        Column {
-            val md: String = """
-                        # Sample Pukat Berkat. (3)
-                        ${dictIndex}.
-                        """.trimIndent()
-            MarkdownText(
-                modifier = Modifier.padding(20.dp).fillMaxSize(),
-                markdown = md.trimIndent(),
-                style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Justify)
-            )
+    private fun getSectionUI(dictIndex: String, intIndex: Int) {
+        val ctx = LocalContext.current
 
-            // TODO: Upgrade to schema v2.0
-            // GlobalSchema.globalJSONObject.getJSONArray("pukat-berkat")
+        /* Converting JSONArray to regular list. */
+        val pukatBerkatListAsJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("pukat-berkat")
+        val enumeratedPukatBerkatList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
+        for (i in 0 until pukatBerkatListAsJSONArray.length()) {
+            val curNode = pukatBerkatListAsJSONArray[i] as JSONObject
+            enumeratedPukatBerkatList.add(mapOf(
+                "title" to curNode.getString("title"),
+                "desc" to curNode.getString("desc"),
+                "price" to curNode.getString("price"),
+                "contact" to curNode.getString("contact"),
+                "vendor" to curNode.getString("vendor"),
+                "type" to curNode.getString("type"),
+                "image" to curNode.getString("image"),
+            ))
+        }
+
+        // For some reason, we must pop the 0-th item in cardsList
+        // because JSONArray iterates from 1, not 0.
+        enumeratedPukatBerkatList.removeAt(0)
+
+        /* Save the scroll state */
+        val sectionScrollState = when (dictIndex) {
+            "food" -> ScreenPukatBerkatCompanion.rememberedScrollStateFood!!
+            "non-food" -> ScreenPukatBerkatCompanion.rememberedScrollStateNonFood!!
+            "service" -> ScreenPukatBerkatCompanion.rememberedScrollStateService!!
+            else -> rememberScrollState()
+        }
+
+        /* Draw the UI. */
+        Column (
+            modifier = Modifier.fillMaxSize().verticalScroll(sectionScrollState),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
+        ) {
+            /* Iterating through every Pukat Berkat item. */
+            for (i in 0 until enumeratedPukatBerkatList.size) {
+                // Debug test.
+                val curList = enumeratedPukatBerkatList[i]
+                val curListSize = enumeratedPukatBerkatList.size
+                Logger.logTest({}, "Testing of enumeratedPukatBerkatList -> [curListSize] $curListSize ::  [curList] $curList")
+
+                // Preparing the arguments.
+                val title = curList["title"] as String
+                val desc = curList["desc"] as String
+                val price = curList["price"] as String
+                val thumbnailImage = curList["image"] as String
+                val vendor = curList["vendor"] as String
+                val contactMessage = stringResource(R.string.pukatberkat_whatsapp_text_template)
+                    .replace("%%%TYPE%%%", stringResource(sectionTabName[intIndex]).lowercase())
+                    .replace("%%%NAME%%%", title)
+                    .replace("%%%VENDOR%%%", vendor)
+                val contactURL = StringFormatter.getWhatsAppPrivateChatLink(
+                    curList["contact"] as String,
+                    contactMessage
+                )
+
+                // Displaying the individual card.
+                Card(
+                    onClick = {
+                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+
+                        // TODO: Navigation upon click.
+                        /*
+                        // Set this screen as the anchor point for "back"
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB
+
+                        // Navigate to the WebView viewer.
+                        ScreenInternalHTMLCompanion.internalWebViewTitle = title
+                        ScreenInternalHTMLCompanion.targetHTMLContent = firstPostHTML
+
+                        // Pushing the screen.
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_INTERNAL_HTML*/
+                    },
+                    modifier = Modifier.padding(bottom = 10.dp)
+                ) {
+                    Column ( modifier = Modifier.fillMaxWidth().padding(10.dp).padding(top = 5.dp), verticalArrangement = Arrangement.Center ) {
+                        Row {
+                            // The item thumbnail.
+                            Surface (shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1.0f).fillMaxHeight().padding(start = 5.dp)) {
+                                AsyncImage(
+                                    thumbnailImage,
+                                    contentDescription = "Pukat Berkat: $title",
+                                    error = painterResource(R.drawable.thumbnail_loading_stretched),
+                                    modifier = Modifier.aspectRatio(1f).width(12.5.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            Column(modifier = Modifier.weight(5.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Center) {
+                                // The post title.
+                                Text(title, fontSize = 21.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                                // The item price.
+                                Text(price, fontSize = 18.sp, fontWeight = FontWeight.Normal, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            }
+                        }
+                        // The item description.
+                        Text(desc, fontSize = 18.sp, fontWeight = FontWeight.Normal, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        // The WhatsApp action button.
+                        TextButton(
+                            modifier = Modifier.padding(top = 8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(AppColors.YKB_ARCHIVE_BUTTON_COLOR)
+                            ),
+                            onClick = {
+                                if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
+
+                                // TODO: WhatsApp action.
+                                /*
+                                // Set the content list.
+                                ScreenYKBListCompanion.targetYKBArchiveList = postsList
+                                ScreenYKBListCompanion.screenYKBListTitle = title
+
+                                // Set the navigation.
+                                GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB
+                                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_YKB_LIST
+                                */
+                            }
+                        ) {
+                            Text(vendor.uppercase())
+                        }
+                    }
+                }
+
+            }
         }
     }
 
@@ -216,7 +332,7 @@ class ScreenPukatBerkat : ComponentActivity() {
             TabRow(
                 selectedTabIndex = selectedTabIndex.intValue
             ) {
-                tabs.forEachIndexed { index, tabTitleId ->
+                sectionTabName.forEachIndexed { index, tabTitleId ->
                     val tabFontWeight = if (selectedTabIndex.intValue == index) FontWeight.Bold else FontWeight.Normal
                     val tabIcon = if (selectedTabIndex.intValue == index) iconsSelected[index] else icons[index]
 
@@ -245,6 +361,11 @@ class ScreenPukatBerkat : ComponentActivity() {
  */
 class ScreenPukatBerkatCompanion : Application() {
     companion object {
+        /* Saves the scrolling state of each Pukat Berkat tab menu. */
+        var rememberedScrollStateFood: ScrollState? = null
+        var rememberedScrollStateNonFood: ScrollState? = null
+        var rememberedScrollStateService: ScrollState? = null
+
         /* Saves information about the currently/last selected Pukat Berkat tab. */
         val currentHorizontalPagerValue = mutableIntStateOf(0)
         var pukatBerkatPagerState: PagerState? = null

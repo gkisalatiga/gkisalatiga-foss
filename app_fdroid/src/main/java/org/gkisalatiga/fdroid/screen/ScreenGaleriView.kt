@@ -198,7 +198,7 @@ class ScreenGaleriView : ComponentActivity() {
                 val id = currentPhotoObject.getString("id")
 
                 // Obtain the download URL.
-                val downloadURL = StringFormatter().getGoogleDriveDownloadURL(id)
+                val downloadURL = StringFormatter.getGoogleDriveDownloadURL(id)
 
                 GallerySaver().saveImageFromURL(ctx, downloadURL, name)
             },
@@ -227,7 +227,7 @@ class ScreenGaleriView : ComponentActivity() {
             val id = currentPhotoObject.getString("id")
 
             // The image URL.
-            val imageURL = StringFormatter().getGoogleDriveThumbnail(id, 600)
+            val imageURL = StringFormatter.getGoogleDriveThumbnail(id, 600)
 
             // Set the screen's title.
             currentScreenTopBarTitle.value = name

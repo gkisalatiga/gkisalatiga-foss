@@ -146,7 +146,7 @@ class ScreenGaleriYear : ComponentActivity() {
                     ) {
                         Row ( modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically ) {
                             AsyncImage(
-                                model = StringFormatter().getGoogleDriveThumbnail(featuredImageID, 160),
+                                model = StringFormatter.getGoogleDriveThumbnail(featuredImageID, 160),
                                 contentDescription = title,
                                 error = painterResource(R.drawable.thumbnail_loading),
                                 modifier = Modifier.fillMaxSize().weight(2f),

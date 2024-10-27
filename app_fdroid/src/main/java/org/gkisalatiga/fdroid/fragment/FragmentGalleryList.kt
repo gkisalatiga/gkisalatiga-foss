@@ -57,7 +57,7 @@ class FragmentGalleryList : ComponentActivity() {
             ) {
 
                 extractedAlbumContent.forEachIndexed { index, map ->
-                    val photoThumbnail = StringFormatter().getGoogleDriveThumbnail(map["id"]!!)
+                    val photoThumbnail = StringFormatter.getGoogleDriveThumbnail(map["id"]!!)
                     item {
                         Surface(
                             onClick = {

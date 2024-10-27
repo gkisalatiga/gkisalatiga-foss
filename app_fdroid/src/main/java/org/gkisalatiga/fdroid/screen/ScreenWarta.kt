@@ -207,7 +207,7 @@ class ScreenWarta : ComponentActivity() {
 
                 // Preparing the arguments.
                 val title = it["title"]
-                val url = StringFormatter().getGoogleDrivePreview( it["link"]!! )
+                val url = StringFormatter.getGoogleDrivePreview( it["link"]!! )
 
                 // Displaying the individual card.
                 Card(

@@ -152,7 +152,7 @@ class ScreenYKB : ComponentActivity() {
                 val url = it["url"] as String
                 val firstPostThumbnail = firstPostObject.getString("featured-image")
                 val firstPostTitle = firstPostObject.getString("title")
-                val firstPostDate = StringFormatter().convertDateFromJSON(firstPostObject.getString("date"))
+                val firstPostDate = StringFormatter.convertDateFromJSON(firstPostObject.getString("date"))
                 val firstPostHTML = firstPostObject.getString("html")
 
                 // Displaying the individual card.
@@ -178,7 +178,7 @@ class ScreenYKB : ComponentActivity() {
                             Surface (shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1.0f).fillMaxHeight().padding(start = 5.dp)) {
                                 AsyncImage(
                                     firstPostThumbnail,
-                                    contentDescription = "",
+                                    contentDescription = "YKB: $title",
                                     error = painterResource(R.drawable.thumbnail_loading_stretched),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
                                     contentScale = ContentScale.Crop

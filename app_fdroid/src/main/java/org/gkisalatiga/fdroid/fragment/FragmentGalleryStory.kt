@@ -51,7 +51,7 @@ class FragmentGalleryStory : ComponentActivity() {
                 modifier = Modifier.padding(bottom = 10.dp)
             ) {
                 AsyncImage(
-                    model = StringFormatter().getGoogleDriveThumbnail(featuredImageID, 240),
+                    model = StringFormatter.getGoogleDriveThumbnail(featuredImageID, 240),
                     contentDescription = title,
                     error = painterResource(R.drawable.thumbnail_loading),
                     modifier = Modifier.fillMaxSize(),

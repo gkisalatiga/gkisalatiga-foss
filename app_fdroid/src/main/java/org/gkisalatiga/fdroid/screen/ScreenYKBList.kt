@@ -117,7 +117,7 @@ class ScreenYKBList : ComponentActivity() {
                 // Preparing the arguments.
                 val title = it.getString("title")
                 val thumbnail = it.getString("featured-image")
-                val date = StringFormatter().convertDateFromJSON(it.getString("date"))
+                val date = StringFormatter.convertDateFromJSON(it.getString("date"))
                 val html = it.getString("html")
 
                 // Displaying the individual card.

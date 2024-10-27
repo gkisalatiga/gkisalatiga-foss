@@ -122,6 +122,9 @@
     <string name="pukatberkat_section_food">Makanan</string>
     <string name="pukatberkat_section_goods">Barang</string>
     <string name="pukatberkat_section_service">Jasa</string>
+    <string name="pukatberkat_whatsapp_text_template">
+        Halo! Saya tertarik dengan %%%TYPE%%% %%%NAME%%% yang diiklankan oleh %%%VENDOR%%% di aplikasi GKI Salatiga.
+    </string>
 
     <!-- Constant string used in the new top bar layout. -->
     <string name="new_topbar_greetings">Syalom!</string>

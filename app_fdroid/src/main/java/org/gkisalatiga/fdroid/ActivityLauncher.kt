@@ -285,6 +285,9 @@ class ActivityLauncher : ComponentActivity() {
             GlobalSchema.screenGaleriScrollState = rememberScrollState()
             GlobalSchema.screenMediaScrollState = rememberScrollState()
             GlobalSchema.screenPersembahanScrollState = rememberScrollState()
+            ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
+            ScreenPukatBerkatCompanion.rememberedScrollStateNonFood = rememberScrollState()
+            ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
 

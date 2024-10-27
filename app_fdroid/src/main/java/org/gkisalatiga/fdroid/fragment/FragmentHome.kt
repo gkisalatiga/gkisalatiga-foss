@@ -238,9 +238,9 @@ class FragmentHome : ComponentActivity() {
                                     // Trying to switch to the YouTube viewer and open the stream.
                                     Logger.log({}, "Opening the YouTube stream: $url.")
                                     GlobalSchema.ytViewerParameters["yt-link"] = url
-                                    GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter().getYouTubeIDFromUrl(url)
+                                    GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
                                     GlobalSchema.ytViewerParameters["title"] = title!!
-                                    GlobalSchema.ytViewerParameters["date"] = StringFormatter().convertDateFromJSON(date)
+                                    GlobalSchema.ytViewerParameters["date"] = StringFormatter.convertDateFromJSON(date)
                                     GlobalSchema.ytViewerParameters["desc"] = desc!!
                                     GlobalSchema.ytCurrentSecond.floatValue = 0.0f
                                     GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN

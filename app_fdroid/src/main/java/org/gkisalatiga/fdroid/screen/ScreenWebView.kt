@@ -152,7 +152,7 @@ class ScreenWebView : ComponentActivity() {
                         // Prevents redirection from Google Drive into Google login page.
                         Logger.logTest({}, "Redirection URL: ${url.toString()}")
                         if (url!!.startsWith("https://drive.google.com")) {
-                            wv.loadUrl(StringFormatter().getGoogleDrivePreview(url))
+                            wv.loadUrl(StringFormatter.getGoogleDrivePreview(url))
                         }
                         return false
                     }

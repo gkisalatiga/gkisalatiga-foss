@@ -127,7 +127,7 @@ class ScreenAgenda : ComponentActivity() {
             var isFirst = true
             Row (modifier = Modifier.fillMaxWidth().horizontalScroll(GlobalSchema.componentAgendaDayRowScrollState!!)) {
                 for (key in dayTitleList) {
-                    val dayInLocale = StringFormatter().dayLocaleInIndonesian[key]!!
+                    val dayInLocale = StringFormatter.dayLocaleInIndonesian[key]!!
                     val startPadding = if (isFirst) 0.dp else 10.dp; isFirst = false
                     FilterChip(
                         onClick = { GlobalSchema.currentAgendaDay.value = key },
@@ -146,7 +146,7 @@ class ScreenAgenda : ComponentActivity() {
             Spacer(Modifier.height(15.dp))
 
             // Get the day's name in current locale; then display the day title.
-            val dayInLocale = StringFormatter().dayLocaleInIndonesian[selected.value]!!
+            val dayInLocale = StringFormatter.dayLocaleInIndonesian[selected.value]!!
             Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 Text(dayInLocale, modifier = Modifier, fontWeight = FontWeight.Bold, fontSize = 32.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
             }
