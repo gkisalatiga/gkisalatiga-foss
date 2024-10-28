@@ -1,5 +1,5 @@
 # gkisalatiga-foss
-GKI Salatiga's free and open source Android church application based on Jetpack Compose, distributed for F-Droid.
+GKI Salatiga's free and open source Android church application based on Jetpack Compose.
 
 ## A. Documentation
 
@@ -83,7 +83,7 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 
 ## D. Attribution
 
-This repository was migrated from the original repo, [GKI Salatiga Plus](https://github.com/gkisalatiga/gki-salatiga-plus), which has now been made a public archive. You will see throughout this repo that some codes still refer to GKI Salatiga **_Plus_** instead of just GKI Salatiga. This is minor and does not affect the overall experience of the app.
+This repository was migrated from the original repo, [GKI Salatiga Plus](https://github.com/gkisalatiga/gki-salatiga-plus), which has now been made a public archive.
 
 ### License of Materials Used
 
