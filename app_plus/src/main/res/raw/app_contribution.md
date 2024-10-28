@@ -27,7 +27,6 @@
 - Evelina Purnama
 - Gita Hastuti
 - Gita Kartika Dewi
-- Helen Ruth Manurung
 - Hendra Aribowo
 - Jack Edward Parsaoran
 - Johnson Umbu Radda

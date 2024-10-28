@@ -71,8 +71,9 @@ class FragmentHome : ComponentActivity() {
         NavigationRoutes.SCREEN_YKB,
         NavigationRoutes.SCREEN_FORMS,
         NavigationRoutes.SCREEN_GALERI,
-        NavigationRoutes.SCREEN_BIBLE,
-        NavigationRoutes.SCREEN_LIBRARY,
+        // TODO: Re-enable the bible and library menu once the functionalities are ready.
+        // NavigationRoutes.SCREEN_BIBLE,
+        // NavigationRoutes.SCREEN_LIBRARY,
         NavigationRoutes.SCREEN_PUKAT_BERKAT,
     )
 
@@ -91,9 +92,25 @@ class FragmentHome : ComponentActivity() {
         R.drawable.ph__book_open_text_bold,
         R.drawable.ph__paper_plane_tilt_bold,
         R.drawable.ph__images_square_bold,
-        R.drawable.ph__cross_bold,
-        R.drawable.ph__books_bold,
+        // TODO: Re-enable the bible and library menu once the functionalities are ready.
+        // R.drawable.ph__cross_bold,
+        // R.drawable.ph__books_bold,
         R.drawable.ph__shopping_cart_bold,
+    )
+
+    // Toggle menu button enabled state.
+    private val btnEnabledState = listOf(
+        true,  // --- won't affect actual state.
+        true,  // --- won't affect actual state.
+        true,
+        true,
+        true,
+        true,
+        true,
+        // TODO: Re-enable the bible and library menu once the functionalities are ready.
+        // false,
+        // false,
+        true,
     )
 
     @Composable
@@ -109,8 +126,9 @@ class FragmentHome : ComponentActivity() {
             ctx.resources.getString(R.string.btn_mainmenu_ykb),
             ctx.resources.getString(R.string.btn_mainmenu_form),
             ctx.resources.getString(R.string.btn_mainmenu_gallery),
-            ctx.resources.getString(R.string.btn_mainmenu_bible),
-            ctx.resources.getString(R.string.btn_mainmenu_library),
+            // TODO: Re-enable the bible and library menu once the functionalities are ready.
+            // ctx.resources.getString(R.string.btn_mainmenu_bible),
+            // ctx.resources.getString(R.string.btn_mainmenu_library),
             ctx.resources.getString(R.string.btn_mainmenu_pukatberkat),
         )
         btnDescriptions = listOf(
@@ -122,8 +140,9 @@ class FragmentHome : ComponentActivity() {
             ctx.resources.getString(R.string.btn_desc_mainmenu_form),
             ctx.resources.getString(R.string.btn_desc_mainmenu_gallery),
             ctx.resources.getString(R.string.btn_desc_mainmenu_media),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_bible),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_library),
+            // TODO: Re-enable the bible and library menu once the functionalities are ready.
+            // ctx.resources.getString(R.string.btn_desc_mainmenu_bible),
+            // ctx.resources.getString(R.string.btn_desc_mainmenu_library),
             ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat),
         )
 
@@ -330,7 +349,8 @@ class FragmentHome : ComponentActivity() {
                             },
                             modifier = buttonSpacerModifier,
                             shape = RoundedCornerShape(10.dp),
-                            contentPadding = PaddingValues(5.dp)
+                            contentPadding = PaddingValues(5.dp),
+                            enabled = btnEnabledState[offsetIndex]
                         ) {
                             // The main menu element wrapper.
                             Column (

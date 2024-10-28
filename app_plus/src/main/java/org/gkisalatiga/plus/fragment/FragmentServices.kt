@@ -24,9 +24,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -35,9 +37,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -45,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppColors
 import org.gkisalatiga.plus.lib.Logger
 // import coil.compose.AsyncImage
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -88,11 +93,22 @@ class FragmentServices : ComponentActivity() {
 
             // Opens the non-pinned video playlist.
             // TODO: String extraction and visual improvement of the button.
-            Surface(modifier = Modifier.fillMaxWidth(), onClick = {
-                GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MEDIA
-            }) {
-                Text("[TEST] Tampilkan video lainnya")
+            Spacer(Modifier.fillMaxWidth().padding(top = 10.dp))
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                color = Color(AppColors.FRAGMENT_SERVICES_SHOWMORE_BACKGROUND),
+                contentColor = Color(AppColors.FRAGMENT_SERVICES_SHOWMORE_CONTENT),
+                onClick = {
+                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MEDIA
+                }
+            ) {
+                Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(12.dp)) {
+                    Text(stringResource(R.string.submenu_services_showmore), modifier = Modifier.weight(7.0f), fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                    Spacer(Modifier.weight(2.0f))
+                    Icon(Icons.AutoMirrored.Default.ArrowRight, "", modifier = Modifier.weight(1.0f))
+                }
             }
 
             /* Displaying redundant spacer for visual neatness. */

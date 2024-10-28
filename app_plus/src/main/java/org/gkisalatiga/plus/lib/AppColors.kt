@@ -20,6 +20,10 @@ class AppColors {
         const val MAIN_TOP_BAR_CONTENT_COLOR = 0xffffffff
         const val YKB_ARCHIVE_BUTTON_COLOR = 0xff482505
 
+        /* Used in FragmentServices */
+        const val FRAGMENT_SERVICES_SHOWMORE_BACKGROUND = 0xff97705d
+        const val FRAGMENT_SERVICES_SHOWMORE_CONTENT = 0xffffffff
+
         /* This is how we can theoretically create a color-changing scheme based on theme: */
         /*
         // Cannot use "const" with "when"

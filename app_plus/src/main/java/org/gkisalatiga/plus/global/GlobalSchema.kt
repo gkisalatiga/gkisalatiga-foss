@@ -115,27 +115,21 @@ class GlobalSchema : Application() {
         const val DEBUG_ENABLE_EASTER_EGG = true
 
         // Whether to display the debugger's toast.
-        const val DEBUG_ENABLE_TOAST = true
+        const val DEBUG_ENABLE_TOAST = false
 
         // Whether to display the debugger's logcat logging.
         const val DEBUG_ENABLE_LOG_CAT = true
         const val DEBUG_ENABLE_LOG_CAT_BOOT = true
-        const val DEBUG_ENABLE_LOG_CAT_CONN_TEST = true
+        const val DEBUG_ENABLE_LOG_CAT_CONN_TEST = false
         const val DEBUG_ENABLE_LOG_CAT_DUMP = true
         const val DEBUG_ENABLE_LOG_CAT_INIT = true
-        const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = true
+        const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = false
         const val DEBUG_ENABLE_LOG_CAT_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_UPDATER = true
         const val DEBUG_ENABLE_LOG_CAT_WORKER = true
 
         // Whether to hide the splash screen.
         const val DEBUG_DISABLE_SPLASH_SCREEN = false
-
-        // Whether to disable downloading the static data zip file from the GitHub repository.
-        const val DEBUG_DISABLE_DOWNLOADING_STATIC_DATA = true
-
-        // Whether to disable downloading the carousel data zip file from the GitHub repository.
-        const val DEBUG_DISABLE_DOWNLOADING_CAROUSEL_DATA = false
 
         /* ------------------------------------------------------------------------------------ */
         /* Controls the internal downloader. */

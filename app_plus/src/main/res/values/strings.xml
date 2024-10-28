@@ -43,6 +43,7 @@
     <string name="submenu_services_es">Kebaktian Berbahasa Inggris</string>
     <string name="submenu_services_saren">Sapaan dan Renungan Pagi</string>
     <string name="submenu_services_kml">Produksi KML</string>
+    <string name="submenu_services_showmore">Lihat siaran lainnya</string>
 
     <!-- Constant strings for the main menu's action buttons -->
     <string name="btn_mainmenu_wj">Warta Jemaat</string>

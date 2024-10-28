@@ -536,11 +536,12 @@ class ScreenMain : ComponentActivity() {
                         contentScale = ContentScale.Crop,
                         colorFilter = ColorFilter.tint(ScreenMainCompanion.topBarTitleContentColor)
                     )
-                    Spacer(Modifier.weight(1.0f))
+                    Spacer(Modifier.weight(3.0f))
                 }
             },
             navigationIcon = {},
             actions = {
+                /* TODO: Re-enable the search button once the functionality is ready.
                 IconButton(onClick = {
                     GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_SEARCH
                     GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
@@ -551,6 +552,8 @@ class ScreenMain : ComponentActivity() {
                         tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
+                */
+                /* TODO: Re-enable the settings button once the functionality is ready.
                 IconButton(onClick = {
                     GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_SETTINGS
                     GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
@@ -561,6 +564,7 @@ class ScreenMain : ComponentActivity() {
                         tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
+                */
                 IconButton(onClick = {
                     GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
                     GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
