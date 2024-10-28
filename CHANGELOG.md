@@ -1,6 +1,6 @@
 # GKI Salatiga App Changelog
 
-## Next RC Update
+## v0.5.0-rc 2024.10.28 (28)
 
 :star2: **NEW**
 
