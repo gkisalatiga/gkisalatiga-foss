@@ -104,15 +104,6 @@ class GlobalSchema : Application() {
         var targetStaticFolder: JSONObject? = null
 
         /* ------------------------------------------------------------------------------------ */
-        /* The following parameter determines which zipped carousel data should be loaded into the main screen.
-         * It cannot and should not be changed arbitrarily within the app code. */
-
-        // TODO: Remove this unused code block.
-        // The variable associated with the string values and resource paths.
-        // var carouselJSONObject: ArrayList<JSONObject> = ArrayList<JSONObject>()
-        // var carouselJSONKey: ArrayList<String> = ArrayList<String>()
-
-        /* ------------------------------------------------------------------------------------ */
         /* Values and constants used in the "offertory" menu. */
 
         const val offertoryQRISImageSource = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/images/qris_gkis.png"
@@ -305,47 +296,7 @@ class GlobalSchema : Application() {
         // These variables apply to ScreenGaleriView.
         var galleryViewerStartPage: Int = 0
 
-        // Controls the state of the poster dialog.
-        val posterDialogTitle = mutableStateOf("")
-        val posterDialogCaption = mutableStateOf("")
-        val posterDialogImageSource = mutableStateOf("")
-
         /* This is the clipboard manager. */
         var clipManager: ClipboardManager? = null
-
-        // TODO: Remove this code block. It is now replaced with lib.AppPreferences's sleek preference management.
-        /*
-        /* ------------------------------------------------------------------------------------ */
-        /* The following is the app-wide, private preferences stored across launches.
-         * All variables below must start with "pref" prefix.
-         * The companion constant name for SharedPreferences key should also be supplied. */
-
-        // This constants determines the shared preferences name.
-        const val NAME_SHARED_PREFERENCES: String = "gkisplus"
-
-        // In millisecond. So, divide by 1000 to get second, then 86400 to get days.
-        const val PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY = "static_data_freq"
-
-        // In millisecond. So, divide by 1000 to get second, then 86400 to get days.
-        const val PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY = "carousel_banner_freq"
-
-        // In millisecond. So, divide by 1000 to get second, then 86400 to get days.
-        const val PREF_KEY_LAST_STATIC_DATA_UPDATE = "static_data_last_update"
-
-        // In millisecond. So, divide by 1000 to get second, then 86400 to get days.
-        const val PREF_KEY_LAST_CAROUSEL_BANNER_UPDATE = "carousel_banner_last_update"
-
-        // Number of launches since last install/storage data clear.
-        const val PREF_KEY_LAUNCH_COUNTS = "launch_counts"
-
-        // The default pairing of saved preferences.
-        var preferencesKeyValuePairs: MutableMap<String, Any> = mutableMapOf(
-            PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY to 604800000.toLong(),  // --- 604800000 means "once every 7 days" in millisecond
-            PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY to 86400000.toLong(),  // --- 86400000 means "once every 1 day" in millisecond
-            PREF_KEY_LAST_STATIC_DATA_UPDATE to Long.MIN_VALUE,
-            PREF_KEY_LAST_CAROUSEL_BANNER_UPDATE to Long.MIN_VALUE,
-            PREF_KEY_LAUNCH_COUNTS to -1
-        )*/
-
     }
 }

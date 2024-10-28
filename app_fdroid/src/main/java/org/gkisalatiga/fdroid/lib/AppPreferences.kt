@@ -17,87 +17,6 @@ import android.content.SharedPreferences
 import android.util.Log
 import org.gkisalatiga.fdroid.global.GlobalSchema
 
-// TODO: Remove these obsolete code blocks.
-/*
-import org.gkisalatiga.fdroid.global.GlobalSchema
-import org.gkisalatiga.fdroid.global.GlobalSchema.Companion.PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY
-import org.gkisalatiga.fdroid.global.GlobalSchema.Companion.PREF_KEY_LAST_CAROUSEL_BANNER_UPDATE
-import org.gkisalatiga.fdroid.global.GlobalSchema.Companion.PREF_KEY_LAST_STATIC_DATA_UPDATE
-import org.gkisalatiga.fdroid.global.GlobalSchema.Companion.PREF_KEY_LAUNCH_COUNTS
-import org.gkisalatiga.fdroid.global.GlobalSchema.Companion.PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY*/
-/*class AppPreferences(private val ctx: Context) {
-
-    /**
-     * Returns the preference object.
-     */
-    private fun getPrefObj(): SharedPreferences {
-        return ctx.getSharedPreferences(GlobalSchema.NAME_SHARED_PREFERENCES, MODE_PRIVATE)
-    }
-
-    /**
-     * Read the saved preferences and store them (temporarily) in the GlobalSchema.
-     * Assumes it is ran at the very beginning of the app, before the GlobalSchema is modifier
-     * by any other function.
-     */
-    fun readAllPreferences() {
-
-        // Creates the shared preferences object.
-        val prefObj = getPrefObj()
-
-        // Assign each preference in the map individually.
-        for (l in GlobalSchema.preferencesKeyValuePairs.keys) {
-            // The default value.
-            val def = GlobalSchema.preferencesKeyValuePairs[l]
-
-            // Reading the shared preferences.
-            if (def!!::class == Long::class) {
-                GlobalSchema.preferencesKeyValuePairs[l] = prefObj.getLong(l, def as Long)
-            } else if (def::class == Int::class) {
-                GlobalSchema.preferencesKeyValuePairs[l] = prefObj.getInt(l, def as Int)
-            } else if (def::class == String::class) {
-                GlobalSchema.preferencesKeyValuePairs[l] = prefObj.getString(l, def as String)!!
-            } else if (def::class == Boolean::class) {
-                GlobalSchema.preferencesKeyValuePairs[l] = prefObj.getBoolean(l, def as Boolean)
-            } else if (def::class == Float::class) {
-                GlobalSchema.preferencesKeyValuePairs[l] = prefObj.getFloat(l, def as Float)
-            }
-
-        }
-    }
-
-    /**
-     * Writing a given saved preference according to the passed key.
-     * @param prefKey the preference key to refer to.
-     * @param prefValue the value to be saved.
-     */
-    fun writePreference(prefKey: String, prefValue: Any) {
-        // Creates the shared preferences object.
-        val prefObj = getPrefObj()
-
-        // Save the value also to the global schema.
-        GlobalSchema.preferencesKeyValuePairs[prefKey] = prefValue
-
-        // Write the preference values.
-        with (prefObj.edit()) {
-
-            if (prefValue::class == Long::class) {
-                putLong(prefKey, prefValue as Long)
-            } else if (prefValue::class == Int::class) {
-                putInt(prefKey, prefValue as Int)
-            } else if (prefValue::class == String::class) {
-                putString(prefKey, prefValue as String)
-            } else if (prefValue::class == Boolean::class) {
-                putBoolean(prefKey, prefValue as Boolean)
-            } else if (prefValue::class == Float::class) {
-                putFloat(prefKey, prefValue as Float)
-            }
-
-            apply()
-        }
-    }
-
-}*/
-
 class AppPreferences(private val ctx: Context) {
     private val prefObj = ctx.getSharedPreferences(AppPreferencesCompanion.NAME_SHARED_PREFERENCES, MODE_PRIVATE)
 
@@ -111,8 +30,6 @@ class AppPreferences(private val ctx: Context) {
         PreferenceKeys.PREF_KEY_LAST_CAROUSEL_BANNER_UPDATE to Long.MIN_VALUE,
         PreferenceKeys.PREF_KEY_LAUNCH_COUNTS to -1.toInt()
     )
-
-    private val abc = mapOf("" to listOf(Long::class, Long.MAX_VALUE))
 
     /**
      * Returns the preference object.

@@ -63,6 +63,7 @@ import org.gkisalatiga.fdroid.global.GlobalSchema
 import org.gkisalatiga.fdroid.lib.Logger
 import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.lib.StringFormatter
+import org.gkisalatiga.fdroid.screen.ScreenPosterViewerCompanion
 import kotlin.math.ceil
 
 class FragmentHome : ComponentActivity() {
@@ -132,9 +133,6 @@ class FragmentHome : ComponentActivity() {
             ctx.resources.getString(R.string.btn_desc_mainmenu_library),
             ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat),
         )
-
-        // Prepare the poster dialog.
-        getPosterDialog()
 
         // The following defines each individual featured cover image of the menu.
         // (Only the top two menus are considered.)
@@ -223,10 +221,11 @@ class FragmentHome : ComponentActivity() {
                                     GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
                                 }
                                 "poster" -> {
-                                    showPosterDialog.value = true
-                                    posterDialogTitle.value = currentNode.getString("title")
-                                    posterDialogCaption.value = currentNode.getString("poster-caption")
-                                    posterDialogImageSource.value = currentNode.getString("poster-image")
+                                    ScreenPosterViewerCompanion.posterViewerTitle = currentNode.getString("title")
+                                    ScreenPosterViewerCompanion.posterViewerCaption = currentNode.getString("poster-caption")
+                                    ScreenPosterViewerCompanion.posterViewerImageSource = currentNode.getString("poster-image")
+                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_POSTER_VIEWER
                                 }
                                 "yt" -> {
                                     // Preparing the YouTube player arguments.
@@ -388,57 +387,5 @@ class FragmentHome : ComponentActivity() {
         }  // --- end of scrollable column.
 
     }  // --- end of getComposable().
-
-    // The state of the current poster dialog.
-    private val showPosterDialog = GlobalSchema.fragmentHomePosterDialogState
-    private val posterDialogTitle = GlobalSchema.posterDialogTitle
-    private val posterDialogCaption = GlobalSchema.posterDialogCaption
-    private val posterDialogImageSource = GlobalSchema.posterDialogImageSource
-
-    /**
-     * This function displays the poster dialog.
-     * SOURCE: https://www.composables.com/tutorials/dialogs
-     * SOURCE: https://developer.android.com/develop/ui/compose/components/dialog
-     */
-    @Composable
-    @SuppressLint("ComposableNaming")
-    private fun getPosterDialog() {
-        val ctx = LocalContext.current
-        val verticalScrollState = rememberScrollState()
-        if (showPosterDialog.value) {
-            AlertDialog(
-                onDismissRequest = { showPosterDialog.value = false },
-                title = { Text(posterDialogTitle.value, fontWeight = FontWeight.Bold, fontSize = 24.sp) },
-                text = {
-                    Column(
-                        modifier = Modifier.height(300.dp).verticalScroll(verticalScrollState)
-                    ) {
-                        Text("Ketuk pada gambar untuk memperbesar poster.", fontStyle = FontStyle.Italic)
-                        Spacer(Modifier.height(15.dp))
-                        Surface (modifier = Modifier.fillMaxWidth().height(150.dp), color = Color.Transparent, onClick = {
-                            showPosterDialog.value = false
-                            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_POSTER_VIEWER
-                        }, shape = RoundedCornerShape(20.dp)) {
-                            AsyncImage(
-                                model = posterDialogImageSource.value,
-                                contentDescription = "Carousel Poster Image",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        Spacer(Modifier.height(15.dp))
-                        Text(posterDialogCaption.value)
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showPosterDialog.value = false }) {
-                        Text(stringResource(R.string.poster_dialog_close_text).uppercase())
-                    }
-                },
-                confirmButton = { }
-            )
-        }
-    }
 
 }

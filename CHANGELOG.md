@@ -8,6 +8,7 @@
 
 :star2: **NEW**
 
+- Added the "Pukat Berkat" menu
 - (Back-End) Added the developer menu
 - (Minor) Added emoticons to the changelog document
 

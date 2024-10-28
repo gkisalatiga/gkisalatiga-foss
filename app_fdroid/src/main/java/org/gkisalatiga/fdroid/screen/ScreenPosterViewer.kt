@@ -10,8 +10,10 @@
 package org.gkisalatiga.fdroid.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -43,9 +46,7 @@ class ScreenPosterViewer : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        Scaffold (
-            topBar = { this.getTopBar() }
-                ) {
+        Scaffold ( topBar = { this.getTopBar() } ) {
 
             // Display the necessary content.
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
@@ -68,7 +69,7 @@ class ScreenPosterViewer : ComponentActivity() {
     private fun getMainContent() {
 
         // Declare the local image path that will be displayed.
-        val targetPosterSource = GlobalSchema.posterDialogImageSource.value
+        val targetPosterSource = ScreenPosterViewerCompanion.posterViewerImageSource
 
         // Displaying the poster image from a remote source.
         ZoomableBox {
@@ -102,7 +103,7 @@ class ScreenPosterViewer : ComponentActivity() {
             ),
             title = {
                 Text(
-                    GlobalSchema.posterDialogTitle.value,
+                    ScreenPosterViewerCompanion.posterViewerTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -123,4 +124,13 @@ class ScreenPosterViewer : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenPosterViewerCompanion : Application() {
+    companion object {
+        /* The poster image title and URL. */
+        var posterViewerTitle: String = String()
+        var posterViewerCaption: String = String()
+        var posterViewerImageSource: String = String()
+    }
 }

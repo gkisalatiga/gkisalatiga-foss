@@ -34,6 +34,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.VolunteerActivism
@@ -63,8 +64,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -76,6 +79,7 @@ import org.gkisalatiga.fdroid.R
 import org.gkisalatiga.fdroid.global.GlobalSchema
 import org.gkisalatiga.fdroid.lib.AppColors
 import org.gkisalatiga.fdroid.lib.Logger
+import org.gkisalatiga.fdroid.lib.NavigationRoutes
 import org.gkisalatiga.fdroid.lib.StringFormatter
 import org.json.JSONObject
 
@@ -112,7 +116,7 @@ class ScreenPukatBerkat : ComponentActivity() {
     // of the "gkisplus-main.json" JSON file, where N is an arbitrary non-negative integer.
     private val pukatBerkatDictIndices = listOf(
         "food",
-        "non-food",
+        "goods",
         "service"
     )
 
@@ -123,16 +127,8 @@ class ScreenPukatBerkat : ComponentActivity() {
         scope = rememberCoroutineScope()
 
         Scaffold (topBar = { getTopBar() }) {
-            Column (
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())
-                    .fillMaxSize()
-            ) {
-                Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
-                    getMainContent()
-                }
+            Box ( Modifier.fillMaxSize().padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
+                getMainContent()
             }
         }  // --- end of Scaffold.
 
@@ -145,7 +141,7 @@ class ScreenPukatBerkat : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
+            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
         }
     }
 
@@ -154,11 +150,7 @@ class ScreenPukatBerkat : ComponentActivity() {
 
         HorizontalPager(
             state = horizontalPagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .fillMaxHeight()
-                .wrapContentHeight()
-                .padding(top = 0.dp),
+            modifier = Modifier.fillMaxSize().padding(top = 0.dp),
             // Without this property, the left-right page scrolling would be insanely laggy!
             beyondViewportPageCount = 2
         ) {
@@ -170,6 +162,7 @@ class ScreenPukatBerkat : ComponentActivity() {
     @Composable
     private fun getSectionUI(dictIndex: String, intIndex: Int) {
         val ctx = LocalContext.current
+        val uriHandler = LocalUriHandler.current
 
         /* Converting JSONArray to regular list. */
         val pukatBerkatListAsJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("pukat-berkat")
@@ -194,28 +187,33 @@ class ScreenPukatBerkat : ComponentActivity() {
         /* Save the scroll state */
         val sectionScrollState = when (dictIndex) {
             "food" -> ScreenPukatBerkatCompanion.rememberedScrollStateFood!!
-            "non-food" -> ScreenPukatBerkatCompanion.rememberedScrollStateNonFood!!
+            "goods" -> ScreenPukatBerkatCompanion.rememberedScrollStateGoods!!
             "service" -> ScreenPukatBerkatCompanion.rememberedScrollStateService!!
             else -> rememberScrollState()
         }
 
         /* Draw the UI. */
         Column (
-            modifier = Modifier.fillMaxSize().verticalScroll(sectionScrollState),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(sectionScrollState)
+                .padding(20.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
             /* Iterating through every Pukat Berkat item. */
             for (i in 0 until enumeratedPukatBerkatList.size) {
-                // Debug test.
                 val curList = enumeratedPukatBerkatList[i]
                 val curListSize = enumeratedPukatBerkatList.size
-                Logger.logTest({}, "Testing of enumeratedPukatBerkatList -> [curListSize] $curListSize ::  [curList] $curList")
+
+                // Debug test.
+                // Logger.logTest({}, "Testing of enumeratedPukatBerkatList -> [curListSize] $curListSize ::  [curList] $curList")
 
                 // Preparing the arguments.
                 val title = curList["title"] as String
                 val desc = curList["desc"] as String
                 val price = curList["price"] as String
+                val type = curList["type"] as String
                 val thumbnailImage = curList["image"] as String
                 val vendor = curList["vendor"] as String
                 val contactMessage = stringResource(R.string.pukatberkat_whatsapp_text_template)
@@ -227,22 +225,22 @@ class ScreenPukatBerkat : ComponentActivity() {
                     contactMessage
                 )
 
+                // Determine whether to display the card based on the filter criterion.
+                if (type != pukatBerkatDictIndices[intIndex]) continue
+
                 // Displaying the individual card.
                 Card(
                     onClick = {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
-                        // TODO: Navigation upon click.
-                        /*
-                        // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB
+                        // Set the PosterViewer parameters.
+                        ScreenPosterViewerCompanion.posterViewerTitle = title
+                        ScreenPosterViewerCompanion.posterViewerCaption = desc
+                        ScreenPosterViewerCompanion.posterViewerImageSource = thumbnailImage
 
-                        // Navigate to the WebView viewer.
-                        ScreenInternalHTMLCompanion.internalWebViewTitle = title
-                        ScreenInternalHTMLCompanion.targetHTMLContent = firstPostHTML
-
-                        // Pushing the screen.
-                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_INTERNAL_HTML*/
+                        // Navigate to the screen.
+                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_PUKAT_BERKAT
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_POSTER_VIEWER
                     },
                     modifier = Modifier.padding(bottom = 10.dp)
                 ) {
@@ -266,7 +264,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                             }
                         }
                         // The item description.
-                        Text(desc, fontSize = 18.sp, fontWeight = FontWeight.Normal, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(desc, fontSize = 18.sp, fontStyle = FontStyle.Italic, fontWeight = FontWeight.Normal, maxLines = 15, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(top = 8.dp))
                         // The WhatsApp action button.
                         TextButton(
                             modifier = Modifier.padding(top = 8.dp),
@@ -276,19 +274,15 @@ class ScreenPukatBerkat : ComponentActivity() {
                             onClick = {
                                 if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
 
-                                // TODO: WhatsApp action.
-                                /*
-                                // Set the content list.
-                                ScreenYKBListCompanion.targetYKBArchiveList = postsList
-                                ScreenYKBListCompanion.screenYKBListTitle = title
-
-                                // Set the navigation.
-                                GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_YKB
-                                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_YKB_LIST
-                                */
+                                // Opens in an external browser.
+                                // SOURCE: https://stackoverflow.com/a/69103918
+                                uriHandler.openUri(contactURL)
                             }
                         ) {
-                            Text(vendor.uppercase())
+                            Row (verticalAlignment = Alignment.CenterVertically) {
+                                Text(vendor.uppercase())
+                                Icon(Icons.AutoMirrored.Default.ArrowRight, "", modifier = Modifier.padding(start = 5.dp))
+                            }
                         }
                     }
                 }
@@ -317,7 +311,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
+                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -363,7 +357,7 @@ class ScreenPukatBerkatCompanion : Application() {
     companion object {
         /* Saves the scrolling state of each Pukat Berkat tab menu. */
         var rememberedScrollStateFood: ScrollState? = null
-        var rememberedScrollStateNonFood: ScrollState? = null
+        var rememberedScrollStateGoods: ScrollState? = null
         var rememberedScrollStateService: ScrollState? = null
 
         /* Saves information about the currently/last selected Pukat Berkat tab. */

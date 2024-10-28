@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -207,7 +208,10 @@ class ScreenYKB : ComponentActivity() {
                                 GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_YKB_LIST
                             }
                         ) {
-                            Text(title.uppercase())
+                            Row (verticalAlignment = Alignment.CenterVertically) {
+                                Text(title.uppercase())
+                                Icon(Icons.AutoMirrored.Default.ArrowRight, "", modifier = Modifier.padding(start = 5.dp))
+                            }
                         }
                     }
                 }

@@ -95,7 +95,6 @@ import org.gkisalatiga.fdroid.screen.ScreenGaleriList
 import org.gkisalatiga.fdroid.screen.ScreenGaleriView
 import org.gkisalatiga.fdroid.screen.ScreenGaleriYear
 import org.gkisalatiga.fdroid.screen.ScreenInternalHTML
-import org.gkisalatiga.fdroid.screen.ScreenInternalHTMLCompanion
 import org.gkisalatiga.fdroid.screen.ScreenLibrary
 import org.gkisalatiga.fdroid.screen.ScreenLicense
 import org.gkisalatiga.fdroid.screen.ScreenLiturgi
@@ -286,7 +285,7 @@ class ActivityLauncher : ComponentActivity() {
             GlobalSchema.screenMediaScrollState = rememberScrollState()
             GlobalSchema.screenPersembahanScrollState = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
-            ScreenPukatBerkatCompanion.rememberedScrollStateNonFood = rememberScrollState()
+            ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
@@ -525,24 +524,6 @@ class ActivityLauncher : ComponentActivity() {
         // Use multithread (coroutine scope) so that it won't block the app's execution.
         val scope = rememberCoroutineScope()
         scope.run {
-
-            // TODO: Remove this obsolete code block.
-            /*/* Read the carousel JSON object. */
-            // First, we clear the array list.
-            GlobalSchema.carouselJSONObject.clear()
-            GlobalSchema.carouselJSONKey.clear()
-            // Directly assign globally.
-            val carouselParentNode = GlobalSchema.globalJSONObject!!.getJSONObject("carousel")
-            for (l in carouselParentNode.keys()) {
-                // Extract the static data's node names.
-                GlobalSchema.carouselJSONObject.add(carouselParentNode.getJSONObject(l))
-
-                // Get the carousel JSON object key strings.
-                GlobalSchema.carouselJSONKey.add(l)
-            }*/
-
-            /**********************************************************************/
-
             // "Infinite" pager page scrolling.
             // Please fill the following integer-variable with a number of pages
             // that the user won't bother scrolling.

@@ -95,26 +95,6 @@ class ScreenMedia : ComponentActivity() {
             }
         }
 
-        // TODO: Remove this obsolescence.
-        // The "pinned playlist" section.
-        /*val pinnedList: JSONArray = GlobalSchema.globalJSONObject!!.getJSONObject("yt").getJSONArray("standard")
-
-        // Enlist the cards to be shown in this fragment.
-        // This is equivalent to this fragment's particular JSON node.
-        val pinnedPlaylistTitle: MutableList<String> = mutableListOf()
-        val pinnedPlaylistContent: MutableList<JSONArray> = mutableListOf()
-        for (i in 0 until pinnedList.length()) {
-            pinnedPlaylistTitle.add(
-                (pinnedList[i] as JSONObject).getString("title")
-            )
-
-            pinnedPlaylistContent.add(
-                (pinnedList[i] as JSONObject).getJSONArray("content")
-            )
-        }
-        // pinnedPlaylistTitle.removeAt(0)
-        // pinnedPlaylistContent.removeAt(0)*/
-
         // Enabling vertical scrolling, and setting the layout to center both vertically and horizontally.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
         // SOURCE: https://stackoverflow.com/a/72769561
