@@ -39,3 +39,8 @@ local.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Let's pledge to manually publish and upload APKs and Android app bundles.
+# Well only upload the uncompiled source codes in the main branch of GitHub.
+*.apk
+*.aab
