@@ -1,0 +1,154 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'org.gkisalatiga.fdroid'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "org.gkisalatiga.fdroid"
+        minSdk 21
+        targetSdk 34
+        versionCode 27
+        versionName "0.4.4-rc"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            // Enables on-the-fly edit of drawable vectors.
+            // SOURCE: https://stackoverflow.com/a/38418049
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            // Enables code shrinking, obfuscation, and optimization for only
+            // your project's release build type. Make sure to use a build
+            // variant with `debuggable false`.
+            // SOURCE: https://developer.android.com/build/shrink-code#groovy
+            minifyEnabled true
+
+            // Enables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+            // SOURCE: https://developer.android.com/build/shrink-code#groovy
+            shrinkResources true
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+
+        // SOURCE: https://stackoverflow.com/q/65545018
+        freeCompilerArgs += [
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+        ]
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        // The default version.
+        // kotlinCompilerExtensionVersion '1.3.2'
+
+        // Newer version that can be used.
+        // kotlinCompilerExtensionVersion = '1.5.14'
+
+        // You need a compatible Kotlin compiler version to use Jetpack Compose.
+        // The table of compatibility list is listed below.
+        // SOURCE: https://developer.android.com/jetpack/androidx/releases/compose-kotlin
+        // kotlinCompilerExtensionVersion = '1.3.0'
+        // kotlinCompilerExtensionVersion = '1.4.6'
+        kotlinCompilerExtensionVersion = '1.5.13'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.activity:activity-compose:1.5.1'
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+    // Enable screen navigation in Jetpack Compose
+    // SOURCE: https://medium.com/@KaushalVasava/navigation-in-jetpack-compose-full-guide-beginner-to-advanced-950c1133740
+    implementation('androidx.navigation:navigation-compose:2.7.7')
+
+    // Enable ModalDrawerSheet functionality
+    // SOURCE: https://www.composables.com/material3/modalbottomsheet
+    implementation("androidx.compose.material3:material3:1.3.0-beta04")
+
+    // Enable loading async images from the internet
+    // SOURCE: https://github.com/coil-kt/coil#jetpack-compose
+    // SOURCE: https://developer.android.com/develop/ui/compose/graphics/images/loading
+    // SOURCE: https://coil-kt.github.io/coil/compose/
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
+    // Enable the customizable YouTube embeddable player.
+    // SOURCE: https://dev.to/mozeago/jetpack-compose-loadinghow-to-load-a-youtube-video-or-youtube-livestream-channel-to-your-android-application-4ffc
+    // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:custom-ui:12.1.0")
+
+    // Add more material icons.
+    // SOURCE: https://stackoverflow.com/a/65665564
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Enable markdown rendering with customizable fonts.
+    // SOURCE: https://www.perplexity.ai/search/best-markdown-renderer-for-jet-e2J8laOcTPuvhZyepYE10Q
+    // SOURCE: https://github.com/jeziellago/compose-markdown
+    implementation("com.github.jeziellago:compose-markdown:0.5.3")
+
+    // To allow WorkManager to start background services and works, even after device restart.
+    // SOURCE: https://medium.com/@denniskirimi.dk/android-workmanager-37e08c070439
+    // ---
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+
+    // Enable markdown rendering.
+    // SOURCE: https://stackoverflow.com/a/68899070
+    // SOURCE: https://github.com/halilozercan/compose-richtext
+    // SOURCE: https://halilibo.com/compose-richtext/
+    // implementation("com.halilibo.compose-richtext:richtext-commonmark:1.0.0-alpha01")
+    // implementation("com.halilibo.compose-richtext:richtext-ui-material:1.0.0-alpha01")
+
+    // For displaying icons on tabs?
+    // SOURCE: https://stackoverflow.com/q/78398074
+    // implementation(platform("androidx.compose:compose-bom"))
+
+    // For displaying notifications.
+    // implementation ("com.android.support:support-compat")
+
+    // Allow lifecycle observation and activity/fragment watching.
+    // SOURCE: http://stackoverflow.com/questions/52369540/ddg#53669865
+    // implementation "android.arch.lifecycle:extensions:1.1.1"
+
+    // Enable global storing, accessing, and writing of variables inside composable elements.
+    // SOURCE: https://github.com/GuyMichael/Reactdroid
+    // SOURCE: https://medium.com/nerd-for-tech/android-jetpackcompose-with-global-state-3a0b3c0f0b30
+    // implementation("com.github.GuyMichael.reactdroid:reactdroid:0.1.87")
+}
