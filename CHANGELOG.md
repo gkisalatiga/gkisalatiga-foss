@@ -2,10 +2,6 @@
 
 ## Next RC Update
 
-:information_source: **INFO**
-
-- In this release, the app package ID is changed from the original `org.gkisalatiga.plus` to `org.gkisalatiga.fdroid`
-
 :star2: **NEW**
 
 - Added the "Pukat Berkat" menu

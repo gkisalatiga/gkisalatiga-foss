@@ -62,7 +62,7 @@ Each UI class file should bear a global companion object, useful in passing data
 ### October 2024
 
 - [ ] Add background feed fetcher (data updater) using `WorkManager`
-- [ ] Add "ruang berbagi" (promotional) feature
+- [X] Add "ruang berbagi" (promotional) feature
 - [ ] Add search content feature
 - [ ] Create the wiki page and migrate documentations from `README.md` to the respective wiki pages
 - [X] Fix "Carousel not displaying the latest data"

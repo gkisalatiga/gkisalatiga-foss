@@ -2,10 +2,7 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="GKI_Salatiga.app.fdroid">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="app_fdroid">
+      <SelectionState runConfigName="app_plus">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
