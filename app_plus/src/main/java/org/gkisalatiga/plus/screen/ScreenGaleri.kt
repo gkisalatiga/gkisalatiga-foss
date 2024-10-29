@@ -54,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -85,7 +86,7 @@ class ScreenGaleri : ComponentActivity() {
         val ctx = LocalContext.current
 
         // The agenda node.
-        val galleryNode = GlobalSchema.globalGalleryObject!!
+        val galleryNode = GalleryCompanion.jsonRoot!!
 
         // Enlist the list of years, corresponding to name of days.
         val galleryYearList = mutableListOf(String())

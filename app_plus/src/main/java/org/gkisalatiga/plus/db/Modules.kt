@@ -8,17 +8,18 @@
  * or downloaded online.
  */
 
-package org.gkisalatiga.plus.lib
+package org.gkisalatiga.plus.db
 
+import android.app.Application
 import android.content.Context
+import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
-class AppGallery(private val ctx: Context) {
+class Modules(private val ctx: Context) {
 
     private var _parsedJSONString: String = ""
 
@@ -27,7 +28,7 @@ class AppGallery(private val ctx: Context) {
      * and parse them into string inside the class.
      * SOURCE: https://stackoverflow.com/a/45202002
      */
-    fun loadJSON(absolutePathToJSON: String) {
+    private fun loadJSON(absolutePathToJSON: String) {
         // SOURCE: https://stackoverflow.com/a/45202002
         val file = File(absolutePathToJSON)
         val inputAsString = FileInputStream(file).bufferedReader().use { it.readText() }
@@ -49,67 +50,80 @@ class AppGallery(private val ctx: Context) {
      * This is useful especially when the app has not yet loaded the refreshed JSON metadata
      * from the internet yet.
      */
-    fun getFallbackGalleryData(): JSONObject {
+    fun getFallbackModulesData(): JSONObject {
         // Loading the local JSON file.
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_modules)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
-        // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONObject("gallery")
+        // Return the fallback JSONObject, and then navigate to the "modules" node.
+        return JSONObject(inputAsString).getJSONObject("modules")
     }
 
-    fun getFallbackGalleryMetadata(): JSONObject {
+    fun getFallbackModulesMetadata(): JSONObject {
         // Loading the local JSON file.
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_modules)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
-        // Return the fallback JSONObject, and then navigate to the "gallery" node.
+        // Return the fallback JSONObject, and then navigate to the "modules" node.
         return JSONObject(inputAsString).getJSONObject("meta")
     }
 
     /**
-     * Initializes the gallery data and assign the global variable that handles it.
+     * Initializes the modules data and assign the global variable that handles it.
      */
-    fun initFallbackGalleryData() {
-        GlobalSchema.globalGalleryObject = getFallbackGalleryData()
+    fun initFallbackModulesData() {
+        ModulesCompanion.jsonRoot = getFallbackModulesData()
     }
 
     /**
      * Parse the specified JSON string and serialize it, then
-     * return a JSON object that reads the database's main data.
+     * return a JSON object that reads the database's modules data.
      * SOURCE: https://stackoverflow.com/a/50468095
      * ---
      * Assumes the JSON metadata has been initialized by the Downloader class.
      * Please run Downloader().initMetaData() before executing this function.
      */
-    fun getGalleryData(): JSONObject {
+    fun getModulesData(): JSONObject {
         // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GlobalSchema.absolutePathToGalleryData).exists()
+        val JSONExists = File(ModulesCompanion.absolutePathToJSONFile).exists()
 
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GlobalSchema.isGalleryDataInitialized.value || JSONExists) {
-            this.loadJSON(GlobalSchema.absolutePathToGalleryData)
-            return JSONObject(_parsedJSONString).getJSONObject("gallery")
+        if (ModulesCompanion.mutableIsDataInitialized.value || JSONExists) {
+            this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
+            return JSONObject(_parsedJSONString).getJSONObject("modules")
         } else {
-            return getFallbackGalleryData()
+            return getFallbackModulesData()
         }
 
     }
 
-    fun getGalleryMetadata(): JSONObject {
+    fun getModulesMetadata(): JSONObject {
         // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GlobalSchema.absolutePathToGalleryData).exists()
+        val JSONExists = File(ModulesCompanion.absolutePathToJSONFile).exists()
 
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GlobalSchema.isGalleryDataInitialized.value || JSONExists) {
-            this.loadJSON(GlobalSchema.absolutePathToGalleryData)
+        if (ModulesCompanion.mutableIsDataInitialized.value || JSONExists) {
+            this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
             return JSONObject(_parsedJSONString).getJSONObject("meta")
         } else {
-            return getFallbackGalleryMetadata()
+            return getFallbackModulesMetadata()
         }
 
     }
+}
 
+class ModulesCompanion : Application() {
+    companion object {
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-modules.min.json"
+
+        /* Back-end mechanisms. */
+        var absolutePathToJSONFile: String = String()
+        val mutableIsDataInitialized = mutableStateOf(false)
+        val savedFilename = "gkisplus-modules.json"
+
+        /* The JSON object that will be accessed by screens. */
+        var jsonRoot: JSONObject? = null
+    }
 }

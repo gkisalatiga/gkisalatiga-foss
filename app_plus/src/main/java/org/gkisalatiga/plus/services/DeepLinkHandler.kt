@@ -6,6 +6,7 @@
 
 package org.gkisalatiga.plus.services
 
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -16,7 +17,7 @@ class DeepLinkHandler {
     companion object {
         fun handleSaRen() {
             // The "all playlist" section.
-            val allVideoPlaylists: JSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("yt")
+            val allVideoPlaylists: JSONArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
 
             // Enlist the SaRen video lists to be shown in the video list.
             var sarenPlaylistTitle = ""

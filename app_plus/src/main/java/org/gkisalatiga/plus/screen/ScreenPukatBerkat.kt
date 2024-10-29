@@ -75,8 +75,9 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppColors
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -162,7 +163,7 @@ class ScreenPukatBerkat : ComponentActivity() {
         val uriHandler = LocalUriHandler.current
 
         /* Converting JSONArray to regular list. */
-        val pukatBerkatListAsJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("pukat-berkat")
+        val pukatBerkatListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("pukat-berkat")
         val enumeratedPukatBerkatList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
         for (i in 0 until pukatBerkatListAsJSONArray.length()) {
             val curNode = pukatBerkatListAsJSONArray[i] as JSONObject
@@ -265,7 +266,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                         TextButton(
                             modifier = Modifier.padding(top = 8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(AppColors.YKB_ARCHIVE_BUTTON_COLOR)
+                                containerColor = Color(Colors.YKB_ARCHIVE_BUTTON_COLOR)
                             ),
                             onClick = {
                                 if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()

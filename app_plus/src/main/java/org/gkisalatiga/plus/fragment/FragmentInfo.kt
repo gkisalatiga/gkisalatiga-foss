@@ -49,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
+import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -64,7 +66,7 @@ class FragmentInfo : ComponentActivity() {
     private var externalLinkURL = mutableStateOf("https://www.example.com")
 
     // The JSON node of the social media CTA.
-    private val socialMediaJSONNode = GlobalSchema.globalJSONObject!!.getJSONObject("url-profile")
+    private val socialMediaJSONNode = MainCompanion.jsonRoot!!.getJSONObject("url-profile")
 
     // The list of node title.
     // This must be manually specified in the app.
@@ -97,8 +99,8 @@ class FragmentInfo : ComponentActivity() {
 
         // Converting JSONArray to regular lists.
         val staticDataList: MutableList<JSONObject> = mutableListOf()
-        for (i in 0 until GlobalSchema.globalStaticObject!!.length()) {
-            staticDataList.add(GlobalSchema.globalStaticObject!![i] as JSONObject)
+        for (i in 0 until StaticCompanion.jsonRoot!!.length()) {
+            staticDataList.add(StaticCompanion.jsonRoot!![i] as JSONObject)
         }
 
         // Setting the layout to center both vertically and horizontally,

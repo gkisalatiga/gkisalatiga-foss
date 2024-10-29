@@ -48,8 +48,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppColors
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -63,7 +64,7 @@ class FragmentServices : ComponentActivity() {
     fun getComposable() {
 
         // The "all video playlists" JSON array.
-        val allVideoPlaylistArray = GlobalSchema.globalJSONObject!!.getJSONArray("yt")
+        val allVideoPlaylistArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
 
         // Get the pinned video playlists.
         val pinnedPlaylistDictionary: MutableList<JSONObject> = mutableListOf()
@@ -97,8 +98,8 @@ class FragmentServices : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
-                color = Color(AppColors.FRAGMENT_SERVICES_SHOWMORE_BACKGROUND),
-                contentColor = Color(AppColors.FRAGMENT_SERVICES_SHOWMORE_CONTENT),
+                color = Color(Colors.FRAGMENT_SERVICES_SHOWMORE_BACKGROUND),
+                contentColor = Color(Colors.FRAGMENT_SERVICES_SHOWMORE_CONTENT),
                 onClick = {
                     AppNavigation.navigate(NavigationRoutes.SCREEN_MEDIA)
                 }

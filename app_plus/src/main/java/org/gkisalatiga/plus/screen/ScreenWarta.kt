@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -183,7 +184,7 @@ class ScreenWarta : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Retrieve the list of news. */
-            val formListAsJSONArray = GlobalSchema.globalJSONObject!!.getJSONObject("pdf").getJSONArray("wj")
+            val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONObject("pdf").getJSONArray("wj")
 
             /* Enumerate and enlist the individual card. */
             val enumeratedFormList: MutableList<Map<String, String>> =  mutableListOf(emptyMap<String, String>())

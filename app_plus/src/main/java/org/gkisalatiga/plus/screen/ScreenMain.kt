@@ -101,7 +101,7 @@ import org.gkisalatiga.plus.fragment.FragmentHome
 import org.gkisalatiga.plus.fragment.FragmentInfo
 import org.gkisalatiga.plus.fragment.FragmentServices
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppColors
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
@@ -583,8 +583,8 @@ class ScreenMain : ComponentActivity() {
 class ScreenMainCompanion : Application () {
     companion object {
         val mutableTopBarContainerTransparency = mutableStateOf(0.0f)
-        val topBarContainerColor = Color(AppColors.MAIN_TOP_BAR_COLOR)
-        val topBarTitleContentColor = Color(AppColors.MAIN_TOP_BAR_CONTENT_COLOR)
+        val topBarContainerColor = Color(Colors.MAIN_TOP_BAR_COLOR)
+        val topBarTitleContentColor = Color(Colors.MAIN_TOP_BAR_CONTENT_COLOR)
 
         /* The calculated top bar padding of the scaffolding. */
         var calculatedTopBarPadding = 0.dp

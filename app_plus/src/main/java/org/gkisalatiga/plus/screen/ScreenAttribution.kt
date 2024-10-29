@@ -43,7 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppDatabase
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.json.JSONArray
 import org.json.JSONObject
@@ -89,7 +89,7 @@ class ScreenAttribution : ComponentActivity() {
 
         // Load the JSON file containing attributions of all open source programs
         // and code which are used by this app.
-        val attribJSON: JSONObject = AppDatabase(ctx).getAttributions()
+        val attribJSON: JSONObject = Main(ctx).getAttributions()
         val attribArray: JSONArray = attribJSON.getJSONArray("opensource-attributions")
 
         // Convert JSONArray to regular list.

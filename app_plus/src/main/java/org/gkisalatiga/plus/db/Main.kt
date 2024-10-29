@@ -8,17 +8,21 @@
  * or downloaded online.
  */
 
-package org.gkisalatiga.plus.lib
+package org.gkisalatiga.plus.db
 
+import android.app.Application
 import android.content.Context
+import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.Logger
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
-class AppDatabase(private val ctx: Context) {
+class Main(private val ctx: Context) {
 
     private var _parsedJSONString: String = ""
 
@@ -27,7 +31,7 @@ class AppDatabase(private val ctx: Context) {
      * and parse them into string inside the class.
      * SOURCE: https://stackoverflow.com/a/45202002
      */
-    fun loadJSON(absolutePathToJSON: String) {
+    private fun loadJSON(absolutePathToJSON: String) {
         // SOURCE: https://stackoverflow.com/a/45202002
         val file = File(absolutePathToJSON)
         val inputAsString = FileInputStream(file).bufferedReader().use { it.readText() }
@@ -68,7 +72,7 @@ class AppDatabase(private val ctx: Context) {
         // Loading the local JSON file.
         // SOURCE: https://stackoverflow.com/a/2856501
         // SOURCE: https://stackoverflow.com/a/39500046
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_metadata)
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_main)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "data" node.
@@ -79,7 +83,7 @@ class AppDatabase(private val ctx: Context) {
         // Loading the local JSON file.
         // SOURCE: https://stackoverflow.com/a/2856501
         // SOURCE: https://stackoverflow.com/a/39500046
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_metadata)
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_main)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "data" node.
@@ -90,7 +94,7 @@ class AppDatabase(private val ctx: Context) {
      * Initializes the main data and assign the global variable that handles it.
      */
     fun initFallbackGalleryData() {
-        GlobalSchema.globalJSONObject = getFallbackMainData()
+        MainCompanion.jsonRoot = getFallbackMainData()
     }
 
     /**
@@ -103,19 +107,19 @@ class AppDatabase(private val ctx: Context) {
      */
     fun getMainData(): JSONObject {
         // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GlobalSchema.absolutePathToJSONMetaData).exists()
+        val JSONExists = File(MainCompanion.absolutePathToJSONFile).exists()
 
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GlobalSchema.isJSONMainDataInitialized.value || JSONExists) {
-            this.loadJSON(GlobalSchema.absolutePathToJSONMetaData)
+        if (MainCompanion.mutableIsDataInitialized.value || JSONExists) {
+            this.loadJSON(MainCompanion.absolutePathToJSONFile)
 
             // Debugger logging.
             Logger.logTest({}, "Reading local/downloaded JSON main data ...")
 
             // The JSONObject main data.
             val mainData = JSONObject(this._parsedJSONString).getJSONObject("data")
-            GlobalSchema.globalJSONObject = mainData
+            MainCompanion.jsonRoot = mainData
             return mainData
         } else {
             Logger.logTest({}, "Reverting to the fallback data of the JSON schema ...")
@@ -126,12 +130,12 @@ class AppDatabase(private val ctx: Context) {
 
     fun getMainMetadata(): JSONObject {
         // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GlobalSchema.absolutePathToJSONMetaData).exists()
+        val JSONExists = File(MainCompanion.absolutePathToJSONFile).exists()
 
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GlobalSchema.isJSONMainDataInitialized.value || JSONExists) {
-            this.loadJSON(GlobalSchema.absolutePathToJSONMetaData)
+        if (MainCompanion.mutableIsDataInitialized.value || JSONExists) {
+            this.loadJSON(MainCompanion.absolutePathToJSONFile)
             return JSONObject(this._parsedJSONString).getJSONObject("meta")
         } else {
             return getFallbackMainMetadata()
@@ -139,4 +143,18 @@ class AppDatabase(private val ctx: Context) {
 
     }
 
+}
+
+class MainCompanion : Application() {
+    companion object {
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-main.min.json"
+
+        /* Back-end mechanisms. */
+        var absolutePathToJSONFile: String = String()
+        val mutableIsDataInitialized = mutableStateOf(false)
+        val savedFilename = "gkisplus-main.json"
+
+        /* The JSON object that will be accessed by screens. */
+        var jsonRoot: JSONObject? = null
+    }
 }

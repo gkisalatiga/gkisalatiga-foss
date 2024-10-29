@@ -11,9 +11,14 @@ package org.gkisalatiga.plus.services
 
 import android.content.Context
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppDatabase
-import org.gkisalatiga.plus.lib.AppGallery
-import org.gkisalatiga.plus.lib.AppStatic
+import org.gkisalatiga.plus.db.Main
+import org.gkisalatiga.plus.db.Gallery
+import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.MainCompanion
+import org.gkisalatiga.plus.db.Modules
+import org.gkisalatiga.plus.db.ModulesCompanion
+import org.gkisalatiga.plus.db.Static
+import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.lib.Downloader
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
@@ -26,19 +31,23 @@ class DataUpdater(private val ctx: Context) {
 
     companion object {
         // The location of the remote feeds.json file to check for updates.
-        private const val FEEDS_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/feeds.json"
+        private const val FEEDS_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/feeds.json"
     }
 
     private fun getLastGalleryUpdate() : Int {
-        return AppGallery(ctx).getGalleryMetadata().getInt("last-update")
+        return Gallery(ctx).getGalleryMetadata().getInt("last-update")
     }
 
     private fun getLastMainDataUpdate() : Int {
-        return AppDatabase(ctx).getMainMetadata().getInt("last-update")
+        return Main(ctx).getMainMetadata().getInt("last-update")
+    }
+
+    private fun getLastModulesDataUpdate() : Int {
+        return Modules(ctx).getModulesMetadata().getInt("last-update")
     }
 
     private fun getLastStaticUpdate() : Int {
-        return AppStatic(ctx).getStaticMetadata().getInt("last-update")
+        return Static(ctx).getStaticMetadata().getInt("last-update")
     }
 
     /**
@@ -53,6 +62,7 @@ class DataUpdater(private val ctx: Context) {
         // Dumps the JSON string, and compare them with the currently cached JSON last update values.
         Logger.logDump({}, inputAsString)
         Logger.logTest({}, "Last Main Data Update: ${getLastMainDataUpdate()}")
+        Logger.logTest({}, "Last Modules Data Update: ${getLastModulesDataUpdate()}")
         Logger.logTest({}, "Last Gallery Data Update: ${getLastGalleryUpdate()}")
         Logger.logTest({}, "Last Static Data Update: ${getLastStaticUpdate()}")
 
@@ -76,17 +86,25 @@ class DataUpdater(private val ctx: Context) {
 
                 // Set the flag to "false" to signal that we need to have the new data now,
                 // then make the attempt to download the JSON files.
-                if (getLastMainDataUpdate() < feedJSONObject.getInt("last-maindata-update")) {
+                if (getLastMainDataUpdate() < feedJSONObject.getInt("last-main-update")) {
                     Logger.logUpdate({}, "Updating main data ...", LoggerType.INFO)
-                    GlobalSchema.isJSONMainDataInitialized.value = false
+                    MainCompanion.mutableIsDataInitialized.value = false
                     Downloader(ctx).initMainData(autoReloadGlobalData = true)
                 } else {
                     Logger.logUpdate({}, "Main data is up-to-date!", LoggerType.INFO)
                 }
 
+                if (getLastModulesDataUpdate() < feedJSONObject.getInt("last-modules-update")) {
+                    Logger.logUpdate({}, "Updating modules data ...", LoggerType.INFO)
+                    ModulesCompanion.mutableIsDataInitialized.value = false
+                    Downloader(ctx).initModulesData(autoReloadGlobalData = true)
+                } else {
+                    Logger.logUpdate({}, "Modules data is up-to-date!", LoggerType.INFO)
+                }
+
                 if (getLastGalleryUpdate() < feedJSONObject.getInt("last-gallery-update")) {
                     Logger.logUpdate({}, "Updating gallery data ...", LoggerType.INFO)
-                    GlobalSchema.isGalleryDataInitialized.value = false
+                    GalleryCompanion.mutableIsDataInitialized.value = false
                     Downloader(ctx).initGalleryData(autoReloadGlobalData = true)
                 } else {
                     Logger.logUpdate({}, "Gallery data is up-to-date!", LoggerType.INFO)
@@ -94,7 +112,7 @@ class DataUpdater(private val ctx: Context) {
 
                 if (getLastStaticUpdate() < feedJSONObject.getInt("last-static-update")) {
                     Logger.logUpdate({}, "Updating static data ...", LoggerType.INFO)
-                    GlobalSchema.isStaticDataInitialized.value = false
+                    StaticCompanion.mutableIsDataInitialized.value = false
                     Downloader(ctx).initStaticData(autoReloadGlobalData = true)
                 } else {
                     Logger.logUpdate({}, "Static data is up-to-date!", LoggerType.INFO)
@@ -105,9 +123,10 @@ class DataUpdater(private val ctx: Context) {
             }
 
             // Assign the JSON data globally.
-            GlobalSchema.globalJSONObject = AppDatabase(ctx).getMainData()
-            GlobalSchema.globalGalleryObject = AppGallery(ctx).getGalleryData()
-            GlobalSchema.globalStaticObject = AppStatic(ctx).getStaticData()
+            MainCompanion.jsonRoot = Main(ctx).getMainData()
+            ModulesCompanion.jsonRoot = Modules(ctx).getModulesData()
+            GalleryCompanion.jsonRoot = Gallery(ctx).getGalleryData()
+            StaticCompanion.jsonRoot = Static(ctx).getStaticData()
 
             // End the thread.
             executor.shutdown()

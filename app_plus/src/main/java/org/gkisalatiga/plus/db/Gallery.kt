@@ -8,18 +8,18 @@
  * or downloaded online.
  */
 
-package org.gkisalatiga.plus.lib
+package org.gkisalatiga.plus.db
 
+import android.app.Application
 import android.content.Context
+import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
-class AppStatic(private val ctx: Context) {
+class Gallery(private val ctx: Context) {
 
     private var _parsedJSONString: String = ""
 
@@ -28,7 +28,7 @@ class AppStatic(private val ctx: Context) {
      * and parse them into string inside the class.
      * SOURCE: https://stackoverflow.com/a/45202002
      */
-    fun loadJSON(absolutePathToJSON: String) {
+    private fun loadJSON(absolutePathToJSON: String) {
         // SOURCE: https://stackoverflow.com/a/45202002
         val file = File(absolutePathToJSON)
         val inputAsString = FileInputStream(file).bufferedReader().use { it.readText() }
@@ -50,18 +50,18 @@ class AppStatic(private val ctx: Context) {
      * This is useful especially when the app has not yet loaded the refreshed JSON metadata
      * from the internet yet.
      */
-    fun getFallbackStaticData(): JSONArray {
+    fun getFallbackGalleryData(): JSONObject {
         // Loading the local JSON file.
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONArray("static")
+        return JSONObject(inputAsString).getJSONObject("gallery")
     }
 
-    fun getFallbackStaticMetadata(): JSONObject {
+    fun getFallbackGalleryMetadata(): JSONObject {
         // Loading the local JSON file.
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
@@ -71,8 +71,8 @@ class AppStatic(private val ctx: Context) {
     /**
      * Initializes the gallery data and assign the global variable that handles it.
      */
-    fun initFallbackStaticData() {
-        GlobalSchema.globalStaticObject = getFallbackStaticData()
+    fun initFallbackGalleryData() {
+        GalleryCompanion.jsonRoot = getFallbackGalleryData()
     }
 
     /**
@@ -83,34 +83,47 @@ class AppStatic(private val ctx: Context) {
      * Assumes the JSON metadata has been initialized by the Downloader class.
      * Please run Downloader().initMetaData() before executing this function.
      */
-    fun getStaticData(): JSONArray {
+    fun getGalleryData(): JSONObject {
         // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GlobalSchema.absolutePathToStaticData).exists()
+        val JSONExists = File(GalleryCompanion.absolutePathToJSONFile).exists()
 
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GlobalSchema.isStaticDataInitialized.value || JSONExists) {
-            this.loadJSON(GlobalSchema.absolutePathToStaticData)
-            return JSONObject(_parsedJSONString).getJSONArray("static")
+        if (GalleryCompanion.mutableIsDataInitialized.value || JSONExists) {
+            this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
+            return JSONObject(_parsedJSONString).getJSONObject("gallery")
         } else {
-            return getFallbackStaticData()
+            return getFallbackGalleryData()
         }
 
     }
 
-    fun getStaticMetadata(): JSONObject {
+    fun getGalleryMetadata(): JSONObject {
         // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GlobalSchema.absolutePathToStaticData).exists()
+        val JSONExists = File(GalleryCompanion.absolutePathToJSONFile).exists()
 
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GlobalSchema.isStaticDataInitialized.value || JSONExists) {
-            this.loadJSON(GlobalSchema.absolutePathToStaticData)
+        if (GalleryCompanion.mutableIsDataInitialized.value || JSONExists) {
+            this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
             return JSONObject(_parsedJSONString).getJSONObject("meta")
         } else {
-            return getFallbackStaticMetadata()
+            return getFallbackGalleryMetadata()
         }
 
     }
+}
 
+class GalleryCompanion : Application() {
+    companion object {
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-gallery.min.json"
+
+        /* Back-end mechanisms. */
+        var absolutePathToJSONFile: String = String()
+        val mutableIsDataInitialized = mutableStateOf(false)
+        val savedFilename = "gkisplus-gallery.json"
+
+        /* The JSON object that will be accessed by screens. */
+        var jsonRoot: JSONObject? = null
+    }
 }

@@ -10,6 +10,14 @@
 package org.gkisalatiga.plus.lib
 
 import android.content.Context
+import org.gkisalatiga.plus.db.Main
+import org.gkisalatiga.plus.db.Gallery
+import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.MainCompanion
+import org.gkisalatiga.plus.db.Modules
+import org.gkisalatiga.plus.db.ModulesCompanion
+import org.gkisalatiga.plus.db.Static
+import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import java.io.File
 import java.io.FileOutputStream
@@ -42,14 +50,14 @@ class Downloader(private val ctx: Context) {
 
             try {
                 // Opening the file download stream.
-                val streamIn = java.net.URL(GlobalSchema.JSONSource).openStream()
+                val streamIn = java.net.URL(MainCompanion.REMOTE_JSON_SOURCE).openStream()
 
                 // Coverting input stream (bytes) to string.
                 // SOURCE: http://stackoverflow.com/questions/49467780/ddg#49468129
                 val decodedData: ByteArray = streamIn.readBytes()
 
                 // Creating the private file.
-                val privateFile = File(fileCreator, GlobalSchema.JSONSavedFilename)
+                val privateFile = File(fileCreator, MainCompanion.savedFilename)
 
                 // Writing into the file.
                 val out = FileOutputStream(privateFile)
@@ -58,8 +66,8 @@ class Downloader(private val ctx: Context) {
                 out.close()
 
                 // Notify all the other functions about the JSON file path.
-                GlobalSchema.isJSONMainDataInitialized.value = true
-                if (autoReloadGlobalData) GlobalSchema.globalJSONObject = AppDatabase(ctx).getMainData()
+                MainCompanion.mutableIsDataInitialized.value = true
+                if (autoReloadGlobalData) MainCompanion.jsonRoot = Main(ctx).getMainData()
 
                 Logger.log({}, "JSON metadata was successfully downloaded into: ${privateFile.absolutePath}")
 
@@ -90,14 +98,14 @@ class Downloader(private val ctx: Context) {
 
             try {
                 // Opening the file download stream.
-                val streamIn = java.net.URL(GlobalSchema.gallerySource).openStream()
+                val streamIn = java.net.URL(GalleryCompanion.REMOTE_JSON_SOURCE).openStream()
 
                 // Coverting input stream (bytes) to string.
                 // SOURCE: http://stackoverflow.com/questions/49467780/ddg#49468129
                 val decodedData: ByteArray = streamIn.readBytes()
 
                 // Creating the private file.
-                val privateFile = File(fileCreator, GlobalSchema.gallerySavedFilename)
+                val privateFile = File(fileCreator, GalleryCompanion.savedFilename)
 
                 // Writing into the file.
                 val out = FileOutputStream(privateFile)
@@ -106,14 +114,62 @@ class Downloader(private val ctx: Context) {
                 out.close()
 
                 // Notify all the other functions about the JSON file path.
-                GlobalSchema.isGalleryDataInitialized.value = true
-                if (autoReloadGlobalData) GlobalSchema.globalGalleryObject = AppGallery(ctx).getGalleryData()
+                GalleryCompanion.mutableIsDataInitialized.value = true
+                if (autoReloadGlobalData) GalleryCompanion.jsonRoot = Gallery(ctx).getGalleryData()
 
                 Logger.log({}, "Gallery was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
                 GlobalSchema.isConnectedToInternet.value = false
                 Logger.log({}, "Network unreachable when downloading the gallery data: $e", LoggerType.ERROR)
+            }
+
+            // Break free from this thread.
+            executor.shutdown()
+        }
+    }
+
+    /**
+     * Downloads and initiates the modules JSON source file from the CDN.
+     * This function will then assign the downloaded JSON path to the appropriate global variable.
+     * Requires no argument and does not return any return value.
+     * @param autoReloadGlobalData whether to reload the global JSON data after successful download
+     */
+    fun initModulesData(autoReloadGlobalData: Boolean = false) {
+        // Non-blocking the main GUI by creating a separate thread for the download
+        // Preparing the thread.
+        val executor = Executors.newSingleThreadExecutor()
+
+        // Fetching the data
+        Logger.log({}, "Attempting to download the modules JSON file ...")
+        executor.execute {
+
+            try {
+                // Opening the file download stream.
+                val streamIn = java.net.URL(ModulesCompanion.REMOTE_JSON_SOURCE).openStream()
+
+                // Coverting input stream (bytes) to string.
+                // SOURCE: http://stackoverflow.com/questions/49467780/ddg#49468129
+                val decodedData: ByteArray = streamIn.readBytes()
+
+                // Creating the private file.
+                val privateFile = File(fileCreator, ModulesCompanion.savedFilename)
+
+                // Writing into the file.
+                val out = FileOutputStream(privateFile)
+                out.flush()
+                out.write(decodedData)
+                out.close()
+
+                // Notify all the other functions about the JSON file path.
+                ModulesCompanion.mutableIsDataInitialized.value = true
+                if (autoReloadGlobalData) ModulesCompanion.jsonRoot = Modules(ctx).getModulesData()
+
+                Logger.log({}, "Modules was successfully downloaded into: ${privateFile.absolutePath}")
+
+            } catch (e: UnknownHostException) {
+                GlobalSchema.isConnectedToInternet.value = false
+                Logger.log({}, "Network unreachable when downloading the modules data: $e", LoggerType.ERROR)
             }
 
             // Break free from this thread.
@@ -138,14 +194,14 @@ class Downloader(private val ctx: Context) {
 
             try {
                 // Opening the file download stream.
-                val streamIn = java.net.URL(GlobalSchema.staticSource).openStream()
+                val streamIn = java.net.URL(StaticCompanion.REMOTE_JSON_SOURCE).openStream()
 
                 // Coverting input stream (bytes) to string.
                 // SOURCE: http://stackoverflow.com/questions/49467780/ddg#49468129
                 val decodedData: ByteArray = streamIn.readBytes()
 
                 // Creating the private file.
-                val privateFile = File(fileCreator, GlobalSchema.staticSavedFilename)
+                val privateFile = File(fileCreator, StaticCompanion.savedFilename)
 
                 // Writing into the file.
                 val out = FileOutputStream(privateFile)
@@ -154,8 +210,8 @@ class Downloader(private val ctx: Context) {
                 out.close()
 
                 // Notify all the other functions about the JSON file path.
-                GlobalSchema.isStaticDataInitialized.value = true
-                if (autoReloadGlobalData) GlobalSchema.globalStaticObject = AppStatic(ctx).getStaticData()
+                StaticCompanion.mutableIsDataInitialized.value = true
+                if (autoReloadGlobalData) StaticCompanion.jsonRoot = Static(ctx).getStaticData()
 
                 Logger.log({}, "Static data was successfully downloaded into: ${privateFile.absolutePath}")
 

@@ -60,8 +60,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppColors
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.StringFormatter
 
@@ -91,7 +92,7 @@ class ScreenAgenda : ComponentActivity() {
     private fun getMainContent() {
 
         // The agenda node.
-        val agendaJSONNode = GlobalSchema.globalJSONObject!!.getJSONObject("agenda")
+        val agendaJSONNode = MainCompanion.jsonRoot!!.getJSONObject("agenda")
 
         // Enlist the list of title, corresponding to name of days.
         val dayTitleList = agendaJSONNode.keys()
@@ -136,7 +137,7 @@ class ScreenAgenda : ComponentActivity() {
                         selected = key == selected.value,
                         modifier = Modifier.padding(start = startPadding),
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Color(AppColors.AGENDA_ITEM_CHIP_SELECTED_BACKGROUND)
+                            selectedContainerColor = Color(Colors.AGENDA_ITEM_CHIP_SELECTED_BACKGROUND)
                         )
                     )
                 }
@@ -159,7 +160,7 @@ class ScreenAgenda : ComponentActivity() {
 
                 // Draw the list item for the current event.
                 Surface(shape = RoundedCornerShape(15.dp), modifier = Modifier.padding(top = 10.dp)) {
-                    Column (Modifier.fillMaxSize().background(Color(AppColors.AGENDA_ITEM_BACKGROUND))) {
+                    Column (Modifier.fillMaxSize().background(Color(Colors.AGENDA_ITEM_BACKGROUND))) {
                         Column (modifier = Modifier.fillMaxSize().padding(15.dp)) {
                             // The item title.
                             Text( todayNode.getJSONObject(index).getString("name"), fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -189,8 +190,8 @@ class ScreenAgenda : ComponentActivity() {
                         // Display time info.
                         Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxSize()) {
                             Surface(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp)) {
-                                Column(modifier = Modifier.background(Color(AppColors.AGENDA_ITEM_TIME_BACKGROUND))) {
-                                    Text( todayNode.getJSONObject(index).getString("time"), modifier = Modifier.padding(horizontal = 10.dp).padding(vertical = 5.dp), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color(AppColors.LIGHT_THEME_WHITE))
+                                Column(modifier = Modifier.background(Color(Colors.AGENDA_ITEM_TIME_BACKGROUND))) {
+                                    Text( todayNode.getJSONObject(index).getString("time"), modifier = Modifier.padding(horizontal = 10.dp).padding(vertical = 5.dp), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color(Colors.LIGHT_THEME_WHITE))
                                 }
                             }
                         }

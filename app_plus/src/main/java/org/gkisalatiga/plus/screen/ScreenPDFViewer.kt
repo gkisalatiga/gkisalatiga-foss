@@ -13,11 +13,6 @@ package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -39,8 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
@@ -58,9 +51,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.rajat.pdfviewer.HeaderData
 import com.rajat.pdfviewer.PdfRendererView
-import com.rajat.pdfviewer.PdfViewerActivity
-import com.rajat.pdfviewer.compose.PdfRendererViewCompose
-import com.rajat.pdfviewer.util.saveTo
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
@@ -129,12 +119,12 @@ class ScreenPDFViewer : ComponentActivity() {
                 pdfRendererViewInstance.statusListener = object: PdfRendererView.StatusCallBack {
                     override fun onPageChanged(currentPage: Int, totalPage: Int) {
                         Logger.logRapidTest({}, "onPageChanged -> currentPage: $currentPage, totalPage: $totalPage", LoggerType.VERBOSE)
-                        CurrentPage.mutablecurpg.intValue = currentPage
+                        ScreenLibraryCompanion.mutablecurpg.intValue = currentPage
                     }
 
                     override fun onError(error: Throwable) {
                         super.onError(error)
-                        CurrentPage.mutableString.value = error.message!!
+                        ScreenLibraryCompanion.mutableString.value = error.message!!
                         Logger.logPDF({}, "onError -> error.message!!: ${error.message!!}")
                     }
 
@@ -144,26 +134,26 @@ class ScreenPDFViewer : ComponentActivity() {
                         totalBytes: Long?
                     ) {
                         super.onPdfLoadProgress(progress, downloadedBytes, totalBytes)
-                        CurrentPage.mutableString.value = "Megunduh: $progress. $downloadedBytes/$totalBytes"
+                        ScreenLibraryCompanion.mutableString.value = "Megunduh: $progress. $downloadedBytes/$totalBytes"
                         Logger.logPDF({}, "onPdfLoadProgress -> progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes")
                     }
 
                     override fun onPdfLoadSuccess(absolutePath: String) {
                         super.onPdfLoadSuccess(absolutePath)
-                        CurrentPage.mutableString.value = "Sukses mengunduh: $absolutePath"
+                        ScreenLibraryCompanion.mutableString.value = "Sukses mengunduh: $absolutePath"
                         Logger.logPDF({}, "onPdfLoadSuccess -> absolutePath: $absolutePath")
                     }
 
                     override fun onPdfLoadStart() {
                         super.onPdfLoadStart()
-                        CurrentPage.mutableString.value = "Memuat file..>"
+                        ScreenLibraryCompanion.mutableString.value = "Memuat file..>"
                         Logger.logPDF({}, "onPdfLoadStart (no parameter provided).")
                     }
                 }
 
-                // Text(CurrentPage.currentpg.toString())
-                Text(CurrentPage.mutablecurpg.intValue.toString())
-                Text(CurrentPage.mutableString.value)
+                // Text(ScreenLibraryCompanion.currentpg.toString())
+                Text(ScreenLibraryCompanion.mutablecurpg.intValue.toString())
+                Text(ScreenLibraryCompanion.mutableString.value)
 
                 AndroidView(
                     factory = {

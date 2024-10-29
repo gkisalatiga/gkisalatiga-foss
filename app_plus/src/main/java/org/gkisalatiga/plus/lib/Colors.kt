@@ -9,7 +9,7 @@
 
 package org.gkisalatiga.plus.lib
 
-class AppColors {
+class Colors {
     companion object {
         const val MAIN_DARK_BROWN = 0xff482505
         const val AGENDA_ITEM_BACKGROUND = 0xffFFE8BB

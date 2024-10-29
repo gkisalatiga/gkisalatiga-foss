@@ -10,10 +10,12 @@
 
 package org.gkisalatiga.plus.screen
 
+import android.app.Application
 import android.content.ClipData
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.json.JSONObject
@@ -95,7 +98,7 @@ class ScreenPersembahan : ComponentActivity() {
         val ctx = LocalContext.current
 
         // The column's saved scroll state.
-        val scrollState = GlobalSchema.screenPersembahanScrollState!!
+        val scrollState = ScreenPersembahanCompanion.rememberedScrollState!!
         Column (
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
@@ -122,7 +125,7 @@ class ScreenPersembahan : ComponentActivity() {
 
                     /* The transparent QR code. */
                     AsyncImage(
-                        GlobalSchema.offertoryQRISImageSource,
+                        ScreenPersembahanCompanion.OFFERTORY_QRIS_SOURCE,
                         contentDescription = "The QRIS code image to GKI Salatiga offertory account",
                         error = painterResource(R.drawable.thumbnail_loading),
                         modifier = Modifier.fillMaxWidth(),
@@ -143,7 +146,7 @@ class ScreenPersembahan : ComponentActivity() {
             )
 
             // The JSON node for bank account.
-            val persembahanJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("offertory")
+            val persembahanJSONArray = MainCompanion.jsonRoot!!.getJSONArray("offertory")
 
             // Iterate through every offertory option.
             isFirstElement = true
@@ -198,7 +201,7 @@ class ScreenPersembahan : ComponentActivity() {
             }
 
             // The JSON node for offertory code.
-            val kodeUnikJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("offertory-code")
+            val kodeUnikJSONArray = MainCompanion.jsonRoot!!.getJSONArray("offertory-code")
 
             // Iterate through every offertory option.
             isFirstElement = true
@@ -293,4 +296,14 @@ class ScreenPersembahan : ComponentActivity() {
         }
     }
 
+}
+
+class ScreenPersembahanCompanion : Application() {
+    companion object {
+        /* The QRIS image for offertories. */
+        const val OFFERTORY_QRIS_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/images/qris_gkis.png"
+
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

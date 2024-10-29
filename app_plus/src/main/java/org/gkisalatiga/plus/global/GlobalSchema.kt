@@ -62,52 +62,11 @@ class GlobalSchema : Application() {
         var txtScreenGaleriViewAlertDialogSubtitle = ""
 
         /* ------------------------------------------------------------------------------------ */
-        /* The following parameter determines which JSON API source to look up to in order to update the application content.
-         * It cannot and should not be changed arbitrarily within the app code. */
-        val JSONSource = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-main.min.json"
-
-        // This is the filename which will save the above JSON source.
-        val JSONSavedFilename = "gkisplus-main.json"
-
-        // Stores the absolute path of the downloaded (into internal app storage) JSON metadata
-        var absolutePathToJSONMetaData = ""
-
-        // The state of the initialization of the JSON metadata.
-        var isJSONMainDataInitialized = mutableStateOf(false)
-
-        // The JSONObject that can be globally accessed by any function and class in the app.
-        var globalJSONObject: JSONObject? = null
-        // var globalJSONObject: MutableState<JSONObject?> = mutableStateOf(null)
-
-        /* ------------------------------------------------------------------------------------ */
-        /* Determines the initialization of gallery JSON file. */
-
-        val gallerySource = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/gkisplus-gallery.json"
-        val gallerySavedFilename = "gkisplus-gallery.json"
-        var absolutePathToGalleryData = ""
-        var isGalleryDataInitialized = mutableStateOf(false)
-        var globalGalleryObject: JSONObject? = null
-
-        /* ------------------------------------------------------------------------------------ */
-        /* Determines the initialization of static JSON file. */
-
-        val staticSource = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/gkisplus-static.json"
-        val staticSavedFilename = "gkisplus-static.json"
-        var absolutePathToStaticData = ""
-        var isStaticDataInitialized = mutableStateOf(false)
-        var globalStaticObject: JSONArray? = null
-
-        /* ------------------------------------------------------------------------------------ */
         /* The following parameter determines which zipped static source to look up to in order to update the application's static data.
          * It cannot and should not be changed arbitrarily within the app code. */
 
         // The target static data "folder" to display in the static content list.
         var targetStaticFolder: JSONObject? = null
-
-        /* ------------------------------------------------------------------------------------ */
-        /* Values and constants used in the "offertory" menu. */
-
-        const val offertoryQRISImageSource = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/images/qris_gkis.png"
 
         /* ------------------------------------------------------------------------------------ */
         /* Initializing the debugging toggles. */
@@ -184,7 +143,6 @@ class GlobalSchema : Application() {
         var screenGaleriScrollState: ScrollState? = null
         var screenLicenseScrollState: ScrollState? = null
         var screenMediaScrollState: ScrollState? = null
-        var screenPersembahanScrollState: ScrollState? = null
         var screenPrivacyPolicyScrollState: ScrollState? = null
 
         /* The horizontal pager state in FragmentHome */
@@ -263,6 +221,7 @@ class GlobalSchema : Application() {
         var clipManager: ClipboardManager? = null
 
         // TODO: DEBUG: Remove this code because it is debug.
+        @SuppressLint("StaticFieldLeak")
         var pdfRendererViewInstance: PdfRendererView? = null
     }
 }

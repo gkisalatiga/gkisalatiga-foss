@@ -74,13 +74,17 @@ import com.rajat.pdfviewer.PdfRendererView
 import kotlinx.coroutines.delay
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppDatabase
-import org.gkisalatiga.plus.lib.AppGallery
+import org.gkisalatiga.plus.db.Main
+import org.gkisalatiga.plus.db.Gallery
+import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.MainCompanion
+import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.GallerySaver
 
-import org.gkisalatiga.plus.lib.AppStatic
+import org.gkisalatiga.plus.db.Static
+import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -98,11 +102,13 @@ import org.gkisalatiga.plus.screen.ScreenGaleriView
 import org.gkisalatiga.plus.screen.ScreenGaleriYear
 import org.gkisalatiga.plus.screen.ScreenInternalHTML
 import org.gkisalatiga.plus.screen.ScreenLibrary
+import org.gkisalatiga.plus.screen.ScreenLibraryCompanion
 import org.gkisalatiga.plus.screen.ScreenLicense
 import org.gkisalatiga.plus.screen.ScreenLiturgi
 import org.gkisalatiga.plus.screen.ScreenMain
 import org.gkisalatiga.plus.screen.ScreenMedia
 import org.gkisalatiga.plus.screen.ScreenPersembahan
+import org.gkisalatiga.plus.screen.ScreenPersembahanCompanion
 import org.gkisalatiga.plus.screen.ScreenPosterViewer
 import org.gkisalatiga.plus.screen.ScreenPrivacy
 import org.gkisalatiga.plus.screen.ScreenPukatBerkat
@@ -245,7 +251,7 @@ class ActivityLauncher : ComponentActivity() {
         // Block the app until all data is initialized.
         // Prevents "null pointer exception" when the JSON data in the multi-thread has not been prepared.
         while (true) {
-            if (GlobalSchema.globalJSONObject != null && GlobalSchema.globalGalleryObject != null && GlobalSchema.globalStaticObject != null) {
+            if (MainCompanion.jsonRoot != null && ModulesCompanion.jsonRoot != null && GalleryCompanion.jsonRoot != null && StaticCompanion.jsonRoot != null) {
                 break
             } else {
                 Logger.logRapidTest({}, "Still initializing data ...", LoggerType.WARNING)
@@ -284,7 +290,8 @@ class ActivityLauncher : ComponentActivity() {
             GlobalSchema.screenFormsScrollState = rememberScrollState()
             GlobalSchema.screenGaleriScrollState = rememberScrollState()
             GlobalSchema.screenMediaScrollState = rememberScrollState()
-            GlobalSchema.screenPersembahanScrollState = rememberScrollState()
+            ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
+            ScreenPersembahanCompanion.rememberedScrollState = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
@@ -485,9 +492,10 @@ class ActivityLauncher : ComponentActivity() {
 
         // Setting up the downloaded JSON's absolute paths.
         Logger.logInit({}, "Initializing the downloaded JSON paths ...")
-        GlobalSchema.absolutePathToJSONMetaData = File(fileCreator, GlobalSchema.JSONSavedFilename).absolutePath
-        GlobalSchema.absolutePathToGalleryData = File(fileCreator, GlobalSchema.gallerySavedFilename).absolutePath
-        GlobalSchema.absolutePathToStaticData = File(fileCreator, GlobalSchema.staticSavedFilename).absolutePath
+        MainCompanion.absolutePathToJSONFile = File(fileCreator, MainCompanion.savedFilename).absolutePath
+        ModulesCompanion.absolutePathToJSONFile = File(fileCreator, ModulesCompanion.savedFilename).absolutePath
+        GalleryCompanion.absolutePathToJSONFile = File(fileCreator, GalleryCompanion.savedFilename).absolutePath
+        StaticCompanion.absolutePathToJSONFile = File(fileCreator, StaticCompanion.savedFilename).absolutePath
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.
@@ -497,15 +505,15 @@ class ActivityLauncher : ComponentActivity() {
         if (launches == 0) {
             // Let's apply the fallback JSON data until the actual, updated JSON metadata is downloaded.
             Logger.logInit({}, "Loading the fallback JSON metadata ...")
-            AppDatabase(this).initFallbackGalleryData()
+            Main(this).initFallbackGalleryData()
 
             // Loading the fallback gallery data.
             Logger.logInit({}, "Loading the fallback gallery JSON file ...")
-            AppGallery(this).initFallbackGalleryData()
+            Gallery(this).initFallbackGalleryData()
 
             // Loading the fallback static data.
             Logger.logInit({}, "Loading the fallback static JSON file ...")
-            AppStatic(this).initFallbackStaticData()
+            Static(this).initFallbackStaticData()
 
         } else {
             Logger.logInit({}, "This is not first launch.")
@@ -529,7 +537,7 @@ class ActivityLauncher : ComponentActivity() {
 
             // Necessary variables for the infinite-page carousel.
             // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
-            val actualPageCount = GlobalSchema.globalJSONObject!!.getJSONArray("carousel").length()
+            val actualPageCount = MainCompanion.jsonRoot!!.getJSONArray("carousel").length()
             val carouselPageCount = actualPageCount * baseInfiniteScrollingPages
             GlobalSchema.fragmentHomeCarouselPagerState = rememberPagerState(
                 initialPage = carouselPageCount / 2,

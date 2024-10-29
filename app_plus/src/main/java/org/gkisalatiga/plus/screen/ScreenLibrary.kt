@@ -11,19 +11,16 @@ package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -37,8 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
@@ -56,11 +51,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.rajat.pdfviewer.HeaderData
 import com.rajat.pdfviewer.PdfRendererView
-import com.rajat.pdfviewer.PdfViewerActivity
-import com.rajat.pdfviewer.compose.PdfRendererViewCompose
-import com.rajat.pdfviewer.util.saveTo
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.Modules
+import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -70,7 +64,7 @@ import org.gkisalatiga.plus.lib.LoggerType
 class ScreenLibrary : ComponentActivity() {
 
     @Composable
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
         Scaffold (topBar = { getTopBar() }) {
 
@@ -80,6 +74,7 @@ class ScreenLibrary : ComponentActivity() {
                 modifier = Modifier
                     .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())
                     .fillMaxSize()
+                    .verticalScroll(ScreenLibraryCompanion.rememberedScrollState!!)
             ) {
                 // Display the main "attribution" contents.
                 getMainContent()
@@ -95,6 +90,7 @@ class ScreenLibrary : ComponentActivity() {
     }
 
     @Composable
+    @SuppressLint("ComposableNaming")
     private fun getMainContent() {
         val ctx = LocalContext.current
 
@@ -102,10 +98,18 @@ class ScreenLibrary : ComponentActivity() {
         Box(Modifier.background(Color.Transparent)) {
             val md: String = """
                 # Sample Perpustakaan.
+                Dramatic: "${Modules(ctx).getRawDumped()}"
+                Hello: "${ModulesCompanion.jsonRoot!!.toString(4)}"
             """.trimIndent()
 
+            MarkdownText(
+                modifier = Modifier.padding(20.dp).fillMaxSize(),
+                markdown = md.trimIndent(),
+                style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Justify)
+            )
+
             // Display the markdown text.
-            Column {
+            /*Column {
                 val pdfRendererViewInstance = GlobalSchema.pdfRendererViewInstance!!
 
                 val url = "https://myreport.altervista.org/Lorem_Ipsum.pdf"
@@ -127,12 +131,12 @@ class ScreenLibrary : ComponentActivity() {
                 pdfRendererViewInstance.statusListener = object: PdfRendererView.StatusCallBack {
                     override fun onPageChanged(currentPage: Int, totalPage: Int) {
                         Logger.logRapidTest({}, "onPageChanged -> currentPage: $currentPage, totalPage: $totalPage", LoggerType.VERBOSE)
-                        CurrentPage.mutablecurpg.intValue = currentPage
+                        ScreenLibraryCompanion.mutablecurpg.intValue = currentPage
                     }
 
                     override fun onError(error: Throwable) {
                         super.onError(error)
-                        CurrentPage.mutableString.value = error.message!!
+                        ScreenLibraryCompanion.mutableString.value = error.message!!
                         Logger.logPDF({}, "onError -> error.message!!: ${error.message!!}")
                     }
 
@@ -142,26 +146,26 @@ class ScreenLibrary : ComponentActivity() {
                         totalBytes: Long?
                     ) {
                         super.onPdfLoadProgress(progress, downloadedBytes, totalBytes)
-                        CurrentPage.mutableString.value = "Megunduh: $progress. $downloadedBytes/$totalBytes"
+                        ScreenLibraryCompanion.mutableString.value = "Megunduh: $progress. $downloadedBytes/$totalBytes"
                         Logger.logPDF({}, "onPdfLoadProgress -> progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes")
                     }
 
                     override fun onPdfLoadSuccess(absolutePath: String) {
                         super.onPdfLoadSuccess(absolutePath)
-                        CurrentPage.mutableString.value = "Sukses mengunduh: $absolutePath"
+                        ScreenLibraryCompanion.mutableString.value = "Sukses mengunduh: $absolutePath"
                         Logger.logPDF({}, "onPdfLoadSuccess -> absolutePath: $absolutePath")
                     }
 
                     override fun onPdfLoadStart() {
                         super.onPdfLoadStart()
-                        CurrentPage.mutableString.value = "Memuat file..>"
+                        ScreenLibraryCompanion.mutableString.value = "Memuat file..>"
                         Logger.logPDF({}, "onPdfLoadStart (no parameter provided).")
                     }
                 }
 
-                // Text(CurrentPage.currentpg.toString())
-                Text(CurrentPage.mutablecurpg.intValue.toString())
-                Text(CurrentPage.mutableString.value)
+                // Text(ScreenLibraryCompanion.currentpg.toString())
+                Text(ScreenLibraryCompanion.mutablecurpg.intValue.toString())
+                Text(ScreenLibraryCompanion.mutableString.value)
 
                 AndroidView(
                     factory = {
@@ -177,7 +181,7 @@ class ScreenLibrary : ComponentActivity() {
 
                 // Placebo.
                 Text("ew")
-            }
+            }*/
 
         }
 
@@ -185,6 +189,7 @@ class ScreenLibrary : ComponentActivity() {
 
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
+    @SuppressLint("ComposableNaming")
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
@@ -213,8 +218,11 @@ class ScreenLibrary : ComponentActivity() {
     }
 }
 
-class CurrentPage : Application() {
+class ScreenLibraryCompanion : Application() {
     companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+
         var currentpg = 0
         val mutablecurpg = mutableIntStateOf(0)
         val mutableString = mutableStateOf("")

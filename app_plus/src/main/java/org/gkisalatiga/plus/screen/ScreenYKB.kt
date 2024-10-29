@@ -59,8 +59,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.AppColors
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -123,7 +124,7 @@ class ScreenYKB : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Retrieve the list of devotionals. */
-            val ykbListAsJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("ykb")
+            val ykbListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("ykb")
 
             /* Enumerate and enlist the individual card. */
             val enumeratedYKBList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
@@ -190,7 +191,7 @@ class ScreenYKB : ComponentActivity() {
                         TextButton(
                             modifier = Modifier.padding(top = 8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(AppColors.YKB_ARCHIVE_BUTTON_COLOR)
+                                containerColor = Color(Colors.YKB_ARCHIVE_BUTTON_COLOR)
                             ),
                             onClick = {
                                 // Set the content list.

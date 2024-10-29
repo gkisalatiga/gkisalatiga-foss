@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -83,7 +84,7 @@ class ScreenMedia : ComponentActivity() {
     private fun getMainContent() {
 
         // The "all video playlists" JSON array.
-        val allVideoPlaylistArray = GlobalSchema.globalJSONObject!!.getJSONArray("yt")
+        val allVideoPlaylistArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
 
         // Get the non-pinned video playlists.
         val ordinaryPlaylistDictionary: MutableList<JSONObject> = mutableListOf()

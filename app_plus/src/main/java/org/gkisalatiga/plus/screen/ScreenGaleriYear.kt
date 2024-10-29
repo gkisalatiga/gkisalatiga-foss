@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -81,7 +82,7 @@ class ScreenGaleriYear : ComponentActivity() {
         val ctx = LocalContext.current
 
         // The agenda node.
-        val galleryNode = GlobalSchema.globalGalleryObject!!
+        val galleryNode = GalleryCompanion.jsonRoot!!
 
         // Enlist the list of albums in the currently selected year.
         val galleryYearList = galleryNode.getJSONArray(GlobalSchema.targetGalleryYear)

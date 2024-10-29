@@ -53,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -113,7 +114,7 @@ class ScreenForms : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Retrieve the list of forms. */
-            val formListAsJSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("forms")
+            val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("forms")
 
             /* Enumerate and enlist the individual form. */
             val enumeratedFormList: MutableList<Map<String, String>> =  mutableListOf(emptyMap<String, String>())

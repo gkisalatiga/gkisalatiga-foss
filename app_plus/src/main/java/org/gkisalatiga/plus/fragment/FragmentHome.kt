@@ -52,6 +52,7 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -155,7 +156,7 @@ class FragmentHome : ComponentActivity() {
         )
 
         // Get the number of carousel banners.
-        val actualPageCount = GlobalSchema.globalJSONObject!!.getJSONArray("carousel").length()
+        val actualPageCount = MainCompanion.jsonRoot!!.getJSONArray("carousel").length()
 
         // Retrieving the global state.
         val carouselPagerState = GlobalSchema.fragmentHomeCarouselPagerState!!
@@ -206,7 +207,7 @@ class FragmentHome : ComponentActivity() {
                 ) {
                     // Navigate to the current iteration's JSON node.
                     // val currentNode = GlobalSchema.carouselJSONObject[it % actualPageCount]
-                    val currentNode = GlobalSchema.globalJSONObject!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
+                    val currentNode = MainCompanion.jsonRoot!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
 
                     /* Display the carousel banner image. */
                     Surface (
