@@ -46,8 +46,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Church
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.outlined.Church
 import androidx.compose.material.icons.outlined.Home
@@ -104,6 +102,7 @@ import org.gkisalatiga.plus.fragment.FragmentInfo
 import org.gkisalatiga.plus.fragment.FragmentServices
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppColors
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -118,9 +117,9 @@ class ScreenMain : ComponentActivity() {
 
     // Enlists all of the fragments that will be displayed in this particular screen.
     private val fragRoutes = listOf(
-        NavigationRoutes.FRAG_MAIN_HOME,
-        NavigationRoutes.FRAG_MAIN_SERVICES,
-        NavigationRoutes.FRAG_MAIN_INFO,
+        NavigationRoutes.FRAG_MAIN_HOME.name,
+        NavigationRoutes.FRAG_MAIN_SERVICES.name,
+        NavigationRoutes.FRAG_MAIN_INFO.name,
     )
 
     // The calculated status bar's height, for determining the "top bar"'s top padding. (Also the bottom nav bar.)
@@ -190,7 +189,7 @@ class ScreenMain : ComponentActivity() {
                     isRefreshing.value = false
 
                     // Update/recompose the UI.
-                    GlobalSchema.reloadCurrentScreen.value = !GlobalSchema.reloadCurrentScreen.value
+                    AppNavigation.mutableRecomposeCurrentScreen.value = !AppNavigation.mutableRecomposeCurrentScreen.value
                 }
             })
         ) {
@@ -369,7 +368,7 @@ class ScreenMain : ComponentActivity() {
             val localContext = LocalContext.current
             BackHandler {
                 val curRoute = GlobalSchema.lastMainScreenPagerPage.value
-                if (curRoute == NavigationRoutes.FRAG_MAIN_HOME) {
+                if (curRoute == NavigationRoutes.FRAG_MAIN_HOME.name) {
 
                     // Ensure "double tap the back button to exit".
                     if (backPressedTime + 2000 > System.currentTimeMillis()) {
@@ -384,8 +383,8 @@ class ScreenMain : ComponentActivity() {
                     backPressedTime = System.currentTimeMillis()
 
                 } else if (
-                    curRoute == NavigationRoutes.FRAG_MAIN_INFO ||
-                    curRoute == NavigationRoutes.FRAG_MAIN_SERVICES
+                    curRoute == NavigationRoutes.FRAG_MAIN_INFO.name ||
+                    curRoute == NavigationRoutes.FRAG_MAIN_SERVICES.name
                 ) {
                     // Since we are in the main screen but not at fragment one,
                     // navigate the app to fragment one.
@@ -565,10 +564,7 @@ class ScreenMain : ComponentActivity() {
                     )
                 }
                 */
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
-                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                }) {
+                IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_ABOUT) }) {
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = stringResource(R.string.screenabout_title),

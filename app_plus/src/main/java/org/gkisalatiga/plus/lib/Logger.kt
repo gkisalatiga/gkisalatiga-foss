@@ -128,7 +128,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-PDF"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) when (type) {
+            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_PDF) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)

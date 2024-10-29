@@ -76,6 +76,7 @@ import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppDatabase
 import org.gkisalatiga.plus.lib.AppGallery
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.GallerySaver
 
@@ -216,9 +217,7 @@ class ActivityLauncher : ComponentActivity() {
 
         // Determine the default screen, fragment, and submenu to open upon first app launch,
         // as well as other pre-determined default values.
-        val defaultScreenLaunch = NavigationRoutes.SCREEN_MAIN
-        val defaultFragmentLaunch = NavigationRoutes.FRAG_MAIN_HOME
-        val defaultServicesSubmenu = NavigationRoutes.SUB_BLANK
+        val defaultFragmentLaunch = NavigationRoutes.FRAG_MAIN_HOME.name
         val defaultNewTopBarBackground = R.drawable.topbar_greetings_background
 
         // Set the default selected day in "Agenda" menu.
@@ -226,9 +225,7 @@ class ActivityLauncher : ComponentActivity() {
 
         // Setting some of the most important default values of the global schema.
         // (i.e., the composable navigation direction.)
-        GlobalSchema.pushScreen.value = defaultScreenLaunch
         GlobalSchema.lastMainScreenPagerPage.value = defaultFragmentLaunch
-        GlobalSchema.lastServicesSubmenu.value = defaultServicesSubmenu
 
         // The top bar greeting background.
         GlobalSchema.lastNewTopBarBackground.value = defaultNewTopBarBackground
@@ -342,21 +339,18 @@ class ActivityLauncher : ComponentActivity() {
                                 /* Nothing matches, start the app from the beginning.*/
                                 } else {
                                     // This isn't a URI action call. Open the app regularly.
-                                    GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_MAIN
                                     initSplashScreen(splashNavController)
                                 }
                             }  // --- end of navigation composable.
 
                             composable ("main_screen") {
                                 // Just display the main graphic directly.
-                                GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_MAIN
                                 initMainGraphic()
                             }  // --- end of navigation composable.
                         }  // --- end of NavHost.
                     }
                 } else {
                     // Just display the main graphic directly.
-                    GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_MAIN
                     initMainGraphic()
                 }
             }  // --- end of GKISalatigaPlusTheme.
@@ -408,52 +402,51 @@ class ActivityLauncher : ComponentActivity() {
      * It also becomes the graphical base of all screens.
      */
     @Composable
+    @SuppressLint("ComposableNaming")
     private fun initMainGraphic() {
-        Logger.log({}, "Initializing main graphic ...")
-        Logger.log({}, "Obtained 'pushScreen' value: ${GlobalSchema.pushScreen.value}")
+        Logger.logInit({}, "Initializing main graphic with the current screen route: ${AppNavigation.mutableCurrentNavigationRoute.value.name} ...")
 
         // We use nav. host because it has built-in support for transition effect/animation.
-        // We also use nav. host so that we can handle URI deep-linking,
-        // both from an external URL click and from a notification click.
+        // We also use nav. host so that we can handle URI deep-linking, both from an external URL click and from a notification click.
         // SOURCE: https://composables.com/tutorials/deeplinks
         val mainNavController = rememberNavController()
-        NavHost(navController = mainNavController, startDestination = GlobalSchema.defaultScreen.value) {
-            composable(NavigationRoutes.SCREEN_MAIN) { ScreenMain().getComposable() }
-            composable(NavigationRoutes.SCREEN_ABOUT) { ScreenAbout().getComposable() }
-            composable(NavigationRoutes.SCREEN_ATTRIBUTION) { ScreenAttribution().getComposable() }
-            composable(NavigationRoutes.SCREEN_PRIVACY) { ScreenPrivacy().getComposable() }
-            composable(NavigationRoutes.SCREEN_LICENSE) { ScreenLicense().getComposable() }
-            composable(NavigationRoutes.SCREEN_CONTRIB) { ScreenContrib().getComposable() }
-            composable(NavigationRoutes.SCREEN_LIVE) { ScreenVideoLive().getComposable() }
-            composable(NavigationRoutes.SCREEN_FORMS) { ScreenForms().getComposable() }
-            composable(NavigationRoutes.SCREEN_DEV) { ScreenDev().getComposable() }
-            composable(NavigationRoutes.SCREEN_AGENDA) { ScreenAgenda().getComposable() }
-            composable(NavigationRoutes.SCREEN_PERSEMBAHAN) { ScreenPersembahan().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI) { ScreenGaleri().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_LIST) { ScreenGaleriList().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_VIEW) { ScreenGaleriView().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_YEAR) { ScreenGaleriYear().getComposable() }
-            composable(NavigationRoutes.SCREEN_MEDIA) { ScreenMedia().getComposable() }
-            composable(NavigationRoutes.SCREEN_YKB) {ScreenYKB().getComposable()}
-            composable(NavigationRoutes.SCREEN_YKB_LIST) {ScreenYKBList().getComposable()}
-            composable(NavigationRoutes.SCREEN_BIBLE) {ScreenBible().getComposable()}
-            composable(NavigationRoutes.SCREEN_LIBRARY) {ScreenLibrary().getComposable()}
-            composable(NavigationRoutes.SCREEN_PUKAT_BERKAT) {ScreenPukatBerkat().getComposable()}
-            composable(NavigationRoutes.SCREEN_SETTINGS) {ScreenSettings().getComposable()}
-            composable(NavigationRoutes.SCREEN_SEARCH) {ScreenSearch().getComposable()}
-            composable(NavigationRoutes.SCREEN_VIDEO_LIST) { ScreenVideoList().getComposable() }
-            composable(NavigationRoutes.SCREEN_WARTA) { ScreenWarta().getComposable() }
-            composable(NavigationRoutes.SCREEN_LITURGI) { ScreenLiturgi().getComposable() }
-            composable(NavigationRoutes.SCREEN_WEBVIEW) { ScreenWebView().getComposable() }
-            composable(NavigationRoutes.SCREEN_INTERNAL_HTML) { ScreenInternalHTML().getComposable() }
-            composable(NavigationRoutes.SCREEN_POSTER_VIEWER) { ScreenPosterViewer().getComposable() }
-            composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST) { ScreenStaticContentList().getComposable() }
+        NavHost(navController = mainNavController, startDestination = AppNavigation.startingScreenRoute.name) {
+            composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout().getComposable() }
+            composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda().getComposable() }
+            composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution().getComposable() }
+            composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible().getComposable()}
+            composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib().getComposable() }
+            composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev().getComposable() }
+            composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI.name) { ScreenGaleri().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear().getComposable() }
+            composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML().getComposable() }
+            composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary().getComposable()}
+            composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense().getComposable() }
+            composable(NavigationRoutes.SCREEN_LITURGI.name) { ScreenLiturgi().getComposable() }
+            composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive().getComposable() }
+            composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain().getComposable() }
+            composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia().getComposable() }
+            composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan().getComposable() }
+            composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer().getComposable() }
+            composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }
+            composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat().getComposable()}
+            composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch().getComposable()}
+            composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings().getComposable()}
+            composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList().getComposable() }
+            composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList().getComposable() }
+            composable(NavigationRoutes.SCREEN_WARTA.name) { ScreenWarta().getComposable() }
+            composable(NavigationRoutes.SCREEN_WEBVIEW.name) { ScreenWebView().getComposable() }
+            composable(NavigationRoutes.SCREEN_YKB.name) {ScreenYKB().getComposable()}
+            composable(NavigationRoutes.SCREEN_YKB_LIST.name) {ScreenYKBList().getComposable()}
         }
 
-        // Watch for the state change in the parameter "pushScreen".
+        // Watch for the state change in the parameter "currentNavigationRoute".
         // SOURCE: https://stackoverflow.com/a/73129228
-        key(GlobalSchema.pushScreen.value, GlobalSchema.reloadCurrentScreen.value) {
-            mainNavController.navigate(GlobalSchema.pushScreen.value)
+        key(AppNavigation.mutableCurrentNavigationRoute.value, AppNavigation.mutableRecomposeCurrentScreen.value) {
+            mainNavController.navigate(AppNavigation.mutableCurrentNavigationRoute.value.name)
         }
 
     }

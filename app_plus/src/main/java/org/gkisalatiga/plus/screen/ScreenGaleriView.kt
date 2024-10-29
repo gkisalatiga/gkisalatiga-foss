@@ -67,8 +67,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.GallerySaver
-import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.lib.external.ZoomableBox
 
@@ -143,8 +143,7 @@ class ScreenGaleriView : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI_YEAR
+            AppNavigation.popBack()
             scope.launch {
                 GlobalSchema.fragmentGalleryListScrollState!!.scrollToItem(horizontalPagerState.currentPage)
             }
@@ -278,8 +277,7 @@ class ScreenGaleriView : ComponentActivity() {
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI_YEAR
+                        AppNavigation.popBack()
                         scope.launch {
                             GlobalSchema.fragmentGalleryListScrollState!!.scrollToItem(horizontalPagerState.currentPage)
                         }

@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 
 class ScreenInternalHTML : ComponentActivity() {
 
@@ -55,10 +56,7 @@ class ScreenInternalHTML : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-            GlobalSchema.popBackScreen.value = GlobalSchema.popBackDoubleScreen.value
-        }
+        BackHandler { AppNavigation.popBack() }
     }
 
     @Composable
@@ -121,10 +119,7 @@ class ScreenInternalHTML : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                    GlobalSchema.popBackScreen.value = GlobalSchema.popBackDoubleScreen.value
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

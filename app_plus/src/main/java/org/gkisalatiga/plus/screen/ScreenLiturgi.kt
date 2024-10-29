@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.services.DataUpdater
@@ -103,7 +104,7 @@ class ScreenLiturgi : ComponentActivity() {
                     isRefreshing.value = false
 
                     // Update/recompose the UI.
-                    GlobalSchema.reloadCurrentScreen.value = !GlobalSchema.reloadCurrentScreen.value
+                    AppNavigation.mutableRecomposeCurrentScreen.value = !AppNavigation.mutableRecomposeCurrentScreen.value
                 }
             })) {
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
@@ -143,9 +144,7 @@ class ScreenLiturgi : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
     
@@ -214,13 +213,10 @@ class ScreenLiturgi : ComponentActivity() {
                     onClick = {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
-                        // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_LITURGI
-
                         // Navigate to the WebView viewer.
                         GlobalSchema.webViewTargetURL = url
                         GlobalSchema.webViewTitle = title!!
-                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_WEBVIEW
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                 ) {
@@ -253,9 +249,7 @@ class ScreenLiturgi : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

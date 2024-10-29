@@ -50,8 +50,8 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppColors
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
-// import coil.compose.AsyncImage
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONArray
@@ -100,8 +100,7 @@ class FragmentServices : ComponentActivity() {
                 color = Color(AppColors.FRAGMENT_SERVICES_SHOWMORE_BACKGROUND),
                 contentColor = Color(AppColors.FRAGMENT_SERVICES_SHOWMORE_CONTENT),
                 onClick = {
-                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MEDIA
+                    AppNavigation.navigate(NavigationRoutes.SCREEN_MEDIA)
                 }
             ) {
                 Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(12.dp)) {
@@ -150,8 +149,7 @@ class FragmentServices : ComponentActivity() {
                 // Display the list of videos in this playlist.
                 GlobalSchema.videoListContentArray = playlistContentList
                 GlobalSchema.videoListTitle = sectionTitle
-                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
-                GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MAIN
+                AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Some desc", modifier = Modifier.fillMaxSize().aspectRatio(1.0f).padding(0.dp))
             }
@@ -189,8 +187,7 @@ class FragmentServices : ComponentActivity() {
                         GlobalSchema.ytViewerParameters["date"] = date
                         GlobalSchema.ytViewerParameters["desc"] = desc
                         GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
                     },
                     //modifier = Modifier.fillMaxHeight().width(320.dp).height(232.dp).padding(horizontal = 5.dp),
                     modifier = Modifier.width(320.dp).aspectRatio(1.33334f).padding(horizontal = 5.dp),

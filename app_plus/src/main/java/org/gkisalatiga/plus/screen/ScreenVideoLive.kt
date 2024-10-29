@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 
 
@@ -117,7 +118,7 @@ class ScreenVideoLive : ComponentActivity() {
 
             // Ensures that we always land where we started.
             BackHandler {
-                GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
+                AppNavigation.popBack()
                 GlobalSchema.ytView!!.release()
             }
         }
@@ -177,9 +178,11 @@ class ScreenVideoLive : ComponentActivity() {
             },
             navigationIcon = {
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
+                    AppNavigation.popBack()
                     GlobalSchema.ytView!!.release()
-                }) { Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = "") }
+                }) {
+                    Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = "")
+                }
             },
             actions = {
                 IconButton(onClick = {

@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONObject
 
@@ -76,9 +77,7 @@ class ScreenStaticContentList : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
 
@@ -120,16 +119,12 @@ class ScreenStaticContentList : ComponentActivity() {
                         onClick = {
                             if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
-                            // Set this screen as the anchor point for "back"
-                            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_STATIC_CONTENT_LIST
-                            GlobalSchema.popBackDoubleScreen.value = NavigationRoutes.SCREEN_MAIN
-
                             // Display the church profile content folder list.
                             ScreenInternalHTMLCompanion.targetHTMLContent = it.getString("html")
                             ScreenInternalHTMLCompanion.internalWebViewTitle = it.getString("title")
 
                             // Switching screens.
-                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_INTERNAL_HTML
+                            AppNavigation.navigate(NavigationRoutes.SCREEN_INTERNAL_HTML)
                         },
 
                         modifier = Modifier.padding(bottom = 10.dp).aspectRatio(2.4f).fillMaxWidth()
@@ -222,9 +217,7 @@ class ScreenStaticContentList : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

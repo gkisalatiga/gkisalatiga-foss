@@ -124,6 +124,7 @@ class GlobalSchema : Application() {
         const val DEBUG_ENABLE_LOG_CAT_CONN_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_DUMP = true
         const val DEBUG_ENABLE_LOG_CAT_INIT = true
+        const val DEBUG_ENABLE_LOG_CAT_PDF = true
         const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_UPDATER = true
@@ -142,39 +143,12 @@ class GlobalSchema : Application() {
          * These parameters must be individually a mutable state object.
          * Changing any of the following parameters would directly and immediately trigger recomposition. */
 
-        // Determines where to go when pressing the "back" button after changing screens.
-        val popBackScreen = mutableStateOf("")
-        val popBackDoubleScreen = mutableStateOf("")
-        val popBackFragment = mutableStateOf("")
-        val popBackSubmenu = mutableStateOf("")
-
-        // Determine the next screen to open upon trigger.
-        val pushScreen = mutableStateOf("")
-        val pushFragment = mutableStateOf("")  // --- not used.
-        val pushSubmenu = mutableStateOf("")  // --- not used.
-
-        // The default value of screens and fragments.
-        val defaultScreen = mutableStateOf("")
-        val defaultFragment = mutableStateOf("")  // --- not used.
-        val defaultSubmenu = mutableStateOf("")  // --- not used.
-
-        // Determine if we should reload the current screen.
-        val reloadCurrentScreen = mutableStateOf(false)
-
-        // Custom submenu global state for the tab "Services".
-        var lastServicesSubmenu = mutableStateOf("")
-
         // Stores globally the state of the last opened main menu fragment.
+        // (Only used in ScreenMain.)
         var lastMainScreenPagerPage = mutableStateOf("")
 
         // Stores globally the current background of the new top bar by user github.com/ujepx64.
         var lastNewTopBarBackground = mutableStateOf(0)
-
-        /* The download status of the lib.Downloader's multithread. */
-        var isPrivateDownloadComplete = mutableStateOf(false)
-
-        /* Stores the path to the downloaded private file; used in lib.Downloader. */
-        var pathToDownloadedPrivateFile = mutableStateOf("")
 
         /* The remembered state of the currently selected agenda day. */
         val currentAgendaDay = mutableStateOf("")
@@ -195,29 +169,23 @@ class GlobalSchema : Application() {
         val ytIsFullscreen = mutableStateOf(false)
         val ytCurrentSecond = mutableFloatStateOf(0.0f)
 
-        /* Determines what screen triggered the launching of "ScreenVideoList". */
-        var ytVideoListDispatcher: String = ""
-
         /* The remembered scroll states. */
         var componentAgendaDayRowScrollState: ScrollState? = null
         var fragmentGalleryListScrollState: LazyGridState? = null
         var fragmentHomeScrollState: ScrollState? = null
-        var fragmentServicesScrollState: ScrollState? = null
         var fragmentInfoScrollState: ScrollState? = null
-        var screenAboutScrollState: ScrollState? = null
+        var fragmentServicesScrollState: ScrollState? = null
         var screenAboutContentListScrollState: ScrollState? = null
-        var screenAttributionScrollState: ScrollState? = null
-        var screenPrivacyPolicyScrollState: ScrollState? = null
-        var screenLicenseScrollState: ScrollState? = null
-        var screenContributorsScrollState: ScrollState? = null
+        var screenAboutScrollState: ScrollState? = null
         var screenAgendaScrollState: ScrollState? = null
+        var screenAttributionScrollState: ScrollState? = null
+        var screenContributorsScrollState: ScrollState? = null
         var screenFormsScrollState: ScrollState? = null
+        var screenGaleriScrollState: ScrollState? = null
+        var screenLicenseScrollState: ScrollState? = null
         var screenMediaScrollState: ScrollState? = null
         var screenPersembahanScrollState: ScrollState? = null
-        var screenGaleriScrollState: ScrollState? = null
-
-        /* The poster dialog state in FragmentHome. */
-        val fragmentHomePosterDialogState = mutableStateOf(false)
+        var screenPrivacyPolicyScrollState: ScrollState? = null
 
         /* The horizontal pager state in FragmentHome */
         var fragmentHomeCarouselPagerState: PagerState? = null

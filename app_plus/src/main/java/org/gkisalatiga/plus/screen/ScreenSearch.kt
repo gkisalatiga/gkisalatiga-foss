@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 
 
 class ScreenSearch : ComponentActivity() {
@@ -68,9 +69,7 @@ class ScreenSearch : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
 
@@ -114,9 +113,7 @@ class ScreenSearch : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

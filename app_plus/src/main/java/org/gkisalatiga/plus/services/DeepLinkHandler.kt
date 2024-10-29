@@ -7,6 +7,7 @@
 package org.gkisalatiga.plus.services
 
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONArray
 import org.json.JSONObject
@@ -14,8 +15,6 @@ import org.json.JSONObject
 class DeepLinkHandler {
     companion object {
         fun handleSaRen() {
-            GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
-
             // The "all playlist" section.
             val allVideoPlaylists: JSONArray = GlobalSchema.globalJSONObject!!.getJSONArray("yt")
 
@@ -42,29 +41,21 @@ class DeepLinkHandler {
             // Display the list of SaRen videos.
             GlobalSchema.videoListContentArray = playlistContentList
             GlobalSchema.videoListTitle = sarenPlaylistTitle
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
-            GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MAIN
+            AppNavigation.navigateCold(NavigationRoutes.SCREEN_VIDEO_LIST)
         }
 
         fun handleYKB() {
-            GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_YKB
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_YKB
+            AppNavigation.navigateCold(NavigationRoutes.SCREEN_YKB)
         }
 
         /**
          * Opens a URL of "gkisalatiga.org" host in this app's WebView.
          */
         fun openDomainURL(url: String, title: String = "GKI Salatiga") {
-            // Set the WebView as the default screen.
-            GlobalSchema.defaultScreen.value = NavigationRoutes.SCREEN_WEBVIEW
-
-            // Set the "backPressed" anchor point
-            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-
             // Navigate to the WebView viewer.
             GlobalSchema.webViewTargetURL = url
             GlobalSchema.webViewTitle = title
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_WEBVIEW
+            AppNavigation.navigateCold(NavigationRoutes.SCREEN_WEBVIEW)
         }
     }
 }

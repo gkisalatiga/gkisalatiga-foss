@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONArray
@@ -74,9 +75,7 @@ class ScreenMedia : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
     
@@ -141,8 +140,8 @@ class ScreenMedia : ComponentActivity() {
                 // Display the list of videos in this playlist.
                 GlobalSchema.videoListContentArray = playlistContentList
                 GlobalSchema.videoListTitle = sectionTitle
-                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
-                GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MEDIA
+                // Navigate to the video playlist viewer.
+                AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Some desc", modifier = Modifier.fillMaxSize().aspectRatio(1.0f).padding(0.dp))
             }
@@ -157,8 +156,8 @@ class ScreenMedia : ComponentActivity() {
                     // Display the list of videos in this playlist.
                     GlobalSchema.videoListContentArray = playlistContentList
                     GlobalSchema.videoListTitle = sectionTitle
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
-                    GlobalSchema.ytVideoListDispatcher = NavigationRoutes.SCREEN_MEDIA
+                    // Navigate to the playlist view.
+                    AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
                 }
             ) {
                 AsyncImage(
@@ -193,9 +192,7 @@ class ScreenMedia : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

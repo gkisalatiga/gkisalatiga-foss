@@ -53,6 +53,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import org.gkisalatiga.plus.R
 
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.StringFormatter
 
@@ -83,9 +84,7 @@ class ScreenWebView : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-        }
+        BackHandler { AppNavigation.popBack() }
 
         // Handles opening URLs in external browser.
         key(doTriggerBrowserOpen.value) {
@@ -226,9 +225,7 @@ class ScreenWebView : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

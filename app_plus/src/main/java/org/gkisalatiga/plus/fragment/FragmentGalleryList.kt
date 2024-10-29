@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
-// import coil.compose.AsyncImage
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 
@@ -62,8 +62,7 @@ class FragmentGalleryList : ComponentActivity() {
                         Surface(
                             onClick = {
                                 GlobalSchema.galleryViewerStartPage = index
-                                GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_GALERI_VIEW
-                                GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI_LIST
+                                AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_VIEW)
                             },
                             modifier = Modifier
                                 .aspectRatio(1f)

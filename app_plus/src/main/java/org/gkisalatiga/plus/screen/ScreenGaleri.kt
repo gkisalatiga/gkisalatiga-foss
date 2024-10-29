@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 
 class ScreenGaleri : ComponentActivity() {
@@ -75,9 +76,7 @@ class ScreenGaleri : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
 
@@ -135,12 +134,9 @@ class ScreenGaleri : ComponentActivity() {
                     onClick = {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery folder year: $it", Toast.LENGTH_SHORT).show()
 
-                        // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI
-
                         // Navigate to the WebView viewer.
                         GlobalSchema.targetGalleryYear = it
-                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_GALERI_YEAR
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_YEAR)
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                 ) {
@@ -173,9 +169,7 @@ class ScreenGaleri : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

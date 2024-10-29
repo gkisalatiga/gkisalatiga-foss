@@ -8,6 +8,7 @@ package org.gkisalatiga.plus.lib
 
 /**
  * Stores any system-wide (global) backend tags.
+ * TODO: Make this class enum.
  */
 class Tags {
     companion object {

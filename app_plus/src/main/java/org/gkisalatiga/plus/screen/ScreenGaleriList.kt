@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.fragment.FragmentGalleryList
 import org.gkisalatiga.plus.fragment.FragmentGalleryStory
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.AppNavigation
 
 class ScreenGaleriList : ComponentActivity() {
 
@@ -91,10 +91,7 @@ class ScreenGaleriList : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
 
@@ -150,10 +147,7 @@ class ScreenGaleriList : ComponentActivity() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_GALERI
-                    }) {
+                    IconButton(onClick = { AppNavigation.popBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = ""

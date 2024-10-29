@@ -53,6 +53,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -227,17 +228,13 @@ class FragmentHome : ComponentActivity() {
                                     // Navigate to the WebView viewer.
                                     GlobalSchema.webViewTargetURL = url
                                     GlobalSchema.webViewTitle = title
-                                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_WEBVIEW
-
-                                    // Set this screen as the anchor point for "back"
-                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                                    AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
                                 }
                                 "poster" -> {
                                     ScreenPosterViewerCompanion.posterViewerTitle = currentNode.getString("title")
                                     ScreenPosterViewerCompanion.posterViewerCaption = currentNode.getString("poster-caption")
                                     ScreenPosterViewerCompanion.posterViewerImageSource = currentNode.getString("poster-image")
-                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_POSTER_VIEWER
+                                    AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
                                 }
                                 "yt" -> {
                                     // Preparing the YouTube player arguments.
@@ -254,8 +251,7 @@ class FragmentHome : ComponentActivity() {
                                     GlobalSchema.ytViewerParameters["date"] = StringFormatter.convertDateFromJSON(date)
                                     GlobalSchema.ytViewerParameters["desc"] = desc!!
                                     GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
+                                    AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
                                 }
                             }
                         }
@@ -301,7 +297,7 @@ class FragmentHome : ComponentActivity() {
                     Card (modifier = Modifier.padding(10.dp).fillMaxWidth().weight(1f), onClick = {
                         // This will be triggered when the main menu button is clicked.
                         if (btnRoutes[index] != NavigationRoutes.SCREEN_BLANK) {
-                            GlobalSchema.pushScreen.value = btnRoutes[index]
+                            AppNavigation.navigate(btnRoutes[index])
                         }
                     }) {
                         Column (modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -343,8 +339,7 @@ class FragmentHome : ComponentActivity() {
                             onClick = {
                                 // This will be triggered when the main menu button is clicked.
                                 if (btnRoutes[offsetIndex] != NavigationRoutes.SCREEN_BLANK) {
-                                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                                    GlobalSchema.pushScreen.value = btnRoutes[offsetIndex]
+                                    AppNavigation.navigate(btnRoutes[offsetIndex])
                                 }
                             },
                             modifier = buttonSpacerModifier,

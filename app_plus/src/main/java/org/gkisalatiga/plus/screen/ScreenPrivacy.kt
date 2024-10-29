@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
-import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.AppNavigation
 import java.io.InputStream
 
 
@@ -72,9 +72,7 @@ class ScreenPrivacy : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
 
@@ -118,9 +116,7 @@ class ScreenPrivacy : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ABOUT
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

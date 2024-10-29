@@ -4,7 +4,9 @@
  * Written by Samarthya Lykamanuella (github.com/groaking)
  *
  * ---
- * Display the e-books.
+ * Display the PDF using internal PDF viewer.
+ * This ensures that the fetched online PDF file is cached,
+ * ensuring readability when the app goes offline.
  */
 
 package org.gkisalatiga.plus.screen
@@ -67,7 +69,7 @@ import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 
 
-class ScreenLibrary : ComponentActivity() {
+class ScreenPDFViewer : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -213,10 +215,11 @@ class ScreenLibrary : ComponentActivity() {
     }
 }
 
-class CurrentPage : Application() {
+class ScreenPDFViewerCompanion : Application() {
     companion object {
-        var currentpg = 0
-        val mutablecurpg = mutableIntStateOf(0)
-        val mutableString = mutableStateOf("")
+        /* Stores the state of the current PDF page reading. */
+        internal val mutableCallbackStatusMessage = mutableStateOf("")
+        internal val mutableCurrentPDFPage = mutableIntStateOf(0)
+        internal val mutableTotalPDFPage = mutableIntStateOf(0)
     }
 }

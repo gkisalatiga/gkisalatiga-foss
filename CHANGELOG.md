@@ -1,5 +1,12 @@
 # GKI Salatiga App Changelog
 
+## Next Release
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Added support for composite/mixed nested screen routing
+- (Back-End) Simplified the screen navigation by centralizing all navigations to `AppNavigation`
+
 ## v0.5.0-rc 2024.10.28 (28)
 
 :star2: **NEW**

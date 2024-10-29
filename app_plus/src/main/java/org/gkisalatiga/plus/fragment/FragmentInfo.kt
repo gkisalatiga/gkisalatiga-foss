@@ -50,8 +50,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
-// import coil.compose.AsyncImage
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONObject
 
@@ -133,12 +133,9 @@ class FragmentInfo : ComponentActivity() {
                         onClick = {
                             if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
-                            // Set this screen as the anchor point for "back"
-                            GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-
                             // Display the church profile content folder list.
                             GlobalSchema.targetStaticFolder = itemObject
-                            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_STATIC_CONTENT_LIST
+                            AppNavigation.navigate(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST)
                         },
 
                         modifier = Modifier.padding(bottom = 10.dp).aspectRatio(2.4f).fillMaxWidth()

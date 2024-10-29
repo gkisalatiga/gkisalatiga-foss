@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppColors.Companion.MAIN_DARK_BROWN
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 
 
@@ -140,8 +141,8 @@ class ScreenAbout : ComponentActivity() {
                                     /* Opens the easter egg. */
                                     if (easterEggCurrentClicks >= easterEggMinClicks) {
                                         easterEggCurrentClicks = 0
-                                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_DEV
                                         Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
+                                        AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
                                     } else {
                                         easterEggCurrentClicks += 1
                                     }
@@ -186,10 +187,7 @@ class ScreenAbout : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
-        }
-
+        BackHandler { AppNavigation.popBack() }
     }
 
     @Composable
@@ -215,9 +213,7 @@ class ScreenAbout : ComponentActivity() {
             val licenseText = stringResource(R.string.screen_about_lisensi)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LICENSE
-                }
+                onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_LICENSE) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Badge, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -229,9 +225,7 @@ class ScreenAbout : ComponentActivity() {
             val privacyPolicyText = stringResource(R.string.screen_about_kebijakan_privasi)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_PRIVACY
-                }
+                onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_PRIVACY) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Security, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -243,9 +237,7 @@ class ScreenAbout : ComponentActivity() {
             val attributionText = stringResource(R.string.screen_about_atribusi_pihak_ketiga)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_ATTRIBUTION
-                }
+                onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_ATTRIBUTION) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.AutoMirrored.Default.LibraryBooks, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -297,9 +289,7 @@ class ScreenAbout : ComponentActivity() {
             val contributorText = stringResource(R.string.screen_about_kontributor)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_CONTRIB
-                }
+                onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_CONTRIB) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Diversity1, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -348,9 +338,7 @@ class ScreenAbout : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_MAIN
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

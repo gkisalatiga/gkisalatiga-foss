@@ -73,6 +73,12 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Migrate/upgrade static JSON data to v2.0
 - [X] Remove ambiguous "upload date" of videos in "Content" tab
 
+### November 2024
+
+- [ ] Migrate ytView parameter implementation from using `GlobalSchema` to using data class
+- [ ] Migrate the scroll states from `GlobalSchema` to the companion object of each screen class
+- [ ] Rename `GlobalSchema` class to something more appropriate (e.g., `GlobalState` or `GlobalParameter`)
+
 ## C. Privacy Policy
 
 The latest privacy policy document of GKI Salatiga can be read in this [GitHub repository file](https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/PRIVACY_POLICY.md). However, this **README** file has summarized the privacy policy as follows:

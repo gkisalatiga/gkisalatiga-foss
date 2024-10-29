@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.external.ZoomableBox
 
 
@@ -55,10 +56,7 @@ class ScreenPosterViewer : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.fragmentHomePosterDialogState.value = true
-            GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
 
@@ -107,10 +105,7 @@ class ScreenPosterViewer : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.fragmentHomePosterDialogState.value = true
-                    GlobalSchema.pushScreen.value = GlobalSchema.popBackScreen.value
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

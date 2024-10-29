@@ -63,6 +63,7 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -102,7 +103,7 @@ class ScreenVideoList : ComponentActivity() {
                     isRefreshing.value = false
 
                     // Update/recompose the UI.
-                    GlobalSchema.reloadCurrentScreen.value = !GlobalSchema.reloadCurrentScreen.value
+                    AppNavigation.mutableRecomposeCurrentScreen.value = !AppNavigation.mutableRecomposeCurrentScreen.value
                 }
             })) {
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
@@ -142,9 +143,7 @@ class ScreenVideoList : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            GlobalSchema.pushScreen.value = GlobalSchema.ytVideoListDispatcher
-        }
+        BackHandler { AppNavigation.popBack() }
 
     }
     
@@ -184,9 +183,6 @@ class ScreenVideoList : ComponentActivity() {
                         // Debug logging.
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
-                        // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
-
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
                         GlobalSchema.ytViewerParameters["yt-link"] = url
@@ -196,7 +192,9 @@ class ScreenVideoList : ComponentActivity() {
                         GlobalSchema.ytViewerParameters["desc"] = desc
                         GlobalSchema.ytViewerParameters["thumbnail"] = thumbnail
                         GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
+
+                        // Navigate to the screen.
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
                     }
                 ) {
                     AsyncImage(
@@ -227,9 +225,6 @@ class ScreenVideoList : ComponentActivity() {
                     onClick = {
                         if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
-                        // Set this screen as the anchor point for "back"
-                        GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_VIDEO_LIST
-
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
                         GlobalSchema.ytViewerParameters["yt-link"] = url
@@ -239,7 +234,9 @@ class ScreenVideoList : ComponentActivity() {
                         GlobalSchema.ytViewerParameters["desc"] = desc
                         GlobalSchema.ytViewerParameters["thumbnail"] = thumbnail
                         GlobalSchema.ytCurrentSecond.floatValue = 0.0f
-                        GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_LIVE
+
+                        // Navigate to the screen.
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                 ) {
@@ -286,9 +283,7 @@ class ScreenVideoList : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = GlobalSchema.ytVideoListDispatcher
-                }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""

@@ -19,14 +19,15 @@ class AppPreferences(private val ctx: Context) {
     private val prefObj = ctx.getSharedPreferences(AppPreferencesCompanion.NAME_SHARED_PREFERENCES, MODE_PRIVATE)
 
     /**
-     * The default values of preference keys.]
+     * The default values of preference keys.
      */
     private val DEFAULT_PREFERENCE_KEY_VALUES: Map<PreferenceKeys, Any> = mapOf(
-        PreferenceKeys.PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY to 604800000.toLong(),  // --- 604800000 means "once every 7 days" in millisecond
         PreferenceKeys.PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY to 86400000.toLong(),  // --- 86400000 means "once every 1 day" in millisecond
+        PreferenceKeys.PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES to 30.toInt(),
         PreferenceKeys.PREF_KEY_LAST_STATIC_DATA_UPDATE to Long.MIN_VALUE,
         PreferenceKeys.PREF_KEY_LAST_CAROUSEL_BANNER_UPDATE to Long.MIN_VALUE,
-        PreferenceKeys.PREF_KEY_LAUNCH_COUNTS to -1.toInt()
+        PreferenceKeys.PREF_KEY_LAUNCH_COUNTS to -1.toInt(),
+        PreferenceKeys.PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY to 604800000.toLong(),  // --- 604800000 means "once every 7 days" in millisecond
     )
 
     /**
@@ -139,9 +140,10 @@ class AppPreferencesCompanion : Application () {
  * Each preference bears its own key, represented by the following enum object.
  */
 enum class PreferenceKeys {
-    PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY,
     PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY,
+    PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES,
     PREF_KEY_LAST_STATIC_DATA_UPDATE,
     PREF_KEY_LAST_CAROUSEL_BANNER_UPDATE,
     PREF_KEY_LAUNCH_COUNTS,
+    PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY,
 }
