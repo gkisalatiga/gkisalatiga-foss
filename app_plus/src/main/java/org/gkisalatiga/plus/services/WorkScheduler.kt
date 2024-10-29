@@ -47,13 +47,13 @@ class WorkScheduler {
 
             // Creates the instance of a unique one-time work.
             val oneTimeWorkRequest = OneTimeWorkRequest.Builder(DebugNotificationWorker::class.java)
-                .addTag(Tags.TAG_MINUTELY_DEBUG)
+                .addTag(Tags.TAG_MINUTELY_DEBUG.name)
                 .setInitialDelay(target.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .build()
 
             // Creates the request to start a worker.
             val request = WorkManager.getInstance(ctx).enqueueUniqueWork(
-                Tags.NAME_DEBUG_WORK,
+                Tags.NAME_DEBUG_WORK.name,
                 ExistingWorkPolicy.REPLACE,  // --- prevents multiple trigger-fires (?)
                 oneTimeWorkRequest
             )
@@ -84,13 +84,13 @@ class WorkScheduler {
 
             // Creates the instance of a unique one-time work.
             val oneTimeWorkRequest = OneTimeWorkRequest.Builder(SarenNotificationWorker::class.java)
-                .addTag(Tags.TAG_SAREN_REMINDER)
+                .addTag(Tags.TAG_SAREN_REMINDER.name)
                 .setInitialDelay(target.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .build()
 
             // Creates the request to start a worker.
             val request = WorkManager.getInstance(ctx).enqueueUniqueWork(
-                Tags.NAME_SAREN_WORK,
+                Tags.NAME_SAREN_WORK.name,
                 ExistingWorkPolicy.REPLACE,  // --- prevents multiple trigger-fires (?)
                 oneTimeWorkRequest
             )
@@ -121,13 +121,13 @@ class WorkScheduler {
 
             // Creates the instance of a unique one-time work.
             val oneTimeWorkRequest = OneTimeWorkRequest.Builder(YKBNotificationWorker::class.java)
-                .addTag(Tags.TAG_YKB_REMINDER)
+                .addTag(Tags.TAG_YKB_REMINDER.name)
                 .setInitialDelay(target.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .build()
 
             // Creates the request to start a worker.
             val request = WorkManager.getInstance(ctx).enqueueUniqueWork(
-                Tags.NAME_YKB_WORK,
+                Tags.NAME_YKB_WORK.name,
                 ExistingWorkPolicy.REPLACE,  // --- prevents multiple trigger-fires (?)
                 oneTimeWorkRequest
             )

@@ -8,18 +8,15 @@ package org.gkisalatiga.plus.lib
 
 /**
  * Stores any system-wide (global) backend tags.
- * TODO: Make this class enum.
  */
-class Tags {
-    companion object {
-        /* WorkManager periodic work tags. */
-        const val TAG_MINUTELY_DEBUG = "tag_minutely_reminder_debug"
-        const val TAG_SAREN_REMINDER = "tag_saren_reminder"
-        const val TAG_YKB_REMINDER = "tag_ykb_reminder"
+enum class Tags {
+    /* WorkManager periodic work tags. */
+    TAG_MINUTELY_DEBUG,
+    TAG_SAREN_REMINDER,
+    TAG_YKB_REMINDER,
 
-        /* WorkManager work names. */
-        const val NAME_DEBUG_WORK = "work_debug"
-        const val NAME_SAREN_WORK = "work_saren_reminder"
-        const val NAME_YKB_WORK = "work_ykb_reminder"
-    }
+    /* WorkManager work names. */
+    NAME_DEBUG_WORK,
+    NAME_SAREN_WORK,
+    NAME_YKB_WORK,
 }
