@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.rajat.pdfviewer.PdfRendererView
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.json.JSONArray
 import org.json.JSONObject
@@ -115,15 +116,15 @@ class GlobalSchema : Application() {
         const val DEBUG_ENABLE_EASTER_EGG = true
 
         // Whether to display the debugger's toast.
-        const val DEBUG_ENABLE_TOAST = false
+        const val DEBUG_ENABLE_TOAST = true
 
         // Whether to display the debugger's logcat logging.
         const val DEBUG_ENABLE_LOG_CAT = true
         const val DEBUG_ENABLE_LOG_CAT_BOOT = true
-        const val DEBUG_ENABLE_LOG_CAT_CONN_TEST = false
+        const val DEBUG_ENABLE_LOG_CAT_CONN_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_DUMP = true
         const val DEBUG_ENABLE_LOG_CAT_INIT = true
-        const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = false
+        const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_UPDATER = true
         const val DEBUG_ENABLE_LOG_CAT_WORKER = true
@@ -292,5 +293,8 @@ class GlobalSchema : Application() {
 
         /* This is the clipboard manager. */
         var clipManager: ClipboardManager? = null
+
+        // TODO: DEBUG: Remove this code because it is debug.
+        var pdfRendererViewInstance: PdfRendererView? = null
     }
 }

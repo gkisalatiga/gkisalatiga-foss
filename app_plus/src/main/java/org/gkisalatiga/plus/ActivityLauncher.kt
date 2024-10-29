@@ -70,6 +70,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.rajat.pdfviewer.PdfRendererView
 import kotlinx.coroutines.delay
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.global.GlobalSchema
@@ -266,6 +267,9 @@ class ActivityLauncher : ComponentActivity() {
 
             // Try to remember the state of the carousel.
             initCarouselState()
+
+            // TODO: DEBUG: Remove this code because it is debug.
+            GlobalSchema.pdfRendererViewInstance = PdfRendererView(this)
 
             // Initializes the scroll states.
             GlobalSchema.componentAgendaDayRowScrollState = rememberScrollState()

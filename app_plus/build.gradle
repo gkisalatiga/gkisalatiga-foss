@@ -129,26 +129,8 @@ dependencies {
     // ---
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 
-    // Enable markdown rendering.
-    // SOURCE: https://stackoverflow.com/a/68899070
-    // SOURCE: https://github.com/halilozercan/compose-richtext
-    // SOURCE: https://halilibo.com/compose-richtext/
-    // implementation("com.halilibo.compose-richtext:richtext-commonmark:1.0.0-alpha01")
-    // implementation("com.halilibo.compose-richtext:richtext-ui-material:1.0.0-alpha01")
+    // To allow on-the-fly (both online and offline) PDF rendering.
+    // SOURCE: https://github.com/afreakyelf/Pdf-Viewer
+    implementation("io.github.afreakyelf:Pdf-Viewer:2.1.1")
 
-    // For displaying icons on tabs?
-    // SOURCE: https://stackoverflow.com/q/78398074
-    // implementation(platform("androidx.compose:compose-bom"))
-
-    // For displaying notifications.
-    // implementation ("com.android.support:support-compat")
-
-    // Allow lifecycle observation and activity/fragment watching.
-    // SOURCE: http://stackoverflow.com/questions/52369540/ddg#53669865
-    // implementation "android.arch.lifecycle:extensions:1.1.1"
-
-    // Enable global storing, accessing, and writing of variables inside composable elements.
-    // SOURCE: https://github.com/GuyMichael/Reactdroid
-    // SOURCE: https://medium.com/nerd-for-tech/android-jetpackcompose-with-global-state-3a0b3c0f0b30
-    // implementation("com.github.GuyMichael.reactdroid:reactdroid:0.1.87")
 }

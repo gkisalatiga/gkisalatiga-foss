@@ -119,6 +119,25 @@ class Logger {
         }
 
         /**
+         * Log messages sent for the internal PDF viewer of GKI Salatiga app.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logPDF (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-PDF"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) when (type) {
+                LoggerType.DEBUG -> Log.d(tag, msgString)
+                LoggerType.ERROR -> Log.e(tag, msgString)
+                LoggerType.INFO -> Log.i(tag, msgString)
+                LoggerType.VERBOSE -> Log.v(tag, msgString)
+                LoggerType.WARNING -> Log.w(tag, msgString)
+            }
+        }
+
+        /**
          * Short logging messages sent rapidly across successive time to test out time-critical operations.
          * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
          * @param msg The message to be logged to the terminal.

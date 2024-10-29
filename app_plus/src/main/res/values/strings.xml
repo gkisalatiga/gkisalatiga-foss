@@ -155,6 +155,11 @@
     <string name="screen_about_license_confirm">Buka Teks Utuh</string>
     <string name="screen_persembahan_ok">OK</string>
 
+    <!-- Pdf-Viewer custom string settings. -->
+    <!-- SOURCE: https://github.com/afreakyelf/Pdf-Viewer -->
+    <string name="pdfView_page_no">%1$s / %2$s</string>
+
+    <!-- Developer strings. -->
     <string name="not_connected_to_internet">Anda tidak terhubung ke internet!</string>
     <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>
     <string name="screen_dev_quick_action_title">Aksi Cepat</string>

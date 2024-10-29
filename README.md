@@ -95,6 +95,7 @@ This repository was migrated from the original repo, [GKI Salatiga Plus](https:/
 - Compose UI - Coil; Coil Contributors  (C) 2024 (Apache 2.0) [Link](https://github.com/coil-kt/coil)
 - Jetpack Compose Material3; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.0-beta04)
 - Material Symbols & Icons - Google Fonts; The Android Open Source Project (C) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
+- Pdf-Viewer; Rajat Mittal (C) 2024 (MIT) [Link](https://github.com/afreakyelf/Pdf-Viewer)
 - Phosphor; Phosphor Icons (C) 2024 (MIT) [Link 1](https://icon-sets.iconify.design/ph), [Link 2](https://github.com/phosphor-icons/core)
 - RemixIcon Icon Set; Remix-Design (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/ri), [Link 2](https://github.com/Remix-Design/RemixIcon)
 - UnzipUtil; Nitin Praksh (C) 2021 (Apache 2.0) [Link 1](https://prakashnitin.medium.com/unzipping-files-in-android-kotlin-2a2a2d5eb7ae), [Link 2](https://gist.github.com/NitinPraksash9911/dea21ec4b8ae7df068f8f891187b6d1e)

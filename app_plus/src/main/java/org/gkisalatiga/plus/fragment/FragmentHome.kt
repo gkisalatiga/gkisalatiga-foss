@@ -73,7 +73,7 @@ class FragmentHome : ComponentActivity() {
         NavigationRoutes.SCREEN_GALERI,
         // TODO: Re-enable the bible and library menu once the functionalities are ready.
         // NavigationRoutes.SCREEN_BIBLE,
-        // NavigationRoutes.SCREEN_LIBRARY,
+        NavigationRoutes.SCREEN_LIBRARY,
         NavigationRoutes.SCREEN_PUKAT_BERKAT,
     )
 
@@ -94,7 +94,7 @@ class FragmentHome : ComponentActivity() {
         R.drawable.ph__images_square_bold,
         // TODO: Re-enable the bible and library menu once the functionalities are ready.
         // R.drawable.ph__cross_bold,
-        // R.drawable.ph__books_bold,
+        R.drawable.ph__books_bold,
         R.drawable.ph__shopping_cart_bold,
     )
 
@@ -109,7 +109,7 @@ class FragmentHome : ComponentActivity() {
         true,
         // TODO: Re-enable the bible and library menu once the functionalities are ready.
         // false,
-        // false,
+        true,
         true,
     )
 
@@ -128,7 +128,7 @@ class FragmentHome : ComponentActivity() {
             ctx.resources.getString(R.string.btn_mainmenu_gallery),
             // TODO: Re-enable the bible and library menu once the functionalities are ready.
             // ctx.resources.getString(R.string.btn_mainmenu_bible),
-            // ctx.resources.getString(R.string.btn_mainmenu_library),
+            ctx.resources.getString(R.string.btn_mainmenu_library),
             ctx.resources.getString(R.string.btn_mainmenu_pukatberkat),
         )
         btnDescriptions = listOf(
@@ -142,7 +142,7 @@ class FragmentHome : ComponentActivity() {
             ctx.resources.getString(R.string.btn_desc_mainmenu_media),
             // TODO: Re-enable the bible and library menu once the functionalities are ready.
             // ctx.resources.getString(R.string.btn_desc_mainmenu_bible),
-            // ctx.resources.getString(R.string.btn_desc_mainmenu_library),
+            ctx.resources.getString(R.string.btn_desc_mainmenu_library),
             ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat),
         )
 
