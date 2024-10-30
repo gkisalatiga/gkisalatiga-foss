@@ -51,6 +51,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -100,8 +101,10 @@ import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
 import org.gkisalatiga.plus.fragment.FragmentHomeCompanion
 import org.gkisalatiga.plus.fragment.FragmentInfoCompanion
 import org.gkisalatiga.plus.fragment.FragmentServicesCompanion
+import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
@@ -134,6 +137,7 @@ import org.gkisalatiga.plus.screen.ScreenMain
 import org.gkisalatiga.plus.screen.ScreenMedia
 import org.gkisalatiga.plus.screen.ScreenMediaCompanion
 import org.gkisalatiga.plus.screen.ScreenPDFViewer
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion
 import org.gkisalatiga.plus.screen.ScreenPersembahan
 import org.gkisalatiga.plus.screen.ScreenPersembahanCompanion
 import org.gkisalatiga.plus.screen.ScreenPosterViewer
@@ -218,7 +222,7 @@ class ActivityLauncher : ComponentActivity() {
         // ProcessLifecycleOwner.get().lifecycle.addObserver(this);
 
         // Initializes the app's internally saved preferences.
-        initPreferences()
+        initPreferencesAndLocalStorage()
 
         // Start the connection (online/offline) checker.
         ConnectionChecker(this).execute()
@@ -286,8 +290,9 @@ class ActivityLauncher : ComponentActivity() {
             // Try to remember the state of the carousel.
             initCarouselState()
 
-            // TODO: DEBUG: Remove this code because it is debug.
-            GlobalCompanion.pdfRendererViewInstance = PdfRendererView(this)
+            // Initializes the PDF viewer renderer instance.
+            ScreenPDFViewerCompanion.pdfRendererViewInstance = PdfRendererView(this)
+            ScreenPDFViewerCompanion.initPDFViewerCallbackHandler(this)
 
             // Initializes the scroll states and lazy scroll states.
             FragmentGalleryListCompanion.rememberedLazyGridState = rememberLazyGridState()
@@ -305,6 +310,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
             ScreenMediaCompanion.rememberedScrollState = rememberScrollState()
+            ScreenPDFViewerCompanion.navigatorLazyListState = rememberLazyListState()
             ScreenPersembahanCompanion.rememberedScrollState = rememberScrollState()
             ScreenPrivacyCompanion.rememberedScrollState = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
@@ -384,16 +390,20 @@ class ActivityLauncher : ComponentActivity() {
      * This method reads the current saved preference associated with the app
      * and pass it to the GlobalCompanion so that other functions can use them.
      */
-    private fun initPreferences() {
-        // Initializes the preferences.
+    private fun initPreferencesAndLocalStorage() {
+        // Instantiating the classes.
         val appLocalStorage = LocalStorage(this)
+        val appPreferences = AppPreferences(this)
 
-        // Initializes the default/fallback preferences if this is a first launch.
-        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS) as Int) < 0) appLocalStorage.initDefaultLocalStorage()
+        // Initializes the default/fallback preferences and launch value if this is a first launch.
+        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) < 0) {
+            appPreferences.initDefaultPreferences()
+            appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, -1, LocalStorageDataTypes.INT)
+        }
 
-        // Increment the number of counts.
-        val now = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS) as Int
-        appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1)
+        // Increment the number of launch counts.
+        val now = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
+        appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1, LocalStorageDataTypes.INT)
         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
     }
 
@@ -536,7 +546,7 @@ class ActivityLauncher : ComponentActivity() {
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.
-        val launches = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS) as Int
+        val launches = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
 
         // Get fallback data only if first launch.
         if (launches == 0) {

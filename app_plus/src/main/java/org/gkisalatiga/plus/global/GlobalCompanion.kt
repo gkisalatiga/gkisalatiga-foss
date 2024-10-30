@@ -116,9 +116,5 @@ class GlobalCompanion : Application() {
         /* Controls the scaffolding snack bar. */
 
         val snackbarHostState = SnackbarHostState()
-
-        // TODO: DEBUG: Remove this code because it is debug.
-        @SuppressLint("StaticFieldLeak")
-        var pdfRendererViewInstance: PdfRendererView? = null
     }
 }

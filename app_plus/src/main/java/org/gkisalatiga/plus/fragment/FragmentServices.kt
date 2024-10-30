@@ -97,7 +97,6 @@ class FragmentServices : ComponentActivity() {
             }
 
             // Opens the non-pinned video playlist.
-            // TODO: String extraction and visual improvement of the button.
             Spacer(Modifier.fillMaxWidth().padding(top = 10.dp))
             Surface(
                 modifier = Modifier.fillMaxWidth(),

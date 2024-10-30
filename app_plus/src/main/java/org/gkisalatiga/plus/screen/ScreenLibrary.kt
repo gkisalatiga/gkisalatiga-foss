@@ -143,18 +143,9 @@ class ScreenLibrary : ComponentActivity() {
             for (i in 0 until libraryAsJSONArray.length()) {
                 val curNode = libraryAsJSONArray[i] as JSONObject
 
-                // TODO: DEBUG: Remove.
-                Logger.logTest({}, "All keys: ${curNode.keys()}")
-
                 // Obtaining the maps of the JSONObject.
                 val temporaryMutableMap = mutableMapOf<String, Any>()
-                for (key in curNode.keys()) {
-
-                    // TODO: DEBUG: Remove.
-                    Logger.logTest({}, "Key: $key")
-
-                    temporaryMutableMap[key] = curNode.getString(key)
-                }
+                for (key in curNode.keys()) temporaryMutableMap[key] = curNode.getString(key)
 
                 // Assigning the temporary map into the enumerated list.
                 enumeratedLibraryList.add(temporaryMutableMap)
@@ -184,6 +175,7 @@ class ScreenLibrary : ComponentActivity() {
                         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the PDF viewer.
+                        ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
                         AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)
                     },
                     modifier = Modifier.padding(bottom = 10.dp)
@@ -258,83 +250,6 @@ class ScreenLibrary : ComponentActivity() {
             }  // --- end of forEach.
 
         }  // --- end of column.
-
-            // Display the markdown text.
-            /*Column {
-                val pdfRendererViewInstance = GlobalCompanion.pdfRendererViewInstance!!
-
-                val url = "https://myreport.altervista.org/Lorem_Ipsum.pdf"
-                val headers = HeaderData()
-                val lifecycleOwner = LocalLifecycleOwner.current
-                val lifecycleScope = lifecycleOwner.lifecycleScope
-
-                MarkdownText(
-                    modifier = Modifier.padding(20.dp),
-                    markdown = md.trimIndent(),
-                    style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Justify)
-                )
-                Button (onClick = {
-                    pdfRendererViewInstance.jumpToPage(3)
-                }) {
-                    Text("Jump to 3")
-                }
-
-                pdfRendererViewInstance.statusListener = object: PdfRendererView.StatusCallBack {
-                    override fun onPageChanged(currentPage: Int, totalPage: Int) {
-                        Logger.logRapidTest({}, "onPageChanged -> currentPage: $currentPage, totalPage: $totalPage", LoggerType.VERBOSE)
-                        ScreenLibraryCompanion.mutablecurpg.intValue = currentPage
-                    }
-
-                    override fun onError(error: Throwable) {
-                        super.onError(error)
-                        ScreenLibraryCompanion.mutableString.value = error.message!!
-                        Logger.logPDF({}, "onError -> error.message!!: ${error.message!!}")
-                    }
-
-                    override fun onPdfLoadProgress(
-                        progress: Int,
-                        downloadedBytes: Long,
-                        totalBytes: Long?
-                    ) {
-                        super.onPdfLoadProgress(progress, downloadedBytes, totalBytes)
-                        ScreenLibraryCompanion.mutableString.value = "Megunduh: $progress. $downloadedBytes/$totalBytes"
-                        Logger.logPDF({}, "onPdfLoadProgress -> progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes")
-                    }
-
-                    override fun onPdfLoadSuccess(absolutePath: String) {
-                        super.onPdfLoadSuccess(absolutePath)
-                        ScreenLibraryCompanion.mutableString.value = "Sukses mengunduh: $absolutePath"
-                        Logger.logPDF({}, "onPdfLoadSuccess -> absolutePath: $absolutePath")
-                    }
-
-                    override fun onPdfLoadStart() {
-                        super.onPdfLoadStart()
-                        ScreenLibraryCompanion.mutableString.value = "Memuat file..>"
-                        Logger.logPDF({}, "onPdfLoadStart (no parameter provided).")
-                    }
-                }
-
-                // Text(ScreenLibraryCompanion.currentpg.toString())
-                Text(ScreenLibraryCompanion.mutablecurpg.intValue.toString())
-                Text(ScreenLibraryCompanion.mutableString.value)
-
-                AndroidView(
-                    factory = {
-                        pdfRendererViewInstance.apply {
-                            initWithUrl(url, headers, lifecycleScope, lifecycleOwner.lifecycle)
-                        }
-                    },
-                    update = {
-                        // Update logic if needed
-                    },
-                    modifier = Modifier
-                )
-
-                // Placebo.
-                Text("ew")
-            }
-        }*/
-
     }
 
     @Composable
@@ -372,9 +287,5 @@ class ScreenLibraryCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
-
-        var currentpg = 0
-        val mutablecurpg = mutableIntStateOf(0)
-        val mutableString = mutableStateOf("")
     }
 }

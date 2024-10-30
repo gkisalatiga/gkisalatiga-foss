@@ -18,15 +18,8 @@ import android.content.SharedPreferences
 class LocalStorage(private val ctx: Context) {
     private val localStorageObj = ctx.getSharedPreferences(LocalStorageCompanion.NAME_SHARED_PREFERENCES, MODE_PRIVATE)
 
-    /**
-     * The default values of local storage keys.
-     */
-    private val DEFAULT_LOCAL_KEY_VALUES: Map<LocalStorageKeys, Any> = mapOf(
-        LocalStorageKeys.LOCAL_KEY_LAST_OPENED_PDF_CACHES to "",
-        LocalStorageKeys.LOCAL_KEY_LAST_STATIC_DATA_UPDATE to Long.MIN_VALUE,
-        LocalStorageKeys.LOCAL_KEY_LAST_CAROUSEL_BANNER_UPDATE to Long.MIN_VALUE,
-        LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS to -1.toInt(),
-    )
+    /* The default custom key value. */
+    private val DEFAULT_CUSTOM_KEY_STRING = ""
 
     /**
      * Returns the LocalStorage object.
@@ -39,55 +32,32 @@ class LocalStorage(private val ctx: Context) {
     }
 
     /**
-     * Initializes the default local storage values.
-     * Useful during first launch where local storage values are unset.
-     */
-    fun initDefaultLocalStorage() {
-        // Assign each local storage value in the map individually.
-        for (localKey in DEFAULT_LOCAL_KEY_VALUES.keys) {
-            // The default value, as declared in the default local storage key value.
-            val defaultVal = DEFAULT_LOCAL_KEY_VALUES[localKey]!!
-
-            // Debug the default local storage's type.
-            Logger.logTest({}, "Type of defaultVal ${defaultVal::class.qualifiedName}, valued = $defaultVal")
-
-            // Initializing the default values to the local storage store.
-            with (localStorageObj.edit()) {
-                if (defaultVal::class == Long::class) putLong(localKey.name, defaultVal as Long)
-                else if (defaultVal::class == Int::class) putInt(localKey.name, defaultVal as Int)
-                else if (defaultVal::class == String::class) putString(localKey.name, defaultVal as String)
-                else if (defaultVal::class == Boolean::class) putBoolean(localKey.name, defaultVal as Boolean)
-                else if (defaultVal::class == Float::class) putFloat(localKey.name, defaultVal as Float)
-
-                // Writing the default local storage values.
-                apply()
-            }
-        }
-    }
-
-    /**
      * Get the saved value of a given local storage key, on an individual basis.
      * @param localKey the local storage key to refer to.
+     * @param customKey any additional custom string that will be appended as the local storage key. (default to empty string)
+     * @param type the data type of the value that will be retrieved.
      * @return The value stored by the local storage key, if the key exists. Otherwise returns null.
      */
-    fun getLocalStorageValue(localKey: LocalStorageKeys): Any? {
+    fun getLocalStorageValue(localKey: LocalStorageKeys, type: LocalStorageDataTypes, customKey: String = DEFAULT_CUSTOM_KEY_STRING): Any? {
         // The returned value.
         var retVal: Any? = null
 
-        // Find the key's default value, as declared in the default local storage key value.
-        val defaultVal = DEFAULT_LOCAL_KEY_VALUES[localKey]!!
+        // The combined key.
+        val key = localKey.name + customKey
 
         // Initializing the default values to the local storage store.
         with (localStorageObj) {
-            if (defaultVal::class == Long::class) retVal = getLong(localKey.name, defaultVal as Long)
-            else if (defaultVal::class == Int::class) retVal = getInt(localKey.name, defaultVal as Int)
-            else if (defaultVal::class == String::class) retVal = getString(localKey.name, defaultVal as String)
-            else if (defaultVal::class == Boolean::class) retVal = getBoolean(localKey.name, defaultVal as Boolean)
-            else if (defaultVal::class == Float::class) retVal = getFloat(localKey.name, defaultVal as Float)
+            retVal = when (type) {
+                LocalStorageDataTypes.BOOLEAN -> getBoolean(key, LocalStorageCompanion.DEFAULT_BOOLEAN_VALUE)
+                LocalStorageDataTypes.FLOAT -> getFloat(key, LocalStorageCompanion.DEFAULT_FLOAT_VALUE)
+                LocalStorageDataTypes.INT -> getInt(key, LocalStorageCompanion.DEFAULT_INT_VALUE)
+                LocalStorageDataTypes.LONG -> getLong(key, LocalStorageCompanion.DEFAULT_LONG_VALUE)
+                LocalStorageDataTypes.STRING -> getString(key, LocalStorageCompanion.DEFAULT_STRING_VALUE)
+            }
         }
 
         // Debug the default local storage's type.
-        Logger.logTest({}, "Type of defaultVal ${defaultVal::class.qualifiedName}, valued = $defaultVal")
+        Logger.logTest({}, "Type of the retrieved value: ${type.name}, content: $retVal")
 
         // Hand over the local storage value the caller asks for.
         return retVal
@@ -97,23 +67,24 @@ class LocalStorage(private val ctx: Context) {
      * Writing a given saved local storage according to the passed key.
      * @param localKey the local storage key to refer to.
      * @param localStorageValue the value to be saved. Must be either: float, int, long, string, or boolean.
+     * @param customKey any additional custom string that will be appended as the local storage key. (default to empty string)
+     * @param type the data type of the value that will be retrieved.
      */
-    fun setLocalStorageValue(localKey: LocalStorageKeys, localStorageValue: Any) {
+    fun setLocalStorageValue(localKey: LocalStorageKeys, localStorageValue: Any, type: LocalStorageDataTypes, customKey: String = DEFAULT_CUSTOM_KEY_STRING) {
+        // The combined key.
+        val key = localKey.name + customKey
+
         // Debug the local storage key-to-write value.
-        Logger.logTest({}, "Writing the local storage value: $localStorageValue under the key ${localKey.name} with class type: ${localStorageValue::class.qualifiedName}")
+        Logger.logTest({}, "Writing the local storage value: $localStorageValue under the key $key with class type: $type")
 
         with (localStorageObj.edit()) {
             // Detect local storage value type.
-            if (localStorageValue::class == Long::class) {
-                putLong(localKey.name, localStorageValue as Long)
-            } else if (localStorageValue::class == Int::class) {
-                putInt(localKey.name, localStorageValue as Int)
-            } else if (localStorageValue::class == String::class) {
-                putString(localKey.name, localStorageValue as String)
-            } else if (localStorageValue::class == Boolean::class) {
-                putBoolean(localKey.name, localStorageValue as Boolean)
-            } else if (localStorageValue::class == Float::class) {
-                putFloat(localKey.name, localStorageValue as Float)
+            when (type) {
+                LocalStorageDataTypes.BOOLEAN -> putBoolean(key, localStorageValue as Boolean)
+                LocalStorageDataTypes.FLOAT -> putFloat(key, localStorageValue as Float)
+                LocalStorageDataTypes.INT -> putInt(key, localStorageValue as Int)
+                LocalStorageDataTypes.LONG -> putLong(key, localStorageValue as Long)
+                LocalStorageDataTypes.STRING -> putString(key, localStorageValue as String)
             }
 
             // Write the local storage values.
@@ -130,6 +101,15 @@ class LocalStorage(private val ctx: Context) {
 class LocalStorageCompanion : Application () {
     companion object {
         const val NAME_SHARED_PREFERENCES: String = "org.gkisalatiga.GKISPLUS_LOCAL_STORAGE"
+
+        /**
+         * The default values of each primitive value class..
+         */
+        const val DEFAULT_BOOLEAN_VALUE = false
+        const val DEFAULT_FLOAT_VALUE = 0.0f
+        const val DEFAULT_INT_VALUE = 0.toInt()
+        const val DEFAULT_LONG_VALUE = 0.toLong()
+        const val DEFAULT_STRING_VALUE = ""
     }
 }
 
@@ -138,8 +118,25 @@ class LocalStorageCompanion : Application () {
  * Each preference bears its own key, represented by the following enum object.
  */
 enum class LocalStorageKeys {
+    /* Generic key that does not require additional custom key. */
     LOCAL_KEY_LAST_OPENED_PDF_CACHES,
     LOCAL_KEY_LAST_STATIC_DATA_UPDATE,
     LOCAL_KEY_LAST_CAROUSEL_BANNER_UPDATE,
     LOCAL_KEY_LAUNCH_COUNTS,
+
+    /* More sophisticated local storage keys that require the use of customKey. */
+    LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION,
+    LOCAL_KEY_IS_PDF_FILE_DOWNLOADED,
+}
+
+/**
+ * This class determines the type of data to be stored in the local storage.
+ * i.e., boolean, float, integer, long, and string.
+ */
+enum class LocalStorageDataTypes {
+    BOOLEAN,
+    FLOAT,
+    INT,
+    LONG,
+    STRING
 }
