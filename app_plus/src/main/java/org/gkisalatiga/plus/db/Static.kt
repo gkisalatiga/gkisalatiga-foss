@@ -123,7 +123,7 @@ class StaticCompanion : Application() {
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-static.json"
+        val savedFilename = "gkisplus-static-v2.json"
 
         /* The JSON object that will be accessed by screens. */
         var jsonRoot: JSONArray? = null

@@ -26,14 +26,14 @@ import org.gkisalatiga.plus.R
 class NotificationService {
     companion object {
 
-        val DEBUG_CHANNEL_ID = "debug_notif"
-        val DEBUG_NOTIFICATION_ID = 999990
+        const val DEBUG_CHANNEL_ID = "debug_notif"
+        const val DEBUG_NOTIFICATION_ID = 999990
 
-        val SAREN_CHANNEL_ID = "saren_notif"
-        val SAREN_NOTIFICATION_ID = 12526
+        const val SAREN_CHANNEL_ID = "saren_notif"
+        const val SAREN_NOTIFICATION_ID = 12526
 
-        val YKB_HARIAN_CHANNEL_ID = "daily_ykb_notif"
-        val YKB_HARIAN_NOTIFICATION_ID = 12891
+        const val YKB_HARIAN_CHANNEL_ID = "daily_ykb_notif"
+        const val YKB_HARIAN_NOTIFICATION_ID = 12891
 
         /**
          * The notification channel for fallback and debugging.

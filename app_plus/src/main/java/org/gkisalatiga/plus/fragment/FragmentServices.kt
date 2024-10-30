@@ -10,8 +10,10 @@
 
 package org.gkisalatiga.plus.fragment
 
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,13 +50,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.screen.ScreenVideoListCompanion
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -77,7 +81,7 @@ class FragmentServices : ComponentActivity() {
         // Enabling vertical scrolling, and setting the layout to center both vertically and horizontally.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
         // SOURCE: https://stackoverflow.com/a/72769561
-        val scrollState = GlobalSchema.fragmentServicesScrollState!!
+        val scrollState = FragmentServicesCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
@@ -148,8 +152,7 @@ class FragmentServices : ComponentActivity() {
             Text(sectionTitle, modifier = Modifier.fillMaxWidth().weight(4f), fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis)
             Button(onClick = {
                 // Display the list of videos in this playlist.
-                GlobalSchema.videoListContentArray = playlistContentList
-                GlobalSchema.videoListTitle = sectionTitle
+                ScreenVideoListCompanion.putArguments(playlistContentList, sectionTitle)
                 AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Some desc", modifier = Modifier.fillMaxSize().aspectRatio(1.0f).padding(0.dp))
@@ -178,16 +181,19 @@ class FragmentServices : ComponentActivity() {
 
                 Card (
                     onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "The card $title is clicked", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "The card $title is clicked", Toast.LENGTH_SHORT).show()
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening the YouTube stream: $url.")
-                        GlobalSchema.ytViewerParameters["yt-link"] = url
-                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
-                        GlobalSchema.ytViewerParameters["title"] = title
-                        GlobalSchema.ytViewerParameters["date"] = date
-                        GlobalSchema.ytViewerParameters["desc"] = desc
-                        GlobalSchema.ytCurrentSecond.floatValue = 0.0f
+                        YouTubeViewCompanion.seekToZero()
+                        YouTubeViewCompanion.putArguments(
+                            date = date,
+                            desc = desc,
+                            thumbnail = StringFormatter.getYouTubeThumbnailFromUrl(url),
+                            title = title,
+                            yt_id = StringFormatter.getYouTubeIDFromUrl(url),
+                            yt_link = url
+                        )
                         AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
                     },
                     //modifier = Modifier.fillMaxHeight().width(320.dp).height(232.dp).padding(horizontal = 5.dp),
@@ -220,4 +226,11 @@ class FragmentServices : ComponentActivity() {
 
     }
 
+}
+
+class FragmentServicesCompanion : Application() {
+    companion object {
+        /* The fragment's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

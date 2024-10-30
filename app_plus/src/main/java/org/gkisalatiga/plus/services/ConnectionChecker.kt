@@ -11,7 +11,7 @@ package org.gkisalatiga.plus.services
 
 import android.content.Context
 import android.net.ConnectivityManager
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import java.util.concurrent.Executors
@@ -42,10 +42,10 @@ class ConnectionChecker(private val ctx: Context) {
                 val networkInfo = manager.activeNetworkInfo
                 if (networkInfo != null && networkInfo.isConnected) {
                     // We are connected to the internet!
-                    GlobalSchema.isConnectedToInternet.value = true
+                    GlobalCompanion.isConnectedToInternet.value = true
                     Logger.logConnTest({}, "ONLINE::0", LoggerType.INFO)
                 } else {
-                    GlobalSchema.isConnectedToInternet.value = false
+                    GlobalCompanion.isConnectedToInternet.value = false
                     Logger.logConnTest({}, "OFFLINE::1", LoggerType.INFO)
                 }
 

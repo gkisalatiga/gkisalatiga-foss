@@ -100,7 +100,7 @@ import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.fragment.FragmentHome
 import org.gkisalatiga.plus.fragment.FragmentInfo
 import org.gkisalatiga.plus.fragment.FragmentServices
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -117,9 +117,9 @@ class ScreenMain : ComponentActivity() {
 
     // Enlists all of the fragments that will be displayed in this particular screen.
     private val fragRoutes = listOf(
-        NavigationRoutes.FRAG_MAIN_HOME.name,
-        NavigationRoutes.FRAG_MAIN_SERVICES.name,
-        NavigationRoutes.FRAG_MAIN_INFO.name,
+        NavigationRoutes.FRAG_MAIN_HOME,
+        NavigationRoutes.FRAG_MAIN_SERVICES,
+        NavigationRoutes.FRAG_MAIN_INFO,
     )
 
     // The calculated status bar's height, for determining the "top bar"'s top padding. (Also the bottom nav bar.)
@@ -127,7 +127,7 @@ class ScreenMain : ComponentActivity() {
     private var calculatedBottomPadding = 0.dp
 
     // Used by the bottom nav to command the scrolling of the horizontal pager.
-    private var bottomNavPagerScrollTo = mutableIntStateOf(fragRoutes.indexOf(GlobalSchema.lastMainScreenPagerPage.value))
+    private var bottomNavPagerScrollTo = mutableIntStateOf(fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value))
 
     // Determines the top banner title.
     private var topBannerTitle = ""
@@ -136,13 +136,13 @@ class ScreenMain : ComponentActivity() {
     private lateinit var horizontalPagerState: PagerState
 
     // Determines what background to show on the new top bar layout by user github.com/ujepx64.
-    private var newTopBannerBackground = mutableIntStateOf(GlobalSchema.lastNewTopBarBackground.value)
+    private var newTopBannerBackground = R.drawable.topbar_greetings_background
 
     // The coroutine scope.
     private lateinit var scope: CoroutineScope
 
     // The snackbar host state.
-    private val snackbarHostState = GlobalSchema.snackbarHostState
+    private val snackbarHostState = GlobalCompanion.snackbarHostState
 
     @Composable
     @ExperimentalMaterial3Api
@@ -156,17 +156,17 @@ class ScreenMain : ComponentActivity() {
         topBannerTitle = ctx.resources.getString(R.string.app_name_alias)
 
         // Initializing the horizontal pager.
-        horizontalPagerState = rememberPagerState ( pageCount = {fragRoutes.size}, initialPage = fragRoutes.indexOf(GlobalSchema.lastMainScreenPagerPage.value) )
+        horizontalPagerState = rememberPagerState ( pageCount = {fragRoutes.size}, initialPage = fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value) )
 
         // Connects the horizontal pager with the bottom bar.
         LaunchedEffect(horizontalPagerState.targetPage) {
-            GlobalSchema.lastMainScreenPagerPage.value = fragRoutes[horizontalPagerState.targetPage]
+            ScreenMainCompanion.mutableLastPagerPage.value = fragRoutes[horizontalPagerState.targetPage]
         }
 
         // The pull-to-refresh indicator states.
-        val isRefreshing = remember { GlobalSchema.isPTRRefreshing }
-        val pullToRefreshState = GlobalSchema.globalPTRState
-        val refreshExecutor = GlobalSchema.PTRExecutor
+        val isRefreshing = remember { GlobalCompanion.isPTRRefreshing }
+        val pullToRefreshState = GlobalCompanion.globalPTRState
+        val refreshExecutor = GlobalCompanion.PTRExecutor
 
         Scaffold (
             bottomBar = { getBottomBar() },
@@ -180,7 +180,7 @@ class ScreenMain : ComponentActivity() {
                 refreshExecutor.execute {
                     // Assumes there is an internet connection.
                     // (If there isn't, the boolean state change will trigger the snack bar.)
-                    GlobalSchema.isConnectedToInternet.value = true
+                    GlobalCompanion.isConnectedToInternet.value = true
 
                     // Attempts to update the data.
                     isRefreshing.value = true
@@ -279,7 +279,7 @@ class ScreenMain : ComponentActivity() {
 
                             // Changing the top bar's transparency.
                             val targetTopBarTransparency = 1 - ((currentContentOffset - ScreenMainCompanion.calculatedTopBarPadding.value) / ( ScreenMainCompanion.MAX_SCREEN_MAIN_TOP_OFFSET - ScreenMainCompanion.calculatedTopBarPadding.value))
-                            ScreenMainCompanion.mutableTopBarContainerTransparency.value = targetTopBarTransparency
+                            ScreenMainCompanion.mutableTopBarContainerTransparency.floatValue = targetTopBarTransparency
 
                             // Debugging the output values.
                             Logger.logRapidTest({}, "[Post-Scroll] y-consumed: ${consumed.y}, y-available: ${available.y}", LoggerType.VERBOSE)
@@ -336,8 +336,8 @@ class ScreenMain : ComponentActivity() {
             // Check whether we are connected to the internet.
             // Then notify user about this.
             val snackbarMessageString = stringResource(R.string.not_connected_to_internet)
-            LaunchedEffect(GlobalSchema.isConnectedToInternet.value) {
-                if (!GlobalSchema.isConnectedToInternet.value) scope.launch {
+            LaunchedEffect(GlobalCompanion.isConnectedToInternet.value) {
+                if (!GlobalCompanion.isConnectedToInternet.value) scope.launch {
                     snackbarHostState.showSnackbar(
                         message = snackbarMessageString,
                         duration = SnackbarDuration.Short
@@ -367,14 +367,14 @@ class ScreenMain : ComponentActivity() {
             val exitConfirm = stringResource(R.string.exit_confirmation_toast_string)
             val localContext = LocalContext.current
             BackHandler {
-                val curRoute = GlobalSchema.lastMainScreenPagerPage.value
-                if (curRoute == NavigationRoutes.FRAG_MAIN_HOME.name) {
+                val curRoute = ScreenMainCompanion.mutableLastPagerPage.value
+                if (curRoute == NavigationRoutes.FRAG_MAIN_HOME) {
 
                     // Ensure "double tap the back button to exit".
                     if (backPressedTime + 2000 > System.currentTimeMillis()) {
                         // Exit the application.
                         // SOURCE: https://stackoverflow.com/a/67402808
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(localContext, "You just clicked $curRoute and exited the app!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(localContext, "You just clicked $curRoute and exited the app!", Toast.LENGTH_SHORT).show()
                         (localContext as ComponentActivity).finish()
                     } else {
                         Toast.makeText(localContext, exitConfirm, Toast.LENGTH_LONG).show()
@@ -383,8 +383,8 @@ class ScreenMain : ComponentActivity() {
                     backPressedTime = System.currentTimeMillis()
 
                 } else if (
-                    curRoute == NavigationRoutes.FRAG_MAIN_INFO.name ||
-                    curRoute == NavigationRoutes.FRAG_MAIN_SERVICES.name
+                    curRoute == NavigationRoutes.FRAG_MAIN_INFO ||
+                    curRoute == NavigationRoutes.FRAG_MAIN_SERVICES
                 ) {
                     // Since we are in the main screen but not at fragment one,
                     // navigate the app to fragment one.
@@ -430,14 +430,14 @@ class ScreenMain : ComponentActivity() {
 
                     NavigationBarItem(
                         icon = {
-                            if (fragRoutes.indexOf(GlobalSchema.lastMainScreenPagerPage.value) == index) {
+                            if (fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value) == index) {
                                 Icon(bottomNavItemIconsSelected[index], contentDescription = item)
                             } else {
                                 Icon(bottomNavItemIconsInactive[index], contentDescription = item)
                             }
                         },
                         label = { Text(item) },
-                        selected = fragRoutes.indexOf(GlobalSchema.lastMainScreenPagerPage.value) == index,
+                        selected = fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value) == index,
                         colors = NavigationBarItemColors(
                             selectedIconColor = Color.Unspecified,
                             selectedTextColor = Color.Unspecified,
@@ -472,7 +472,7 @@ class ScreenMain : ComponentActivity() {
             /* Drawing the top bar greetings banner background. */
             // SOURCE: https://stackoverflow.com/a/70965281
             Image (
-                painter = painterResource(newTopBannerBackground.intValue),
+                painter = painterResource(newTopBannerBackground),
                 contentDescription = "",
                 modifier = Modifier.fillMaxHeight(),
                 contentScale = ContentScale.Crop
@@ -525,7 +525,7 @@ class ScreenMain : ComponentActivity() {
         TopAppBar (
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = ScreenMainCompanion.topBarContainerColor
-                    .copy(ScreenMainCompanion.mutableTopBarContainerTransparency.value),
+                    .copy(ScreenMainCompanion.mutableTopBarContainerTransparency.floatValue),
                 titleContentColor = ScreenMainCompanion.topBarTitleContentColor
             ),
             title = {
@@ -542,8 +542,8 @@ class ScreenMain : ComponentActivity() {
             actions = {
                 /* TODO: Re-enable the search button once the functionality is ready.
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_SEARCH
-                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                    GlobalCompanion.pushScreen.value = NavigationRoutes.SCREEN_SEARCH
+                    GlobalCompanion.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
                 }) {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -554,8 +554,8 @@ class ScreenMain : ComponentActivity() {
                 */
                 /* TODO: Re-enable the settings button once the functionality is ready.
                 IconButton(onClick = {
-                    GlobalSchema.pushScreen.value = NavigationRoutes.SCREEN_SETTINGS
-                    GlobalSchema.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
+                    GlobalCompanion.pushScreen.value = NavigationRoutes.SCREEN_SETTINGS
+                    GlobalCompanion.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
                 }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -582,12 +582,18 @@ class ScreenMain : ComponentActivity() {
  */
 class ScreenMainCompanion : Application () {
     companion object {
-        val mutableTopBarContainerTransparency = mutableStateOf(0.0f)
+        val DEFAULT_MAIN_FRAGMENT = NavigationRoutes.FRAG_MAIN_HOME
+
+        /* The dynamic state of the top bar UI. */
+        val mutableTopBarContainerTransparency = mutableFloatStateOf(0.0f)
         val topBarContainerColor = Color(Colors.MAIN_TOP_BAR_COLOR)
         val topBarTitleContentColor = Color(Colors.MAIN_TOP_BAR_CONTENT_COLOR)
 
         /* The calculated top bar padding of the scaffolding. */
         var calculatedTopBarPadding = 0.dp
+
+        /* The last visited pager page (representing fragment) in ScreenMain. */
+        var mutableLastPagerPage = mutableStateOf(DEFAULT_MAIN_FRAGMENT)
 
         /* The top offset of fragments in the ScreenMain. */
         const val MIN_SCREEN_MAIN_TOP_OFFSET = 0.0f

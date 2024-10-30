@@ -10,8 +10,10 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +54,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -97,7 +98,7 @@ class ScreenMedia : ComponentActivity() {
         // Enabling vertical scrolling, and setting the layout to center both vertically and horizontally.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
         // SOURCE: https://stackoverflow.com/a/72769561
-        val scrollState = GlobalSchema.screenMediaScrollState!!
+        val scrollState = ScreenMediaCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
@@ -139,8 +140,7 @@ class ScreenMedia : ComponentActivity() {
             Text(sectionTitle, modifier = Modifier.fillMaxWidth().weight(4f), fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis)
             Button(onClick = {
                 // Display the list of videos in this playlist.
-                GlobalSchema.videoListContentArray = playlistContentList
-                GlobalSchema.videoListTitle = sectionTitle
+                ScreenVideoListCompanion.putArguments(playlistContentList, sectionTitle)
                 // Navigate to the video playlist viewer.
                 AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
@@ -155,8 +155,7 @@ class ScreenMedia : ComponentActivity() {
                 modifier = Modifier.padding(bottom = 10.dp).aspectRatio(1.77778f),
                 onClick = {
                     // Display the list of videos in this playlist.
-                    GlobalSchema.videoListContentArray = playlistContentList
-                    GlobalSchema.videoListTitle = sectionTitle
+                    ScreenVideoListCompanion.putArguments(playlistContentList, sectionTitle)
                     // Navigate to the playlist view.
                     AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
                 }
@@ -203,5 +202,12 @@ class ScreenMedia : ComponentActivity() {
             actions = { },
             scrollBehavior = scrollBehavior
         )
+    }
+}
+
+class ScreenMediaCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
     }
 }

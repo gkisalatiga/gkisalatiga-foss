@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 
 class ScreenInternalHTML : ComponentActivity() {

@@ -11,6 +11,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -54,8 +55,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.fragment.FragmentGalleryList
 import org.gkisalatiga.plus.fragment.FragmentGalleryStory
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.json.JSONArray
 
 class ScreenGaleriList : ComponentActivity() {
 
@@ -119,8 +120,8 @@ class ScreenGaleriList : ComponentActivity() {
     private fun getTopBar() {
 
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        val topBarTitle = GlobalSchema.displayedAlbumTitle
-        val tabs = listOf("Album", "Kisah")
+        val topBarTitle = ScreenGaleriListCompanion.displayedAlbumTitle
+        val tabs = listOf("Album", "Kisah")  // TODO: Extract string to strings.xml
         val icons = listOf(
             Icons.Outlined.PhotoCamera,
             Icons.AutoMirrored.Outlined.Article
@@ -183,4 +184,27 @@ class ScreenGaleriList : ComponentActivity() {
         }
     }
 
+}
+
+class ScreenGaleriListCompanion : Application() {
+    companion object {
+        internal var displayedAlbumTitle: String = ""
+        internal var displayedAlbumStory: String = ""
+        internal var displayedFeaturedImageID: String = ""
+        internal var targetAlbumContent: JSONArray? = null
+
+        /**
+         * This function neatly and thoroughly passes the respective arguments to the screen's handler.
+         * @param albumTitle the target album's title.
+         * @param albumStory the target album's story.
+         * @param featuredImageId the featured image that will visually describe the album.
+         * @param albumContent the target album contents (photographs) that will be enlisted.
+         */
+        fun putArguments(albumTitle: String, albumStory: String, featuredImageId: String, albumContent: JSONArray?) {
+            displayedAlbumTitle = albumTitle
+            displayedAlbumStory = albumStory
+            displayedFeaturedImageID = featuredImageId
+            targetAlbumContent = albumContent
+        }
+    }
 }

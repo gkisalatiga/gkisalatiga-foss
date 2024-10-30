@@ -10,6 +10,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -18,6 +19,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -69,7 +71,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -119,7 +121,7 @@ class ScreenAbout : ComponentActivity() {
             topBar = { getTopBar() }
                 ) {
 
-            val scrollState = GlobalSchema.screenAboutScrollState!!
+            val scrollState = ScreenAboutCompanion.rememberedScrollState!!
             Column (
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -135,7 +137,7 @@ class ScreenAbout : ComponentActivity() {
                         modifier = Modifier.size(100.dp),
                         onClick = {
                             /* You know what this is. */
-                            if (GlobalSchema.DEBUG_ENABLE_EASTER_EGG) {
+                            if (GlobalCompanion.DEBUG_ENABLE_EASTER_EGG) {
                                 // Ensures that the user (developer) has to click N-times before opening the dev menu.
                                 if (easterEggFirstClick + easterEggTimeout > System.currentTimeMillis()) {
                                     /* Opens the easter egg. */
@@ -249,7 +251,7 @@ class ScreenAbout : ComponentActivity() {
             val sourceCodeText = stringResource(R.string.screen_about_kode_sumber)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { uriHandler.openUri(GlobalSchema.aboutSourceCodeURL) }
+                onClick = { uriHandler.openUri(GlobalCompanion.APP_SOURCE_CODE_URL) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Code, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -262,7 +264,7 @@ class ScreenAbout : ComponentActivity() {
             val changelogText = stringResource(R.string.screen_about_log_perubahan)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { uriHandler.openUri(GlobalSchema.aboutChangelogURL) }
+                onClick = { uriHandler.openUri(GlobalCompanion.APP_CHANGELOG_URL) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.History, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -307,7 +309,7 @@ class ScreenAbout : ComponentActivity() {
                     // SOURCE: https://www.tutorialspoint.com/android/android_sending_email.htm
                     // SOURCE: https://stackoverflow.com/a/59365539
                     val emailIntent = Intent(Intent.ACTION_SENDTO)
-                    emailIntent.setData(Uri.parse("mailto:${GlobalSchema.aboutContactMail}"))
+                    emailIntent.setData(Uri.parse("mailto:${GlobalCompanion.ABOUT_CONTACT_MAIL}"))
                     ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
                 }
             ) {
@@ -350,4 +352,11 @@ class ScreenAbout : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenAboutCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

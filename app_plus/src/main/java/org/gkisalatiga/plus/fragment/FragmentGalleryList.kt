@@ -6,12 +6,14 @@
 
 package org.gkisalatiga.plus.fragment
 
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -24,10 +26,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
+import org.gkisalatiga.plus.screen.ScreenGaleriViewCompanion
 
 class FragmentGalleryList : ComponentActivity() {
 
@@ -35,8 +38,8 @@ class FragmentGalleryList : ComponentActivity() {
     fun getComposable() {
         /* Extract JSONArray to regular list. As always, JSONArray starts at 1. */
         val extractedAlbumContent = mutableListOf(mapOf<String, String>())
-        for (i in 0 until GlobalSchema.targetAlbumContent!!.length()) {
-            val curItem = GlobalSchema.targetAlbumContent!!.getJSONObject(i)
+        for (i in 0 until ScreenGaleriListCompanion.targetAlbumContent!!.length()) {
+            val curItem = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(i)
             extractedAlbumContent.add(
                 mapOf<String, String> (
                     "date" to curItem.getString("date"),
@@ -49,7 +52,7 @@ class FragmentGalleryList : ComponentActivity() {
 
         /* Displaying the thumbnails. */
         Box (Modifier.fillMaxSize().padding(10.dp)) {
-            val verticalScrollState = GlobalSchema.fragmentGalleryListScrollState!!
+            val verticalScrollState = FragmentGalleryListCompanion.rememberedLazyGridState!!
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier.fillMaxSize(),
@@ -61,7 +64,7 @@ class FragmentGalleryList : ComponentActivity() {
                     item {
                         Surface(
                             onClick = {
-                                GlobalSchema.galleryViewerStartPage = index
+                                ScreenGaleriViewCompanion.galleryViewerStartPage = index
                                 AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_VIEW)
                             },
                             modifier = Modifier
@@ -86,4 +89,11 @@ class FragmentGalleryList : ComponentActivity() {
         }  // --- end of box.
     }  // --- end of getComposable().
 
+}
+
+class FragmentGalleryListCompanion : Application() {
+    companion object {
+        /* The fragment's remembered lazy grid state. */
+        var rememberedLazyGridState: LazyGridState? = null
+    }
 }

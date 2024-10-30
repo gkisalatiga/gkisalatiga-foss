@@ -76,7 +76,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -95,7 +95,6 @@ class ScreenPukatBerkat : ComponentActivity() {
     private lateinit var scope: CoroutineScope
 
     // The horizontal pager tab selections.
-    private val topBarTitle = GlobalSchema.displayedAlbumTitle
     private val sectionTabName = listOf(
         R.string.pukatberkat_section_food,
         R.string.pukatberkat_section_goods,
@@ -229,7 +228,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                         // Set the PosterViewer parameters.
                         ScreenPosterViewerCompanion.posterViewerTitle = title
@@ -269,7 +268,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                                 containerColor = Color(Colors.YKB_ARCHIVE_BUTTON_COLOR)
                             ),
                             onClick = {
-                                if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
+                                if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
 
                                 // Opens in an external browser.
                                 // SOURCE: https://stackoverflow.com/a/69103918

@@ -7,9 +7,10 @@
 package org.gkisalatiga.plus.services
 
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.screen.ScreenVideoListCompanion
+import org.gkisalatiga.plus.screen.ScreenWebViewCompanion
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -40,8 +41,7 @@ class DeepLinkHandler {
             }
 
             // Display the list of SaRen videos.
-            GlobalSchema.videoListContentArray = playlistContentList
-            GlobalSchema.videoListTitle = sarenPlaylistTitle
+            ScreenVideoListCompanion.putArguments(playlistContentList, sarenPlaylistTitle)
             AppNavigation.navigateCold(NavigationRoutes.SCREEN_VIDEO_LIST)
         }
 
@@ -54,8 +54,7 @@ class DeepLinkHandler {
          */
         fun openDomainURL(url: String, title: String = "GKI Salatiga") {
             // Navigate to the WebView viewer.
-            GlobalSchema.webViewTargetURL = url
-            GlobalSchema.webViewTitle = title
+            ScreenWebViewCompanion.putArguments(url, title)
             AppNavigation.navigateCold(NavigationRoutes.SCREEN_WEBVIEW)
         }
     }

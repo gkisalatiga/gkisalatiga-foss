@@ -53,7 +53,7 @@ import com.rajat.pdfviewer.HeaderData
 import com.rajat.pdfviewer.PdfRendererView
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
@@ -98,7 +98,7 @@ class ScreenPDFViewer : ComponentActivity() {
 
             // Display the markdown text.
             Column {
-                val pdfRendererViewInstance = GlobalSchema.pdfRendererViewInstance!!
+                val pdfRendererViewInstance = GlobalCompanion.pdfRendererViewInstance!!
 
                 val url = "https://myreport.altervista.org/Lorem_Ipsum.pdf"
                 val headers = HeaderData()

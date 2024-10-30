@@ -10,11 +10,13 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,7 +60,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
@@ -91,7 +92,7 @@ class ScreenDev : ComponentActivity() {
             topBar = { getTopBar() }
                 ) {
 
-            val scrollState = GlobalSchema.screenAboutScrollState!!
+            val scrollState = ScreenDevCompanion.rememberedScrollState!!
             Column (
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -219,4 +220,11 @@ class ScreenDev : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenDevCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

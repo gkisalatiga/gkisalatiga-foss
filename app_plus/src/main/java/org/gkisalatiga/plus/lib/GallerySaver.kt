@@ -12,7 +12,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.ActivityCompat.startActivityForResult
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import java.io.OutputStream
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
@@ -23,8 +23,8 @@ import java.util.concurrent.Executors
  */
 class GallerySaver {
     fun saveImageFromURL(ctx: Context, imageURL: String, imageName: String) {
-        GlobalSchema.targetGoogleDrivePhotoURL = imageURL
-        GlobalSchema.targetSaveFilename = imageName
+        GlobalCompanion.targetGoogleDrivePhotoURL = imageURL
+        GlobalCompanion.targetSaveFilename = imageName
 
         // Create a new intent.
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
@@ -33,7 +33,7 @@ class GallerySaver {
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "image/*"
         intent.putExtra(Intent.EXTRA_TITLE, imageName)
-        startActivityForResult(ctx as Activity, intent, GlobalSchema.GALLERY_SAVER_CODE, null)
+        startActivityForResult(ctx as Activity, intent, GlobalCompanion.GALLERY_SAVER_CODE, null)
         Logger.logTest({}, "Is this block executed? (2)")
     }
 
@@ -43,12 +43,12 @@ class GallerySaver {
         executor.execute {
 
             // Display the download progress circle.
-            GlobalSchema.showScreenGaleriViewDownloadProgress.value = true
+            GlobalCompanion.showScreenGaleriViewDownloadProgress.value = true
 
             try {
                 // Opening the file download stream.
-                Logger.logDump({}, GlobalSchema.targetGoogleDrivePhotoURL)
-                val streamIn = java.net.URL(GlobalSchema.targetGoogleDrivePhotoURL).openStream()
+                Logger.logDump({}, GlobalCompanion.targetGoogleDrivePhotoURL)
+                val streamIn = java.net.URL(GlobalCompanion.targetGoogleDrivePhotoURL).openStream()
 
                 // Coverting input stream (bytes) to string.
                 // SOURCE: http://stackoverflow.com/questions/49467780/ddg#49468129
@@ -60,21 +60,21 @@ class GallerySaver {
                 outputStream.close()
 
                 // Show some successful alert.
-                GlobalSchema.txtScreenGaleriViewAlertDialogTitle = "File Terunduh!"
-                GlobalSchema.txtScreenGaleriViewAlertDialogSubtitle = "Berhasil mengunduh \"${GlobalSchema.targetSaveFilename}\""
-                GlobalSchema.showScreenGaleriViewAlertDialog.value = true
+                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "File Terunduh!"
+                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Berhasil mengunduh \"${GlobalCompanion.targetSaveFilename}\""
+                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
 
             } catch (e: UnknownHostException) {
                 Logger.log({}, "Network unreachable when downloading the gallery data: $e", LoggerType.ERROR)
 
                 // Show some failure alert.
-                GlobalSchema.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
-                GlobalSchema.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda."
-                GlobalSchema.showScreenGaleriViewAlertDialog.value = true
+                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda."
+                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
             }
 
             // Break free from this thread.
-            GlobalSchema.showScreenGaleriViewDownloadProgress.value = false
+            GlobalCompanion.showScreenGaleriViewDownloadProgress.value = false
             executor.shutdown()
         }
     }

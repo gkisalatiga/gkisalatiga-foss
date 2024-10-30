@@ -11,10 +11,12 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,7 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.GalleryCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 
@@ -101,7 +103,7 @@ class ScreenGaleri : ComponentActivity() {
         galleryYearList.sort()
 
         // The column's saved scroll state.
-        val scrollState = GlobalSchema.screenGaleriScrollState!!
+        val scrollState = ScreenGaleriCompanion.rememberedScrollState!!
         Column (
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -133,10 +135,10 @@ class ScreenGaleri : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery folder year: $it", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery folder year: $it", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the WebView viewer.
-                        GlobalSchema.targetGalleryYear = it
+                        ScreenGaleriCompanion.targetGalleryYear = it
                         AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_YEAR)
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
@@ -182,4 +184,21 @@ class ScreenGaleri : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenGaleriCompanion : Application() {
+    companion object {
+        internal var targetGalleryYear: String = ""
+
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+
+        /**
+         * This function neatly and thoroughly passes the respective arguments to the screen's handler.
+         * @param year the target gallery year to display in the gallery album.
+         */
+        fun putArguments(year: String) {
+            targetGalleryYear = year
+        }
+    }
 }

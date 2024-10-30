@@ -14,9 +14,7 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.Logger
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
@@ -152,7 +150,7 @@ class MainCompanion : Application() {
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-main.json"
+        val savedFilename = "gkisplus-main-v2.json"
 
         /* The JSON object that will be accessed by screens. */
         var jsonRoot: JSONObject? = null

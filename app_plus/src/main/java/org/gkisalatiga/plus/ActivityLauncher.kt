@@ -73,7 +73,8 @@ import androidx.navigation.navDeepLink
 import com.rajat.pdfviewer.PdfRendererView
 import kotlinx.coroutines.delay
 import org.gkisalatiga.plus.composable.YouTubeView
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
@@ -85,18 +86,29 @@ import org.gkisalatiga.plus.lib.GallerySaver
 
 import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
+import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
+import org.gkisalatiga.plus.fragment.FragmentHomeCompanion
+import org.gkisalatiga.plus.fragment.FragmentInfoCompanion
+import org.gkisalatiga.plus.fragment.FragmentServicesCompanion
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.screen.ScreenAbout
+import org.gkisalatiga.plus.screen.ScreenAboutCompanion
 import org.gkisalatiga.plus.screen.ScreenAgenda
+import org.gkisalatiga.plus.screen.ScreenAgendaCompanion
 import org.gkisalatiga.plus.screen.ScreenAttribution
+import org.gkisalatiga.plus.screen.ScreenAttributionCompanion
 import org.gkisalatiga.plus.screen.ScreenBible
 import org.gkisalatiga.plus.screen.ScreenContrib
+import org.gkisalatiga.plus.screen.ScreenContribCompanion
 import org.gkisalatiga.plus.screen.ScreenDev
+import org.gkisalatiga.plus.screen.ScreenDevCompanion
 import org.gkisalatiga.plus.screen.ScreenForms
+import org.gkisalatiga.plus.screen.ScreenFormsCompanion
 import org.gkisalatiga.plus.screen.ScreenGaleri
+import org.gkisalatiga.plus.screen.ScreenGaleriCompanion
 import org.gkisalatiga.plus.screen.ScreenGaleriList
 import org.gkisalatiga.plus.screen.ScreenGaleriView
 import org.gkisalatiga.plus.screen.ScreenGaleriYear
@@ -104,18 +116,23 @@ import org.gkisalatiga.plus.screen.ScreenInternalHTML
 import org.gkisalatiga.plus.screen.ScreenLibrary
 import org.gkisalatiga.plus.screen.ScreenLibraryCompanion
 import org.gkisalatiga.plus.screen.ScreenLicense
+import org.gkisalatiga.plus.screen.ScreenLicenseCompanion
 import org.gkisalatiga.plus.screen.ScreenLiturgi
 import org.gkisalatiga.plus.screen.ScreenMain
 import org.gkisalatiga.plus.screen.ScreenMedia
+import org.gkisalatiga.plus.screen.ScreenMediaCompanion
+import org.gkisalatiga.plus.screen.ScreenPDFViewer
 import org.gkisalatiga.plus.screen.ScreenPersembahan
 import org.gkisalatiga.plus.screen.ScreenPersembahanCompanion
 import org.gkisalatiga.plus.screen.ScreenPosterViewer
 import org.gkisalatiga.plus.screen.ScreenPrivacy
+import org.gkisalatiga.plus.screen.ScreenPrivacyCompanion
 import org.gkisalatiga.plus.screen.ScreenPukatBerkat
 import org.gkisalatiga.plus.screen.ScreenPukatBerkatCompanion
 import org.gkisalatiga.plus.screen.ScreenSearch
 import org.gkisalatiga.plus.screen.ScreenSettings
 import org.gkisalatiga.plus.screen.ScreenStaticContentList
+import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
 import org.gkisalatiga.plus.screen.ScreenVideoList
 import org.gkisalatiga.plus.screen.ScreenVideoLive
 import org.gkisalatiga.plus.screen.ScreenWarta
@@ -124,6 +141,7 @@ import org.gkisalatiga.plus.screen.ScreenYKB
 import org.gkisalatiga.plus.screen.ScreenYKBCompanion
 import org.gkisalatiga.plus.screen.ScreenYKBList
 import org.gkisalatiga.plus.screen.ScreenYKBListCompanion
+import org.gkisalatiga.plus.services.ClipManager
 import org.gkisalatiga.plus.services.ConnectionChecker
 import org.gkisalatiga.plus.services.DataUpdater
 import org.gkisalatiga.plus.services.DeepLinkHandler
@@ -137,13 +155,13 @@ class ActivityLauncher : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        GlobalSchema.isRunningInBackground.value = true
+        GlobalCompanion.isRunningInBackground.value = true
         Logger.log({}, "App is now in background.")
     }
 
     override fun onResume() {
         super.onResume()
-        GlobalSchema.isRunningInBackground.value = false
+        GlobalCompanion.isRunningInBackground.value = false
         Logger.log({}, "App has been restored to foreground.")
     }
 
@@ -165,7 +183,7 @@ class ActivityLauncher : ComponentActivity() {
     @SuppressLint("MissingSuperCall", "Recycle")
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, resultData: Intent?) {
-        if (requestCode == GlobalSchema.GALLERY_SAVER_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == GlobalCompanion.GALLERY_SAVER_CODE && resultCode == Activity.RESULT_OK) {
             // The result data contains a URI for the document or directory that
             // the user selected.
             resultData?.data?.also { uri ->
@@ -221,29 +239,14 @@ class ActivityLauncher : ComponentActivity() {
         // Call the superclass. (The default behavior. DO NOT CHANGE!)
         super.onCreate(savedInstanceState)
 
-        // Determine the default screen, fragment, and submenu to open upon first app launch,
-        // as well as other pre-determined default values.
-        val defaultFragmentLaunch = NavigationRoutes.FRAG_MAIN_HOME.name
-        val defaultNewTopBarBackground = R.drawable.topbar_greetings_background
-
-        // Set the default selected day in "Agenda" menu.
-        GlobalSchema.currentAgendaDay.value = "sun"
-
-        // Setting some of the most important default values of the global schema.
-        // (i.e., the composable navigation direction.)
-        GlobalSchema.lastMainScreenPagerPage.value = defaultFragmentLaunch
-
-        // The top bar greeting background.
-        GlobalSchema.lastNewTopBarBackground.value = defaultNewTopBarBackground
-
         // Setting the clipboard manager.
         // Should be performed within "onCreate" to avoid the following error:
         // java.lang.IllegalStateException: System services not available to Activities before onCreate()
-        GlobalSchema.clipManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        ClipManager.clipManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 
         // Prepares the global YouTube composable and viewer.
         // Prevents NPE.
-        GlobalSchema.ytComposable = YouTubeView()
+        YouTubeViewCompanion.composable = YouTubeView()
 
         // Retrieving the latest JSON metadata.
         initData()
@@ -272,29 +275,30 @@ class ActivityLauncher : ComponentActivity() {
             initCarouselState()
 
             // TODO: DEBUG: Remove this code because it is debug.
-            GlobalSchema.pdfRendererViewInstance = PdfRendererView(this)
+            GlobalCompanion.pdfRendererViewInstance = PdfRendererView(this)
 
-            // Initializes the scroll states.
-            GlobalSchema.componentAgendaDayRowScrollState = rememberScrollState()
-            GlobalSchema.fragmentGalleryListScrollState = rememberLazyGridState()
-            GlobalSchema.fragmentHomeScrollState = rememberScrollState()
-            GlobalSchema.fragmentServicesScrollState = rememberScrollState()
-            GlobalSchema.fragmentInfoScrollState = rememberScrollState()
-            GlobalSchema.screenAboutScrollState = rememberScrollState()
-            GlobalSchema.screenAboutContentListScrollState = rememberScrollState()
-            GlobalSchema.screenAttributionScrollState = rememberScrollState()
-            GlobalSchema.screenPrivacyPolicyScrollState = rememberScrollState()
-            GlobalSchema.screenLicenseScrollState = rememberScrollState()
-            GlobalSchema.screenContributorsScrollState = rememberScrollState()
-            GlobalSchema.screenAgendaScrollState = rememberScrollState()
-            GlobalSchema.screenFormsScrollState = rememberScrollState()
-            GlobalSchema.screenGaleriScrollState = rememberScrollState()
-            GlobalSchema.screenMediaScrollState = rememberScrollState()
+            // Initializes the scroll states and lazy scroll states.
+            FragmentGalleryListCompanion.rememberedLazyGridState = rememberLazyGridState()
+            FragmentHomeCompanion.rememberedScrollState = rememberScrollState()
+            FragmentInfoCompanion.rememberedScrollState = rememberScrollState()
+            FragmentServicesCompanion.rememberedScrollState = rememberScrollState()
+            ScreenAboutCompanion.rememberedScrollState = rememberScrollState()
+            ScreenAgendaCompanion.rememberedDayListScrollState = rememberScrollState()
+            ScreenAgendaCompanion.rememberedScrollState = rememberScrollState()
+            ScreenAttributionCompanion.rememberedScrollState = rememberScrollState()
+            ScreenContribCompanion.rememberedScrollState = rememberScrollState()
+            ScreenDevCompanion.rememberedScrollState = rememberScrollState()
+            ScreenFormsCompanion.rememberedScrollState = rememberScrollState()
+            ScreenGaleriCompanion.rememberedScrollState = rememberScrollState()
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
+            ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
+            ScreenMediaCompanion.rememberedScrollState = rememberScrollState()
             ScreenPersembahanCompanion.rememberedScrollState = rememberScrollState()
+            ScreenPrivacyCompanion.rememberedScrollState = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
+            ScreenStaticContentListCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
 
@@ -302,12 +306,12 @@ class ActivityLauncher : ComponentActivity() {
             ScreenPukatBerkatCompanion.pukatBerkatPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
 
             // Prepare the pull-to-refresh (PTR) state globally.
-            GlobalSchema.globalPTRState = rememberPullToRefreshState()
+            GlobalCompanion.globalPTRState = rememberPullToRefreshState()
 
             // Listen to the request to hide the phone's bars.
             // SOURCE: https://developer.android.com/develop/ui/views/layout/immersive
-            key (GlobalSchema.phoneBarsVisibility.value) {
-                if (GlobalSchema.phoneBarsVisibility.value) {
+            key (GlobalCompanion.isPhoneBarsVisible.value) {
+                if (GlobalCompanion.isPhoneBarsVisible.value) {
                     windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
                 } else {
                     windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
@@ -315,7 +319,7 @@ class ActivityLauncher : ComponentActivity() {
             }
 
             GKISalatigaPlusTheme {
-                if (!GlobalSchema.DEBUG_DISABLE_SPLASH_SCREEN) {
+                if (!GlobalCompanion.DEBUG_DISABLE_SPLASH_SCREEN) {
                     // Splash screen.
                     // SOURCE: https://medium.com/@fahadhabib01/animated-splash-screens-in-jetpack-compose-navigation-component-4e28f69ad559
                     Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
@@ -366,7 +370,7 @@ class ActivityLauncher : ComponentActivity() {
 
     /**
      * This method reads the current saved preference associated with the app
-     * and pass it to the GlobalSchema so that other functions can use them.
+     * and pass it to the GlobalCompanion so that other functions can use them.
      */
     private fun initPreferences() {
         // Initializes the preferences.
@@ -378,7 +382,7 @@ class ActivityLauncher : ComponentActivity() {
         // Increment the number of counts.
         val now = appPref.getPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS) as Int
         appPref.setPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS, now + 1)
-        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
+        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
     }
 
     /**
@@ -436,6 +440,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive().getComposable() }
             composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain().getComposable() }
             composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia().getComposable() }
+            composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer().getComposable() }
             composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan().getComposable() }
             composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer().getComposable() }
             composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }
@@ -488,7 +493,7 @@ class ActivityLauncher : ComponentActivity() {
     private fun initData() {
 
         // The file creator to create the private file.
-        val fileCreator = this.getDir(GlobalSchema.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
+        val fileCreator = this.getDir(GlobalCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
 
         // Setting up the downloaded JSON's absolute paths.
         Logger.logInit({}, "Initializing the downloaded JSON paths ...")
@@ -539,7 +544,7 @@ class ActivityLauncher : ComponentActivity() {
             // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
             val actualPageCount = MainCompanion.jsonRoot!!.getJSONArray("carousel").length()
             val carouselPageCount = actualPageCount * baseInfiniteScrollingPages
-            GlobalSchema.fragmentHomeCarouselPagerState = rememberPagerState(
+            FragmentHomeCompanion.rememberedCarouselPagerState = rememberPagerState(
                 initialPage = carouselPageCount / 2,
                 pageCount = { carouselPageCount }
             )

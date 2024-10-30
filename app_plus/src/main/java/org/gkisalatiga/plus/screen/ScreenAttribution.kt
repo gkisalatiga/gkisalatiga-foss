@@ -10,8 +10,10 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,7 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.json.JSONArray
@@ -59,7 +60,7 @@ class ScreenAttribution : ComponentActivity() {
             topBar = { getTopBar() }
                 ) {
 
-            val scrollState = GlobalSchema.screenAttributionScrollState!!
+            val scrollState = ScreenAttributionCompanion.rememberedScrollState!!
             Column (
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,4 +152,11 @@ class ScreenAttribution : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenAttributionCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

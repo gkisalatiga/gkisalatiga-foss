@@ -10,10 +10,12 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONObject
@@ -86,7 +88,7 @@ class ScreenForms : ComponentActivity() {
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
-        val scrollState = GlobalSchema.screenFormsScrollState!!
+        val scrollState = ScreenFormsCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -140,11 +142,10 @@ class ScreenForms : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the WebView viewer.
-                        GlobalSchema.webViewTargetURL = url!!
-                        GlobalSchema.webViewTitle = title!!
+                        ScreenWebViewCompanion.putArguments(url!!, title!!)
                         AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
@@ -188,5 +189,12 @@ class ScreenForms : ComponentActivity() {
             actions = { },
             scrollBehavior = scrollBehavior
         )
+    }
+}
+
+class ScreenFormsCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
     }
 }

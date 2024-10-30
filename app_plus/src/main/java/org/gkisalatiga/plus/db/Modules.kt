@@ -121,7 +121,7 @@ class ModulesCompanion : Application() {
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-modules.json"
+        val savedFilename = "gkisplus-modules-v2.json"
 
         /* The JSON object that will be accessed by screens. */
         var jsonRoot: JSONObject? = null

@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.GalleryCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -85,7 +85,7 @@ class ScreenGaleriYear : ComponentActivity() {
         val galleryNode = GalleryCompanion.jsonRoot!!
 
         // Enlist the list of albums in the currently selected year.
-        val galleryYearList = galleryNode.getJSONArray(GlobalSchema.targetGalleryYear)
+        val galleryYearList = galleryNode.getJSONArray(ScreenGaleriCompanion.targetGalleryYear)
 
         // DEBUG. Always comment out.
         Logger.logTest({}, "Current object (1): ${galleryYearList}")
@@ -128,13 +128,15 @@ class ScreenGaleriYear : ComponentActivity() {
                     // Displaying the individual card.
                     Card(
                         onClick = {
-                            if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery album year: $title", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery album year: $title", Toast.LENGTH_SHORT).show()
 
                             // Navigate to the WebView viewer.
-                            GlobalSchema.displayedAlbumTitle = title
-                            GlobalSchema.displayedAlbumStory = it["story"].toString()
-                            GlobalSchema.displayedFeaturedImageID = featuredImageID
-                            GlobalSchema.targetAlbumContent = it["photos"] as JSONArray
+                            ScreenGaleriListCompanion.putArguments(
+                                albumTitle = title,
+                                albumStory = it["story"].toString(),
+                                featuredImageId = featuredImageID,
+                                albumContent = it["photos"] as JSONArray
+                            )
                             AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_LIST)
                         },
                         modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
@@ -161,7 +163,7 @@ class ScreenGaleriYear : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        val topBarTitle = "Kilas Balik Tahun " + GlobalSchema.targetGalleryYear
+        val topBarTitle = "Kilas Balik Tahun " + ScreenGaleriCompanion.targetGalleryYear
         CenterAlignedTopAppBar(
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,

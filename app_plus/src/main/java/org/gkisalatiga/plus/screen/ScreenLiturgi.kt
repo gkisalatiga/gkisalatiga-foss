@@ -64,7 +64,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -75,7 +75,7 @@ import java.util.concurrent.TimeUnit
 class ScreenLiturgi : ComponentActivity() {
 
     // The snackbar host state.
-    private val snackbarHostState = GlobalSchema.snackbarHostState
+    private val snackbarHostState = GlobalCompanion.snackbarHostState
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -85,9 +85,9 @@ class ScreenLiturgi : ComponentActivity() {
         val scope = rememberCoroutineScope()
 
         // The pull-to-refresh indicator states.
-        val isRefreshing = remember { GlobalSchema.isPTRRefreshing }
-        val pullToRefreshState = GlobalSchema.globalPTRState
-        val refreshExecutor = GlobalSchema.PTRExecutor
+        val isRefreshing = remember { GlobalCompanion.isPTRRefreshing }
+        val pullToRefreshState = GlobalCompanion.globalPTRState
+        val refreshExecutor = GlobalCompanion.PTRExecutor
 
         Scaffold (
             topBar = { getTopBar() },
@@ -96,7 +96,7 @@ class ScreenLiturgi : ComponentActivity() {
                 refreshExecutor.execute {
                     // Assumes there is an internet connection.
                     // (If there isn't, the boolean state change will trigger the snack bar.)
-                    GlobalSchema.isConnectedToInternet.value = true
+                    GlobalCompanion.isConnectedToInternet.value = true
 
                     // Attempts to update the data.
                     isRefreshing.value = true
@@ -115,8 +115,8 @@ class ScreenLiturgi : ComponentActivity() {
             // Check whether we are connected to the internet.
             // Then notify user about this.
             val snackbarMessageString = stringResource(R.string.not_connected_to_internet)
-            LaunchedEffect(GlobalSchema.isConnectedToInternet.value) {
-                if (!GlobalSchema.isConnectedToInternet.value) scope.launch {
+            LaunchedEffect(GlobalCompanion.isConnectedToInternet.value) {
+                if (!GlobalCompanion.isConnectedToInternet.value) scope.launch {
                     snackbarHostState.showSnackbar(
                         message = snackbarMessageString,
                         duration = SnackbarDuration.Short
@@ -212,11 +212,10 @@ class ScreenLiturgi : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the WebView viewer.
-                        GlobalSchema.webViewTargetURL = url
-                        GlobalSchema.webViewTitle = title!!
+                        ScreenWebViewCompanion.putArguments(url, title!!)
                         AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)

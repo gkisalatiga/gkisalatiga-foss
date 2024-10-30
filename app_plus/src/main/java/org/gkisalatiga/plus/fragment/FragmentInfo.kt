@@ -6,11 +6,13 @@
 
 package org.gkisalatiga.plus.fragment
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +53,7 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.StaticCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -106,7 +108,7 @@ class FragmentInfo : ComponentActivity() {
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
-        val scrollState = GlobalSchema.fragmentInfoScrollState!!
+        val scrollState = FragmentInfoCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom,
@@ -133,10 +135,10 @@ class FragmentInfo : ComponentActivity() {
 
                     Card(
                         onClick = {
-                            if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Display the church profile content folder list.
-                            GlobalSchema.targetStaticFolder = itemObject
+                            GlobalCompanion.targetStaticFolder = itemObject
                             AppNavigation.navigate(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST)
                         },
 
@@ -256,4 +258,11 @@ class FragmentInfo : ComponentActivity() {
         }
     }
 
+}
+
+class FragmentInfoCompanion : Application() {
+    companion object {
+        /* The fragment's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

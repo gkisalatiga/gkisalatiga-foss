@@ -10,8 +10,10 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import java.io.InputStream
 
@@ -86,7 +87,7 @@ class ScreenPrivacy : ComponentActivity() {
             val inputAsString: String = input.bufferedReader().use { it.readText() }
 
             // Display the markdown text.
-            val markdownScrollState = GlobalSchema.screenPrivacyPolicyScrollState!!
+            val markdownScrollState = ScreenPrivacyCompanion.rememberedScrollState!!
             Column(Modifier.verticalScroll(markdownScrollState)) {
                 MarkdownText(
                     modifier = Modifier.padding(20.dp).fillMaxSize(),
@@ -128,4 +129,11 @@ class ScreenPrivacy : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenPrivacyCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

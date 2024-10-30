@@ -18,7 +18,7 @@ import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import java.io.File
 import java.io.FileOutputStream
 import java.net.UnknownHostException
@@ -31,7 +31,7 @@ import java.util.concurrent.Executors
 class Downloader(private val ctx: Context) {
 
     // The file creator to create the private file.
-    private val fileCreator = ctx.getDir(GlobalSchema.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
+    private val fileCreator = ctx.getDir(GlobalCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
 
     /**
      * Downloads and initiates the main JSON data source file from the CDN.
@@ -72,7 +72,7 @@ class Downloader(private val ctx: Context) {
                 Logger.log({}, "JSON metadata was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
-                GlobalSchema.isConnectedToInternet.value = false
+                GlobalCompanion.isConnectedToInternet.value = false
                 Logger.log({}, "Network unreachable during download: $e", LoggerType.ERROR)
             }
 
@@ -120,7 +120,7 @@ class Downloader(private val ctx: Context) {
                 Logger.log({}, "Gallery was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
-                GlobalSchema.isConnectedToInternet.value = false
+                GlobalCompanion.isConnectedToInternet.value = false
                 Logger.log({}, "Network unreachable when downloading the gallery data: $e", LoggerType.ERROR)
             }
 
@@ -168,7 +168,7 @@ class Downloader(private val ctx: Context) {
                 Logger.log({}, "Modules was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
-                GlobalSchema.isConnectedToInternet.value = false
+                GlobalCompanion.isConnectedToInternet.value = false
                 Logger.log({}, "Network unreachable when downloading the modules data: $e", LoggerType.ERROR)
             }
 
@@ -216,7 +216,7 @@ class Downloader(private val ctx: Context) {
                 Logger.log({}, "Static data was successfully downloaded into: ${privateFile.absolutePath}")
 
             } catch (e: UnknownHostException) {
-                GlobalSchema.isConnectedToInternet.value = false
+                GlobalCompanion.isConnectedToInternet.value = false
                 Logger.log({}, "Network unreachable when downloading the static data: $e", LoggerType.ERROR)
             }
 

@@ -11,9 +11,11 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +50,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,7 +64,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -98,7 +100,7 @@ class ScreenAgenda : ComponentActivity() {
         val dayTitleList = agendaJSONNode.keys()
 
         // The column's saved scroll state.
-        val scrollState = GlobalSchema.screenAgendaScrollState!!
+        val scrollState = ScreenAgendaCompanion.rememberedScrollState!!
         Column (
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -123,14 +125,14 @@ class ScreenAgenda : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Enlisting the day selector chips. */
-            val selected = GlobalSchema.currentAgendaDay
+            val selected = ScreenAgendaCompanion.mutableCurrentDay
             var isFirst = true
-            Row (modifier = Modifier.fillMaxWidth().horizontalScroll(GlobalSchema.componentAgendaDayRowScrollState!!)) {
+            Row (modifier = Modifier.fillMaxWidth().horizontalScroll(ScreenAgendaCompanion.rememberedDayListScrollState!!)) {
                 for (key in dayTitleList) {
                     val dayInLocale = StringFormatter.dayLocaleInIndonesian[key]!!
                     val startPadding = if (isFirst) 0.dp else 10.dp; isFirst = false
                     FilterChip(
-                        onClick = { GlobalSchema.currentAgendaDay.value = key },
+                        onClick = { ScreenAgendaCompanion.mutableCurrentDay.value = key },
                         label = {
                             Text(dayInLocale.uppercase(), fontSize = 14.sp, color = if (key == selected.value) Color.White else Color.Black)
                         },
@@ -232,4 +234,19 @@ class ScreenAgenda : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenAgendaCompanion : Application() {
+    companion object {
+        const val DEFAULT_DAY_CHIP_INDEX = "sun"
+
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+
+        /* The remembered scroll state of the horizontal day list. */
+        var rememberedDayListScrollState: ScrollState? = null
+
+        /* The currently selected day chip. */
+        var mutableCurrentDay = mutableStateOf(DEFAULT_DAY_CHIP_INDEX)
+    }
 }

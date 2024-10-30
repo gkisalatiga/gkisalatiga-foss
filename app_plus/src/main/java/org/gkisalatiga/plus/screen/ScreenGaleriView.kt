@@ -11,6 +11,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -66,7 +67,8 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.GallerySaver
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -90,8 +92,8 @@ class ScreenGaleriView : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val horizontalPageCount = GlobalSchema.targetAlbumContent!!.length()
-        horizontalPagerState = rememberPagerState ( pageCount = {horizontalPageCount}, initialPage = GlobalSchema.galleryViewerStartPage )
+        val horizontalPageCount = ScreenGaleriListCompanion.targetAlbumContent!!.length()
+        horizontalPagerState = rememberPagerState ( pageCount = {horizontalPageCount}, initialPage = ScreenGaleriViewCompanion.galleryViewerStartPage )
         scope = rememberCoroutineScope()
 
         Box (Modifier.fillMaxSize()) {
@@ -112,7 +114,7 @@ class ScreenGaleriView : ComponentActivity() {
             }
 
             // The download progress circle.
-            if (GlobalSchema.showScreenGaleriViewDownloadProgress.value) {
+            if (GlobalCompanion.showScreenGaleriViewDownloadProgress.value) {
                 Box(modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.5f))  // Semi-transparent scrim
@@ -123,15 +125,15 @@ class ScreenGaleriView : ComponentActivity() {
             }
 
             // Show some alert dialogs.
-            if (GlobalSchema.showScreenGaleriViewAlertDialog.value) {
+            if (GlobalCompanion.showScreenGaleriViewAlertDialog.value) {
                 AlertDialog(
                     onDismissRequest = {
-                        GlobalSchema.showScreenGaleriViewAlertDialog.value = false
+                        GlobalCompanion.showScreenGaleriViewAlertDialog.value = false
                     },
-                    title = { Text(GlobalSchema.txtScreenGaleriViewAlertDialogTitle) },
-                    text = { Text(GlobalSchema.txtScreenGaleriViewAlertDialogSubtitle) },
+                    title = { Text(GlobalCompanion.txtScreenGaleriViewAlertDialogTitle) },
+                    text = { Text(GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle) },
                     confirmButton = {
-                        Button(onClick = { GlobalSchema.showScreenGaleriViewAlertDialog.value = false }) {
+                        Button(onClick = { GlobalCompanion.showScreenGaleriViewAlertDialog.value = false }) {
                             Text("OK", color = Color.White)
                         }
                     }
@@ -145,7 +147,7 @@ class ScreenGaleriView : ComponentActivity() {
         BackHandler {
             AppNavigation.popBack()
             scope.launch {
-                GlobalSchema.fragmentGalleryListScrollState!!.scrollToItem(horizontalPagerState.currentPage)
+                FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
             }
         }
 
@@ -191,7 +193,7 @@ class ScreenGaleriView : ComponentActivity() {
         val ctx = LocalContext.current
         FloatingActionButton (
             onClick = {
-                val currentPhotoObject = GlobalSchema.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage)
+                val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage)
                 val name = currentPhotoObject.getString("name")
                 val date = currentPhotoObject.getString("date")
                 val id = currentPhotoObject.getString("id")
@@ -220,7 +222,7 @@ class ScreenGaleriView : ComponentActivity() {
             beyondViewportPageCount = 2
         ) { page ->
             // The photo's specific metadata.
-            val currentPhotoObject = GlobalSchema.targetAlbumContent!!.getJSONObject(page)
+            val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(page)
             val name = currentPhotoObject.getString("name")
             val date = currentPhotoObject.getString("date")
             val id = currentPhotoObject.getString("id")
@@ -279,7 +281,7 @@ class ScreenGaleriView : ComponentActivity() {
                     IconButton(onClick = {
                         AppNavigation.popBack()
                         scope.launch {
-                            GlobalSchema.fragmentGalleryListScrollState!!.scrollToItem(horizontalPagerState.currentPage)
+                            FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
                         }
                     }) {
                         Icon(
@@ -294,4 +296,10 @@ class ScreenGaleriView : ComponentActivity() {
         }
     }
 
+}
+
+class ScreenGaleriViewCompanion : Application() {
+    companion object {
+        var galleryViewerStartPage: Int = 0
+    }
 }

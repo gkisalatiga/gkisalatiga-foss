@@ -6,11 +6,13 @@
 
 package org.gkisalatiga.plus.fragment
 
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +28,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -52,13 +55,15 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.screen.ScreenPosterViewerCompanion
+import org.gkisalatiga.plus.screen.ScreenWebViewCompanion
 import kotlin.math.ceil
 
 class FragmentHome : ComponentActivity() {
@@ -159,7 +164,7 @@ class FragmentHome : ComponentActivity() {
         val actualPageCount = MainCompanion.jsonRoot!!.getJSONArray("carousel").length()
 
         // Retrieving the global state.
-        val carouselPagerState = GlobalSchema.fragmentHomeCarouselPagerState!!
+        val carouselPagerState = FragmentHomeCompanion.rememberedCarouselPagerState!!
 
         /* Set-up the launched effect for auto-scrolling the horizontal carousel/pager. */
         // SOURCE: https://stackoverflow.com/a/67615616
@@ -182,7 +187,7 @@ class FragmentHome : ComponentActivity() {
 
         // Setting the layout to center both vertically and horizontally
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
-        val scrollState = GlobalSchema.fragmentHomeScrollState!!
+        val scrollState = FragmentHomeCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -206,7 +211,7 @@ class FragmentHome : ComponentActivity() {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     // Navigate to the current iteration's JSON node.
-                    // val currentNode = GlobalSchema.carouselJSONObject[it % actualPageCount]
+                    // val currentNode = GlobalCompanion.carouselJSONObject[it % actualPageCount]
                     val currentNode = MainCompanion.jsonRoot!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
 
                     /* Display the carousel banner image. */
@@ -214,7 +219,7 @@ class FragmentHome : ComponentActivity() {
                         shape = RoundedCornerShape(15.dp),
                         modifier = Modifier.padding(LocalContext.current.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
                         onClick = {
-                            if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
 
                             // Get the type of the current carousel banner.
                             val currentType = currentNode.getString("type")
@@ -227,8 +232,7 @@ class FragmentHome : ComponentActivity() {
                                     val title = currentNode.getString("title")
 
                                     // Navigate to the WebView viewer.
-                                    GlobalSchema.webViewTargetURL = url
-                                    GlobalSchema.webViewTitle = title
+                                    ScreenWebViewCompanion.putArguments(url, title)
                                     AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
                                 }
                                 "poster" -> {
@@ -246,12 +250,15 @@ class FragmentHome : ComponentActivity() {
 
                                     // Trying to switch to the YouTube viewer and open the stream.
                                     Logger.log({}, "Opening the YouTube stream: $url.")
-                                    GlobalSchema.ytViewerParameters["yt-link"] = url
-                                    GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
-                                    GlobalSchema.ytViewerParameters["title"] = title!!
-                                    GlobalSchema.ytViewerParameters["date"] = StringFormatter.convertDateFromJSON(date)
-                                    GlobalSchema.ytViewerParameters["desc"] = desc!!
-                                    GlobalSchema.ytCurrentSecond.floatValue = 0.0f
+                                    YouTubeViewCompanion.seekToZero()
+                                    YouTubeViewCompanion.putArguments(
+                                        date = StringFormatter.convertDateFromJSON(date),
+                                        desc = desc,
+                                        thumbnail = StringFormatter.getYouTubeThumbnailFromUrl(url),
+                                        title = title,
+                                        yt_id = StringFormatter.getYouTubeIDFromUrl(url),
+                                        yt_link = url
+                                    )
                                     AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
                                 }
                             }
@@ -397,4 +404,14 @@ class FragmentHome : ComponentActivity() {
 
     }  // --- end of getComposable().
 
+}
+
+class FragmentHomeCompanion : Application() {
+    companion object {
+        /* The fragment's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+
+        /* The carousel's remembered pager state. */
+        var rememberedCarouselPagerState: PagerState? = null
+    }
 }

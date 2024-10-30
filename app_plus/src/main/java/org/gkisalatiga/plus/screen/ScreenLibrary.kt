@@ -41,24 +41,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import com.rajat.pdfviewer.HeaderData
-import com.rajat.pdfviewer.PdfRendererView
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Logger
-import org.gkisalatiga.plus.lib.LoggerType
+import org.gkisalatiga.plus.lib.NavigationRoutes
 
 
 class ScreenLibrary : ComponentActivity() {
@@ -99,18 +93,23 @@ class ScreenLibrary : ComponentActivity() {
             val md: String = """
                 # Sample Perpustakaan.
                 Dramatic: "${Modules(ctx).getRawDumped()}"
-                Hello: "${ModulesCompanion.jsonRoot!!.toString(4)}"
+                Hello: "${ModulesCompanion.jsonRoot!!.toString(1)}"
             """.trimIndent()
 
-            MarkdownText(
-                modifier = Modifier.padding(20.dp).fillMaxSize(),
-                markdown = md.trimIndent(),
-                style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Justify)
-            )
+            Column (Modifier.fillMaxSize()) {
+                Button(onClick = {AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)}) {
+                    Text("Open it!")
+                }
+                MarkdownText(
+                    modifier = Modifier.padding(20.dp).fillMaxSize(),
+                    markdown = md.trimIndent(),
+                    style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Justify)
+                )
+            }
 
             // Display the markdown text.
             /*Column {
-                val pdfRendererViewInstance = GlobalSchema.pdfRendererViewInstance!!
+                val pdfRendererViewInstance = GlobalCompanion.pdfRendererViewInstance!!
 
                 val url = "https://myreport.altervista.org/Lorem_Ipsum.pdf"
                 val headers = HeaderData()

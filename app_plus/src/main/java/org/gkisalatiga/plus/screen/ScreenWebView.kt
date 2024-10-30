@@ -10,6 +10,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.ClipData
 import android.graphics.Bitmap
 import android.view.View.OnLongClickListener
@@ -52,10 +53,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import org.gkisalatiga.plus.R
 
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.services.ClipManager
 
 class ScreenWebView : ComponentActivity() {
 
@@ -91,7 +92,7 @@ class ScreenWebView : ComponentActivity() {
             if (doTriggerBrowserOpen.value) {
                 // Opens in an external browser.
                 // SOURCE: https://stackoverflow.com/a/69103918
-                LocalUriHandler.current.openUri(GlobalSchema.webViewTargetURL)
+                LocalUriHandler.current.openUri(ScreenWebViewCompanion.webViewTargetURL)
 
                 doTriggerBrowserOpen.value = false
             }
@@ -103,7 +104,7 @@ class ScreenWebView : ComponentActivity() {
     @Composable
     private fun getMainContent() {
         // Declare a string that contains a url.
-        val destURL = GlobalSchema.webViewTargetURL
+        val destURL = ScreenWebViewCompanion.webViewTargetURL
 
         /* Displaying the web view.
          * SOURCE: https://medium.com/@kevinnzou/using-webview-in-jetpack-compose-bbf5991cfd14 */
@@ -219,7 +220,7 @@ class ScreenWebView : ComponentActivity() {
             ),
             title = {
                 Text(
-                    GlobalSchema.webViewTitle,
+                    ScreenWebViewCompanion.webViewTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -266,14 +267,14 @@ class ScreenWebView : ComponentActivity() {
                         Surface (modifier = Modifier.fillMaxWidth(), color = Color.Transparent, onClick = {
                             // Attempt to copy text to clipboard.
                             // SOURCE: https://www.geeksforgeeks.org/clipboard-in-android/
-                            val clipData = ClipData.newPlainText("text", GlobalSchema.webViewTargetURL)
-                            GlobalSchema.clipManager!!.setPrimaryClip(clipData)
+                            val clipData = ClipData.newPlainText("text", ScreenWebViewCompanion.webViewTargetURL)
+                            ClipManager.clipManager!!.setPrimaryClip(clipData)
 
                             Toast.makeText(ctx, notificationText, Toast.LENGTH_SHORT).show()
                         }) {
                             OutlinedTextField(
                                 modifier = Modifier.fillMaxWidth(),
-                                value = GlobalSchema.webViewTargetURL,
+                                value = ScreenWebViewCompanion.webViewTargetURL,
                                 onValueChange = { /* NOTHING */ },
                                 label = { Text("-") },
                                 enabled = false,
@@ -298,4 +299,21 @@ class ScreenWebView : ComponentActivity() {
         }
     }
 
+}
+
+class ScreenWebViewCompanion : Application() {
+    companion object {
+        internal var webViewTargetURL: String = ""
+        internal var webViewTitle: String = ""
+
+        /**
+         * This function neatly and thoroughly passes the respective arguments to the screen's handler.
+         * @param targetURL the target URL that will be displayed by the WebView.
+         * @param title the title of the current WebView session.
+         */
+        fun putArguments(targetURL: String, title: String) {
+            webViewTargetURL = targetURL
+            webViewTitle = title
+        }
+    }
 }

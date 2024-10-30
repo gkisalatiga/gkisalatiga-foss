@@ -63,8 +63,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.services.ClipManager
 import org.json.JSONObject
 
 class ScreenPersembahan : ComponentActivity() {
@@ -174,7 +174,7 @@ class ScreenPersembahan : ComponentActivity() {
                         // Attempt to copy text to clipboard.
                         // SOURCE: https://www.geeksforgeeks.org/clipboard-in-android/
                         val clipData = ClipData.newPlainText("text", currentNode.getString("bank-number").replace(".", ""))
-                        GlobalSchema.clipManager!!.setPrimaryClip(clipData)
+                        ClipManager.clipManager!!.setPrimaryClip(clipData)
 
                         Toast.makeText(ctx, notificationString, Toast.LENGTH_SHORT).show()
                     })
@@ -227,7 +227,7 @@ class ScreenPersembahan : ComponentActivity() {
                         // Attempt to copy text to clipboard.
                         // SOURCE: https://www.geeksforgeeks.org/clipboard-in-android/
                         val clipData = ClipData.newPlainText("text", currentNode.getString("unique-code"))
-                        GlobalSchema.clipManager!!.setPrimaryClip(clipData)
+                        ClipManager.clipManager!!.setPrimaryClip(clipData)
 
                         Toast.makeText(ctx, notificationString, Toast.LENGTH_SHORT).show()
                     })

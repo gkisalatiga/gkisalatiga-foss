@@ -72,9 +72,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeView
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.services.ClipManager
 
 
 class ScreenVideoLive : ComponentActivity() {
@@ -92,7 +94,7 @@ class ScreenVideoLive : ComponentActivity() {
     private lateinit var scope: CoroutineScope
 
     // The snackbar host state.
-    private val snackbarHostState = GlobalSchema.snackbarHostState
+    private val snackbarHostState = GlobalCompanion.snackbarHostState
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -100,13 +102,13 @@ class ScreenVideoLive : ComponentActivity() {
         val ctx = LocalContext.current
         scope = rememberCoroutineScope()
 
-        Logger.log({}, "Are we full screen?: ${GlobalSchema.ytIsFullscreen.value}. Duration: ${GlobalSchema.ytCurrentSecond.floatValue}")
+        Logger.log({}, "Are we full screen?: ${YouTubeViewCompanion.isFullscreen.value}. Duration: ${YouTubeViewCompanion.currentSecond.floatValue}")
 
         // Ensures that we only initialize the ytView once.
-        GlobalSchema.ytComposable!!.initYouTubeView()
+        YouTubeViewCompanion.composable!!.initYouTubeView()
 
         // Opens a specific composable element based on the fullscreen state.
-        if (GlobalSchema.ytIsFullscreen.value) {
+        if (YouTubeViewCompanion.isFullscreen.value) {
             getFullscreenPlayer()
 
             // Exits the fullscreen mode.
@@ -119,15 +121,15 @@ class ScreenVideoLive : ComponentActivity() {
             // Ensures that we always land where we started.
             BackHandler {
                 AppNavigation.popBack()
-                GlobalSchema.ytView!!.release()
+                YouTubeViewCompanion.view!!.release()
             }
         }
 
         // Check whether we are connected to the internet.
         // Then notify user about this.
         val snackbarMessageString = stringResource(R.string.not_connected_to_internet)
-        LaunchedEffect(GlobalSchema.isConnectedToInternet.value) {
-            if (!GlobalSchema.isConnectedToInternet.value) scope.launch {
+        LaunchedEffect(GlobalCompanion.isConnectedToInternet.value) {
+            if (!GlobalCompanion.isConnectedToInternet.value) scope.launch {
                 snackbarHostState.showSnackbar(
                     message = snackbarMessageString,
                     duration = SnackbarDuration.Short
@@ -136,10 +138,10 @@ class ScreenVideoLive : ComponentActivity() {
         }
 
         // Disabling background YouTube playback.
-        LaunchedEffect(GlobalSchema.isRunningInBackground.value) {
-            if (GlobalSchema.isRunningInBackground.value) {
+        LaunchedEffect(GlobalCompanion.isRunningInBackground.value) {
+            if (GlobalCompanion.isRunningInBackground.value) {
                 try {
-                    GlobalSchema.ytPlayer!!.pause()
+                    YouTubeViewCompanion.player!!.pause()
                 } catch (e: Exception) {
                     Logger.log({}, "Error detected when trying to pause the video: $e")
                 }
@@ -154,7 +156,7 @@ class ScreenVideoLive : ComponentActivity() {
             if (doTriggerBrowserOpen.value) {
                 // Opens in an external browser.
                 // SOURCE: https://stackoverflow.com/a/69103918
-                LocalUriHandler.current.openUri(GlobalSchema.ytViewerParameters["yt-link"]!!)
+                LocalUriHandler.current.openUri(YouTubeViewCompanion.videoUrl)
                 doTriggerBrowserOpen.value = false
             }
         }
@@ -179,7 +181,7 @@ class ScreenVideoLive : ComponentActivity() {
             navigationIcon = {
                 IconButton(onClick = {
                     AppNavigation.popBack()
-                    GlobalSchema.ytView!!.release()
+                    YouTubeViewCompanion.view!!.release()
                 }) {
                     Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = "")
                 }
@@ -218,14 +220,14 @@ class ScreenVideoLive : ComponentActivity() {
                         Surface (modifier = Modifier.fillMaxWidth(), color = Color.Transparent, onClick = {
                             // Attempt to copy text to clipboard.
                             // SOURCE: https://www.geeksforgeeks.org/clipboard-in-android/
-                            val clipData = ClipData.newPlainText("text", GlobalSchema.ytViewerParameters["yt-link"])
-                            GlobalSchema.clipManager!!.setPrimaryClip(clipData)
+                            val clipData = ClipData.newPlainText("text", YouTubeViewCompanion.videoUrl)
+                            ClipManager.clipManager!!.setPrimaryClip(clipData)
 
                             Toast.makeText(ctx, notificationText, Toast.LENGTH_SHORT).show()
                         }) {
                             OutlinedTextField(
                                 modifier = Modifier.fillMaxWidth(),
-                                value = GlobalSchema.ytViewerParameters["yt-link"]!!,
+                                value = YouTubeViewCompanion.videoUrl,
                                 onValueChange = { /* NOTHING */ },
                                 label = { Text("-") },
                                 enabled = false,
@@ -257,7 +259,7 @@ class ScreenVideoLive : ComponentActivity() {
     private fun getNormalPlayer() {
         val ctx = LocalContext.current
         Scaffold (
-            topBar = { if (!GlobalSchema.ytIsFullscreen.value) this.getTopBar() },
+            topBar = { if (!YouTubeViewCompanion.isFullscreen.value) this.getTopBar() },
             snackbarHost = { SnackbarHost(snackbarHostState) },
         ) {
             calculatedTopPadding = it.calculateTopPadding()
@@ -269,13 +271,13 @@ class ScreenVideoLive : ComponentActivity() {
                 .fillMaxHeight()) {
                 Column {
 
-                    GlobalSchema.ytComposable!!.YouTubeViewComposable()
+                    YouTubeViewCompanion.composable!!.YouTubeViewComposable()
 
                     Column (Modifier.verticalScroll(rememberScrollState())) {
                         //jeff 10.25
                         Spacer(Modifier.height(15.dp))
-                        Text(GlobalSchema.ytViewerParameters["title"]!!,Modifier.absolutePadding(left = 20.dp, right = 20.dp), fontWeight = FontWeight.ExtraBold, fontSize = 24.sp, color = Color.White)
-                        Text("Diunggah pada " + GlobalSchema.ytViewerParameters["date"]!!, Modifier.absolutePadding(left = 20.dp, right = 20.dp), color = Color(0xfffcfcfc), fontSize = 16.sp)
+                        Text(YouTubeViewCompanion.videoTitle,Modifier.absolutePadding(left = 20.dp, right = 20.dp), fontWeight = FontWeight.ExtraBold, fontSize = 24.sp, color = Color.White)
+                        Text("Diunggah pada " + YouTubeViewCompanion.videoUploadDate, Modifier.absolutePadding(left = 20.dp, right = 20.dp), color = Color(0xfffcfcfc), fontSize = 16.sp)
                         Spacer(Modifier.height(15.dp))
 
                         // the video desc
@@ -291,7 +293,7 @@ class ScreenVideoLive : ComponentActivity() {
                         ) {
                             Column(Modifier.padding(10.dp), horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Top) {
                                 Text(
-                                    GlobalSchema.ytViewerParameters["desc"]!!,
+                                    YouTubeViewCompanion.videoDesc,
                                     Modifier
                                         .absolutePadding(left = 10.dp, right = 10.dp)
                                         .fillMaxWidth(),
@@ -320,7 +322,7 @@ class ScreenVideoLive : ComponentActivity() {
             modifier = Modifier.background(Color.Black).fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Surface (Modifier.aspectRatio(1.77778f)) { GlobalSchema.ytComposable!!.YouTubeViewComposable() }
+            Surface (Modifier.aspectRatio(1.77778f)) { YouTubeViewCompanion.composable!!.YouTubeViewComposable() }
         }
     }
 

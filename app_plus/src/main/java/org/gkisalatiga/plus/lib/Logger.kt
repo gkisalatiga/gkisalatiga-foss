@@ -10,7 +10,7 @@
 package org.gkisalatiga.plus.lib
 
 import android.util.Log
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 
 /**
  * Perform the back-end logging to the logcat.
@@ -33,7 +33,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -52,7 +52,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Boot"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_BOOT) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -71,7 +71,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-CT"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_CONN_TEST) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -90,7 +90,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Dump"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: DUMPING LOG MESSAGE:\n$msg\n::: END OF DUMP"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_DUMP) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DUMP) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -109,7 +109,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Init"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_INIT) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -128,7 +128,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-PDF"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_PDF) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -147,7 +147,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-RT"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_RAPID_TEST) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_RAPID_TEST) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -166,7 +166,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Test"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_TEST) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_TEST) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -185,7 +185,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Update"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_UPDATER) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_UPDATER) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)
@@ -204,7 +204,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Worker"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalSchema.DEBUG_ENABLE_LOG_CAT_WORKER) when (type) {
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_WORKER) when (type) {
                 LoggerType.DEBUG -> Log.d(tag, msgString)
                 LoggerType.ERROR -> Log.e(tag, msgString)
                 LoggerType.INFO -> Log.i(tag, msgString)

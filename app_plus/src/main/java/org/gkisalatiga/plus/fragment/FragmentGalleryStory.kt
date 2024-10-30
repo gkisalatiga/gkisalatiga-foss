@@ -26,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
 // import coil.compose.AsyncImage
 import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 
 class FragmentGalleryStory : ComponentActivity() {
 
@@ -41,9 +41,9 @@ class FragmentGalleryStory : ComponentActivity() {
             horizontalAlignment = Alignment.Start,
         ) {
             // Titles, stories, and such.
-            val title = GlobalSchema.displayedAlbumTitle
-            val story = GlobalSchema.displayedAlbumStory
-            val featuredImageID = GlobalSchema.displayedFeaturedImageID
+            val title = ScreenGaleriListCompanion.displayedAlbumTitle
+            val story = ScreenGaleriListCompanion.displayedAlbumStory
+            val featuredImageID = ScreenGaleriListCompanion.displayedFeaturedImageID
 
             // Displaying featured banner.
             Surface (

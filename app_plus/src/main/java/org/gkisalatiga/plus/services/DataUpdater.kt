@@ -10,7 +10,6 @@
 package org.gkisalatiga.plus.services
 
 import android.content.Context
-import org.gkisalatiga.plus.global.GlobalSchema
 import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion

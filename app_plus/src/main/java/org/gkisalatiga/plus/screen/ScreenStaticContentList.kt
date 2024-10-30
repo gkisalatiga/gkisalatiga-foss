@@ -10,9 +10,11 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,7 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONObject
@@ -86,7 +88,7 @@ class ScreenStaticContentList : ComponentActivity() {
         val ctx = LocalContext.current
 
         // The selected static folder's folder content.
-        val folderContent = GlobalSchema.targetStaticFolder!!
+        val folderContent = GlobalCompanion.targetStaticFolder!!
 
         // Enlist the list of contents under this folder.
         val contentList: MutableList<JSONObject> = mutableListOf()
@@ -95,7 +97,7 @@ class ScreenStaticContentList : ComponentActivity() {
         }
 
         // The column's saved scroll state.
-        val scrollState = GlobalSchema.screenAboutContentListScrollState!!
+        val scrollState = ScreenStaticContentListCompanion.rememberedScrollState!!
         Column (
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -117,7 +119,7 @@ class ScreenStaticContentList : ComponentActivity() {
                     // Displaying the individual card.
                     Card(
                         onClick = {
-                            if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Display the church profile content folder list.
                             ScreenInternalHTMLCompanion.targetHTMLContent = it.getString("html")
@@ -211,7 +213,7 @@ class ScreenStaticContentList : ComponentActivity() {
             ),
             title = {
                 Text(
-                    GlobalSchema.targetStaticFolder!!.getString("title"),
+                    GlobalCompanion.targetStaticFolder!!.getString("title"),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -229,4 +231,11 @@ class ScreenStaticContentList : ComponentActivity() {
         )
     }
 
+}
+
+class ScreenStaticContentListCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

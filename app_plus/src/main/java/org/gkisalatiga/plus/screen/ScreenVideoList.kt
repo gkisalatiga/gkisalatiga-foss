@@ -10,6 +10,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -62,18 +63,20 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.global.GlobalSchema
+import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.services.DataUpdater
+import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 class ScreenVideoList : ComponentActivity() {
 
     // The snackbar host state.
-    private val snackbarHostState = GlobalSchema.snackbarHostState
+    private val snackbarHostState = GlobalCompanion.snackbarHostState
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -83,9 +86,9 @@ class ScreenVideoList : ComponentActivity() {
         val scope = rememberCoroutineScope()
 
         // The pull-to-refresh indicator states.
-        val isRefreshing = remember { GlobalSchema.isPTRRefreshing }
-        val pullToRefreshState = GlobalSchema.globalPTRState
-        val refreshExecutor = GlobalSchema.PTRExecutor
+        val isRefreshing = remember { GlobalCompanion.isPTRRefreshing }
+        val pullToRefreshState = GlobalCompanion.globalPTRState
+        val refreshExecutor = GlobalCompanion.PTRExecutor
 
         Scaffold (
             topBar = { getTopBar() },
@@ -94,7 +97,7 @@ class ScreenVideoList : ComponentActivity() {
                 refreshExecutor.execute {
                     // Assumes there is an internet connection.
                     // (If there isn't, the boolean state change will trigger the snack bar.)
-                    GlobalSchema.isConnectedToInternet.value = true
+                    GlobalCompanion.isConnectedToInternet.value = true
 
                     // Attempts to update the data.
                     isRefreshing.value = true
@@ -113,8 +116,8 @@ class ScreenVideoList : ComponentActivity() {
             // Check whether we are connected to the internet.
             // Then notify user about this.
             val snackbarMessageString = stringResource(R.string.not_connected_to_internet)
-            LaunchedEffect(GlobalSchema.isConnectedToInternet.value) {
-                if (!GlobalSchema.isConnectedToInternet.value) scope.launch {
+            LaunchedEffect(GlobalCompanion.isConnectedToInternet.value) {
+                if (!GlobalCompanion.isConnectedToInternet.value) scope.launch {
                     snackbarHostState.showSnackbar(
                         message = snackbarMessageString,
                         duration = SnackbarDuration.Short
@@ -165,7 +168,7 @@ class ScreenVideoList : ComponentActivity() {
         ) {
 
             /* Retrieve the list of video content. */
-            val listOfVideoContent = GlobalSchema.videoListContentArray
+            val listOfVideoContent = ScreenVideoListCompanion.videoListContentArray
 
             /* Display the banner image. */
             if (listOfVideoContent.size >= 1) {
@@ -181,17 +184,21 @@ class ScreenVideoList : ComponentActivity() {
                         val thumbnail = listOfVideoContent[0].getString("thumbnail")
 
                         // Debug logging.
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
-                        GlobalSchema.ytViewerParameters["yt-link"] = url
-                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
-                        GlobalSchema.ytViewerParameters["title"] = title!!
-                        GlobalSchema.ytViewerParameters["date"] = date
-                        GlobalSchema.ytViewerParameters["desc"] = desc
-                        GlobalSchema.ytViewerParameters["thumbnail"] = thumbnail
-                        GlobalSchema.ytCurrentSecond.floatValue = 0.0f
+                        YouTubeViewCompanion.seekToZero()
+
+                        // Put arguments to the YouTube video viewer.
+                        YouTubeViewCompanion.putArguments(
+                            date = date,
+                            desc = desc,
+                            thumbnail = thumbnail,
+                            title = title,
+                            yt_id = StringFormatter.getYouTubeIDFromUrl(url),
+                            yt_link = url
+                        )
 
                         // Navigate to the screen.
                         AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
@@ -223,17 +230,21 @@ class ScreenVideoList : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalSchema.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
-                        GlobalSchema.ytViewerParameters["yt-link"] = url
-                        GlobalSchema.ytViewerParameters["yt-id"] = StringFormatter.getYouTubeIDFromUrl(url)
-                        GlobalSchema.ytViewerParameters["title"] = title!!
-                        GlobalSchema.ytViewerParameters["date"] = date
-                        GlobalSchema.ytViewerParameters["desc"] = desc
-                        GlobalSchema.ytViewerParameters["thumbnail"] = thumbnail
-                        GlobalSchema.ytCurrentSecond.floatValue = 0.0f
+                        YouTubeViewCompanion.seekToZero()
+
+                        // Put arguments to the YouTube video viewer.
+                        YouTubeViewCompanion.putArguments(
+                            date = date,
+                            desc = desc,
+                            thumbnail = thumbnail,
+                            title = title,
+                            yt_id = StringFormatter.getYouTubeIDFromUrl(url),
+                            yt_link = url
+                        )
 
                         // Navigate to the screen.
                         AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
@@ -277,7 +288,7 @@ class ScreenVideoList : ComponentActivity() {
             ),
             title = {
                 Text(
-                    GlobalSchema.videoListTitle,
+                    ScreenVideoListCompanion.videoListTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -293,5 +304,22 @@ class ScreenVideoList : ComponentActivity() {
             actions = { },
             scrollBehavior = scrollBehavior
         )
+    }
+}
+
+class ScreenVideoListCompanion : Application() {
+    companion object {
+        internal var videoListContentArray: MutableList<JSONObject> = mutableListOf()
+        internal var videoListTitle: String = ""
+
+        /**
+         * This function neatly and thoroughly passes the respective arguments to the screen's handler.
+         * @param contentArray the list of videos in this playlist.
+         * @param title the title of the video playlist.
+         */
+        fun putArguments(contentArray: MutableList<JSONObject>, title: String) {
+            videoListContentArray = contentArray
+            videoListTitle = title
+        }
     }
 }
