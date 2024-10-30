@@ -59,16 +59,22 @@
 
             <!-- Allows handling URIs for notification deep-linking. -->
             <!-- SOURCE: https://composables.com/tutorials/deeplinks -->
-            <intent-filter>
+            <!-- SOURCE: https://developer.android.com/training/app-links#android-app-links -->
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:host="gkisalatiga.org" android:scheme="https" />
+                <data android:host="gkisalatiga.org" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
             </intent-filter>
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="www.gkisalatiga.org" android:scheme="https" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:host="www.gkisalatiga.org" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
             </intent-filter>
 
         </activity>

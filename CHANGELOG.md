@@ -8,6 +8,10 @@
 - (Back-End) Simplified the screen navigation by centralizing all navigations to `AppNavigation`
 - (Back-End) Migrated scroll states from `GlobalSchema` to the respective companion class of screens
 
+:hammer_and_wrench: **FIX**
+
+- Fixed deeplinking not working with `https://www.gkisalatiga.org` domain
+
 ## v0.5.0-rc 2024.10.28 (28)
 
 :star2: **NEW**
