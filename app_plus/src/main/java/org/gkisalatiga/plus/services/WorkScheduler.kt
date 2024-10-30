@@ -74,6 +74,7 @@ class WorkScheduler {
                 set(Calendar.HOUR, 4)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 5)
+                set(Calendar.AM_PM, Calendar.AM)
             }
 
             // Ensures that we don't "schedule something in the past." This controls periodicity.
@@ -111,6 +112,7 @@ class WorkScheduler {
                 set(Calendar.HOUR, 12)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 5)
+                set(Calendar.AM_PM, Calendar.PM)
             }
 
             // Ensures that we don't "schedule something in the past." This controls periodicity.
