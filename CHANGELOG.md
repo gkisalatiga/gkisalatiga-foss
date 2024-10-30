@@ -2,6 +2,10 @@
 
 ## Next Release
 
+:star2: **NEW**
+
+- (Back-End) Introduced `LocalStorage` for storing persistent data across launches
+
 :four_leaf_clover: **IMPROVEMENT**
 
 - (Back-End) Added support for composite/mixed nested screen routing

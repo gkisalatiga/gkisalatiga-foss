@@ -81,7 +81,6 @@ import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.GallerySaver
 
 import org.gkisalatiga.plus.db.Static
@@ -90,6 +89,8 @@ import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
 import org.gkisalatiga.plus.fragment.FragmentHomeCompanion
 import org.gkisalatiga.plus.fragment.FragmentInfoCompanion
 import org.gkisalatiga.plus.fragment.FragmentServicesCompanion
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -374,14 +375,14 @@ class ActivityLauncher : ComponentActivity() {
      */
     private fun initPreferences() {
         // Initializes the preferences.
-        val appPref = AppPreferences(this)
+        val appLocalStorage = LocalStorage(this)
 
         // Initializes the default/fallback preferences if this is a first launch.
-        if ((appPref.getPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS) as Int) < 0) appPref.initDefaultPreferences()
+        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS) as Int) < 0) appLocalStorage.initDefaultLocalStorage()
 
         // Increment the number of counts.
-        val now = appPref.getPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS) as Int
-        appPref.setPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS, now + 1)
+        val now = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS) as Int
+        appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1)
         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
     }
 
@@ -504,7 +505,7 @@ class ActivityLauncher : ComponentActivity() {
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.
-        val launches = AppPreferences(this).getPreferenceValue(PreferenceKeys.PREF_KEY_LAUNCH_COUNTS) as Int
+        val launches = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS) as Int
 
         // Get fallback data only if first launch.
         if (launches == 0) {
