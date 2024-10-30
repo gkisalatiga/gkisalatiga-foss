@@ -114,14 +114,15 @@ class Gallery(private val ctx: Context) {
     }
 }
 
+// TODO: Update to gallery JSON data v2
 class GalleryCompanion : Application() {
     companion object {
-        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-gallery.min.json"
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/gkisplus-gallery.json"
 
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-gallery-v2.json"
+        val savedFilename = "gkisplus-gallery.json"
 
         /* The JSON object that will be accessed by screens. */
         var jsonRoot: JSONObject? = null

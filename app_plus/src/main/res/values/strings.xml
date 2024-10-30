@@ -127,6 +127,9 @@
         Halo! Saya tertarik dengan %%%TYPE%%% %%%NAME%%% yang diiklankan oleh %%%VENDOR%%% di aplikasi GKI Salatiga.
     </string>
 
+    <!-- Constant strings used in the "ScreenLibrary" section. -->
+    <string name="library_published_year_label">Diterbitkan Tahun</string>
+
     <!-- Constant string used in the new top bar layout. -->
     <string name="new_topbar_greetings">Syalom!</string>
     <string name="new_topbar_person_name">Sobat GKIS terkasih</string>

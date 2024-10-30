@@ -1,6 +1,6 @@
 # GKI Salatiga App Changelog
 
-## Next Release
+## Next Planned Release
 
 :star2: **NEW**
 

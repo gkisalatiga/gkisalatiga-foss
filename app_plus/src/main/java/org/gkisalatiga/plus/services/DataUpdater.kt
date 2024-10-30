@@ -30,7 +30,7 @@ class DataUpdater(private val ctx: Context) {
 
     companion object {
         // The location of the remote feeds.json file to check for updates.
-        private const val FEEDS_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/feeds.json"
+        private const val FEEDS_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/feeds.min.json"
     }
 
     private fun getLastGalleryUpdate() : Int {

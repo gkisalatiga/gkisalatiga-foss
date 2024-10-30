@@ -92,10 +92,6 @@ class ScreenYKB : ComponentActivity() {
     @Composable
     private fun getMainContent() {
         val ctx = LocalContext.current
-
-        // Setting the layout to center both vertically and horizontally,
-        // and then make it scrollable vertically.
-        // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
         val scrollState = ScreenYKBCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
