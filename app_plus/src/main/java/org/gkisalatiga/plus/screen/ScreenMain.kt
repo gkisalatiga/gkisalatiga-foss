@@ -431,9 +431,9 @@ class ScreenMain : ComponentActivity() {
                     NavigationBarItem(
                         icon = {
                             if (fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value) == index) {
-                                Icon(bottomNavItemIconsSelected[index], contentDescription = item)
+                                Icon(bottomNavItemIconsSelected[index], contentDescription = "Nav bar selected: $item")
                             } else {
-                                Icon(bottomNavItemIconsInactive[index], contentDescription = item)
+                                Icon(bottomNavItemIconsInactive[index], contentDescription = "Nav bar inactive: $item")
                             }
                         },
                         label = { Text(item) },
@@ -473,7 +473,7 @@ class ScreenMain : ComponentActivity() {
             // SOURCE: https://stackoverflow.com/a/70965281
             Image (
                 painter = painterResource(newTopBannerBackground),
-                contentDescription = "",
+                contentDescription = "FragmentHome Top Bar Greetings Banner",
                 modifier = Modifier.fillMaxHeight(),
                 contentScale = ContentScale.Crop
             )

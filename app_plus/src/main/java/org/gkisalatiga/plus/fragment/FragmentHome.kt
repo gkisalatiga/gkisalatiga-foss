@@ -310,7 +310,7 @@ class FragmentHome : ComponentActivity() {
                     }) {
                         Column (modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                             Surface(shape = RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp), modifier = Modifier.fillMaxWidth().aspectRatio(0.75f)) {
-                                Image(painter = painterResource(btnFeaturedCover[index]), "", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+                                Image(painter = painterResource(btnFeaturedCover[index]), "Top Menu Banner", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
                             }
                             Text(btnLabels[index], textAlign = TextAlign.Center, modifier = Modifier.padding(5.dp), fontWeight = FontWeight.Bold)
                         }
