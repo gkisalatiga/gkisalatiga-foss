@@ -80,6 +80,7 @@ class GlobalCompanion : Application() {
         const val DEBUG_ENABLE_LOG_CAT_WORKER = true
 
         // Whether to hide the splash screen.
+        //
         const val DEBUG_DISABLE_SPLASH_SCREEN = false
 
         /* ------------------------------------------------------------------------------------ */

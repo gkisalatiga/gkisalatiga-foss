@@ -3,6 +3,7 @@
     <string name="app_name">GKI Salatiga+</string>
     <string name="app_name_alias">GKI Salatiga Plus</string>
     <string name="app_description">Media sistem informasi jemaat dan komunikasi internal untuk mendukung pembangunan jemaat di GKI Salatiga</string>
+    <string name="app_slogan">Menjadi Mitra Allah di Dunia</string>
     <string name="title_activity_main">GKI Salatiga+</string>
 
     <!-- Constant strings for ScreenMain and FragmentMain. -->

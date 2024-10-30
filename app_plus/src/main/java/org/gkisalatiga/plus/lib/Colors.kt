@@ -20,6 +20,8 @@ class Colors {
         const val MAIN_TOP_BAR_CONTENT_COLOR = 0xffffffff
         const val YKB_ARCHIVE_BUTTON_COLOR = 0xff482505
 
+        const val SPLASHSCREEN_SUB_TEXT_COLOR = 0xffffffff
+
         /* Used in FragmentServices */
         const val FRAGMENT_SERVICES_SHOWMORE_BACKGROUND = 0xff97705d
         const val FRAGMENT_SERVICES_SHOWMORE_CONTENT = 0xffffffff
