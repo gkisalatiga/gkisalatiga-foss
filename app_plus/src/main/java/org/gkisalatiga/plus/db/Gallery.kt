@@ -14,6 +14,7 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
 import java.io.File
@@ -56,16 +57,8 @@ class Gallery(private val ctx: Context) {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
-
-        // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONObject("gallery")
-    }
-
-    fun getFallbackGalleryMetadata(): JSONObject {
-        // Loading the local JSON file.
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
-        val inputAsString: String = input.bufferedReader().use { it.readText() }
-        val inputAsByteArray = input.readBytes()
+        val secondInput: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
+        val inputAsByteArray = secondInput.use { it.readBytes() }
 
         // Write the raw-resource-shipped file buffer as an actual file.
         // Creating the private file.
@@ -76,6 +69,15 @@ class Gallery(private val ctx: Context) {
         out.flush()
         out.write(inputAsByteArray)
         out.close()
+
+        // Return the fallback JSONObject, and then navigate to the "gallery" node.
+        return JSONObject(inputAsString).getJSONObject("gallery")
+    }
+
+    fun getFallbackGalleryMetadata(): JSONObject {
+        // Loading the local JSON file.
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
+        val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
         return JSONObject(inputAsString).getJSONObject("meta")

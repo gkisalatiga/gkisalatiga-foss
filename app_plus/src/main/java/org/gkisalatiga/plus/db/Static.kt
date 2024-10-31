@@ -57,16 +57,8 @@ class Static(private val ctx: Context) {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
-
-        // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONArray("static")
-    }
-
-    fun getFallbackStaticMetadata(): JSONObject {
-        // Loading the local JSON file.
-        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
-        val inputAsString: String = input.bufferedReader().use { it.readText() }
-        val inputAsByteArray = input.readBytes()
+        val secondInput: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
+        val inputAsByteArray = secondInput.use { it.readBytes() }
 
         // Write the raw-resource-shipped file buffer as an actual file.
         // Creating the private file.
@@ -77,6 +69,15 @@ class Static(private val ctx: Context) {
         out.flush()
         out.write(inputAsByteArray)
         out.close()
+
+        // Return the fallback JSONObject, and then navigate to the "gallery" node.
+        return JSONObject(inputAsString).getJSONArray("static")
+    }
+
+    fun getFallbackStaticMetadata(): JSONObject {
+        // Loading the local JSON file.
+        val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
+        val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
         return JSONObject(inputAsString).getJSONObject("meta")

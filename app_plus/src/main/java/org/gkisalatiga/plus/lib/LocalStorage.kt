@@ -66,7 +66,7 @@ class LocalStorage(private val ctx: Context) {
         }
 
         // Debug the default local storage's type.
-        Logger.logTest({}, "Type of the retrieved value: ${type.name}, content: $retVal")
+        Logger.logTest({}, "getLocalStorageValue -> type.name: key: $key, ${type.name}, retVal: $retVal")
 
         // Hand over the local storage value the caller asks for.
         return retVal

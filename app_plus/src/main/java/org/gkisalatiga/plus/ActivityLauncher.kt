@@ -162,6 +162,7 @@ import org.gkisalatiga.plus.services.ClipManager
 import org.gkisalatiga.plus.services.ConnectionChecker
 import org.gkisalatiga.plus.services.DataUpdater
 import org.gkisalatiga.plus.services.DeepLinkHandler
+import org.gkisalatiga.plus.services.InternalFileManager
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
 import org.gkisalatiga.plus.ui.theme.GKISalatigaPlusTheme
@@ -222,6 +223,9 @@ class ActivityLauncher : ComponentActivity() {
         // Preamble logging to the terminal.
         Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
 
+        // Call the superclass. (The default behavior. DO NOT CHANGE!)
+        super.onCreate(savedInstanceState)
+
         // Initializes the app's internally saved preferences.
         initPreferencesAndLocalStorage()
 
@@ -249,9 +253,6 @@ class ActivityLauncher : ComponentActivity() {
         // Enable on-the-fly edit of drawable SVG vectors.
         // SOURCE: https://stackoverflow.com/a/38418049
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
-        // Call the superclass. (The default behavior. DO NOT CHANGE!)
-        super.onCreate(savedInstanceState)
 
         // Setting the clipboard manager.
         // Should be performed within "onCreate" to avoid the following error:
@@ -534,7 +535,7 @@ class ActivityLauncher : ComponentActivity() {
     private fun initData() {
 
         // The file creator to create the private file.
-        val fileCreator = this.getDir(GlobalCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
+        val fileCreator = InternalFileManager(this).DOWNLOAD_FILE_CREATOR
 
         // Setting up the downloaded JSON's absolute paths.
         Logger.logInit({}, "Initializing the downloaded JSON paths ...")
@@ -548,7 +549,7 @@ class ActivityLauncher : ComponentActivity() {
         val launches = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
 
         // Get fallback data only if first launch.
-        if (launches == 0) {
+        if (launches == 1) {
             // Let's apply the fallback JSON data until the actual, updated JSON metadata is downloaded.
             Logger.logInit({}, "Loading the fallback JSON metadata ...")
             Main(this).initFallbackMainData()

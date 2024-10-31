@@ -74,6 +74,18 @@ class Main(private val ctx: Context) {
         // SOURCE: https://stackoverflow.com/a/39500046
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_main)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
+        val secondInput: InputStream = ctx.resources.openRawResource(R.raw.fallback_main)
+        val inputAsByteArray = secondInput.use { it.readBytes() }
+
+        // Write the raw-resource-shipped file buffer as an actual file.
+        // Creating the private file.
+        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, MainCompanion.savedFilename)
+
+        // Writing the fallback file into an actual file in the app's internal storage.
+        val out = FileOutputStream(privateFile)
+        out.flush()
+        out.write(inputAsByteArray)
+        out.close()
 
         // Return the fallback JSONObject, and then navigate to the "data" node.
         return JSONObject(inputAsString).getJSONObject("data")
@@ -85,17 +97,6 @@ class Main(private val ctx: Context) {
         // SOURCE: https://stackoverflow.com/a/39500046
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_main)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
-        val inputAsByteArray = input.readBytes()
-
-        // Write the raw-resource-shipped file buffer as an actual file.
-        // Creating the private file.
-        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, MainCompanion.savedFilename)
-
-        // Writing the fallback file into an actual file in the app's internal storage.
-        val out = FileOutputStream(privateFile)
-        out.flush()
-        out.write(inputAsByteArray)
-        out.close()
 
         // Return the fallback JSONObject, and then navigate to the "data" node.
         return JSONObject(inputAsString).getJSONObject("meta")
@@ -132,16 +133,8 @@ class Main(private val ctx: Context) {
         // Prevents error-returning when this function is called upon offline.
         if (MainCompanion.mutableIsDataInitialized.value || JSONExists) {
             this.loadJSON(MainCompanion.absolutePathToJSONFile)
-
-            // Debugger logging.
-            Logger.logTest({}, "Reading local/downloaded JSON main data ...")
-
-            // The JSONObject main data.
-            val mainData = JSONObject(this._parsedJSONString).getJSONObject("data")
-            MainCompanion.jsonRoot = mainData
-            return mainData
+            return JSONObject(this._parsedJSONString).getJSONObject("data")
         } else {
-            Logger.logTest({}, "Reverting to the fallback data of the JSON schema ...")
             return getFallbackMainData()
         }
 
