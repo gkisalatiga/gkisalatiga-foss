@@ -74,7 +74,7 @@ class GlobalCompanion : Application() {
         const val DEBUG_ENABLE_LOG_CAT_DUMP = true
         const val DEBUG_ENABLE_LOG_CAT_INIT = true
         const val DEBUG_ENABLE_LOG_CAT_PDF = true
-        const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = true
+        const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = false
         const val DEBUG_ENABLE_LOG_CAT_TEST = true
         const val DEBUG_ENABLE_LOG_CAT_UPDATER = true
         const val DEBUG_ENABLE_LOG_CAT_WORKER = true

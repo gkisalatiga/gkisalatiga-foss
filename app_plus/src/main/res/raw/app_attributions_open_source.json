@@ -33,6 +33,14 @@
             "link": "https://github.com/coil-kt/coil"
         },
         {
+            "title": "CoroutineFileDownload",
+            "license": "Apache License 2.0",
+            "license-url": "https://spdx.org/licenses/Apache-2.0.html",
+            "year": "2018",
+            "author": "Jovche Mitrejchevski",
+            "link": "https://github.com/mitrejcevski/coroutineFileDownload"
+        },
+        {
             "title": "Jetpack Compose Material3",
             "license": "Apache License 2.0",
             "license-url": "https://spdx.org/licenses/Apache-2.0.html",

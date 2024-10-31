@@ -22,6 +22,15 @@ class LocalStorage(private val ctx: Context) {
     private val DEFAULT_CUSTOM_KEY_STRING = ""
 
     /**
+     * Returns the composite key if a given custom key is passed for a LocalStorageKeys.
+     * @param localKey the base LocalStorageKeys to be considered.
+     * @param customKey the custom key which will compound the base localKey.
+     */
+    fun getCompositeKey(localKey: LocalStorageKeys, customKey: String = DEFAULT_CUSTOM_KEY_STRING): String {
+        return localKey.name + customKey
+    }
+
+    /**
      * Returns the LocalStorage object.
      * It must be set to private so that only this class may be allowed to alter
      * the app's internal local storage.
@@ -43,7 +52,7 @@ class LocalStorage(private val ctx: Context) {
         var retVal: Any? = null
 
         // The combined key.
-        val key = localKey.name + customKey
+        val key = getCompositeKey(localKey, customKey)
 
         // Initializing the default values to the local storage store.
         with (localStorageObj) {
@@ -123,6 +132,7 @@ enum class LocalStorageKeys {
     LOCAL_KEY_LAST_STATIC_DATA_UPDATE,
     LOCAL_KEY_LAST_CAROUSEL_BANNER_UPDATE,
     LOCAL_KEY_LAUNCH_COUNTS,
+    LOCAL_KEY_LIST_OF_DOWNLOADED_PDF_CACHES,
 
     /* More sophisticated local storage keys that require the use of customKey. */
     LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION,

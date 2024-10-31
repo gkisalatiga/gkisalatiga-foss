@@ -14,8 +14,10 @@ package org.gkisalatiga.plus.screen
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,22 +55,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.rajat.pdfviewer.HeaderData
 import com.rajat.pdfviewer.PdfRendererView
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Downloader
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
+import org.gkisalatiga.plus.lib.external.DownloadViewModel
+import org.gkisalatiga.plus.lib.external.FileDownloadEvent
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTriggerPDFViewerRecomposition
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.navigatorLazyListState
+import org.gkisalatiga.plus.services.InternalFileManager
 import java.io.File
 
 
 class ScreenPDFViewer : ComponentActivity() {
+
+    // The view model for downloading files with progress.
+    private val downloadWithProgressViewModel = DownloadViewModel()
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -113,7 +125,6 @@ class ScreenPDFViewer : ComponentActivity() {
         /* Displaying the main PDF content. */
         Column (Modifier.fillMaxSize()) {
             val url = ScreenPDFViewerCompanion.eBookUrl
-            val headers = HeaderData()
 
             // The page navigator.
             Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
@@ -136,31 +147,53 @@ class ScreenPDFViewer : ComponentActivity() {
             // Text(ScreenLibraryCompanion.currentpg.toString())
             Text(ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value)
 
-            // The actual PDF renderer and viewer.
-            AndroidView(
-                factory = {
-                    pdfRendererViewInstance.apply {
-                        val isAlreadyDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
-                        val absolutePDFPathIfCached = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
+            val isAlreadyDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+            val absolutePDFPathIfCached = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
 
-                        // Redundant logging for debugging.
-                        Logger.logPDF({}, "url: $url, isAlreadyDownloaded: $isAlreadyDownloaded, absolutePDFPathIfCached: $absolutePDFPathIfCached")
+            // Redundant logging for debugging.
+            Logger.logPDF({}, "url: $url, isAlreadyDownloaded: $isAlreadyDownloaded, absolutePDFPathIfCached: $absolutePDFPathIfCached")
 
-                        // Displaying the PDF file.
-                        /*if (isAlreadyDownloaded) initWithFile(File(absolutePDFPathIfCached))
-                        else*/ initWithUrl(url, headers, lifecycleScope, lifecycleOwner.lifecycle)
-                        // TODO: Make a self-created implementation to check if the PDF is already downloaded, then also all PDF downloaded files except the latest N. (For storage management.)
+            // Attempt to download the file, if not exists.
+            if (!isAlreadyDownloaded) {
+                // Request for the downloading of a new PDF file.
+                mutableTriggerPDFViewerRecomposition.value = true
+                // Downloader(ctx).initRemotePDF(url, lifecycleScope, ScreenPDFViewerCompanion.pdfRendererViewInstance!!.statusListener!!)
 
-                        // TODO: Remove.
-                        // initWithUrl(url, headers, lifecycleScope, lifecycleOwner.lifecycle)
-                        // initWithFile(File("/data/user/0/org.gkisalatiga.plus/cache/-1903487257.pdf"))
-                    }
-                },
-                update = {
-                    // Update logic if needed
-                },
-                modifier = Modifier
-            )
+                Logger.logTest({}, "[ABG] 1")
+                // --- ensuring that this block will only be ran once every time.
+                LaunchedEffect(Unit) { handlePdfDownload(ctx, url, lifecycleOwner) }
+            }
+
+            // Displaying the PDF file.
+            /*if (isAlreadyDownloaded) initWithFile(File(absolutePDFPathIfCached))
+            else*/ // initWithUrl(url, headers, lifecycleScope, lifecycleOwner.lifecycle)
+            // TODO: Make a self-created implementation to check if the PDF is already downloaded, then also all PDF downloaded files except the latest N. (For storage management.)
+
+            // Displaying the PDF.
+            key (mutableTriggerPDFViewerRecomposition.value, true) {
+                // The actual PDF renderer and viewer.
+                AndroidView(
+                    factory = {
+                        pdfRendererViewInstance.apply {
+                            // Double-checking if the file is already downloaded.
+                            val isDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+
+                            // Display the file if already downloaded.
+                            if (isDownloaded) initWithFile(File(absolutePDFPathIfCached))
+
+                            // TODO: Remove.
+                            // initWithUrl(url, headers, lifecycleScope, lifecycleOwner.lifecycle)
+                            // initWithFile(File("/data/user/0/org.gkisalatiga.plus/cache/-1903487257.pdf"))
+                        }.also {
+                            // Prevents error: java.lang.IllegalStateException: The specified child already has a parent. You must call removeView() on the child's parent first.
+                            // SOURCE: https://stackoverflow.com/a/73407161
+                            if(it.parent != null) (it.parent as ViewGroup).removeView(it)
+                        }
+                    },
+                    update = { /* Update logic if needed. */ },
+                    modifier = Modifier
+                )
+            }
 
             // Placebo.
             Text("ew")
@@ -203,6 +236,45 @@ class ScreenPDFViewer : ComponentActivity() {
             scrollBehavior = scrollBehavior
         )
     }
+
+    /**
+     * This function handles the PDF downloading.
+     */
+    private fun handlePdfDownload(ctx: Context, url: String, lifecycleOwner: LifecycleOwner) {
+        val targetDownloadDir = InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR
+        downloadWithProgressViewModel.downloadFile(url, "kudai.pdf", targetDownloadDir).observe(lifecycleOwner) {
+            Logger.logTest({}, "[ABG] 10_${it}")
+            when (it) {
+                is FileDownloadEvent.Progress -> {
+                    Logger.logTest({}, "[ABG] 1a")
+                    ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = "Downloading... ${it.percentage}%"
+                }
+
+                is FileDownloadEvent.Success -> {
+                    Logger.logTest({}, "[ABG] 1b")
+                    ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = "Success! Downloaded to: ${it.downloadedFilePath}"
+
+                    val outputPath = it.downloadedFilePath
+
+                    // Ensure that we don't download this PDF file again in the future.
+                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, true, LocalStorageDataTypes.BOOLEAN, url)
+                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, outputPath, LocalStorageDataTypes.STRING, url)
+
+                    // Register the file in the app's internal file manager so that it will be scheduled for cleaning.
+                    InternalFileManager(ctx).enlistDownloadedFileForCleanUp(eBookUrl, outputPath)
+
+                    // Trigger recomposition of the PDF viewer, if this is new download.
+                    mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
+                }
+
+                is FileDownloadEvent.Failure -> {
+                    Logger.logTest({}, "[ABG] 1c")
+                    ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = it.failure
+                }
+            }
+        }
+    }
+
 }
 
 class ScreenPDFViewerCompanion : Application() {
@@ -211,6 +283,9 @@ class ScreenPDFViewerCompanion : Application() {
         internal val mutableCallbackStatusMessage = mutableStateOf("")
         internal val mutableCurrentPDFPage = mutableIntStateOf(0)
         internal val mutableTotalPDFPage = mutableIntStateOf(0)
+
+        /* Set this flag to "true" in order to order for a new batch of PDF download. */
+        internal var mutableTriggerPDFViewerRecomposition = mutableStateOf(false)
 
         /* These information are essential to the screen. */
         internal var eBookTitle: String = String()
@@ -239,7 +314,8 @@ class ScreenPDFViewerCompanion : Application() {
                     mutableTotalPDFPage.intValue = totalPage
                 }
 
-                override fun onError(error: Throwable) {
+                // TODO: Consider removing.
+                /*override fun onError(error: Throwable) {
                     super.onError(error)
                     mutableCallbackStatusMessage.value = error.message!!
                     Logger.logPDF({}, "onError -> error.message!!: ${error.message!!}")
@@ -251,7 +327,7 @@ class ScreenPDFViewerCompanion : Application() {
                     totalBytes: Long?
                 ) {
                     super.onPdfLoadProgress(progress, downloadedBytes, totalBytes)
-                    mutableCallbackStatusMessage.value = "Megunduh: $progress. $downloadedBytes/$totalBytes"  // --- TODO: Extract string to XML.
+                    mutableCallbackStatusMessage.value = "Mengunduh: $progress. $downloadedBytes/$totalBytes"  // --- TODO: Extract string to XML.
                     Logger.logRapidTest({}, "onPdfLoadProgress -> progress: $progress, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes")
                 }
 
@@ -260,16 +336,15 @@ class ScreenPDFViewerCompanion : Application() {
                     mutableCallbackStatusMessage.value = "Sukses mengunduh: $absolutePath"  // --- TODO: Extract string to XML.
                     Logger.logPDF({}, "onPdfLoadSuccess -> absolutePath: $absolutePath")
 
-                    // Ensure that we don't download this PDF file again in the future.
-                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, true, LocalStorageDataTypes.BOOLEAN, eBookUrl)
-                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, absolutePath, LocalStorageDataTypes.STRING, eBookUrl)
+                    // Trigger the composition of the PDF file.
+                    mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
                 }
 
                 override fun onPdfLoadStart() {
                     super.onPdfLoadStart()
-                    mutableCallbackStatusMessage.value = "Memuat file..>"  // --- TODO: Extract string to XML.
+                    mutableCallbackStatusMessage.value = "Memuat PDF..."  // --- TODO: Extract string to XML.
                     Logger.logPDF({}, "onPdfLoadStart (no parameter provided).")
-                }
+                }*/
             }
         }
 

@@ -222,9 +222,6 @@ class ActivityLauncher : ComponentActivity() {
         // Preamble logging to the terminal.
         Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
 
-        // SOURCE: https://stackoverflow.com/a/53669865
-        // ProcessLifecycleOwner.get().lifecycle.addObserver(this);
-
         // Initializes the app's internally saved preferences.
         initPreferencesAndLocalStorage()
 
@@ -268,6 +265,12 @@ class ActivityLauncher : ComponentActivity() {
         // Retrieving the latest JSON metadata.
         initData()
 
+        // Creating the notification channels.
+        initNotificationChannel()
+
+        // Initializing the scheduled alarms.
+        initWorkManager()
+
         // TODO: Remove this code block after v0.6.0 launch. This code block causes screen blank during launch.
         /*// Block the app until all data is initialized.
         // Prevents "null pointer exception" when the JSON data in the multi-thread has not been prepared.
@@ -278,12 +281,6 @@ class ActivityLauncher : ComponentActivity() {
                 Logger.logRapidTest({}, "Still initializing data ...", LoggerType.WARNING)
             }
         }*/
-
-        // Creating the notification channels.
-        initNotificationChannel()
-
-        // Initializing the scheduled alarms.
-        initWorkManager()
 
         // Initiate the Jetpack Compose composition.
         // This is the entry point of every composable, similar to "main()" function in Java.
