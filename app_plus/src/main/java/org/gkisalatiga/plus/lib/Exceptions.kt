@@ -1,3 +1,3 @@
 package org.gkisalatiga.plus.lib
 
-class InvalidTestStringException(errorMsg: String) : Exception(errorMsg)
+class InvalidConnectionTestStringException(errorMsg: String = "Downloaded string does not match with the app's test string.") : Exception(errorMsg)

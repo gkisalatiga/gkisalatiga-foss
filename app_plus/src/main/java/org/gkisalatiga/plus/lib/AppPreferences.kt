@@ -22,9 +22,10 @@ class AppPreferences(private val ctx: Context) {
      * The default values of preference keys.
      */
     private val DEFAULT_PREFERENCE_KEY_VALUES: Map<PreferenceKeys, Any> = mapOf(
-        PreferenceKeys.PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY to 86400000.toLong(),  // --- 86400000 means "once every 1 day" in millisecond
+        PreferenceKeys.PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY to 86400000.toLong(),  // --- 86400000 means "once every 1 day" in millisecond.
         PreferenceKeys.PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES to 30.toInt(),
-        PreferenceKeys.PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY to 604800000.toLong(),  // --- 604800000 means "once every 7 days" in millisecond
+        PreferenceKeys.PREF_KEY_OFFLINE_CHECK_FREQUENCY to 10000.toLong(),  // --- 10000 means 10 seconds.
+        PreferenceKeys.PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY to 604800000.toLong(),  // --- 604800000 means "once every 7 days" in millisecond.
     )
 
     /**
@@ -139,5 +140,6 @@ class AppPreferencesCompanion : Application () {
 enum class PreferenceKeys {
     PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY,
     PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES,
+    PREF_KEY_OFFLINE_CHECK_FREQUENCY,
     PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY,
 }

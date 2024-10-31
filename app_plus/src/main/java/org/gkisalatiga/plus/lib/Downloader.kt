@@ -21,6 +21,9 @@ import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.net.ConnectException
+import java.net.SocketException
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
 
@@ -69,11 +72,23 @@ class Downloader(private val ctx: Context) {
                 MainCompanion.mutableIsDataInitialized.value = true
                 if (autoReloadGlobalData) MainCompanion.jsonRoot = Main(ctx).getMainData()
 
+                GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "JSON metadata was successfully downloaded into: ${privateFile.absolutePath}")
 
+            } catch (e: ConnectException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
+            } catch (e: IOException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
+            } catch (e: SocketException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
             } catch (e: UnknownHostException) {
                 GlobalCompanion.isConnectedToInternet.value = false
-                Logger.log({}, "Network unreachable during download: $e", LoggerType.ERROR)
+                Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
             }
 
             // Break free from this thread.
@@ -117,11 +132,23 @@ class Downloader(private val ctx: Context) {
                 GalleryCompanion.mutableIsDataInitialized.value = true
                 if (autoReloadGlobalData) GalleryCompanion.jsonRoot = Gallery(ctx).getGalleryData()
 
+                GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "Gallery was successfully downloaded into: ${privateFile.absolutePath}")
 
+            } catch (e: ConnectException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
+            } catch (e: IOException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
+            } catch (e: SocketException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
             } catch (e: UnknownHostException) {
                 GlobalCompanion.isConnectedToInternet.value = false
-                Logger.log({}, "Network unreachable when downloading the gallery data: $e", LoggerType.ERROR)
+                Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
             }
 
             // Break free from this thread.
@@ -165,11 +192,23 @@ class Downloader(private val ctx: Context) {
                 ModulesCompanion.mutableIsDataInitialized.value = true
                 if (autoReloadGlobalData) ModulesCompanion.jsonRoot = Modules(ctx).getModulesData()
 
+                GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "Modules was successfully downloaded into: ${privateFile.absolutePath}")
 
+            } catch (e: ConnectException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
+            } catch (e: IOException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
+            } catch (e: SocketException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
             } catch (e: UnknownHostException) {
                 GlobalCompanion.isConnectedToInternet.value = false
-                Logger.log({}, "Network unreachable when downloading the modules data: $e", LoggerType.ERROR)
+                Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
             }
 
             // Break free from this thread.
@@ -213,11 +252,82 @@ class Downloader(private val ctx: Context) {
                 StaticCompanion.mutableIsDataInitialized.value = true
                 if (autoReloadGlobalData) StaticCompanion.jsonRoot = Static(ctx).getStaticData()
 
+                GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "Static data was successfully downloaded into: ${privateFile.absolutePath}")
 
+            } catch (e: ConnectException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
+            } catch (e: IOException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
+            } catch (e: SocketException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
             } catch (e: UnknownHostException) {
                 GlobalCompanion.isConnectedToInternet.value = false
-                Logger.log({}, "Network unreachable when downloading the static data: $e", LoggerType.ERROR)
+                Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
+            }
+
+            // Break free from this thread.
+            executor.shutdown()
+        }
+    }
+
+    /**
+     * Downloads PDF file from an online source and then mark the URL as already downloaded,
+     * to prevent duplication and cluttering of app's internal storage.
+     * @param pdfUrl the URL of the PDF file to be downloaded.
+     */
+    fun initRemotePDF(pdfUrl: String) {
+        // Non-blocking the main GUI by creating a separate thread for the download
+        // Preparing the thread.
+        val executor = Executors.newSingleThreadExecutor()
+
+        // Fetching the data
+        Logger.log({}, "Attempting to download the static JSON file ...")
+        executor.execute {
+
+            try {
+                // Opening the file download stream.
+                val streamIn = java.net.URL(StaticCompanion.REMOTE_JSON_SOURCE).openStream()
+
+                // Coverting input stream (bytes) to string.
+                // SOURCE: http://stackoverflow.com/questions/49467780/ddg#49468129
+                val decodedData: ByteArray = streamIn.readBytes()
+
+                // Creating the private file.
+                val privateFile = File(fileCreator, StaticCompanion.savedFilename)
+
+                // Writing into the file.
+                val out = FileOutputStream(privateFile)
+                out.flush()
+                out.write(decodedData)
+                out.close()
+
+                // Notify all the other functions about the JSON file path.
+                StaticCompanion.mutableIsDataInitialized.value = true
+                // if (autoReloadGlobalData) StaticCompanion.jsonRoot = Static(ctx).getStaticData()
+
+                GlobalCompanion.isConnectedToInternet.value = true
+                Logger.log({}, "Static data was successfully downloaded into: ${privateFile.absolutePath}")
+
+            } catch (e: ConnectException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
+            } catch (e: IOException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
+            } catch (e: SocketException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
+            } catch (e: UnknownHostException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
             }
 
             // Break free from this thread.

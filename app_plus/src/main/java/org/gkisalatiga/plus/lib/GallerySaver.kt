@@ -13,7 +13,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.ActivityCompat.startActivityForResult
 import org.gkisalatiga.plus.global.GlobalCompanion
+import java.io.IOException
 import java.io.OutputStream
+import java.net.ConnectException
+import java.net.SocketException
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
 
@@ -59,17 +62,51 @@ class GallerySaver {
                 outputStream.write(decodedData)
                 outputStream.close()
 
-                // Show some successful alert.
+                // Show some successful alert. TODO: Extract string to allow localization.
                 GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "File Terunduh!"
                 GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Berhasil mengunduh \"${GlobalCompanion.targetSaveFilename}\""
                 GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
 
-            } catch (e: UnknownHostException) {
-                Logger.log({}, "Network unreachable when downloading the gallery data: $e", LoggerType.ERROR)
+                GlobalCompanion.isConnectedToInternet.value = true
 
-                // Show some failure alert.
+            } catch (e: ConnectException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
+
+                // Show some failure alert. TODO: Extract string to allow localization.
                 GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
-                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda."
+                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+            } catch (e: IOException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
+
+                // Show some failure alert. TODO: Extract string to allow localization.
+                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+            } catch (e: SocketException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
+
+                // Show some failure alert. TODO: Extract string to allow localization.
+                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+            } catch (e: UnknownHostException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
+
+                // Show some failure alert. TODO: Extract string to allow localization.
+                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
+
+                // Show some failure alert. TODO: Extract string to allow localization.
+                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Eror yang belum pernah ditangani sebelumnya terdeteksi: ${e.message}"
                 GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
             }
 

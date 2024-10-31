@@ -18,11 +18,16 @@ import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Downloader
+import org.gkisalatiga.plus.lib.InvalidConnectionTestStringException
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.json.JSONObject
+import java.io.IOException
 import java.io.InputStream
+import java.net.ConnectException
+import java.net.SocketException
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
 
@@ -117,8 +122,22 @@ class DataUpdater(private val ctx: Context) {
                     Logger.logUpdate({}, "Static data is up-to-date!", LoggerType.INFO)
                 }
 
+                GlobalCompanion.isConnectedToInternet.value = true
+
+            } catch (e: ConnectException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
+            } catch (e: IOException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
+            } catch (e: SocketException) {
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
             } catch (e: UnknownHostException) {
-                Logger.logTest({}, "Network error! Cannot retrieve the latest feeds JSON file data!", LoggerType.ERROR)
+                GlobalCompanion.isConnectedToInternet.value = false
+                Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
             }
 
             // Assign the JSON data globally.
