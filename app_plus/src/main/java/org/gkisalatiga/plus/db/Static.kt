@@ -14,10 +14,12 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStream
 
 class Static(private val ctx: Context) {
@@ -64,6 +66,17 @@ class Static(private val ctx: Context) {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
+        val inputAsByteArray = input.readBytes()
+
+        // Write the raw-resource-shipped file buffer as an actual file.
+        // Creating the private file.
+        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, StaticCompanion.savedFilename)
+
+        // Writing the fallback file into an actual file in the app's internal storage.
+        val out = FileOutputStream(privateFile)
+        out.flush()
+        out.write(inputAsByteArray)
+        out.close()
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
         return JSONObject(inputAsString).getJSONObject("meta")
@@ -74,6 +87,14 @@ class Static(private val ctx: Context) {
      */
     fun initFallbackStaticData() {
         StaticCompanion.jsonRoot = getFallbackStaticData()
+    }
+
+    /**
+     * Initializes the locally downloaded/stored static data.
+     * Then assign the global variable that handles it.
+     */
+    fun initLocalStaticData() {
+        StaticCompanion.jsonRoot = getStaticData()
     }
 
     /**

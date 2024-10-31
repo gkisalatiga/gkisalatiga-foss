@@ -91,6 +91,7 @@ import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.db.MainCompanion
+import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.GallerySaver
@@ -218,6 +219,9 @@ class ActivityLauncher : ComponentActivity() {
     @SuppressLint("MutableCollectionMutableState")
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        // Preamble logging to the terminal.
+        Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
+
         // SOURCE: https://stackoverflow.com/a/53669865
         // ProcessLifecycleOwner.get().lifecycle.addObserver(this);
 
@@ -249,9 +253,6 @@ class ActivityLauncher : ComponentActivity() {
         // SOURCE: https://stackoverflow.com/a/38418049
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-        // Preamble logging to the terminal.
-        Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
-
         // Call the superclass. (The default behavior. DO NOT CHANGE!)
         super.onCreate(savedInstanceState)
 
@@ -267,7 +268,8 @@ class ActivityLauncher : ComponentActivity() {
         // Retrieving the latest JSON metadata.
         initData()
 
-        // Block the app until all data is initialized.
+        // TODO: Remove this code block after v0.6.0 launch. This code block causes screen blank during launch.
+        /*// Block the app until all data is initialized.
         // Prevents "null pointer exception" when the JSON data in the multi-thread has not been prepared.
         while (true) {
             if (MainCompanion.jsonRoot != null && ModulesCompanion.jsonRoot != null && GalleryCompanion.jsonRoot != null && StaticCompanion.jsonRoot != null) {
@@ -275,7 +277,7 @@ class ActivityLauncher : ComponentActivity() {
             } else {
                 Logger.logRapidTest({}, "Still initializing data ...", LoggerType.WARNING)
             }
-        }
+        }*/
 
         // Creating the notification channels.
         initNotificationChannel()
@@ -552,7 +554,7 @@ class ActivityLauncher : ComponentActivity() {
         if (launches == 0) {
             // Let's apply the fallback JSON data until the actual, updated JSON metadata is downloaded.
             Logger.logInit({}, "Loading the fallback JSON metadata ...")
-            Main(this).initFallbackGalleryData()
+            Main(this).initFallbackMainData()
 
             // Loading the fallback gallery data.
             Logger.logInit({}, "Loading the fallback gallery JSON file ...")
@@ -562,8 +564,16 @@ class ActivityLauncher : ComponentActivity() {
             Logger.logInit({}, "Loading the fallback static JSON file ...")
             Static(this).initFallbackStaticData()
 
+            // Loading the fallback static data.
+            Logger.logInit({}, "Loading the fallback modules JSON file ...")
+            Modules(this).initFallbackModulesData()
+
         } else {
-            Logger.logInit({}, "This is not first launch.")
+            Logger.logInit({}, "This is not first launch. Loading the locally downloaded JSON files ...")
+            Main(this).initLocalMainData()
+            Gallery(this).initLocalGalleryData()
+            Static(this).initLocalStaticData()
+            Modules(this).initLocalModulesData()
         }
 
         // At last, update the data to the latest whenever possible.

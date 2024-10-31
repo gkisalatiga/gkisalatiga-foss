@@ -15,9 +15,11 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStream
 
 class Main(private val ctx: Context) {
@@ -83,6 +85,17 @@ class Main(private val ctx: Context) {
         // SOURCE: https://stackoverflow.com/a/39500046
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_main)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
+        val inputAsByteArray = input.readBytes()
+
+        // Write the raw-resource-shipped file buffer as an actual file.
+        // Creating the private file.
+        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, MainCompanion.savedFilename)
+
+        // Writing the fallback file into an actual file in the app's internal storage.
+        val out = FileOutputStream(privateFile)
+        out.flush()
+        out.write(inputAsByteArray)
+        out.close()
 
         // Return the fallback JSONObject, and then navigate to the "data" node.
         return JSONObject(inputAsString).getJSONObject("meta")
@@ -91,8 +104,16 @@ class Main(private val ctx: Context) {
     /**
      * Initializes the main data and assign the global variable that handles it.
      */
-    fun initFallbackGalleryData() {
+    fun initFallbackMainData() {
         MainCompanion.jsonRoot = getFallbackMainData()
+    }
+
+    /**
+     * Initializes the locally downloaded/stored main data.
+     * Then assign the global variable that handles it.
+     */
+    fun initLocalMainData() {
+        MainCompanion.jsonRoot = getMainData()
     }
 
     /**

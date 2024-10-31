@@ -16,6 +16,8 @@
 :hammer_and_wrench: **FIX**
 
 - Fixed deeplinking not working with `https://www.gkisalatiga.org` domain
+- Fixed very long screen blank upon launching the app (caused by blocking due to JSON data download)
+- Fixed app crashes when there is network error (38b6e5fa9f061ddd31525d554c24e0239bc43838)
 
 ## v0.5.0-rc 2024.10.28 (28)
 

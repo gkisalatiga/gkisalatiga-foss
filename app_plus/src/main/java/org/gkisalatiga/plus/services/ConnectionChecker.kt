@@ -48,11 +48,13 @@ class ConnectionChecker(private val ctx: Context) {
     fun execute() {
         Logger.log({}, "Initiating the network checker ...")
 
+        // Check if first execution.
+        var isFirstExecution = true
+
         // Use coroutine instead of regular single-thread for efficiency.
         // SOURCE: https://discuss.kotlinlang.org/t/how-can-i-use-co-routines-to-single-thread-asynchronous-responses/23045/15
         executor.execute {
             while (true) {
-                // TODO: Consider removing.
                 /**
                  * Previously, this is how we test for internet connectivity:
                  * =======================================================================
@@ -69,11 +71,14 @@ class ConnectionChecker(private val ctx: Context) {
                  *     Logger.logConnTest({}, "OFFLINE::1", LoggerType.INFO)
                  * }
                  * * =======================================================================
-                 * However, turns out this code gives false positives.
+                 * However, it turns out this code gives false positives.
                  * When the phone is connected to any Wi-Fi network but with no data traffic,
                  * the above code still results in "ONLINE::0" conn. test log string.
                  * This is replaced with the following code in v0.6.0.
                  */
+
+                // Wait for a certain time before re-checking the internet connection again.
+                if (!isFirstExecution) TimeUnit.MILLISECONDS.sleep(offlineCheckFrequency) else isFirstExecution = false
 
                 // Ping for internet connectivity.
                 try {
@@ -108,8 +113,6 @@ class ConnectionChecker(private val ctx: Context) {
                     Logger.logConnTest({}, "2, UNKNOWN, Exception, ${e.message}", LoggerType.INFO)
                 }
 
-                // Wait for a certain time before re-checking the internet connection again.
-                TimeUnit.MILLISECONDS.sleep(offlineCheckFrequency)
             }  // --- end of while loop.
         }  // --- end of executor.execute()
     }  // --- end of fun.

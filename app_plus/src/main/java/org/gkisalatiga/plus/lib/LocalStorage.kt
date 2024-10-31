@@ -75,7 +75,7 @@ class LocalStorage(private val ctx: Context) {
         val key = localKey.name + customKey
 
         // Debug the local storage key-to-write value.
-        Logger.logTest({}, "Writing the local storage value: $localStorageValue under the key $key with class type: $type")
+        Logger.logTest({}, "setLocalStorageValue -> localStorageValue: [$localStorageValue], key: [$key], type: [$type]")
 
         with (localStorageObj.edit()) {
             // Detect local storage value type.

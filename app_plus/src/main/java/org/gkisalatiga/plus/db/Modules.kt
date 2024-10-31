@@ -14,9 +14,11 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStream
 
 class Modules(private val ctx: Context) {
@@ -63,6 +65,17 @@ class Modules(private val ctx: Context) {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_modules)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
+        val inputAsByteArray = input.readBytes()
+
+        // Write the raw-resource-shipped file buffer as an actual file.
+        // Creating the private file.
+        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, ModulesCompanion.savedFilename)
+
+        // Writing the fallback file into an actual file in the app's internal storage.
+        val out = FileOutputStream(privateFile)
+        out.flush()
+        out.write(inputAsByteArray)
+        out.close()
 
         // Return the fallback JSONObject, and then navigate to the "modules" node.
         return JSONObject(inputAsString).getJSONObject("meta")
@@ -73,6 +86,14 @@ class Modules(private val ctx: Context) {
      */
     fun initFallbackModulesData() {
         ModulesCompanion.jsonRoot = getFallbackModulesData()
+    }
+
+    /**
+     * Initializes the locally downloaded/stored modules data.
+     * Then assign the global variable that handles it.
+     */
+    fun initLocalModulesData() {
+        ModulesCompanion.jsonRoot = getModulesData()
     }
 
     /**
