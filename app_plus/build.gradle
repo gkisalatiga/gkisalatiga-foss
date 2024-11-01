@@ -133,4 +133,7 @@ dependencies {
     // SOURCE: https://github.com/afreakyelf/Pdf-Viewer
     implementation("io.github.afreakyelf:Pdf-Viewer:2.1.1")
 
+    // Better, more advanced VerticalPager and HorizontalPager zoomable modifier.
+    implementation("net.engawapg.lib:zoomable:1.6.2")
+
 }

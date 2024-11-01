@@ -14,11 +14,17 @@ package org.gkisalatiga.plus.screen
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -27,6 +33,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
@@ -50,6 +58,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,9 +70,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import coil.compose.AsyncImage
 import com.rajat.pdfviewer.HeaderData
 import com.rajat.pdfviewer.PdfRendererView
 import kotlinx.coroutines.launch
+import net.engawapg.lib.zoomable.ScrollGesturePropagation
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.toggleScale
+import net.engawapg.lib.zoomable.zoomable
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Downloader
 import org.gkisalatiga.plus.lib.LocalStorage
@@ -164,13 +181,53 @@ class ScreenPDFViewer : ComponentActivity() {
                 LaunchedEffect(Unit) { handlePdfDownload(ctx, url, lifecycleOwner) }
             }
 
+            key (mutableTriggerPDFViewerRecomposition.value, true) {
+                // SOURCE: https://gist.github.com/grumpyshoe/cffd0bb54b8819e5e562e033445ec2f6
+                val fileDescriptor = ParcelFileDescriptor.open(
+                    File(absolutePDFPathIfCached),
+                    ParcelFileDescriptor.MODE_READ_ONLY
+                )
+                val mPdfRenderer = PdfRenderer(fileDescriptor)
+                val mPdfPageCount = mPdfRenderer.pageCount
+
+                // For zooming images.
+                val targetScale = 5.0f
+                HorizontalPager(rememberPagerState { mPdfPageCount }, modifier = Modifier.fillMaxSize(), beyondViewportPageCount = 3) {
+                    val mPdfPage = mPdfRenderer.openPage(it)
+
+                    // Create a new bitmap and render the page contents into it
+                    val bitmap = Bitmap.createBitmap(
+                        mPdfPage.width * 2,
+                        mPdfPage.height * 2,
+                        Bitmap.Config.ARGB_8888,
+                    )
+                    mPdfPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
+                    mPdfPage.close()
+
+                    val zoomState = rememberZoomState()
+                    Box (Modifier.background(Color.White)) {
+                        // Displaying the image.
+                        Image(
+                            bitmap.asImageBitmap(),
+                            modifier = Modifier.zoomable(
+                                zoomState,
+                                onDoubleTap = { position -> zoomState.toggleScale(targetScale, position) },
+                                scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+                            ).fillMaxSize().background(Color.White),
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                }
+            }
+
             // Displaying the PDF file.
             /*if (isAlreadyDownloaded) initWithFile(File(absolutePDFPathIfCached))
             else*/ // initWithUrl(url, headers, lifecycleScope, lifecycleOwner.lifecycle)
             // TODO: Make a self-created implementation to check if the PDF is already downloaded, then also all PDF downloaded files except the latest N. (For storage management.)
 
             // Displaying the PDF.
-            key (mutableTriggerPDFViewerRecomposition.value, true) {
+            /*key (mutableTriggerPDFViewerRecomposition.value, true) {
                 // The actual PDF renderer and viewer.
                 AndroidView(
                     factory = {
@@ -193,10 +250,10 @@ class ScreenPDFViewer : ComponentActivity() {
                     update = { /* Update logic if needed. */ },
                     modifier = Modifier
                 )
-            }
+            }*/
 
             // Placebo.
-            Text("ew")
+            // Text("ew")
         }
 
     }
