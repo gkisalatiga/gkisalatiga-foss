@@ -17,14 +17,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
-import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -34,6 +31,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -55,23 +53,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import coil.compose.AsyncImage
-import com.rajat.pdfviewer.HeaderData
 import com.rajat.pdfviewer.PdfRendererView
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.ScrollGesturePropagation
@@ -79,17 +74,18 @@ import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.toggleScale
 import net.engawapg.lib.zoomable.zoomable
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Downloader
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
-import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.external.DownloadViewModel
 import org.gkisalatiga.plus.lib.external.FileDownloadEvent
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableCurrentPDFPage
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTotalPDFPage
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTriggerPDFViewerRecomposition
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.navigatorLazyListState
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.rememberedViewerPagerState
 import org.gkisalatiga.plus.services.InternalFileManager
 import java.io.File
 
@@ -110,18 +106,38 @@ class ScreenPDFViewer : ComponentActivity() {
                 modifier = Modifier
                     .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())
                     .fillMaxSize()
-            ) {
-                // Display the main "attribution" contents.
-                getMainContent()
+            ) { getMainContent() }
+
+            // Update the page state when the pager is scrolled against. TODO: remove?
+            /*key(rememberedViewerPagerState!!.currentPage) {
+                mutableCurrentPDFPage.intValue = rememberedViewerPagerState!!.currentPage
+                Logger.logTest({}, "key -> rememberedViewerPagerState!!.currentPage: ${rememberedViewerPagerState!!.currentPage}")
+            }*/
+            key (rememberedViewerPagerState!!.currentPage) {
+                mutableCurrentPDFPage.intValue = rememberedViewerPagerState!!.currentPage
+                Logger.logRapidTest({}, "key -> rememberedViewerPagerState!!.currentPage: ${rememberedViewerPagerState!!.currentPage}")
             }
 
-            // Also scroll the horizontal navigator to the respective position.
+            // Sroll the horizontal navigator to the respective position.
             val scope = rememberCoroutineScope()
-            LaunchedEffect(ScreenPDFViewerCompanion.mutableCurrentPDFPage.intValue) {
+            /*LaunchedEffect(mutableCurrentPDFPage.intValue) {
                 scope.launch {
-                    navigatorLazyListState!!.animateScrollToItem(ScreenPDFViewerCompanion.mutableCurrentPDFPage.intValue)
+                    navigatorLazyListState!!.animateScrollToItem(rememberedViewerPagerState!!.currentPage)
                 }
-            }
+            }*/
+            // TODO: These cause lags when turning pages. Change the implementation?
+            /*LaunchedEffect(mutableCurrentPDFPage.intValue) {
+                scope.launch {
+                    navigatorLazyListState!!.animateScrollToItem(mutableCurrentPDFPage.intValue)
+                    rememberedViewerPagerState!!.animateScrollToPage(mutableCurrentPDFPage.intValue)
+                }
+            }*/
+            /*key(mutableCurrentPDFPage.intValue) {
+                scope.launch {
+                    navigatorLazyListState!!.animateScrollToItem(mutableCurrentPDFPage.intValue)
+                    rememberedViewerPagerState!!.animateScrollToPage(mutableCurrentPDFPage.intValue)
+                }
+            }*/
 
         }
 
@@ -135,26 +151,30 @@ class ScreenPDFViewer : ComponentActivity() {
     @Composable
     private fun getMainContent() {
         val ctx = LocalContext.current
+        val scope = rememberCoroutineScope()
         val lifecycleOwner = LocalLifecycleOwner.current
         val lifecycleScope = lifecycleOwner.lifecycleScope
         val pdfRendererViewInstance = ScreenPDFViewerCompanion.pdfRendererViewInstance!!
 
         /* Displaying the main PDF content. */
         Column (Modifier.fillMaxSize()) {
-            val url = ScreenPDFViewerCompanion.eBookUrl
+            val url = eBookUrl
 
             // The page navigator.
             Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
                 Button(onClick = { /* Displays the custom page navigator (with typing)? */ }) {
-                    Text((ScreenPDFViewerCompanion.mutableCurrentPDFPage.intValue + 1).toString() + " / " + ScreenPDFViewerCompanion.mutableTotalPDFPage.intValue.toString(), textAlign = TextAlign.Center)
+                    Text((mutableCurrentPDFPage.intValue + 1).toString() + " / " + ScreenPDFViewerCompanion.mutableTotalPDFPage.intValue.toString(), textAlign = TextAlign.Center)
                 }
                 VerticalDivider(Modifier.fillMaxHeight().padding(vertical = 2.dp).padding(horizontal = 10.dp))
-                LazyRow(state = ScreenPDFViewerCompanion.navigatorLazyListState!!) {
-                    val totalPDFPage = ScreenPDFViewerCompanion.mutableTotalPDFPage.intValue
+                LazyRow(state = navigatorLazyListState!!) {
+                    val totalPDFPage = mutableTotalPDFPage.intValue
                     if (totalPDFPage > 0)
                     items(totalPDFPage) {
                         val actualPage = it + 1
-                        TextButton(onClick = { pdfRendererViewInstance.jumpToPage(actualPage - 1) }) {
+                        TextButton(onClick = {
+                            scope.launch { rememberedViewerPagerState!!.animateScrollToPage(actualPage - 1) }
+                            // mutableCurrentPDFPage.intValue = actualPage - 1
+                        }) {
                             Text(actualPage.toString(), textAlign = TextAlign.Center)
                         }
                     }
@@ -164,36 +184,74 @@ class ScreenPDFViewer : ComponentActivity() {
             // Text(ScreenLibraryCompanion.currentpg.toString())
             Text(ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value)
 
+            // Redundant logging for debugging.
             val isAlreadyDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
             val absolutePDFPathIfCached = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
-
-            // Redundant logging for debugging.
             Logger.logPDF({}, "url: $url, isAlreadyDownloaded: $isAlreadyDownloaded, absolutePDFPathIfCached: $absolutePDFPathIfCached")
 
             // Attempt to download the file, if not exists.
-            if (!isAlreadyDownloaded) {
-                // Request for the downloading of a new PDF file.
-                mutableTriggerPDFViewerRecomposition.value = true
-                // Downloader(ctx).initRemotePDF(url, lifecycleScope, ScreenPDFViewerCompanion.pdfRendererViewInstance!!.statusListener!!)
+            // TODO: This LaunchedEffect implementation is causing lags when turning pages. Change the implementation.
+            /*if (!isAlreadyDownloaded) {
+                LaunchedEffect(Unit) { handlePdfDownload(ctx, url, lifecycleOwner) }  // --- ensuring that this block will only be ran once every time.
+            }*/
 
-                Logger.logTest({}, "[ABG] 1")
-                // --- ensuring that this block will only be ran once every time.
-                LaunchedEffect(Unit) { handlePdfDownload(ctx, url, lifecycleOwner) }
-            }
+            // Only render the PDF if the file exists and the PDF viewer composable is triggerred. TODO: remove?
+            /*key (mutableTriggerPDFViewerRecomposition.value, true) {
 
-            key (mutableTriggerPDFViewerRecomposition.value, true) {
+            }*/
+
+            if (File(absolutePDFPathIfCached).exists()) {
                 // SOURCE: https://gist.github.com/grumpyshoe/cffd0bb54b8819e5e562e033445ec2f6
-                val fileDescriptor = ParcelFileDescriptor.open(
-                    File(absolutePDFPathIfCached),
-                    ParcelFileDescriptor.MODE_READ_ONLY
-                )
-                val mPdfRenderer = PdfRenderer(fileDescriptor)
-                val mPdfPageCount = mPdfRenderer.pageCount
+                val fileDescriptor = remember {
+                    Logger.logPDF({}, "Remembering fileDescriptor...")
+                    ParcelFileDescriptor.open(
+                        File(absolutePDFPathIfCached),
+                        ParcelFileDescriptor.MODE_READ_ONLY
+                    )
+                }
+                val mPdfRenderer = remember {
+                    Logger.logPDF({}, "Remembering mPdfRenderer...")
+                    PdfRenderer(fileDescriptor)
+                }
+                val mPdfPageCount = remember {
+                    Logger.logPDF({}, "Remembering mPdfPageCount...")
+                    mPdfRenderer.pageCount
+                }
+
+                // Updating the PDF page navigator.
+                mutableTotalPDFPage.intValue = mPdfPageCount
+
+                // Initiating the pager state.
+                val initialPage = 0
+                rememberedViewerPagerState = rememberPagerState(initialPage = initialPage) { mPdfPageCount }
 
                 // For zooming images.
                 val targetScale = 5.0f
-                HorizontalPager(rememberPagerState { mPdfPageCount }, modifier = Modifier.fillMaxSize(), beyondViewportPageCount = 3) {
+                HorizontalPager(rememberedViewerPagerState!!, modifier = Modifier.fillMaxSize(), beyondViewportPageCount = 3) {
                     val mPdfPage = mPdfRenderer.openPage(it)
+
+                    // Updating the PDF page navigator state (again). TODO: remove?
+                    // mutableCurrentPDFPage.intValue = rememberedViewerPagerState!!.currentPage
+                    // TODO: These might be causing lags. Change the implementation?
+                    /*LaunchedEffect(Unit) {
+                        scope.launch { navigatorLazyListState!!.animateScrollToItem(mutableCurrentPDFPage.intValue) }
+                    }*/
+                    // mutableCurrentPDFPage.intValue = it
+
+                    // TODO: Use the following implementation and make app preference key.
+                    // SOURCE: https://stackoverflow.com/a/32327174
+                    // ---
+                    /**
+                     * Beware of using this densityDpi / 72 - after I did it, it was causing OutOfMemory errors on newer high-DPI devices. So now, I simply multiplied my height and width by 2 to get a crisper image and it looks pretty good. –
+                     * BlazeFast
+                     * Commented Nov 11, 2016 at 21:10
+                     * SOURCE: https://stackoverflow.com/a/32327174
+                     */
+                    /*val bitmap = Bitmap.createBitmap(
+                        resources.displayMetrics.densityDpi * mCurrentPage.getWidth() / 72,
+                        resources.displayMetrics.densityDpi * mCurrentPage.getHeight() / 72,
+                        Bitmap.Config.ARGB_8888
+                    )*/
 
                     // Create a new bitmap and render the page contents into it
                     val bitmap = Bitmap.createBitmap(
@@ -205,19 +263,16 @@ class ScreenPDFViewer : ComponentActivity() {
                     mPdfPage.close()
 
                     val zoomState = rememberZoomState()
-                    Box (Modifier.background(Color.White)) {
-                        // Displaying the image.
-                        Image(
-                            bitmap.asImageBitmap(),
-                            modifier = Modifier.zoomable(
-                                zoomState,
-                                onDoubleTap = { position -> zoomState.toggleScale(targetScale, position) },
-                                scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
-                            ).fillMaxSize().background(Color.White),
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit
-                        )
-                    }
+                    Image(
+                        bitmap.asImageBitmap(),
+                        modifier = Modifier.zoomable(
+                            zoomState,
+                            onDoubleTap = { position -> zoomState.toggleScale(targetScale, position) },
+                            scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+                        ).fillMaxSize().background(Color.White),
+                        contentDescription = "PDF Page Bitmap Page $it",
+                        contentScale = ContentScale.Fit
+                    )
                 }
             }
 
@@ -299,16 +354,14 @@ class ScreenPDFViewer : ComponentActivity() {
      */
     private fun handlePdfDownload(ctx: Context, url: String, lifecycleOwner: LifecycleOwner) {
         val targetDownloadDir = InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR
-        downloadWithProgressViewModel.downloadFile(url, "kudai.pdf", targetDownloadDir).observe(lifecycleOwner) {
-            Logger.logTest({}, "[ABG] 10_${it}")
+        val targetFilename = System.currentTimeMillis()
+        downloadWithProgressViewModel.downloadFile(url, "$targetFilename.pdf", targetDownloadDir).observe(lifecycleOwner) {
             when (it) {
                 is FileDownloadEvent.Progress -> {
-                    Logger.logTest({}, "[ABG] 1a")
                     ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = "Downloading... ${it.percentage}%"
                 }
 
                 is FileDownloadEvent.Success -> {
-                    Logger.logTest({}, "[ABG] 1b")
                     ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = "Success! Downloaded to: ${it.downloadedFilePath}"
 
                     val outputPath = it.downloadedFilePath
@@ -325,7 +378,6 @@ class ScreenPDFViewer : ComponentActivity() {
                 }
 
                 is FileDownloadEvent.Failure -> {
-                    Logger.logTest({}, "[ABG] 1c")
                     ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = it.failure
                 }
             }
@@ -363,6 +415,8 @@ class ScreenPDFViewerCompanion : Application() {
          * It returns unit and takes no argumen.
          */
         fun initPDFViewerCallbackHandler(ctx: Context) {
+            // TODO: Consider removing.
+            /*
             val pdfRendererViewInstance = pdfRendererViewInstance!!
             pdfRendererViewInstance.statusListener = object: PdfRendererView.StatusCallBack {
                 override fun onPageChanged(currentPage: Int, totalPage: Int) {
@@ -371,8 +425,7 @@ class ScreenPDFViewerCompanion : Application() {
                     mutableTotalPDFPage.intValue = totalPage
                 }
 
-                // TODO: Consider removing.
-                /*override fun onError(error: Throwable) {
+                override fun onError(error: Throwable) {
                     super.onError(error)
                     mutableCallbackStatusMessage.value = error.message!!
                     Logger.logPDF({}, "onError -> error.message!!: ${error.message!!}")
@@ -401,8 +454,8 @@ class ScreenPDFViewerCompanion : Application() {
                     super.onPdfLoadStart()
                     mutableCallbackStatusMessage.value = "Memuat PDF..."  // --- TODO: Extract string to XML.
                     Logger.logPDF({}, "onPdfLoadStart (no parameter provided).")
-                }*/
-            }
+                }
+            }*/
         }
 
         /**
@@ -428,6 +481,9 @@ class ScreenPDFViewerCompanion : Application() {
             eBookSource = source
             eBookSize = size
         }
+
+        /* The pager state for the PDF viewer. */
+        var rememberedViewerPagerState: PagerState? = null
 
         /* This view instance ensures the PDF file can be viewed. */
         @SuppressLint("StaticFieldLeak")
