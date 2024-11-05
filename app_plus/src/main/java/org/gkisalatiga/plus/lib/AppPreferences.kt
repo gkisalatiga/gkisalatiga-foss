@@ -26,6 +26,7 @@ class AppPreferences(private val ctx: Context) {
         PreferenceKeys.PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES to 30.toInt(),
         PreferenceKeys.PREF_KEY_OFFLINE_CHECK_FREQUENCY to 10000.toLong(),  // --- 10000 means 10 seconds.
         PreferenceKeys.PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY to 604800000.toLong(),  // --- 604800000 means "once every 7 days" in millisecond.
+        PreferenceKeys.PREF_KEY_PDF_RENDER_QUALITY_FACTOR to 2.toInt(),
     )
 
     /**
@@ -49,7 +50,7 @@ class AppPreferences(private val ctx: Context) {
             val defaultVal = DEFAULT_PREFERENCE_KEY_VALUES[prefKey]!!
 
             // Debug the default preference's type.
-            Logger.logTest({}, "Type of defaultVal ${defaultVal::class.qualifiedName}, valued = $defaultVal")
+            Logger.logTest({}, "Type of defaultVal = ${defaultVal::class.qualifiedName}, key = $prefKey, valued = $defaultVal")
 
             // Initializing the default values to the preference store.
             with (prefObj.edit()) {
@@ -87,7 +88,7 @@ class AppPreferences(private val ctx: Context) {
         }
 
         // Debug the default preference's type.
-        Logger.logTest({}, "Type of defaultVal ${defaultVal::class.qualifiedName}, valued = $defaultVal")
+        Logger.logTest({}, "Type of defaultVal = ${defaultVal::class.qualifiedName}, key = $prefKey, valued = $defaultVal")
 
         // Hand over the preference value the caller asks for.
         return retVal
@@ -100,7 +101,7 @@ class AppPreferences(private val ctx: Context) {
      */
     fun setPreferenceValue(prefKey: PreferenceKeys, prefValue: Any) {
         // Debug the preference key-to-write value.
-        Logger.logTest({}, "Writing the preference value: $prefValue under the key ${prefKey.name} with class type: ${prefValue::class.qualifiedName}")
+        Logger.logTest({}, "Writing the preference value: $prefValue, under the key: ${prefKey.name}, with class type: ${prefValue::class.qualifiedName}")
 
         with (prefObj.edit()) {
             // Detect preference value type.
@@ -141,5 +142,6 @@ enum class PreferenceKeys {
     PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY,
     PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES,
     PREF_KEY_OFFLINE_CHECK_FREQUENCY,
+    PREF_KEY_PDF_RENDER_QUALITY_FACTOR,
     PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY,
 }

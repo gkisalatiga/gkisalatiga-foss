@@ -27,7 +27,7 @@ class LocalStorage(private val ctx: Context) {
      * @param customKey the custom key which will compound the base localKey.
      */
     fun getCompositeKey(localKey: LocalStorageKeys, customKey: String = DEFAULT_CUSTOM_KEY_STRING): String {
-        return localKey.name + customKey
+        return localKey.name + LocalStorageCompanion.COMPOSITE_KEY_SEPARATOR + customKey
     }
 
     /**
@@ -66,7 +66,7 @@ class LocalStorage(private val ctx: Context) {
         }
 
         // Debug the default local storage's type.
-        Logger.logTest({}, "getLocalStorageValue -> type.name: key: $key, ${type.name}, retVal: $retVal")
+        Logger.logTest({}, "getLocalStorageValue -> type.name: ${type.name}, key: $key, retVal: $retVal")
 
         // Hand over the local storage value the caller asks for.
         return retVal
@@ -111,14 +111,17 @@ class LocalStorageCompanion : Application () {
     companion object {
         const val NAME_SHARED_PREFERENCES: String = "org.gkisalatiga.GKISPLUS_LOCAL_STORAGE"
 
-        /**
-         * The default values of each primitive value class..
-         */
+        /* The default values of each primitive value class. */
         const val DEFAULT_BOOLEAN_VALUE = false
         const val DEFAULT_FLOAT_VALUE = 0.0f
         const val DEFAULT_INT_VALUE = 0.toInt()
         const val DEFAULT_LONG_VALUE = 0.toLong()
         const val DEFAULT_STRING_VALUE = ""
+
+        /* String to separate LocalStorageKeys from getter key in a composite LocalStorage key.
+         * The string was chosen arbitrarily.
+         * DO NOT CHANGE IN FUTURE RELEASE! MAY BREAK IF UPDATED */
+        const val COMPOSITE_KEY_SEPARATOR = "*8<@"
     }
 }
 

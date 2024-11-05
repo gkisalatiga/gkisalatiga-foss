@@ -11,6 +11,7 @@ import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
+import java.io.File
 
 /**
  * Manages the app's internal file management.
@@ -18,7 +19,11 @@ import org.gkisalatiga.plus.lib.LocalStorageKeys
  */
 class InternalFileManager (private val ctx: Context) {
     // The file creator to create the private file (as a downloaded file).
-    val DOWNLOAD_FILE_CREATOR = ctx.getDir(GlobalCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
+    val CACHE_FILE_CREATOR = ctx.cacheDir
+    val DATA_DIR_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DATA_DIR, Context.MODE_PRIVATE)
+    val DOWNLOAD_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
+    val PDF_PAGES_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_PAGES_DIR, Context.MODE_PRIVATE)
+    val PDF_POOL_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_POOL_DIR, Context.MODE_PRIVATE)
 
     // The string delimiter for encoding pdfAssociatedKey-pdfAbsolutePath pair as string.
     // (Chosen at random. DO NOT CHANGE IN FUTURE RELEASES!!!)
@@ -49,5 +54,15 @@ class InternalFileManager (private val ctx: Context) {
         // Storing the new record.
         val newRecordString = currentList + encodedString + PDF_LIST_DELIMITER
         LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LIST_OF_DOWNLOADED_PDF_CACHES, newRecordString, LocalStorageDataTypes.STRING)
+    }
+}
+
+class InternalFileManagerCompanion {
+    companion object {
+        /* The "app_..." suffix name for downloading files. */
+        const val FILE_CREATOR_TARGET_DATA_DIR = "data"
+        const val FILE_CREATOR_TARGET_DOWNLOAD_DIR = "Downloads"
+        const val FILE_CREATOR_TARGET_PDF_POOL_DIR = "pdf_pool"
+        const val FILE_CREATOR_TARGET_PDF_PAGES_DIR = "pdf_pages"
     }
 }

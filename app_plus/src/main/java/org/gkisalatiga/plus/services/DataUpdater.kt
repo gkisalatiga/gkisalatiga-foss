@@ -65,10 +65,6 @@ class DataUpdater(private val ctx: Context) {
 
         // Dumps the JSON string, and compare them with the currently cached JSON last update values.
         Logger.logDump({}, inputAsString)
-        Logger.logTest({}, "Last Main Data Update: ${getLastMainDataUpdate()}")
-        Logger.logTest({}, "Last Modules Data Update: ${getLastModulesDataUpdate()}")
-        Logger.logTest({}, "Last Gallery Data Update: ${getLastGalleryUpdate()}")
-        Logger.logTest({}, "Last Static Data Update: ${getLastStaticUpdate()}")
 
         // Returns the feeds data.
         return JSONObject(inputAsString).getJSONObject("feeds")
@@ -87,6 +83,12 @@ class DataUpdater(private val ctx: Context) {
             try {
                 // Retrieving the feed JSON file to check if update is even necessary.
                 val feedJSONObject = getMostRecentFeeds()
+
+                // Testing the last download timestamps of the JSON files.
+                Logger.logTest({}, "gkisplus-main -> local: ${getLastMainDataUpdate()}, online: ${feedJSONObject.getInt("last-main-update")}")
+                Logger.logTest({}, "gkisplus-modules -> local: ${getLastModulesDataUpdate()}, online: ${feedJSONObject.getInt("last-modules-update")}")
+                Logger.logTest({}, "gkisplus-gallery -> local: ${getLastGalleryUpdate()}, online: ${feedJSONObject.getInt("last-gallery-update")}")
+                Logger.logTest({}, "gkisplus-static -> local: ${getLastStaticUpdate()}, online: ${feedJSONObject.getInt("last-static-update")}")
 
                 // Set the flag to "false" to signal that we need to have the new data now,
                 // then make the attempt to download the JSON files.
