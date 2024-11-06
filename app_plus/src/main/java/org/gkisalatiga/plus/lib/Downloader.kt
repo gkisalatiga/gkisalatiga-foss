@@ -13,8 +13,6 @@ import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleObserver
-import com.rajat.pdfviewer.HeaderData
-import com.rajat.pdfviewer.PdfRendererView.StatusCallBack
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -293,7 +291,7 @@ class Downloader(private val ctx: Context) {
         }
     }
 
-    /** TODO: Consider removing.
+    /** TODO: Consider replacing with a newer PDF downloader implementation.
      * Downloads PDF file from an online source and then mark the URL as already downloaded,
      * to prevent duplication and cluttering of app's internal storage.
      * This function rewrites and modifies some parts of com.rajat.pdfviewer.PdfDownloader.kt
@@ -302,7 +300,7 @@ class Downloader(private val ctx: Context) {
      * @param lifecycleCoroutineScope required by com.rajat.pdfviewer.PdfDownloader
      * @param statusListener the status listener for updating the state of PDF downloading.
      */
-    fun initRemotePDF(pdfUrl: String, lifecycleCoroutineScope: LifecycleCoroutineScope, statusListener: StatusCallBack) {
+    /*fun initRemotePDF(pdfUrl: String, lifecycleCoroutineScope: LifecycleCoroutineScope, statusListener: StatusCallBack) {
         lifecycleCoroutineScope.launch {
             withContext(Dispatchers.IO) {
                 try {
@@ -371,6 +369,6 @@ class Downloader(private val ctx: Context) {
                 delay(DOWNLOAD_WAIT_DELAY)
             }  // --- end withContext.
         }  // --- end lifecycleCoroutineScope.
-    }
+    }*/
 
 }

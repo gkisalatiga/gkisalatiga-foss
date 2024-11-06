@@ -22,7 +22,6 @@ class InternalFileManager (private val ctx: Context) {
     val CACHE_FILE_CREATOR = ctx.cacheDir
     val DATA_DIR_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DATA_DIR, Context.MODE_PRIVATE)
     val DOWNLOAD_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
-    val PDF_PAGES_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_PAGES_DIR, Context.MODE_PRIVATE)
     val PDF_POOL_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_POOL_DIR, Context.MODE_PRIVATE)
 
     // The string delimiter for encoding pdfAssociatedKey-pdfAbsolutePath pair as string.
@@ -63,6 +62,5 @@ class InternalFileManagerCompanion {
         const val FILE_CREATOR_TARGET_DATA_DIR = "data"
         const val FILE_CREATOR_TARGET_DOWNLOAD_DIR = "Downloads"
         const val FILE_CREATOR_TARGET_PDF_POOL_DIR = "pdf_pool"
-        const val FILE_CREATOR_TARGET_PDF_PAGES_DIR = "pdf_pages"
     }
 }

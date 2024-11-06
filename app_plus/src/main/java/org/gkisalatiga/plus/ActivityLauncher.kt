@@ -23,6 +23,10 @@
  *
  * On writing a clean code, it's pros and cons:
  * SOURCE: https://softwareengineering.stackexchange.com/a/29205
+ *
+ * Use "result.postValue()" instead of "result.value = ..." to post a LiveData value,
+ * in order to enforce asynchronous coroutine and prevents "Cannot invoke setValue on a background thread" error.
+ * SOURCE: https://stackoverflow.com/a/60126585
  */
 
 package org.gkisalatiga.plus
@@ -82,7 +86,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
-import com.rajat.pdfviewer.PdfRendererView
 import kotlinx.coroutines.delay
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
@@ -108,7 +111,6 @@ import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
-import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenAbout
 import org.gkisalatiga.plus.screen.ScreenAboutCompanion
@@ -289,10 +291,6 @@ class ActivityLauncher : ComponentActivity() {
 
             // Try to remember the state of the carousel.
             initCarouselState()
-
-            // Initializes the PDF viewer renderer instance.
-            ScreenPDFViewerCompanion.pdfRendererViewInstance = PdfRendererView(this)
-            ScreenPDFViewerCompanion.initPDFViewerCallbackHandler(this)
 
             // Initializes the scroll states and lazy scroll states.
             FragmentGalleryListCompanion.rememberedLazyGridState = rememberLazyGridState()
