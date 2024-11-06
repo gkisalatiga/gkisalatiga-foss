@@ -70,7 +70,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Fix "Notification appears at exact time of the day, but at both AM and PM"
 - [X] Migrate/upgrade main JSON data to v2.0
 - [ ] Migrate/upgrade gallery JSON data to v2.0
-- [ ] Migrate/upgrade static JSON data to v2.0
+- [X] Migrate/upgrade static JSON data to v2.0
 - [X] Remove ambiguous "upload date" of videos in "Content" tab
 
 ### November 2024

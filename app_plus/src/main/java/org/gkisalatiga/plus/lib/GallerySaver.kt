@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.ActivityCompat.startActivityForResult
 import org.gkisalatiga.plus.global.GlobalCompanion
+import org.gkisalatiga.plus.screen.ScreenGaleriViewCompanion
 import java.io.IOException
 import java.io.OutputStream
 import java.net.ConnectException
@@ -23,9 +24,15 @@ import java.util.concurrent.Executors
  * SOURCE: https://www.techotopia.com/index.php/A_Kotlin_Android_Storage_Access_Framework_Example
  */
 class GallerySaver {
+
+    companion object {
+        /* SAF create document code. */
+        const val GALLERY_SAVER_CODE = 40
+    }
+
     fun saveImageFromURL(ctx: Context, imageURL: String, imageName: String) {
-        GlobalCompanion.targetGoogleDrivePhotoURL = imageURL
-        GlobalCompanion.targetSaveFilename = imageName
+        ScreenGaleriViewCompanion.targetGoogleDrivePhotoURL = imageURL
+        ScreenGaleriViewCompanion.targetSaveFilename = imageName
 
         // Create a new intent.
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
@@ -34,7 +41,7 @@ class GallerySaver {
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "image/*"
         intent.putExtra(Intent.EXTRA_TITLE, imageName)
-        startActivityForResult(ctx as Activity, intent, GlobalCompanion.GALLERY_SAVER_CODE, null)
+        startActivityForResult(ctx as Activity, intent, GALLERY_SAVER_CODE, null)
         Logger.logTest({}, "Is this block executed? (2)")
     }
 
@@ -44,12 +51,12 @@ class GallerySaver {
         executor.execute {
 
             // Display the download progress circle.
-            GlobalCompanion.showScreenGaleriViewDownloadProgress.value = true
+            ScreenGaleriViewCompanion.showScreenGaleriViewDownloadProgress.value = true
 
             try {
                 // Opening the file download stream.
-                Logger.logDump({}, GlobalCompanion.targetGoogleDrivePhotoURL)
-                val streamIn = java.net.URL(GlobalCompanion.targetGoogleDrivePhotoURL).openStream()
+                Logger.logDump({}, ScreenGaleriViewCompanion.targetGoogleDrivePhotoURL)
+                val streamIn = java.net.URL(ScreenGaleriViewCompanion.targetGoogleDrivePhotoURL).openStream()
 
                 // Coverting input stream (bytes) to string.
                 // SOURCE: http://stackoverflow.com/questions/49467780/ddg#49468129
@@ -61,9 +68,9 @@ class GallerySaver {
                 outputStream.close()
 
                 // Show some successful alert. TODO: Extract string to allow localization.
-                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "File Terunduh!"
-                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Berhasil mengunduh \"${GlobalCompanion.targetSaveFilename}\""
-                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogTitle = "File Terunduh!"
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Berhasil mengunduh \"${ScreenGaleriViewCompanion.targetSaveFilename}\""
+                ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = true
 
                 GlobalCompanion.isConnectedToInternet.value = true
 
@@ -72,44 +79,44 @@ class GallerySaver {
                 Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
 
                 // Show some failure alert. TODO: Extract string to allow localization.
-                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
-                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
-                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = true
             } catch (e: IOException) {
                 GlobalCompanion.isConnectedToInternet.value = false
                 Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
 
                 // Show some failure alert. TODO: Extract string to allow localization.
-                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
-                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
-                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = true
             } catch (e: SocketException) {
                 GlobalCompanion.isConnectedToInternet.value = false
                 Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
 
                 // Show some failure alert. TODO: Extract string to allow localization.
-                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
-                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
-                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = true
             } catch (e: UnknownHostException) {
                 GlobalCompanion.isConnectedToInternet.value = false
                 Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
 
                 // Show some failure alert. TODO: Extract string to allow localization.
-                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
-                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
-                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Koneksi terputus. Silahkan periksa sambungan internet perangkat Anda: ${e.message}"
+                ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = true
             } catch (e: Exception) {
                 Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
 
                 // Show some failure alert. TODO: Extract string to allow localization.
-                GlobalCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
-                GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Eror yang belum pernah ditangani sebelumnya terdeteksi: ${e.message}"
-                GlobalCompanion.showScreenGaleriViewAlertDialog.value = true
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogTitle = "Gagal Mengunduh!"
+                ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogSubtitle = "Eror yang belum pernah ditangani sebelumnya terdeteksi: ${e.message}"
+                ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = true
             }
 
             // Break free from this thread.
-            GlobalCompanion.showScreenGaleriViewDownloadProgress.value = false
+            ScreenGaleriViewCompanion.showScreenGaleriViewDownloadProgress.value = false
             executor.shutdown()
         }
     }

@@ -114,7 +114,7 @@ class ScreenGaleriView : ComponentActivity() {
             }
 
             // The download progress circle.
-            if (GlobalCompanion.showScreenGaleriViewDownloadProgress.value) {
+            if (ScreenGaleriViewCompanion.showScreenGaleriViewDownloadProgress.value) {
                 Box(modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.5f))  // Semi-transparent scrim
@@ -125,15 +125,15 @@ class ScreenGaleriView : ComponentActivity() {
             }
 
             // Show some alert dialogs.
-            if (GlobalCompanion.showScreenGaleriViewAlertDialog.value) {
+            if (ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value) {
                 AlertDialog(
                     onDismissRequest = {
-                        GlobalCompanion.showScreenGaleriViewAlertDialog.value = false
+                        ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = false
                     },
-                    title = { Text(GlobalCompanion.txtScreenGaleriViewAlertDialogTitle) },
-                    text = { Text(GlobalCompanion.txtScreenGaleriViewAlertDialogSubtitle) },
+                    title = { Text(ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogTitle) },
+                    text = { Text(ScreenGaleriViewCompanion.txtScreenGaleriViewAlertDialogSubtitle) },
                     confirmButton = {
-                        Button(onClick = { GlobalCompanion.showScreenGaleriViewAlertDialog.value = false }) {
+                        Button(onClick = { ScreenGaleriViewCompanion.showScreenGaleriViewAlertDialog.value = false }) {
                             Text("OK", color = Color.White)
                         }
                     }
@@ -145,9 +145,12 @@ class ScreenGaleriView : ComponentActivity() {
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler {
-            AppNavigation.popBack()
-            scope.launch {
-                FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
+            // Do not return back if we are downloading.
+            if (!ScreenGaleriViewCompanion.showScreenGaleriViewDownloadProgress.value) {
+                AppNavigation.popBack()
+                scope.launch {
+                    FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
+                }
             }
         }
 
@@ -301,5 +304,15 @@ class ScreenGaleriView : ComponentActivity() {
 class ScreenGaleriViewCompanion : Application() {
     companion object {
         var galleryViewerStartPage: Int = 0
+
+        /* For locally saving the gallery images. */
+        val showScreenGaleriViewDownloadProgress = mutableStateOf(false)
+        val showScreenGaleriViewAlertDialog = mutableStateOf(false)
+        var targetSaveFilename = ""
+        var txtScreenGaleriViewAlertDialogTitle = ""
+        var txtScreenGaleriViewAlertDialogSubtitle = ""
+
+        /* SAF GallerySaver -> GDrive URL to download. */
+        var targetGoogleDrivePhotoURL = ""
     }
 }

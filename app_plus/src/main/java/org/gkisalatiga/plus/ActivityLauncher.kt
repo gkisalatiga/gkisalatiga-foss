@@ -203,7 +203,7 @@ class ActivityLauncher : ComponentActivity() {
     @SuppressLint("MissingSuperCall", "Recycle")
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, resultData: Intent?) {
-        if (requestCode == GlobalCompanion.GALLERY_SAVER_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == GallerySaver.GALLERY_SAVER_CODE && resultCode == Activity.RESULT_OK) {
             // The result data contains a URI for the document or directory that
             // the user selected.
             resultData?.data?.also { uri ->

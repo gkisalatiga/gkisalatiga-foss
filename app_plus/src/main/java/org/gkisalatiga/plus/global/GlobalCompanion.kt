@@ -34,23 +34,6 @@ class GlobalCompanion : Application() {
         const val APP_SOURCE_CODE_URL = "https://github.com/gkisalatiga/gkisalatiga-foss"
 
         /* ------------------------------------------------------------------------------------ */
-        /* The following schemas are used in Google Drive Gallery viewer
-         * and the SAF-based GDrive photo downloader. */
-
-        // SAF create document code.
-        const val GALLERY_SAVER_CODE = 40
-
-        // SAF GallerySaver -> GDrive URL to download.
-        var targetGoogleDrivePhotoURL = ""
-
-        // Whether to display the download progress indicator.
-        val showScreenGaleriViewDownloadProgress = mutableStateOf(false)
-        val showScreenGaleriViewAlertDialog = mutableStateOf(false)
-        var targetSaveFilename = ""
-        var txtScreenGaleriViewAlertDialogTitle = ""
-        var txtScreenGaleriViewAlertDialogSubtitle = ""
-
-        /* ------------------------------------------------------------------------------------ */
         /* The following parameter determines which zipped static source to look up to in order to update the application's static data.
          * It cannot and should not be changed arbitrarily within the app code. */
 
