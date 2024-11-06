@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.gkisalatiga.plus.lib.FileNotDownloadableException
 import org.gkisalatiga.plus.lib.Logger
 import java.io.BufferedInputStream
 import java.io.File
@@ -78,8 +79,12 @@ class DownloadViewModel : CoroutineViewModel() {
             try {
                 performFileDownload(fileUrl, targetFilename, result)
                 return@launch
-            } catch (exception: IOException) {
-                result.postValue(FileDownloadEvent.Failure("R.string.error_downloading_file"))
+            } catch (e: IOException) {
+                result.postValue(FileDownloadEvent.Failure("IOException: ${e.message}"))
+            } catch (e: FileNotDownloadableException) {
+                result.postValue(FileDownloadEvent.Failure("FileNotDownloadableException: ${e.message}"))
+            } catch (e: Exception) {
+                result.postValue(FileDownloadEvent.Failure("Exception: ${e.message}"))
             }
         }
     }
@@ -98,7 +103,11 @@ class DownloadViewModel : CoroutineViewModel() {
             outputStream.write(buffer, 0, currentRead)
             currentRead = inputStream.read(buffer, 0, buffer.size)
             val progress = (100f * (downloadedFileSize.toFloat() / contentLength.toFloat())).toInt()
-            Logger.logRapidTest({}, "Download progress of $fileUrl: ${progress}%")
+
+            // Negative download percentage means the link cannot be downloaded using this method.
+            if (progress < 0) throw FileNotDownloadableException("Negative download progress detected: $progress%. The remote link $fileUrl may not be downloadable!")
+
+            Logger.logRapidTest({}, "Download progress of $fileUrl: $progress%")
             result.postValue(FileDownloadEvent.Progress(progress))
         }
         outputStream.flush()  // --- ensuring all data is written to the file.

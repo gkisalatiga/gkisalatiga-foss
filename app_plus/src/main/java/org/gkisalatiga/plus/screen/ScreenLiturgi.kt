@@ -10,10 +10,12 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +26,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,6 +57,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
@@ -156,7 +162,7 @@ class ScreenLiturgi : ComponentActivity() {
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
-        val scrollState = rememberScrollState()
+        val scrollState = ScreenLiturgiCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -187,46 +193,94 @@ class ScreenLiturgi : ComponentActivity() {
             val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONObject("pdf").getJSONArray("liturgi")
 
             /* Enumerate and enlist the individual card. */
-            val enumeratedFormList: MutableList<Map<String, String>> =  mutableListOf(emptyMap<String, String>())
+            val enumeratedContentList: MutableList<Map<String, String>> =  mutableListOf(emptyMap<String, String>())
             for (i in 0 until formListAsJSONArray.length()) {
                 val curNode = formListAsJSONArray[i] as JSONObject
-                enumeratedFormList.add(mapOf(
+                enumeratedContentList.add(mapOf(
                     "title" to curNode.getString("title"),
                     "date" to curNode.getString("date"),
                     "link" to curNode.getString("link"),
-                    "thumbnail" to curNode.getString("thumbnail")
+                    "thumbnail" to curNode.getString("thumbnail"),
+                    "post-page" to curNode.getString("post-page")
                 ))
             }
 
             // For some reason, we must pop the 0-th item in cardsList
             // because JSONArray iterates from 1, not 0.
-            enumeratedFormList.removeAt(0)
+            enumeratedContentList.removeAt(0)
 
             /* Draw the news selection elements. */
-            enumeratedFormList.forEach {
+            enumeratedContentList.forEach {
 
                 // Preparing the arguments.
-                val title = it["title"]
-                val url = StringFormatter.getGoogleDrivePreview( it["link"]!! )
+                val title = it["title"]!!
+                val urlId = StringFormatter.getGoogleDriveId( it["link"]!! )
+
+                // Let's obtain the download URL.
+                val url = StringFormatter.getGoogleDriveDownloadURL(urlId)
+
+                // Additional information of the PDF not present in the remote JSON main data.
+                val author = "Gereja Kristen Indonesia Salatiga"
+                val publisher = "Gereja Kristen Indonesia Salatiga"
+                val publisherLoc = "Kota Salatiga, Jawa Tengah 50742"
+                val year = it["date"]!!.split('-')[0]
+                val thumbnail = it["thumbnail"]!!
+                val source = it["post-page"]!!
+                val size = "??? MB"
 
                 // Displaying the individual card.
                 Card(
                     onClick = {
                         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
-                        // Navigate to the WebView viewer.
-                        ScreenWebViewCompanion.putArguments(url, title!!)
-                        AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
+                        // Navigate to the PDF viewer.
+                        ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)
                     },
-                    modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
+                    modifier = Modifier.padding(bottom = 10.dp)
                 ) {
-                    Row ( modifier = Modifier.padding(5.dp).fillMaxSize().padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically ) {
-                        Text(title!!, fontSize = 18.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(start = 5.dp).weight(5f), maxLines = 2, overflow = TextOverflow.Ellipsis)
-                        // The "arrow forward" icon.
-                        Icon(Icons.AutoMirrored.Default.ArrowForward, "", modifier = Modifier.padding(vertical = 5.dp).padding(end = 5.dp).padding(start = 10.dp).fillMaxHeight())
+                    Column ( modifier = Modifier.fillMaxWidth().padding(8.dp), verticalArrangement = Arrangement.Center ) {
+                        Row {
+                            // The first post thumbnail.
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.weight(1.0f).fillMaxWidth()
+                            ) {
+                                AsyncImage(
+                                    thumbnail,
+                                    contentDescription = "Liturgy Book: $title",
+                                    error = painterResource(R.drawable.menu_cover_liturgi),
+                                    modifier = Modifier.width(14.dp),
+                                    contentScale = ContentScale.FillWidth
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(5.0f).padding(start = 10.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                // The publication title.
+                                Text(
+                                    title,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                // The file size.
+                                Row {
+                                    Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
+                                    Text(
+                                        size,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                            }
+                        }
                     }
-                }
-
+                }  // --- end of Card.
             }
 
         }  // --- end of column.
@@ -259,5 +313,12 @@ class ScreenLiturgi : ComponentActivity() {
             actions = { },
             scrollBehavior = scrollBehavior
         )
+    }
+}
+
+class ScreenLiturgiCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
     }
 }

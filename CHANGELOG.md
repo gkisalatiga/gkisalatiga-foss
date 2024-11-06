@@ -5,6 +5,7 @@
 :star2: **NEW**
 
 - Added a preliminary design of the internal PDF viewer
+- Added page navigation and PDF info in the internal PDF viewer
 - (Back-End) Introduced `LocalStorage` for storing persistent data across launches
 
 :four_leaf_clover: **IMPROVEMENT**

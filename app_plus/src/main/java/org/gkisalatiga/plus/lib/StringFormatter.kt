@@ -69,6 +69,28 @@ class StringFormatter {
         }
 
         /**
+         * Obtains pure Google Drive Id of a given Google Drive file based solely on its share link.
+         */
+        fun getGoogleDriveId(url: String): String {
+            var a: String = ""
+
+            if (url.endsWith("/view")) {
+                a = url.replace("/view", "")
+            } else if (url.endsWith("/preview")) {
+                a = url.replace("/preview", "")
+            } else if (url.endsWith("/edit")) {
+                a = url.replace("/edit", "")
+            }
+
+            // Let's be exhaustive here.
+            a = a.replace("http://drive.google.com/file/d/", "")
+            a = a.replace("https://drive.google.com/file/d/", "")
+            a = a.replace("/", "")
+
+            return a
+        }
+
+        /**
          * Returns a Google Drive link that has "/preview" suffix in the URL.
          */
         fun getGoogleDrivePreview(url: String): String {
@@ -87,8 +109,11 @@ class StringFormatter {
             return a
         }
 
-        fun getGoogleDriveDownloadURL(photoId: String): String {
-            return "https://drive.google.com/uc?export=download&id=$photoId"
+        /**
+         * Returns the download URL of a given Google Drive file.
+         */
+        fun getGoogleDriveDownloadURL(id: String): String {
+            return "https://drive.google.com/uc?export=download&id=$id"
         }
 
         /**

@@ -136,6 +136,7 @@ import org.gkisalatiga.plus.screen.ScreenLibraryCompanion
 import org.gkisalatiga.plus.screen.ScreenLicense
 import org.gkisalatiga.plus.screen.ScreenLicenseCompanion
 import org.gkisalatiga.plus.screen.ScreenLiturgi
+import org.gkisalatiga.plus.screen.ScreenLiturgiCompanion
 import org.gkisalatiga.plus.screen.ScreenMain
 import org.gkisalatiga.plus.screen.ScreenMedia
 import org.gkisalatiga.plus.screen.ScreenMediaCompanion
@@ -155,6 +156,7 @@ import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
 import org.gkisalatiga.plus.screen.ScreenVideoList
 import org.gkisalatiga.plus.screen.ScreenVideoLive
 import org.gkisalatiga.plus.screen.ScreenWarta
+import org.gkisalatiga.plus.screen.ScreenWartaCompanion
 import org.gkisalatiga.plus.screen.ScreenWebView
 import org.gkisalatiga.plus.screen.ScreenYKB
 import org.gkisalatiga.plus.screen.ScreenYKBCompanion
@@ -306,6 +308,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenGaleriCompanion.rememberedScrollState = rememberScrollState()
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
+            ScreenLiturgiCompanion.rememberedScrollState = rememberScrollState()
             ScreenMediaCompanion.rememberedScrollState = rememberScrollState()
             ScreenPDFViewerCompanion.navigatorLazyListState = rememberLazyListState()
             ScreenPersembahanCompanion.rememberedScrollState = rememberScrollState()
@@ -314,6 +317,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
             ScreenStaticContentListCompanion.rememberedScrollState = rememberScrollState()
+            ScreenWartaCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
 
