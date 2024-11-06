@@ -300,7 +300,6 @@ class ActivityLauncher : ComponentActivity() {
             FragmentInfoCompanion.rememberedScrollState = rememberScrollState()
             FragmentServicesCompanion.rememberedScrollState = rememberScrollState()
             ScreenAboutCompanion.rememberedScrollState = rememberScrollState()
-            ScreenAgendaCompanion.rememberedDayListScrollState = rememberScrollState()
             ScreenAgendaCompanion.rememberedScrollState = rememberScrollState()
             ScreenAttributionCompanion.rememberedScrollState = rememberScrollState()
             ScreenContribCompanion.rememberedScrollState = rememberScrollState()

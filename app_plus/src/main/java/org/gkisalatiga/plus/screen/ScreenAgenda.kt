@@ -14,13 +14,15 @@ import android.annotation.SuppressLint
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -29,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,10 +39,10 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -71,7 +74,7 @@ import org.gkisalatiga.plus.lib.StringFormatter
 class ScreenAgenda : ComponentActivity() {
 
     @Composable
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
         Scaffold (
             topBar = { this.getTopBar() }
@@ -91,6 +94,7 @@ class ScreenAgenda : ComponentActivity() {
     }
 
     @Composable
+    @SuppressLint("ComposableNaming")
     private fun getMainContent() {
 
         // The agenda node.
@@ -127,21 +131,26 @@ class ScreenAgenda : ComponentActivity() {
             /* Enlisting the day selector chips. */
             val selected = ScreenAgendaCompanion.mutableCurrentDay
             var isFirst = true
-            Row (modifier = Modifier.fillMaxWidth().horizontalScroll(ScreenAgendaCompanion.rememberedDayListScrollState!!)) {
+            Row (modifier = Modifier.fillMaxWidth()) {
                 for (key in dayTitleList) {
-                    val dayInLocale = StringFormatter.dayLocaleInIndonesian[key]!!
-                    val startPadding = if (isFirst) 0.dp else 10.dp; isFirst = false
-                    FilterChip(
+                    val dayInLocale = StringFormatter.dayLocaleShortInIndonesian[key]!!
+                    val startPadding = if (isFirst) 0.dp else 5.dp; isFirst = false
+                    Button(
                         onClick = { ScreenAgendaCompanion.mutableCurrentDay.value = key },
-                        label = {
-                            Text(dayInLocale.uppercase(), fontSize = 14.sp, color = if (key == selected.value) Color.White else Color.Black)
-                        },
-                        selected = key == selected.value,
-                        modifier = Modifier.padding(start = startPadding),
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Color(Colors.AGENDA_ITEM_CHIP_SELECTED_BACKGROUND)
-                        )
-                    )
+                        modifier = Modifier.weight(1.0f).aspectRatio(1.0f).padding(start = startPadding).width(intrinsicSize = IntrinsicSize.Max),
+                        colors = ButtonDefaults.buttonColors(containerColor = if (key == selected.value) Color(Colors.AGENDA_ITEM_CHIP_SELECTED_BACKGROUND) else Color.White),
+                        border =  if (key == selected.value) null else BorderStroke(1.dp, Color.Black),
+                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(0.dp),
+                    ) {
+                        Text(
+                            dayInLocale.uppercase(),
+                            fontSize = 12.sp,
+                            color = if (key == selected.value) Color.White else Color.Black,
+                            modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center).padding(2.dp),
+                            textAlign = TextAlign.Center
+                        )  // --- end of Text.
+                    }  // --- end of Button.
                 }
             }
 
@@ -242,9 +251,6 @@ class ScreenAgendaCompanion : Application() {
 
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
-
-        /* The remembered scroll state of the horizontal day list. */
-        var rememberedDayListScrollState: ScrollState? = null
 
         /* The currently selected day chip. */
         var mutableCurrentDay = mutableStateOf(DEFAULT_DAY_CHIP_INDEX)

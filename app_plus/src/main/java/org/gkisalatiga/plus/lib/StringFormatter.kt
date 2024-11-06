@@ -42,6 +42,17 @@ class StringFormatter {
             "sun" to "Minggu"
         )
 
+        // List of local day names (short abbreviation) in Indonesian.
+        val dayLocaleShortInIndonesian = mapOf<String, String>(
+            "mon" to "Sen",
+            "tue" to "Sel",
+            "wed" to "Rab",
+            "thu" to "Kam",
+            "fri" to "Jum",
+            "sat" to "Sab",
+            "sun" to "Min"
+        )
+
         /**
          * Convert YYYY-MM-DD date format used in the JSON metadata
          * into locale date, similar to "31 Desember 2000"
