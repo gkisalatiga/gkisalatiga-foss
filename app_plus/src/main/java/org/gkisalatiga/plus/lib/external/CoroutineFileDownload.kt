@@ -64,9 +64,9 @@ class DownloadViewModel : CoroutineViewModel() {
         downloadsDirectory = targetDir
         val result = MutableLiveData<FileDownloadEvent>()
         if (fileUrl.isBlank()) {
-            result.value = FileDownloadEvent.Failure("R.string.bad_download_url_provided")
+            result.postValue(FileDownloadEvent.Failure("R.string.bad_download_url_provided"))
         } else if (!targetDir.isDirectory) {
-            result.value = FileDownloadEvent.Failure("R.string.target_dir_not_a_directory")
+            result.postValue(FileDownloadEvent.Failure("R.string.target_dir_not_a_directory"))
         } else {
             proceedFileDownload(fileUrl, targetFilename, result)
         }
@@ -107,11 +107,8 @@ class DownloadViewModel : CoroutineViewModel() {
         inputStream.close()
     }
 
-    private fun fileName(fileUrl: String): String =
-        fileUrl.substring(fileUrl.lastIndexOf("/") + 1, fileUrl.length)
-
-    private fun targetFile(fileName: String): File =
-        File(downloadsDirectory, fileName)
+    private fun fileName(fileUrl: String): String = fileUrl.substring(fileUrl.lastIndexOf("/") + 1, fileUrl.length)
+    private fun targetFile(fileName: String): File = File(downloadsDirectory, fileName)
 }
 
 sealed class FileDownloadEvent {

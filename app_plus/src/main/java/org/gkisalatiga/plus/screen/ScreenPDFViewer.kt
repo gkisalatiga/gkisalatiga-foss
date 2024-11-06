@@ -74,10 +74,9 @@ import org.gkisalatiga.plus.lib.external.DownloadViewModel
 import org.gkisalatiga.plus.lib.external.FileDownloadEvent
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableBitmapMap
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableCurrentPDFPage
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiCurrentPage
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiEventMessage
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiPageCount
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTotalPDFPage
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiTotalPageCount
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTriggerPDFPageRecomposition
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTriggerPDFViewerRecomposition
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.navigatorLazyListState
@@ -111,7 +110,7 @@ class ScreenPDFViewer : ComponentActivity() {
 
             // Scroll the horizontal navigator to the respective position when the pager is scrolled against.
             val scope = rememberCoroutineScope()
-            LaunchedEffect(mutableCurrentPDFPage.intValue) {
+            LaunchedEffect(mutablePdfUiCurrentPage.intValue) {
                 scope.launch {
                     navigatorLazyListState!!.animateScrollToItem(rememberedViewerPagerState!!.currentPage)
                 }
@@ -129,7 +128,6 @@ class ScreenPDFViewer : ComponentActivity() {
     @Composable
     private fun getMainContent() {
         val ctx = LocalContext.current
-        val filePath = "/data/data/org.gkisalatiga.plus/app_Downloads/1730456953302.pdf"
         val lifecycleOwner = LocalLifecycleOwner.current
         val scope = rememberCoroutineScope()
 
@@ -139,11 +137,11 @@ class ScreenPDFViewer : ComponentActivity() {
             // The page navigator.
             Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
                 Button(onClick = { /* Displays the custom page navigator (with typing)? */ }) {
-                    Text((mutableCurrentPDFPage.intValue + 1).toString() + " / " + mutableTotalPDFPage.intValue.toString(), textAlign = TextAlign.Center)
+                    Text((mutablePdfUiCurrentPage.intValue + 1).toString() + " / " + mutablePdfUiTotalPageCount.intValue.toString(), textAlign = TextAlign.Center)
                 }
                 VerticalDivider(Modifier.fillMaxHeight().padding(vertical = 2.dp).padding(horizontal = 10.dp))
                 LazyRow(state = navigatorLazyListState!!) {
-                    val totalPDFPage = mutableTotalPDFPage.intValue
+                    val totalPDFPage = mutablePdfUiTotalPageCount.intValue
                     if (totalPDFPage > 0) items(totalPDFPage) {
                         val actualPage = it + 1
                         TextButton(onClick = { scope.launch { rememberedViewerPagerState!!.animateScrollToPage(actualPage - 1) } }) {
@@ -153,51 +151,40 @@ class ScreenPDFViewer : ComponentActivity() {
                 }
             }
 
-            // Attempt to download the file, if not exists.
+            // Redundant logging for debugging.
+            val url = eBookUrl
+            val isAlreadyDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+            val absolutePDFPathIfCached = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
+            Logger.logPDF({}, "url: $url, isAlreadyDownloaded: $isAlreadyDownloaded, absolutePDFPathIfCached: $absolutePDFPathIfCached")
+
+            // Ensures that this block will only be ran once every other recomposition.
             LaunchedEffect(Unit) {
+                // Attempt to download the file, if not exists.
                 if (!isAlreadyDownloaded) {
+                    Logger.logPDF({}, "Downloading the PDF file: $url")
                     handlePdfDownload(ctx, url, lifecycleOwner)
+
+                } else {
+                    // Load the file directly if it exists.
+                    currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(absolutePDFPathIfCached)
+                    mutablePdfUiTotalPageCount.intValue = currentFilePdfRenderer.value!!.pageCount
+
+                    // Trigger recompositioning.
+                    mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
                 }
             }
 
-            // Ensures that the PDF is downloaded and loaded.
-            LaunchedEffect(Unit) {
-                /*pdfRendererViewModel.loadPdf(filePath).observe(lifecycleOwner) {
-                    when (it) {
-                        is PdfUiEvent.Error -> {
-                            // DO NOTHING.
-                            // mutablePdfUiEventMessage.value = it.message
-                            // mutablePdfUiEventIdentifier.value = it.eventIdentifier
-                        }
-                        is PdfUiEvent.FileLoaded -> {
-                            mutablePdfUiEventMessage.value = it.message
-                            mutablePdfUiPageCount.intValue = it.pdfPageCount
-                        }
-                        is PdfUiEvent.FileLoading -> {}
-                    }
-
-                    // Trigger recomposition.
-                    mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
-                }*/
-
-                currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(filePath)
-                mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
-                mutablePdfUiPageCount.intValue = currentFilePdfRenderer.value!!.pageCount
-                mutableTotalPDFPage.intValue = currentFilePdfRenderer.value!!.pageCount
-            }
-
-            // Only render the PDF if the file exists and the PDF viewer composable is triggerred. TODO: remove?
+            // Only render the PDF if the file exists and the PDF viewer composable is triggerred.
             key (mutableTriggerPDFViewerRecomposition.value, currentFilePdfRenderer.value) {
-                if (rememberedViewerPagerState != null) Logger.logPDF({}, "mutablePdfUiPageCount.intValue: ${mutablePdfUiPageCount.intValue}, mutableTotalPDFPage.intValue: ${mutableTotalPDFPage.intValue}, rememberedViewerPagerState!!.currentPage: ${rememberedViewerPagerState!!.currentPage}, mutableCurrentPDFPage.intValue: ${mutableCurrentPDFPage.intValue}")
+                if (rememberedViewerPagerState != null) Logger.logPDF({}, "mutablePdfUiPageCount.intValue: ${mutablePdfUiTotalPageCount.intValue}, mutableTotalPDFPage.intValue: ${mutablePdfUiTotalPageCount.intValue}, rememberedViewerPagerState!!.currentPage: ${rememberedViewerPagerState!!.currentPage}, mutableCurrentPDFPage.intValue: ${mutablePdfUiCurrentPage.intValue}")
 
                 // Initiating the pager state.
                 val initialPage = 0
-                rememberedViewerPagerState = rememberPagerState(initialPage = initialPage) { mutablePdfUiPageCount.intValue }
+                rememberedViewerPagerState = rememberPagerState(initialPage = initialPage) { mutablePdfUiTotalPageCount.intValue }
 
                 HorizontalPager(rememberedViewerPagerState!!, modifier = Modifier.fillMaxSize(), beyondViewportPageCount = 3) { pagerPage ->
                     // Updating the state of the currently selected PDF page.
-                    // mutableCurrentPDFPage.intValue = pagerPage
-                    mutableCurrentPDFPage.intValue = rememberedViewerPagerState!!.currentPage
+                    mutablePdfUiCurrentPage.intValue = rememberedViewerPagerState!!.currentPage
 
                     // Request PDF page rendering.
                     LaunchedEffect(Unit) {
@@ -213,26 +200,22 @@ class ScreenPDFViewer : ComponentActivity() {
                                 }
                                 is PdfPageUiEvent.PageRendered -> {
                                     if (!mutableBitmapMap.containsKey(it.pageNumber) || mutableBitmapMap[it.pageNumber] == null || mutableBitmapMap[it.pageNumber]!!::class != Bitmap::class) {
+                                        // Storing the bitmap in the respective page's mapping.
                                         Logger.logPDF({}, it.message, LoggerType.INFO)
-                                        // mutableBitmapList[pagerPage] = it.pageBitmap
-                                        // if (mutableBitmapList.size < it.pageNumber) mutableBitmapList.add(it.pageNumber, it.pageBitmap)
-                                        // else mutableBitmapList[it.pageNumber] = it.pageBitmap
                                         mutableBitmapMap[it.pageNumber] = it.pageBitmap
 
                                         Logger.logDump({}, mutableBitmapMap.toString(), LoggerType.VERBOSE)
                                     }
 
                                     // Triggering the recomposition, only if we are at the right page.
-                                    if (mutableCurrentPDFPage.intValue == it.pageNumber) mutableTriggerPDFPageRecomposition.value = !mutableTriggerPDFPageRecomposition.value
+                                    if (mutablePdfUiCurrentPage.intValue == it.pageNumber) mutableTriggerPDFPageRecomposition.value = !mutableTriggerPDFPageRecomposition.value
                                 }
                             }
                         }
                     }
 
                     key(mutableTriggerPDFPageRecomposition.value) {
-                        // if (mutableBitmapList.size >= pagerPage && mutableBitmapList.size != 0) {
                         if (mutableBitmapMap.containsKey(pagerPage) && mutableBitmapMap[pagerPage] != null && mutableBitmapMap[pagerPage]!!::class == Bitmap::class) {
-                            // PdfPage(mutableBitmapList[pagerPage])
                             PdfPage(mutableBitmapMap[pagerPage]!!)
                         }
                     }
@@ -282,16 +265,17 @@ class ScreenPDFViewer : ComponentActivity() {
      * This function handles the PDF downloading.
      */
     private fun handlePdfDownload(ctx: Context, url: String, lifecycleOwner: LifecycleOwner) {
-        val targetDownloadDir = InternalFileManager(ctx).PDF_POOL_FILE_CREATOR
+        val targetDownloadDir = InternalFileManager(ctx).PDF_POOL_PDF_FILE_CREATOR
         val targetFilename = System.currentTimeMillis()
+
         downloadWithProgressViewModel.downloadFile(url, "$targetFilename.pdf", targetDownloadDir).observe(lifecycleOwner) {
             when (it) {
                 is FileDownloadEvent.Progress -> {
-                    ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = "Downloading... ${it.percentage}%"
+                    ScreenPDFViewerCompanion.mutablePdfDownloadStatusMessage.value = "Downloading... ${it.percentage}%"
                 }
 
                 is FileDownloadEvent.Success -> {
-                    ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = "Success! Downloaded to: ${it.downloadedFilePath}"
+                    ScreenPDFViewerCompanion.mutablePdfDownloadStatusMessage.value = "Success! Downloaded to: ${it.downloadedFilePath}"
 
                     val outputPath = it.downloadedFilePath
 
@@ -302,12 +286,16 @@ class ScreenPDFViewer : ComponentActivity() {
                     // Register the file in the app's internal file manager so that it will be scheduled for cleaning.
                     InternalFileManager(ctx).enlistDownloadedFileForCleanUp(eBookUrl, outputPath)
 
+                    // Load the file directly if it exists.
+                    currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(outputPath)
+                    mutablePdfUiTotalPageCount.intValue = currentFilePdfRenderer.value!!.pageCount
+
                     // Trigger recomposition of the PDF viewer, if this is new download.
                     mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
                 }
 
                 is FileDownloadEvent.Failure -> {
-                    ScreenPDFViewerCompanion.mutableCallbackStatusMessage.value = it.failure
+                    ScreenPDFViewerCompanion.mutablePdfDownloadStatusMessage.value = it.failure
                 }
             }
         }
@@ -322,17 +310,16 @@ class ScreenPDFViewer : ComponentActivity() {
 
 class ScreenPDFViewerCompanion : Application() {
     companion object {
-        /* Stores the state of the current PDF page reading. */
-        internal val mutableCallbackStatusMessage = mutableStateOf("")
-        internal val mutableCurrentPDFPage = mutableIntStateOf(0)
-        internal val mutableTotalPDFPage = mutableIntStateOf(0)
-
-        /* TODO: DEBUG FOR TEST_004. */
-        internal val mutablePdfUiEventMessage = mutableStateOf("")
-        internal val mutablePdfUiPageCount = mutableIntStateOf(0)
-
-        /* Set this flag to "true" in order to order for a new batch of PDF download. */
+        /* Stores the bitmap of all pages of the currently opened PDF file. */
         internal var mutableBitmapMap: MutableMap<Int, Bitmap> = mutableMapOf()
+
+        /* Stores the state of the current PDF page reading. */
+        internal val mutablePdfDownloadStatusMessage = mutableStateOf("")
+        internal val mutablePdfUiEventMessage = mutableStateOf("")
+        internal val mutablePdfUiCurrentPage = mutableIntStateOf(0)
+        internal val mutablePdfUiTotalPageCount = mutableIntStateOf(0)
+
+        /* Mutable trigger signals for PDF composition. */
         internal var mutableTriggerPDFViewerRecomposition = mutableStateOf(false)
         internal var mutableTriggerPDFPageRecomposition = mutableStateOf(false)
 
@@ -375,7 +362,8 @@ class ScreenPDFViewerCompanion : Application() {
 
             /* Resetting the state of the current PDF viewer due to the existence of a new PDF file. */
             mutableBitmapMap = mutableMapOf<Int, Bitmap>()
-            mutablePdfUiPageCount.intValue = 0
+            mutablePdfUiCurrentPage.intValue = 1
+            mutablePdfUiTotalPageCount.intValue = 0
         }
 
         /* The pager state for the PDF viewer. */

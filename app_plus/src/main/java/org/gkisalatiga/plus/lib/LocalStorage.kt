@@ -81,7 +81,7 @@ class LocalStorage(private val ctx: Context) {
      */
     fun setLocalStorageValue(localKey: LocalStorageKeys, localStorageValue: Any, type: LocalStorageDataTypes, customKey: String = DEFAULT_CUSTOM_KEY_STRING) {
         // The combined key.
-        val key = localKey.name + customKey
+        val key = getCompositeKey(localKey, customKey)
 
         // Debug the local storage key-to-write value.
         Logger.logTest({}, "setLocalStorageValue -> localStorageValue: [$localStorageValue], key: [$key], type: [$type]")

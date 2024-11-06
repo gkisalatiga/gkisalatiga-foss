@@ -7,11 +7,9 @@
 package org.gkisalatiga.plus.services
 
 import android.content.Context
-import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
-import java.io.File
 
 /**
  * Manages the app's internal file management.
@@ -22,7 +20,7 @@ class InternalFileManager (private val ctx: Context) {
     val CACHE_FILE_CREATOR = ctx.cacheDir
     val DATA_DIR_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DATA_DIR, Context.MODE_PRIVATE)
     val DOWNLOAD_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
-    val PDF_POOL_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_POOL_DIR, Context.MODE_PRIVATE)
+    val PDF_POOL_PDF_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_POOL_DIR, Context.MODE_PRIVATE)
 
     // The string delimiter for encoding pdfAssociatedKey-pdfAbsolutePath pair as string.
     // (Chosen at random. DO NOT CHANGE IN FUTURE RELEASES!!!)

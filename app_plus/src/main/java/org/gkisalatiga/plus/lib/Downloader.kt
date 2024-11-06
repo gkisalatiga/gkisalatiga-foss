@@ -10,14 +10,6 @@
 package org.gkisalatiga.plus.lib
 
 import android.content.Context
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.LifecycleObserver
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.internal.wait
 import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
@@ -27,15 +19,12 @@ import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
 import org.gkisalatiga.plus.services.InternalFileManager
-import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketException
-import java.net.URL
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
 
@@ -290,85 +279,5 @@ class Downloader(private val ctx: Context) {
             executor.shutdown()
         }
     }
-
-    /** TODO: Consider replacing with a newer PDF downloader implementation.
-     * Downloads PDF file from an online source and then mark the URL as already downloaded,
-     * to prevent duplication and cluttering of app's internal storage.
-     * This function rewrites and modifies some parts of com.rajat.pdfviewer.PdfDownloader.kt
-     * so that we only download the PDF file, not viewing it.
-     * @param pdfUrl the URL of the PDF file to be downloaded.
-     * @param lifecycleCoroutineScope required by com.rajat.pdfviewer.PdfDownloader
-     * @param statusListener the status listener for updating the state of PDF downloading.
-     */
-    /*fun initRemotePDF(pdfUrl: String, lifecycleCoroutineScope: LifecycleCoroutineScope, statusListener: StatusCallBack) {
-        lifecycleCoroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    // Attempting to download the PDF file.
-                    val urlConnection = URL(pdfUrl).openConnection()
-                    val savedFilename = "localpdf_" + System.currentTimeMillis().toString() + ".pdf"
-                    val outputFile = File(fileCreator, savedFilename)
-                    val totalLength = urlConnection.contentLength.toLong()
-                    BufferedInputStream(urlConnection.getInputStream()).use { inputStream ->
-                        FileOutputStream(outputFile).use { outputStream ->
-                            val data = ByteArray(8192)
-                            var totalBytesRead = 0L
-                            var bytesRead: Int
-                            while (inputStream.read(data).also { bytesRead = it } != -1) {
-                                outputStream.write(data, 0, bytesRead)
-                                totalBytesRead += bytesRead
-                                withContext(Dispatchers.Main) {
-                                    // Updating the downloaded bytes status (i.e., the download progress.)
-                                    var progress = (totalBytesRead.toFloat() / totalLength.toFloat() * 100F).toInt()
-                                    if (progress >= 100) progress = 100
-
-                                    // Notify the listener about the current progression of the PDF download.
-                                    statusListener.onPdfLoadProgress(progress, totalBytesRead, totalLength)
-                                }
-                            }
-                            outputStream.flush()  // --- ensure all data is written to the file.
-                        }
-                    }
-
-                    // Validating the downloaded file.
-                    val outputPath = outputFile.absolutePath
-                    if (outputFile.length() == totalLength) {
-                        // Ensure that we don't download this PDF file again in the future.
-                        LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, true, LocalStorageDataTypes.BOOLEAN, pdfUrl)
-                        LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, outputPath, LocalStorageDataTypes.STRING, pdfUrl)
-
-                        // Register the file in the app's internal file manager so that it will be scheduled for cleaning.
-                        InternalFileManager(ctx).enlistDownloadedFileForCleanUp(eBookUrl, outputPath)
-
-                        withContext(Dispatchers.Main) { statusListener.onPdfLoadSuccess(outputPath) }
-                        return@withContext
-                    } else {
-                        throw IOException("Incomplete downloading of the PDF file: $outputPath")
-                    }
-                } catch (e: ConnectException) {
-                    statusListener.onError(e)
-                    GlobalCompanion.isConnectedToInternet.value = false
-                    Logger.logTest({}, "ConnectException: ${e.message}", LoggerType.ERROR)
-                } catch (e: IOException) {
-                    statusListener.onError(e)
-                    GlobalCompanion.isConnectedToInternet.value = false
-                    Logger.logTest({}, "IOException: ${e.message}", LoggerType.ERROR)
-                } catch (e: SocketException) {
-                    statusListener.onError(e)
-                    GlobalCompanion.isConnectedToInternet.value = false
-                    Logger.logTest({}, "SocketException: ${e.message}", LoggerType.ERROR)
-                } catch (e: UnknownHostException) {
-                    statusListener.onError(e)
-                    GlobalCompanion.isConnectedToInternet.value = false
-                    Logger.logTest({}, "UnknownHostException: ${e.message}", LoggerType.ERROR)
-                } catch (e: Exception) {
-                    statusListener.onError(e)
-                    Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
-                }
-
-                delay(DOWNLOAD_WAIT_DELAY)
-            }  // --- end withContext.
-        }  // --- end lifecycleCoroutineScope.
-    }*/
 
 }
