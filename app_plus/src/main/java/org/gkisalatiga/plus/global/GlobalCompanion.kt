@@ -61,8 +61,10 @@ class GlobalCompanion : Application() {
         const val DEBUG_ENABLE_LOG_CAT_UPDATER = true
         const val DEBUG_ENABLE_LOG_CAT_WORKER = true
 
+        // Whether to display extraneous information in various screens.
+        const val DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO = true
+
         // Whether to hide the splash screen.
-        //
         const val DEBUG_DISABLE_SPLASH_SCREEN = false
 
         /* ------------------------------------------------------------------------------------ */

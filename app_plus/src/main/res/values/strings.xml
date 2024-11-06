@@ -159,9 +159,18 @@
     <string name="screen_about_license_confirm">Buka Teks Utuh</string>
     <string name="screen_persembahan_ok">OK</string>
 
-    <!-- Pdf-Viewer custom string settings. -->
-    <!-- SOURCE: https://github.com/afreakyelf/Pdf-Viewer -->
-    <string name="pdfView_page_no">%1$s / %2$s</string>
+    <!-- Applicable in ScreenPDFViewer. -->
+    <string name="screen_pdfviewer_info_dialog_title">Detil PDF</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_title">Judul</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_author">Penulis</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_publisher">Penerbit</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_publisher_loc">Tempat Terbit</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_year">Tahun Terbit</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_source">Sumber</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_local_path">Lokasi Unduhan</string>
+    <string name="screen_pdfviewer_info_dialog_content_name_doc_size">Ukuran</string>
+    <string name="screen_pdfviewer_nav_title">Navigasi Halaman</string>
+    <string name="screen_pdfviewer_nav_page_string">Halaman</string>
 
     <!-- Developer strings. -->
     <string name="not_connected_to_internet">Anda tidak terhubung ke internet!</string>
