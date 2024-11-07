@@ -1,5 +1,8 @@
 # gkisalatiga-foss
+
 GKI Salatiga's free and open source Android church application based on Jetpack Compose.
+
+This repository was migrated from the original repo, [GKI Salatiga Plus](https://github.com/gkisalatiga/gki-salatiga-plus), which has now been made a public archive.
 
 ## A. Documentation
 
@@ -81,6 +84,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Introduce "putArguments" implementation to `ScreenInternalHTMLCompanion` `ScreenYKBListCompanion`
 - [ ] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
 - [ ] Add download progress display when downloading PDF files
+- [ ] Add the automatic PDF remover back-end functionality
 
 ## C. Privacy Policy
 
@@ -91,8 +95,6 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 - GKI Salatiga does not use any third-party tracking service
 
 ## D. Attribution
-
-This repository was migrated from the original repo, [GKI Salatiga Plus](https://github.com/gkisalatiga/gki-salatiga-plus), which has now been made a public archive.
 
 ### License of Materials Used
 

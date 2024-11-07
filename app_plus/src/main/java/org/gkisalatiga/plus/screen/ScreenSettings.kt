@@ -170,7 +170,8 @@ class ScreenSettings : ComponentActivity() {
         HorizontalDivider(Modifier.padding(horizontal = 20.dp))
 
         /* Settings: automatic deletion of PDF files that are no longer read after N days. */
-        val expandedPdfAutoDelete = remember { mutableStateOf(false) }
+        // TODO: Re-enable this code block when the PDF autodeletion functionality is ready.
+        /*val expandedPdfAutoDelete = remember { mutableStateOf(false) }
         val titlePdfAutoDelete = stringResource(R.string.screen_settings_pref_pdf_remove)
         Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.TopStart)) {
             Surface (onClick = { expandedPdfAutoDelete.value = true }, modifier = Modifier.fillMaxWidth()) {
@@ -194,7 +195,7 @@ class ScreenSettings : ComponentActivity() {
                     )
                 }
             }
-        }
+        }*/
 
     }
 
