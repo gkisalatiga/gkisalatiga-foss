@@ -2,6 +2,11 @@
 
 ## v0.5.1-rc 2024.11.08 (29)
 
+:information_source: **INFO**
+
+- This release is **for internal/developer use only**
+- This release uses a custom signing key generated using Android Studio. Any releases previously installed through Google Play Store must be uninstalled first
+
 :star2: **NEW**
 
 - Added a preliminary design of the internal PDF viewer
@@ -102,6 +107,8 @@
 :information_source: **INFO**
 
 - This release is general bug fixes and visual improvement release
+- This relase uses signing key generated from Google Play Store
+- Warning! You must uninstall any previous installation of GKI Salatiga+ in order to install this version
 
 :four_leaf_clover: **IMPROVEMENT**
 
