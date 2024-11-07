@@ -72,6 +72,8 @@ import androidx.core.view.allViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.OfflineSnackbarHost
+import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
@@ -98,7 +100,7 @@ class ScreenVideoLive : ComponentActivity() {
     private lateinit var scope: CoroutineScope
 
     // The snackbar host state.
-    private val snackbarHostState = GlobalCompanion.snackbarHostState
+    private val snackbarHostState = OfflineSnackbarHostCompanion.snackbarHostState
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -269,7 +271,7 @@ class ScreenVideoLive : ComponentActivity() {
         val ctx = LocalContext.current
         Scaffold (
             topBar = { if (!YouTubeViewCompanion.isFullscreen.value) this.getTopBar() },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = { OfflineSnackbarHost() },
         ) {
             calculatedTopPadding = it.calculateTopPadding()
 

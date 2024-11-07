@@ -34,7 +34,6 @@ package org.gkisalatiga.plus
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -88,6 +87,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.coroutines.delay
+import org.gkisalatiga.plus.composable.MainPTRCompanion
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
@@ -329,7 +329,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenPukatBerkatCompanion.pukatBerkatPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
 
             // Prepare the pull-to-refresh (PTR) state globally.
-            GlobalCompanion.globalPTRState = rememberPullToRefreshState()
+            MainPTRCompanion.mainPTRState = rememberPullToRefreshState()
 
             // Listen to the request to hide the phone's bars.
             // SOURCE: https://developer.android.com/develop/ui/views/layout/immersive

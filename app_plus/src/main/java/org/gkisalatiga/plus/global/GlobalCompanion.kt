@@ -34,13 +34,6 @@ class GlobalCompanion : Application() {
         const val APP_SOURCE_CODE_URL = "https://github.com/gkisalatiga/gkisalatiga-foss"
 
         /* ------------------------------------------------------------------------------------ */
-        /* The following parameter determines which zipped static source to look up to in order to update the application's static data.
-         * It cannot and should not be changed arbitrarily within the app code. */
-
-        // The target static data "folder" to display in the static content list.
-        var targetStaticFolder: JSONObject? = null
-
-        /* ------------------------------------------------------------------------------------ */
         /* Initializing the debugging toggles. */
 
         // Whether to enable the easter egg feature of the app and display it to the user.
@@ -82,18 +75,5 @@ class GlobalCompanion : Application() {
         // Whether the app is running in background.
         val isRunningInBackground = mutableStateOf(false)
 
-        /* ------------------------------------------------------------------------------------ */
-        /* Controls the pull-to-refresh (PTR) states and variables. */
-
-        val isPTRRefreshing = mutableStateOf(false)
-        val PTRExecutor = Executors.newSingleThreadExecutor()
-
-        @OptIn(ExperimentalMaterial3Api::class)
-        var globalPTRState: PullToRefreshState? = null
-
-        /* ------------------------------------------------------------------------------------ */
-        /* Controls the scaffolding snack bar. */
-
-        val snackbarHostState = SnackbarHostState()
     }
 }

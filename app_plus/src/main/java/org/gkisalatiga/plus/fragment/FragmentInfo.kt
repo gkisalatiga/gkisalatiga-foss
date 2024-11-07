@@ -57,6 +57,7 @@ import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
 import org.json.JSONObject
 
 class FragmentInfo : ComponentActivity() {
@@ -138,7 +139,7 @@ class FragmentInfo : ComponentActivity() {
                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Display the church profile content folder list.
-                            GlobalCompanion.targetStaticFolder = itemObject
+                            ScreenStaticContentListCompanion.targetStaticFolder = itemObject
                             AppNavigation.navigate(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST)
                         },
 

@@ -88,7 +88,7 @@ class ScreenStaticContentList : ComponentActivity() {
         val ctx = LocalContext.current
 
         // The selected static folder's folder content.
-        val folderContent = GlobalCompanion.targetStaticFolder!!
+        val folderContent = ScreenStaticContentListCompanion.targetStaticFolder!!
 
         // Enlist the list of contents under this folder.
         val contentList: MutableList<JSONObject> = mutableListOf()
@@ -213,7 +213,7 @@ class ScreenStaticContentList : ComponentActivity() {
             ),
             title = {
                 Text(
-                    GlobalCompanion.targetStaticFolder!!.getString("title"),
+                    ScreenStaticContentListCompanion.targetStaticFolder!!.getString("title"),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -237,5 +237,8 @@ class ScreenStaticContentListCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* The target static data "folder" to display in the static content list. */
+        var targetStaticFolder: JSONObject? = null
     }
 }

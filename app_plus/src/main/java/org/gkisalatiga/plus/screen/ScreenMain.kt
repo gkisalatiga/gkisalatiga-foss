@@ -60,13 +60,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +72,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -98,6 +94,10 @@ import androidx.compose.ui.zIndex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.MainPTR
+import org.gkisalatiga.plus.composable.MainPTRCompanion
+import org.gkisalatiga.plus.composable.OfflineSnackbarHost
+import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
 import org.gkisalatiga.plus.fragment.FragmentHome
 import org.gkisalatiga.plus.fragment.FragmentInfo
 import org.gkisalatiga.plus.fragment.FragmentServices
@@ -107,9 +107,7 @@ import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
-import org.gkisalatiga.plus.services.DataUpdater
 import org.gkisalatiga.plus.ui.theme.Brown1
-import java.util.concurrent.TimeUnit
 
 class ScreenMain : ComponentActivity() {
 
@@ -143,7 +141,7 @@ class ScreenMain : ComponentActivity() {
     private lateinit var scope: CoroutineScope
 
     // The snackbar host state.
-    private val snackbarHostState = GlobalCompanion.snackbarHostState
+    private val snackbarHostState = OfflineSnackbarHostCompanion.snackbarHostState
 
     @Composable
     @ExperimentalMaterial3Api
@@ -165,33 +163,19 @@ class ScreenMain : ComponentActivity() {
         }
 
         // The pull-to-refresh indicator states.
-        val isRefreshing = remember { GlobalCompanion.isPTRRefreshing }
-        val pullToRefreshState = GlobalCompanion.globalPTRState
-        val refreshExecutor = GlobalCompanion.PTRExecutor
+        val isRefreshing = remember { MainPTRCompanion.isPTRRefreshing }
+        val pullToRefreshState = MainPTRCompanion.mainPTRState
 
         Scaffold (
             bottomBar = { getBottomBar() },
             topBar = {
                 getTopBar()
             },
-            snackbarHost = { SnackbarHost(snackbarHostState) },
+            snackbarHost = { OfflineSnackbarHost() },
             floatingActionButton =  { },
             floatingActionButtonPosition = FabPosition.Center,
             modifier = Modifier.pullToRefresh(isRefreshing.value, pullToRefreshState!!, onRefresh = {
-                refreshExecutor.execute {
-                    // Assumes there is an internet connection.
-                    // (If there isn't, the boolean state change will trigger the snack bar.)
-                    GlobalCompanion.isConnectedToInternet.value = true
-
-                    // Attempts to update the data.
-                    isRefreshing.value = true
-                    DataUpdater(ctx).updateData()
-                    TimeUnit.SECONDS.sleep(5)
-                    isRefreshing.value = false
-
-                    // Update/recompose the UI.
-                    AppNavigation.mutableRecomposeCurrentScreen.value = !AppNavigation.mutableRecomposeCurrentScreen.value
-                }
+                MainPTRCompanion.launchOnRefresh(ctx)
             })
         ) {
             calculatedTopPadding = it.calculateTopPadding()
@@ -347,20 +331,7 @@ class ScreenMain : ComponentActivity() {
             }
 
             // Add pull-to-refresh mechanism for updating the content data.
-            PullToRefreshBox(
-                modifier = Modifier.fillMaxWidth().padding(top = it.calculateTopPadding()),
-                isRefreshing = isRefreshing.value,
-                state = pullToRefreshState,
-                onRefresh = {},
-                content = {},
-                indicator = {
-                    Indicator(
-                        modifier = Modifier.align(Alignment.TopCenter),
-                        isRefreshing = isRefreshing.value,
-                        state = pullToRefreshState
-                    )
-                },
-            )
+            MainPTR(it.calculateTopPadding())
 
             // Ensure that when we are at the first screen upon clicking "back",
             // the app is exited instead of continuing to navigate back to the previous screens.

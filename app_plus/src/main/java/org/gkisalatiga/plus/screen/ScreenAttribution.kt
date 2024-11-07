@@ -110,7 +110,7 @@ class ScreenAttribution : ComponentActivity() {
                 onClick = { uriHandler.openUri(it.getString("link")) },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column (modifier = Modifier.fillMaxWidth().padding(20.dp).padding(top = 5.dp), verticalArrangement = Arrangement.Center) {
+                Column (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 10.dp).padding(top = 5.dp), verticalArrangement = Arrangement.Center) {
                     Text(it.getString("title"), fontWeight = FontWeight.Bold)
                     Text("Copyright (C) ${it.getString("year")} ${it.getString("author")}")
                     TextButton(onClick = { uriHandler.openUri(it.getString("license-url")) }) {
