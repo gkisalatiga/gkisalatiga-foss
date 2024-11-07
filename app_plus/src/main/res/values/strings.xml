@@ -188,6 +188,9 @@
     <string name="screen_settings_pref_pdf_remove_item_30_days">30 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_never">Jangan Pernah Hapus</string>
 
+    <!-- Applicable in most screens. -->
+    <string name="pdf_already_downloaded_localized">Tersimpan</string>
+
     <!-- Developer strings. -->
     <string name="not_connected_to_internet">Anda tidak terhubung ke internet!</string>
     <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>

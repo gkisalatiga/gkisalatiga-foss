@@ -11,6 +11,8 @@ package org.gkisalatiga.plus.lib
 
 class Colors {
     companion object {
+        const val APP_PDF_DOWNLOADED_BADGE_COLOR = 0xff40c057
+
         const val MAIN_DARK_BROWN = 0xff482505
         const val AGENDA_ITEM_BACKGROUND = 0xffFFE8BB
         const val AGENDA_ITEM_TIME_BACKGROUND = 0xff482505

@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -55,6 +56,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -69,6 +71,10 @@ import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.services.DataUpdater
@@ -198,7 +204,8 @@ class ScreenWarta : ComponentActivity() {
                     "date" to curNode.getString("date"),
                     "link" to curNode.getString("link"),
                     "thumbnail" to curNode.getString("thumbnail"),
-                    "post-page" to curNode.getString("post-page")
+                    "post-page" to curNode.getString("post-page"),
+                    "size" to curNode.getString("size")
                 ))
             }
 
@@ -223,7 +230,10 @@ class ScreenWarta : ComponentActivity() {
                 val year = it["date"]!!.split('-')[0]
                 val thumbnail = it["thumbnail"]!!
                 val source = it["post-page"]!!
-                val size = "??? MB"
+                val size = it["size"]!!
+
+                // Whether this PDF has been downloaded.
+                val isDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
 
                 // Displaying the individual card.
                 Card(
@@ -273,6 +283,22 @@ class ScreenWarta : ComponentActivity() {
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
+                                }
+                                // The downloaded PDF badge.
+                                val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
+                                val badgeColor = Color(Colors.APP_PDF_DOWNLOADED_BADGE_COLOR)
+                                if (isDownloaded) {
+                                    Row {
+                                        Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp), tint = badgeColor)
+                                        Text(
+                                            isDownloadedTitle,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            color = badgeColor
+                                        )
+                                    }
                                 }
                             }
                         }

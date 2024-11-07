@@ -412,20 +412,23 @@ class ActivityLauncher : ComponentActivity() {
 
     /**
      * This method determines what is shown during splash screen.
-     * @param schema the app's custom configurable schema, shared across composables.
+     * @param splashNavController the nav. controller that will redirect the app to the main screen.
      */
     @Composable
+    @SuppressLint("ComposableNaming")
     private fun initSplashScreen(splashNavController: NavHostController) {
-        Logger.log({}, "Loading splash screen of the app ...")
-
         val scale = remember { androidx.compose.animation.core.Animatable(1.6f) }
         val currentProgress = remember { androidx.compose.animation.core.Animatable(0.0f) }
 
+        LaunchedEffect(Unit) { Logger.logInit({}, "Loading splash screen of the app ...") }
+
         LaunchedEffect(key1 = true) {
+            // Animate the progress bar.
             currentProgress.animateTo(targetValue = 1.0f, animationSpec = tween(durationMillis = 750, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
         }
 
         LaunchedEffect(key1 = true) {
+            // Animate the logo.
             scale.animateTo(targetValue = 0.5f, animationSpec = tween(durationMillis = 1250, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
 
             // Determines the duration of the splash screen.

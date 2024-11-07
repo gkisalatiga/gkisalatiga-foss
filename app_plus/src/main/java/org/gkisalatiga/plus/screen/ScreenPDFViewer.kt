@@ -556,7 +556,7 @@ class ScreenPDFViewerCompanion : Application() {
 
             /* Resetting the state of the current PDF viewer due to the existence of a new PDF file. */
             mutableBitmapMap = mutableMapOf<Int, Bitmap>()
-            mutablePdfUiCurrentPage.intValue = 1
+            mutablePdfUiCurrentPage.intValue = 0
             mutablePdfUiTotalPageCount.intValue = 0
         }
 
