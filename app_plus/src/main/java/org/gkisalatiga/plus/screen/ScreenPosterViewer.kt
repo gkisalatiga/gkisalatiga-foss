@@ -13,6 +13,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,14 +30,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
-import org.gkisalatiga.plus.R
+import net.engawapg.lib.zoomable.ScrollGesturePropagation
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.toggleScale
+import net.engawapg.lib.zoomable.zoomable
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.external.ZoomableBox
 
 
 class ScreenPosterViewer : ComponentActivity() {
@@ -67,22 +69,17 @@ class ScreenPosterViewer : ComponentActivity() {
         val targetPosterSource = ScreenPosterViewerCompanion.posterViewerImageSource
 
         // Displaying the poster image from a remote source.
-        ZoomableBox {
-            AsyncImage(
-                model = targetPosterSource,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offsetX,
-                        translationY = offsetY
-                    ),
-                contentDescription = "",
-                error = painterResource(R.drawable.thumbnail_loading),
-                contentScale = ContentScale.Fit
-            )
-        }
+        val zoomState = rememberZoomState()
+        AsyncImage(
+            model = targetPosterSource,
+            modifier = Modifier.zoomable(
+                zoomState,
+                onDoubleTap = { position -> zoomState.toggleScale(ScreenPosterViewerCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
+                scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
+            ).fillMaxSize().background(Color.White),
+            contentDescription = "Poster display view.",
+            contentScale = ContentScale.Fit
+        )
 
     }
 
@@ -120,6 +117,9 @@ class ScreenPosterViewer : ComponentActivity() {
 
 class ScreenPosterViewerCompanion : Application() {
     companion object {
+        /* Determines the maximum zoom scale of the image. */
+        const val PAGE_ZOOM_TARGET_SCALE = 3.5f
+
         /* The poster image title and URL. */
         var posterViewerTitle: String = String()
         var posterViewerCaption: String = String()

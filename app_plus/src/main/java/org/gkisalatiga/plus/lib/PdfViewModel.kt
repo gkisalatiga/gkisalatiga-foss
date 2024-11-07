@@ -12,23 +12,11 @@ import android.graphics.pdf.PdfRenderer
 import android.os.Handler
 import android.os.ParcelFileDescriptor
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.gkisalatiga.plus.model.CoroutineViewModel
 import java.io.File
-import kotlin.coroutines.CoroutineContext
-
-abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
-    private val job = Job()
-    override val coroutineContext: CoroutineContext get() = Dispatchers.Main + job
-    override fun onCleared() {
-        job.cancel()
-        super.onCleared()
-    }
-}
 
 /**
  * Creates a view model for asynchronous PDF rendering-to-bitmap.

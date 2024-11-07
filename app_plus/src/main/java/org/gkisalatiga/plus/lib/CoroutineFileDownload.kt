@@ -17,39 +17,20 @@
  * SOURCE: https://github.com/mitrejcevski/coroutineFileDownload
  */
 
-package org.gkisalatiga.plus.lib.external
+package org.gkisalatiga.plus.lib
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import org.gkisalatiga.plus.lib.FileNotDownloadableException
-import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.model.CoroutineViewModel
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.coroutines.CoroutineContext
-
-abstract class CoroutineViewModel : ViewModel(),
-    CoroutineScope {
-
-    private val job = Job()
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun onCleared() {
-        job.cancel()
-        super.onCleared()
-    }
-}
 
 class DownloadViewModel : CoroutineViewModel() {
 

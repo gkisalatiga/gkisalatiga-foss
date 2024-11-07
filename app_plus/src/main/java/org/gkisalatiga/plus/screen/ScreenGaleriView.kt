@@ -57,22 +57,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.gkisalatiga.plus.R
+import net.engawapg.lib.zoomable.ScrollGesturePropagation
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.toggleScale
+import net.engawapg.lib.zoomable.zoomable
 import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
-import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.GallerySaver
 import org.gkisalatiga.plus.lib.StringFormatter
-import org.gkisalatiga.plus.lib.external.ZoomableBox
 
 class ScreenGaleriView : ComponentActivity() {
 
@@ -236,22 +235,18 @@ class ScreenGaleriView : ComponentActivity() {
             // Set the screen's title.
             currentScreenTopBarTitle.value = name
 
-            ZoomableBox {
-                AsyncImage(
-                    model = imageURL,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .graphicsLayer(
-                            scaleX = scale,
-                            scaleY = scale,
-                            translationX = offsetX,
-                            translationY = offsetY
-                        ),
-                    contentDescription = "",
-                    error = painterResource(R.drawable.thumbnail_loading),
-                    contentScale = ContentScale.Fit
-                )
-            }
+            // Displaying the zoomable image view.
+            val zoomState = rememberZoomState()
+            AsyncImage(
+                model = imageURL,
+                modifier = Modifier.zoomable(
+                    zoomState,
+                    onDoubleTap = { position -> zoomState.toggleScale(ScreenGaleriViewCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
+                    scrollGesturePropagation = ScrollGesturePropagation.ContentEdge
+                ).fillMaxSize().background(Color.White),
+                contentDescription = "Gallery display view.",
+                contentScale = ContentScale.Fit
+            )
 
         }
 
@@ -304,6 +299,9 @@ class ScreenGaleriView : ComponentActivity() {
 class ScreenGaleriViewCompanion : Application() {
     companion object {
         var galleryViewerStartPage: Int = 0
+
+        /* Determines the maximum zoom scale of the image. */
+        const val PAGE_ZOOM_TARGET_SCALE = 3.5f
 
         /* For locally saving the gallery images. */
         val showScreenGaleriViewDownloadProgress = mutableStateOf(false)

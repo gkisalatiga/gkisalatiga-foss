@@ -20,7 +20,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -93,8 +92,8 @@ import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.PdfPageUiEvent
 import org.gkisalatiga.plus.lib.PdfViewModel
-import org.gkisalatiga.plus.lib.external.DownloadViewModel
-import org.gkisalatiga.plus.lib.external.FileDownloadEvent
+import org.gkisalatiga.plus.lib.DownloadViewModel
+import org.gkisalatiga.plus.lib.FileDownloadEvent
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableBitmapMap
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiCurrentPage

@@ -106,10 +106,8 @@ This repository was migrated from the original repo, [GKI Salatiga Plus](https:/
 - Material Symbols & Icons - Google Fonts; The Android Open Source Project (C) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
 - Phosphor; Phosphor Icons (C) 2024 (MIT) [Link 1](https://icon-sets.iconify.design/ph), [Link 2](https://github.com/phosphor-icons/core)
 - RemixIcon Icon Set; Remix-Design (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/ri), [Link 2](https://github.com/Remix-Design/RemixIcon)
-- UnzipUtil; Nitin Praksh (C) 2021 (Apache 2.0) [Link 1](https://prakashnitin.medium.com/unzipping-files-in-android-kotlin-2a2a2d5eb7ae), [Link 2](https://gist.github.com/NitinPraksash9911/dea21ec4b8ae7df068f8f891187b6d1e)
 - WorkManager Kotlin Extensions; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://mvnrepository.com/artifact/androidx.work/work-runtime-ktx)
 - Zoomable; Atsushi USUI (C) 2024 (Apache 2.0) [Link](https://github.com/usuiat/Zoomable)
-- ZoomableBox; Sean (C) 2022 (CC BY-SA 4.0) [Link](https://stackoverflow.com/a/72528056)
 
 #### Open source materials dynamically used in the WebView
 

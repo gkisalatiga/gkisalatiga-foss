@@ -73,14 +73,6 @@
             "link": "https://github.com/Remix-Design/RemixIcon"
         },
         {
-            "title": "UnzipUtil",
-            "license": "Apache License 2.0",
-            "license-url": "https://spdx.org/licenses/Apache-2.0.html",
-            "year": "2021",
-            "author": "Nitin Praksh",
-            "link": "https://gist.github.com/NitinPraksash9911/dea21ec4b8ae7df068f8f891187b6d1e"
-        },
-        {
             "title": "WorkManager Kotlin Extensions",
             "license": "Apache License 2.0",
             "license-url": "https://spdx.org/licenses/Apache-2.0.html",
@@ -95,14 +87,6 @@
             "year": "2024",
             "author": "Atsushi USUI",
             "link": "https://github.com/usuiat/Zoomable"
-        },
-        {
-            "title": "ZoomableBox",
-            "license": "CC BY-SA 4.0",
-            "license-url": "https://spdx.org/licenses/CC-BY-SA-4.0.html",
-            "year": "2022",
-            "author": "Sean",
-            "link": "https://stackoverflow.com/a/72528056"
         }
     ]
 }
