@@ -14,6 +14,7 @@ import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -96,6 +98,24 @@ class ScreenYKBList : ComponentActivity() {
                 .verticalScroll(state = scrollState)
                 .padding(20.dp)
         ) {
+            /* Display the banner image. */
+            val imgSource = ScreenYKBListCompanion.targetYKBArchiveBannerUrl
+            val imgDescription = "YKB archival list banner"
+            Surface (
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.aspectRatio(1.0f)
+            ) {
+                AsyncImage(
+                    model = imgSource,
+                    contentDescription = imgDescription,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            /* Add a visually dividing divider :D */
+            HorizontalDivider(Modifier.padding(vertical = 20.dp))
+
             /* Retrieve the list of devotionals. */
             val ykbListAsJSONArray = ScreenYKBListCompanion.targetYKBArchiveList!!
 
@@ -133,7 +153,7 @@ class ScreenYKBList : ComponentActivity() {
                             // The first post thumbnail.
                             Surface (shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1.0f).fillMaxHeight().padding(start = 5.dp)) {
                                 AsyncImage(
-                                    thumbnail,
+                                    if (thumbnail == "") ScreenYKBListCompanion.targetYKBArchiveBannerUrl else thumbnail,
                                     contentDescription = "",
                                     error = painterResource(R.drawable.thumbnail_loading_stretched),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
@@ -195,5 +215,6 @@ class ScreenYKBListCompanion : Application() {
 
         /* The JSONArray which enlists the devotional posts to display in this screen. */
         var targetYKBArchiveList: JSONArray? = null
+        var targetYKBArchiveBannerUrl: String = String()
     }
 }

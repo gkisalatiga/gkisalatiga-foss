@@ -129,7 +129,8 @@ class ScreenYKB : ComponentActivity() {
                 enumeratedYKBList.add(mapOf(
                     "title" to curNode.getString("title"),
                     "url" to curNode.getString("url"),
-                    "posts" to curNode.getJSONArray("posts")
+                    "posts" to curNode.getJSONArray("posts"),
+                    "banner" to curNode.getString("banner")
                 ))
             }
 
@@ -147,6 +148,7 @@ class ScreenYKB : ComponentActivity() {
                 // Preparing the arguments.
                 val title = it["title"] as String
                 val url = it["url"] as String
+                val banner = it["banner"] as String
                 val firstPostThumbnail = firstPostObject.getString("featured-image")
                 val firstPostTitle = firstPostObject.getString("title")
                 val firstPostDate = StringFormatter.convertDateFromJSON(firstPostObject.getString("date"))
@@ -169,7 +171,7 @@ class ScreenYKB : ComponentActivity() {
                             // The first post thumbnail.
                             Surface (shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1.0f).fillMaxHeight().padding(start = 5.dp)) {
                                 AsyncImage(
-                                    firstPostThumbnail,
+                                    if (firstPostThumbnail == "") banner else firstPostThumbnail,
                                     contentDescription = "YKB: $title",
                                     error = painterResource(R.drawable.thumbnail_loading_stretched),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
@@ -192,6 +194,7 @@ class ScreenYKB : ComponentActivity() {
                             onClick = {
                                 // Set the content list.
                                 ScreenYKBListCompanion.targetYKBArchiveList = postsList
+                                ScreenYKBListCompanion.targetYKBArchiveBannerUrl = banner
                                 ScreenYKBListCompanion.screenYKBListTitle = title
 
                                 // Set the navigation.

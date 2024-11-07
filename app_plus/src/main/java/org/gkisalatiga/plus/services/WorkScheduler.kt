@@ -109,7 +109,7 @@ class WorkScheduler {
             // Set at which time should we schedule this work.
             val target = Calendar.getInstance().apply {
                 timeInMillis = System.currentTimeMillis()
-                set(Calendar.HOUR, 12)
+                set(Calendar.HOUR, 0)
                 set(Calendar.MINUTE, 0)
                 set(Calendar.SECOND, 5)
                 set(Calendar.AM_PM, Calendar.PM)
