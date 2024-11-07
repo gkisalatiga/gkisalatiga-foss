@@ -46,6 +46,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Church
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.outlined.Church
 import androidx.compose.material.icons.outlined.Home
@@ -552,18 +553,13 @@ class ScreenMain : ComponentActivity() {
                     )
                 }
                 */
-                /* TODO: Re-enable the settings button once the functionality is ready.
-                IconButton(onClick = {
-                    GlobalCompanion.pushScreen.value = NavigationRoutes.SCREEN_SETTINGS
-                    GlobalCompanion.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                }) {
+                IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SETTINGS) }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(R.string.screensettings_title),
                         tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
-                */
                 IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_ABOUT) }) {
                     Icon(
                         imageVector = Icons.Default.Info,

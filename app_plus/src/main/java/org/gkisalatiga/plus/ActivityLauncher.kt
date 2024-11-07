@@ -151,6 +151,7 @@ import org.gkisalatiga.plus.screen.ScreenPukatBerkat
 import org.gkisalatiga.plus.screen.ScreenPukatBerkatCompanion
 import org.gkisalatiga.plus.screen.ScreenSearch
 import org.gkisalatiga.plus.screen.ScreenSettings
+import org.gkisalatiga.plus.screen.ScreenSettingsCompanion
 import org.gkisalatiga.plus.screen.ScreenStaticContentList
 import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
 import org.gkisalatiga.plus.screen.ScreenVideoList
@@ -316,6 +317,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
+            ScreenSettingsCompanion.rememberedScrollState = rememberScrollState()
             ScreenStaticContentListCompanion.rememberedScrollState = rememberScrollState()
             ScreenWartaCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()

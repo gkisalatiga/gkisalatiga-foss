@@ -82,7 +82,9 @@ class PdfViewModel : CoroutineViewModel() {
         }
 
         // Assigning class-wide internal variable.
-        val pdfRenderQuality = if (renderQuality > 0) renderQuality else 1
+        // val pdfRenderQuality = if (renderQuality > 0) renderQuality else 1
+        // TODO: Debug
+        val pdfRenderQuality = 5
         val pdfRenderer = Companion.pdfRenderer!!
 
         launch(Dispatchers.IO) {
@@ -112,11 +114,14 @@ class PdfViewModel : CoroutineViewModel() {
                     break
 
                 } catch (e: IllegalStateException) {
-                    result.postValue(PdfPageUiEvent.Error("Encountered error at pageNumber $pageNumber as usual: ${e.message}"))
+                    result.postValue(PdfPageUiEvent.Error("IllegalStateException [pg. $pageNumber]: ${e.message}"))
 
                     // Do loop until we get the PDF page rendered!
                     delay(50L)
                     continue
+                } catch (e: RuntimeException) {
+                    result.postValue(PdfPageUiEvent.Error("RuntimeException [pg. $pageNumber]: ${e.message}"))
+                    break
                 }
             }
         }

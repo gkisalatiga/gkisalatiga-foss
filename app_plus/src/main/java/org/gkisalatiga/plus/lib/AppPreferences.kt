@@ -145,3 +145,20 @@ enum class PreferenceKeys {
     PREF_KEY_PDF_RENDER_QUALITY_FACTOR,
     PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY,
 }
+
+/**
+ * This class stores every possible settings value assigned to a given setting key.
+ */
+enum class PreferenceSettingValues {
+    PREF_VAL_PDF_QUALITY_BEST,
+    PREF_VAL_PDF_QUALITY_HIGH,
+    PREF_VAL_PDF_QUALITY_LOW,
+    PREF_VAL_PDF_QUALITY_MEDIUM,
+    PREF_VAL_PDF_REMOVE_ALWAYS,
+    PREF_VAL_PDF_REMOVE_DAY_7,
+    PREF_VAL_PDF_REMOVE_DAY_14,
+    PREF_VAL_PDF_REMOVE_DAY_30,
+    PREF_VAL_PDF_REMOVE_NEVER,
+    PREF_VAL_YOUTUBE_UI_NEW,
+    PREF_VAL_YOUTUBE_UI_OLD,
+}
