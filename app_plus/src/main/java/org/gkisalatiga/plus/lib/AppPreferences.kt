@@ -19,14 +19,31 @@ class AppPreferences(private val ctx: Context) {
     private val prefObj = ctx.getSharedPreferences(AppPreferencesCompanion.NAME_SHARED_PREFERENCES, MODE_PRIVATE)
 
     /**
+     * The actual values of a given preference item value.
+     * The mapped region must be of string, int, float, boolean, or long types.
+     */
+    private val ACTUAL_PREFERENCE_ITEM_VALUES: Map<PreferenceSettingItem, Any> = mapOf(
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_BEST to 6,
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_HIGH to 4,
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_LOW to 1,
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_MEDIUM to 2,
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS.name,
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7 to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7.name,
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14 to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14.name,
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30 to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30.name,
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER.name,
+        PreferenceSettingItem.PREF_VAL_YOUTUBE_UI_NEW to true,
+        PreferenceSettingItem.PREF_VAL_YOUTUBE_UI_OLD to false,
+    )
+
+    /**
      * The default values of preference keys.
      */
     private val DEFAULT_PREFERENCE_KEY_VALUES: Map<PreferenceKeys, Any> = mapOf(
-        PreferenceKeys.PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY to 86400000.toLong(),  // --- 86400000 means "once every 1 day" in millisecond.
-        PreferenceKeys.PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES to 30.toInt(),
+        PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14.name.toString(),
         PreferenceKeys.PREF_KEY_OFFLINE_CHECK_FREQUENCY to 10000.toLong(),  // --- 10000 means 10 seconds.
-        PreferenceKeys.PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY to 604800000.toLong(),  // --- 604800000 means "once every 7 days" in millisecond.
         PreferenceKeys.PREF_KEY_PDF_RENDER_QUALITY_FACTOR to 2.toInt(),
+        PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME to true,
     )
 
     /**
@@ -67,6 +84,16 @@ class AppPreferences(private val ctx: Context) {
     }
 
     /**
+     * Get the actual value of a given preference settings item.
+     * @return the actual value of the associated [PreferenceSettingItem]
+     */
+    fun getActualItemValue(preferenceSettingValues: PreferenceSettingItem) : Any? {
+        return if (ACTUAL_PREFERENCE_ITEM_VALUES.keys.contains(preferenceSettingValues)) {
+            ACTUAL_PREFERENCE_ITEM_VALUES[preferenceSettingValues]
+        } else null
+    }
+
+    /**
      * Get the saved value of a given preference key, on an individual basis.
      * @param prefKey the preference key to refer to.
      * @return The value stored by the preference key, if the key exists. Otherwise returns null.
@@ -88,7 +115,7 @@ class AppPreferences(private val ctx: Context) {
         }
 
         // Debug the default preference's type.
-        Logger.logTest({}, "Type of defaultVal = ${defaultVal::class.qualifiedName}, key = $prefKey, valued = $defaultVal")
+        Logger.logTest({}, "getPreferenceValue -> defaultVal type: ${defaultVal::class.qualifiedName}, key: $prefKey, defaultVal: $defaultVal, retVal: $retVal")
 
         // Hand over the preference value the caller asks for.
         return retVal
@@ -101,7 +128,7 @@ class AppPreferences(private val ctx: Context) {
      */
     fun setPreferenceValue(prefKey: PreferenceKeys, prefValue: Any) {
         // Debug the preference key-to-write value.
-        Logger.logTest({}, "Writing the preference value: $prefValue, under the key: ${prefKey.name}, with class type: ${prefValue::class.qualifiedName}")
+        Logger.logTest({}, "setPreferenceValue -> prefValue: $prefValue, prefKey: ${prefKey.name}, prefKey class: ${prefValue::class.qualifiedName}")
 
         with (prefObj.edit()) {
             // Detect preference value type.
@@ -139,17 +166,16 @@ class AppPreferencesCompanion : Application () {
  * Each preference bears its own key, represented by the following enum object.
  */
 enum class PreferenceKeys {
-    PREF_KEY_CAROUSEL_BANNER_UPDATE_FREQUENCY,
-    PREF_KEY_KEEP_NUMBER_OF_CACHED_PDF_FILES,
+    PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES,
     PREF_KEY_OFFLINE_CHECK_FREQUENCY,
     PREF_KEY_PDF_RENDER_QUALITY_FACTOR,
-    PREF_KEY_STATIC_DATA_UPDATE_FREQUENCY,
+    PREF_KEY_YOUTUBE_UI_THEME,
 }
 
 /**
  * This class stores every possible settings value assigned to a given setting key.
  */
-enum class PreferenceSettingValues {
+enum class PreferenceSettingItem {
     PREF_VAL_PDF_QUALITY_BEST,
     PREF_VAL_PDF_QUALITY_HIGH,
     PREF_VAL_PDF_QUALITY_LOW,

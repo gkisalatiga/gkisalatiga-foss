@@ -6,6 +6,7 @@
 
 package org.gkisalatiga.plus.lib
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.Handler
@@ -33,11 +34,14 @@ abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
  * Creates a view model for asynchronous PDF rendering-to-bitmap.
  * SOURCE: https://developer.android.com/topic/libraries/architecture/viewmodel
  */
-class PdfViewModel : CoroutineViewModel() {
+class PdfViewModel(ctx: Context) : CoroutineViewModel() {
 
     companion object {
         var pdfRenderer: PdfRenderer? = null
     }
+
+    // The rendering quality of this PDF instance.
+    private val pdfRenderQuality = AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_PDF_RENDER_QUALITY_FACTOR) as Int
 
     /**
      * Opens a PDF file and return its pdfRenderer object.
@@ -82,9 +86,6 @@ class PdfViewModel : CoroutineViewModel() {
         }
 
         // Assigning class-wide internal variable.
-        // val pdfRenderQuality = if (renderQuality > 0) renderQuality else 1
-        // TODO: Debug
-        val pdfRenderQuality = 5
         val pdfRenderer = Companion.pdfRenderer!!
 
         launch(Dispatchers.IO) {

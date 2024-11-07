@@ -78,7 +78,8 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Migrate ytView parameter implementation from using `GlobalSchema` to using data class
 - [X] Migrate the scroll states from `GlobalSchema` to the companion object of each screen class
 - [X] Rename `GlobalSchema` class to something more appropriate (e.g., `GlobalState` or `GlobalParameter`)
-- [ ] Introduce "putArguments" implementation to `ScreenInternalHTMLCompanion` `ScreenYKBListCompanion`
+- [X] Introduce "putArguments" implementation to `ScreenInternalHTMLCompanion` `ScreenYKBListCompanion`
+- [ ] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
 
 ## C. Privacy Policy
 

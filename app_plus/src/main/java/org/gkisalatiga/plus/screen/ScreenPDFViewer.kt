@@ -67,7 +67,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -84,6 +83,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.PdfPage
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.LocalStorage
@@ -107,13 +107,13 @@ import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.remembered
 import org.gkisalatiga.plus.services.InternalFileManager
 
 
-class ScreenPDFViewer : ComponentActivity() {
+class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
     // The view model for downloading files with progress.
     private val downloadWithProgressViewModel = DownloadViewModel()
 
     // The view model for rendering the PDF files.
-    private val pdfRendererViewModel = PdfViewModel()
+    private val pdfRendererViewModel = PdfViewModel(current.ctx)
 
     // When the value of this mutable variable is not null, it means the PDF file is loaded already.
     private var currentFilePdfRenderer: MutableState<PdfRenderer?> = mutableStateOf(null)
@@ -121,7 +121,6 @@ class ScreenPDFViewer : ComponentActivity() {
     @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
         val scope = rememberCoroutineScope()
 
         Box (Modifier.fillMaxSize()) {
@@ -210,7 +209,7 @@ class ScreenPDFViewer : ComponentActivity() {
                             Spacer(Modifier.fillMaxWidth().height(5.dp))
 
                             if (GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO) {
-                                val pdfLocalPath = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, ScreenPDFViewerCompanion.eBookUrl) as String
+                                val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, ScreenPDFViewerCompanion.eBookUrl) as String
                                 Text(infoDialogContentNameDocLocalPath, fontWeight = FontWeight.Bold)
                                 Text(pdfLocalPath)
                                 Spacer(Modifier.fillMaxWidth().height(5.dp))
@@ -293,7 +292,6 @@ class ScreenPDFViewer : ComponentActivity() {
     @Composable
     @SuppressLint("ComposableNaming")
     private fun getMainContent() {
-        val ctx = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val scope = rememberCoroutineScope()
 
@@ -319,8 +317,8 @@ class ScreenPDFViewer : ComponentActivity() {
 
             // Redundant logging for debugging.
             val url = eBookUrl
-            val isAlreadyDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
-            val absolutePDFPathIfCached = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
+            val isAlreadyDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+            val absolutePDFPathIfCached = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
             Logger.logPDF({}, "url: $url, isAlreadyDownloaded: $isAlreadyDownloaded, absolutePDFPathIfCached: $absolutePDFPathIfCached")
 
             // Ensures that this block will only be ran once every other recomposition.
@@ -328,7 +326,7 @@ class ScreenPDFViewer : ComponentActivity() {
                 // Attempt to download the file, if not exists.
                 if (!isAlreadyDownloaded) {
                     Logger.logPDF({}, "Downloading the PDF file: $url")
-                    handlePdfDownload(ctx, url, lifecycleOwner)
+                    handlePdfDownload(current.ctx, url, lifecycleOwner)
 
                 } else {
                     // Load the file directly if it exists.
@@ -432,7 +430,7 @@ class ScreenPDFViewer : ComponentActivity() {
      * This function handles the PDF downloading.
      */
     private fun handlePdfDownload(ctx: Context, url: String, lifecycleOwner: LifecycleOwner) {
-        val targetDownloadDir = InternalFileManager(ctx).PDF_POOL_PDF_FILE_CREATOR
+        val targetDownloadDir = InternalFileManager(current.ctx).PDF_POOL_PDF_FILE_CREATOR
         val targetFilename = System.currentTimeMillis()
 
         // Disable user input during download.
@@ -450,11 +448,11 @@ class ScreenPDFViewer : ComponentActivity() {
                     val outputPath = it.downloadedFilePath
 
                     // Ensure that we don't download this PDF file again in the future.
-                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, true, LocalStorageDataTypes.BOOLEAN, url)
-                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, outputPath, LocalStorageDataTypes.STRING, url)
+                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, true, LocalStorageDataTypes.BOOLEAN, url)
+                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, outputPath, LocalStorageDataTypes.STRING, url)
 
                     // Register the file in the app's internal file manager so that it will be scheduled for cleaning.
-                    InternalFileManager(ctx).enlistDownloadedFileForCleanUp(eBookUrl, outputPath)
+                    InternalFileManager(current.ctx).enlistDownloadedFileForCleanUp(eBookUrl, outputPath)
 
                     // Load the file directly if it exists.
                     currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(outputPath)

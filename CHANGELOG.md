@@ -6,10 +6,13 @@
 
 - Added a preliminary design of the internal PDF viewer
 - Added page navigation and PDF info in the internal PDF viewer
+- Added the app's internal preference menu
+- Added the ability to change the PDF page rendering quality
 - (Back-End) Introduced `LocalStorage` for storing persistent data across launches
 
 :four_leaf_clover: **IMPROVEMENT**
 
+- Added the ability to switch between new/old YouTube video player UI
 - (Back-End) Added support for composite/mixed nested screen routing
 - (Back-End) Simplified the screen navigation by centralizing all navigations to `AppNavigation`
 - (Back-End) Migrated scroll states from `GlobalSchema` to the respective companion class of screens

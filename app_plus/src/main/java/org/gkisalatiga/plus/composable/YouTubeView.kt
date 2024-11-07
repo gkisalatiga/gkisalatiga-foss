@@ -6,25 +6,31 @@
 
 package org.gkisalatiga.plus.composable
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.allViews
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.FullscreenListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import org.gkisalatiga.plus.global.GlobalCompanion
+import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.PreferenceKeys
 
 class YouTubeView {
     companion object {
@@ -46,25 +52,43 @@ class YouTubeView {
         }
     }
 
+    /* The fullscreen viewer used when "use custom YouTube UI" is set to "no" */
+    private var oldFullscreenView: View? = null
+
     @Composable
     @Stable
     fun YouTubeViewComposable() {
+        var i = 0; YouTubeViewCompanion.view!!.allViews.forEach { i++ }
+        Logger.logTest({}, "YouTubeViewComposable -> YouTubeViewCompanion.view!!.visibility: ${YouTubeViewCompanion.view!!.visibility}, YouTubeViewCompanion.view!!.allViews: ${YouTubeViewCompanion.view!!.allViews}, i: $i")
+
         // Display the video.
         AndroidView(factory = { YouTubeViewCompanion.view!! })
     }  // --- end of fun YouTubeViewComposable.
 
     @Composable
+    @SuppressLint("ComposableNaming")
     fun initYouTubeView() {
         val ctx = LocalContext.current
         val lifecycle = LocalLifecycleOwner.current.lifecycle
 
+        // Whether or not we should use the custom UI.
+        val useCustomUi = AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME) as Boolean
+
         // Enable full screen button.
         // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player?tab=readme-ov-file#full-screen
-        val iFramePlayerOptions: IFramePlayerOptions = IFramePlayerOptions.Builder()
-            .controls(0)
-            .fullscreen(0)
-            .modestBranding(1)
-            .build()
+        val iFramePlayerOptions: IFramePlayerOptions = if (useCustomUi) {
+            IFramePlayerOptions.Builder()
+                .controls(0)
+                .fullscreen(0)
+                .modestBranding(1)
+                .build()
+        } else {
+            IFramePlayerOptions.Builder()
+                .controls(1)
+                .fullscreen(1)
+                .modestBranding(0)
+                .build()
+        }
 
         // Embedding the YouTube video into the composable.
         // SOURCE: https://dev.to/mozeago/jetpack-compose-loadinghow-to-load-a-youtube-video-or-youtube-livestream-channel-to-your-android-application-4ffc
@@ -72,6 +96,31 @@ class YouTubeView {
 
         // Initialize the YouTubePlayer view.
         YouTubeViewCompanion.view = YouTubePlayerView(ctx)
+
+        // The fullscreen viewer used when "use custom YouTube UI" is set to "no".
+        var oldFullscreenView: View? = null
+
+        if (!useCustomUi) {
+            // If we don't use custom UI, ensures the app won't crash if we enter full screen.
+            // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player/blob/master/core-sample-app/src/main/java/com/pierfrancescosoffritti/androidyoutubeplayer/core/sampleapp/examples/fullscreenExample/FullscreenExampleActivity.kt
+            YouTubeViewCompanion.view!!.addFullscreenListener(object : FullscreenListener {
+                override fun onEnterFullscreen(fullscreenView: View, exitFullscreen: () -> Unit) {
+                    oldFullscreenView = fullscreenView
+                    YouTubeViewCompanion.view!!.addView(oldFullscreenView)
+                    handleFullscreenStateChange(ctx)
+
+                    var i = 0; YouTubeViewCompanion.view!!.allViews.forEach { i++ }
+                    Logger.logTest({}, "onEnterFullscreen -> YouTubeViewCompanion.view!!.visibility: ${YouTubeViewCompanion.view!!.visibility}, YouTubeViewCompanion.view!!.allViews: ${YouTubeViewCompanion.view!!.allViews}, i: $i")
+                }
+                override fun onExitFullscreen() {
+                    YouTubeViewCompanion.view!!.removeView(oldFullscreenView)
+                    handleFullscreenStateChange(ctx)
+
+                    var i = 0; YouTubeViewCompanion.view!!.allViews.forEach { i++ }
+                    Logger.logTest({}, "onExitFullscreen -> YouTubeViewCompanion.view!!.visibility: ${YouTubeViewCompanion.view!!.visibility}, YouTubeViewCompanion.view!!.allViews: ${YouTubeViewCompanion.view!!.allViews}, i: $i")
+                }
+            })
+        }
 
         // Ensures that we don't play the YouTube video player in background
         // so that we can pass the Google Play Store screening.
@@ -94,14 +143,16 @@ class YouTubeView {
 
                     // Using a custom UI.
                     // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player?tab=readme-ov-file#defaultplayeruicontroller
-                    val ytCustomController: DefaultPlayerUiController = DefaultPlayerUiController(
-                        YouTubeViewCompanion.view!!, youTubePlayer)
-                    ytCustomController.showYouTubeButton(false)
-                    ytCustomController.setFullscreenButtonClickListener {
-                        handleFullscreenStateChange(ctx)
-                    }
+                    if (useCustomUi) {
+                        val ytCustomController: DefaultPlayerUiController = DefaultPlayerUiController(
+                            YouTubeViewCompanion.view!!, youTubePlayer)
+                        ytCustomController.showYouTubeButton(false)
+                        ytCustomController.setFullscreenButtonClickListener {
+                            handleFullscreenStateChange(ctx)
+                        }
 
-                    YouTubeViewCompanion.view!!.setCustomPlayerUi(ytCustomController.rootView)
+                        YouTubeViewCompanion.view!!.setCustomPlayerUi(ytCustomController.rootView)
+                    }
 
                     // Loads and plays the video.
                     youTubePlayer.loadVideo(youtubeVideoID!!, YouTubeViewCompanion.currentSecond.floatValue)
@@ -109,6 +160,7 @@ class YouTubeView {
                 }
             }, iFramePlayerOptions
         )
+
     }
 
 }
@@ -123,6 +175,7 @@ class YouTubeViewCompanion : Application() {
         internal var videoUrl: String = ""
 
         /* The composable YouTube element. */
+        @SuppressLint("StaticFieldLeak")
         var composable: YouTubeView? = null
 
         /* The YouTube player object. */

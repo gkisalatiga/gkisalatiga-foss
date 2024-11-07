@@ -81,6 +81,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -89,6 +90,7 @@ import androidx.navigation.navDeepLink
 import kotlinx.coroutines.delay
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
@@ -465,11 +467,20 @@ class ActivityLauncher : ComponentActivity() {
     private fun initMainGraphic() {
         Logger.logInit({}, "Initializing main graphic with the current screen route: ${AppNavigation.mutableCurrentNavigationRoute.value.name} ...")
 
+        // Prepare the activity-wide context variables.
+        val currentActivityData = ActivityData(
+            ctx = this@ActivityLauncher,
+            scope = rememberCoroutineScope(),
+            lifecycleOwner = this@ActivityLauncher,
+            lifecycleScope = this@ActivityLauncher.lifecycleScope,
+        )
+
         // We use nav. host because it has built-in support for transition effect/animation.
         // We also use nav. host so that we can handle URI deep-linking, both from an external URL click and from a notification click.
         // SOURCE: https://composables.com/tutorials/deeplinks
         val mainNavController = rememberNavController()
         NavHost(navController = mainNavController, startDestination = AppNavigation.startingScreenRoute.name) {
+            // TODO: Provide all screens with "ctx", "scope", and "lifecycleOwner"?
             composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout().getComposable() }
             composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda().getComposable() }
             composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution().getComposable() }
@@ -488,7 +499,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive().getComposable() }
             composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain().getComposable() }
             composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia().getComposable() }
-            composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer().getComposable() }
+            composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(currentActivityData).getComposable() }
             composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan().getComposable() }
             composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer().getComposable() }
             composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }

@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.core.view.allViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
@@ -75,7 +76,10 @@ import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.LoggerType
+import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.services.ClipManager
 
 
@@ -102,7 +106,10 @@ class ScreenVideoLive : ComponentActivity() {
         val ctx = LocalContext.current
         scope = rememberCoroutineScope()
 
-        Logger.log({}, "Are we full screen?: ${YouTubeViewCompanion.isFullscreen.value}. Duration: ${YouTubeViewCompanion.currentSecond.floatValue}")
+        Logger.logTest({}, "Are we full screen?: ${YouTubeViewCompanion.isFullscreen.value}. Duration: ${YouTubeViewCompanion.currentSecond.floatValue}", LoggerType.VERBOSE)
+
+        // Whether or not we should use the custom UI.
+        val useCustomUi = AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME) as Boolean
 
         // Ensures that we only initialize the ytView once.
         YouTubeViewCompanion.composable!!.initYouTubeView()
@@ -113,8 +120,10 @@ class ScreenVideoLive : ComponentActivity() {
 
             // Exits the fullscreen mode.
             BackHandler {
-                YouTubeView.handleFullscreenStateChange(ctx)
+                if (useCustomUi) YouTubeView.handleFullscreenStateChange(ctx)
+                else YouTubeViewCompanion.player!!.toggleFullscreen()
             }
+
         } else {
             getNormalPlayer()
 
