@@ -27,6 +27,7 @@
 - Fixed deeplinking not working with `https://www.gkisalatiga.org` domain
 - Fixed very long screen blank upon launching the app (caused by blocking due to JSON data download)
 - Fixed app crashes when there is network error (38b6e5fa9f061ddd31525d554c24e0239bc43838)
+- Fixed the AM/PM notification showing up bug of Renungan YKB
 
 ## v0.5.0-rc 2024.10.28 (28)
 
@@ -344,6 +345,10 @@
 
 ## v0.0.6-alpha 2024.07.20 (6)
 
+:information_source: **INFO**
+
+- This release is non-production ready
+
 :star2: **NEW**
 
 - Added splash screen to the app
@@ -356,6 +361,10 @@
 - Reduced the number of bottom navigation menu to 3 menus
 
 ## v0.0.5-alpha 2024.07.17 (5)
+
+:information_source: **INFO**
+
+- This non-production ready release generates a signed APK
 
 :star2: **NEW**
 
@@ -392,6 +401,10 @@
 - Fix: Fixed nested NavHost not working by substituting with AnimatedVisibility
 
 ## v0.0.1-alpha 2024.07.15 (1)
+
+:information_source: **INFO**
+
+- This is the very first release of GKI Salatiga+
 
 :star2: **NEW**
 
