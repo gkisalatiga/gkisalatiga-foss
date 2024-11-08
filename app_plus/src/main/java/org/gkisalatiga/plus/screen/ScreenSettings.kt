@@ -225,12 +225,13 @@ class ScreenSettings : ComponentActivity() {
                 }
             },
             actions = {
-                IconButton(onClick = { /* TODO */ }) {
+                // TODO: Re-enable this code block when the settings help menu is available.
+                /*IconButton(onClick = { /* TODO */ }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Help,
                         contentDescription = "Open the help menu of the settings."
                     )
-                }
+                }*/
             },
             scrollBehavior = scrollBehavior
         )

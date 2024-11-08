@@ -12,6 +12,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.Tags
+import org.gkisalatiga.plus.worker.BackgroundUpdaterWorker
 import org.gkisalatiga.plus.worker.DebugNotificationWorker
 import org.gkisalatiga.plus.worker.SarenNotificationWorker
 import org.gkisalatiga.plus.worker.YKBNotificationWorker
@@ -26,6 +27,42 @@ import java.util.concurrent.TimeUnit
  */
 class WorkScheduler {
     companion object {
+
+        fun scheduleBackgroundDataUpdater(ctx: Context) {
+            Logger.logWorker({}, "Scheduling the worker reminder ...")
+
+            // Get the current time.
+            val now = Calendar.getInstance()
+
+            // Set at which time should we schedule this work.
+            val target = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.MINUTE, 30)
+                set(Calendar.SECOND, 5)
+            }
+
+            // Ensures that we don't "schedule something in the past." This controls periodicity.
+            if (target.before(now)) target.add(Calendar.HOUR_OF_DAY, 1)
+
+            // Prevents multiple firings of work trigger.
+            target.add(Calendar.MILLISECOND, 1500)
+
+            // Creates the instance of a unique one-time work.
+            val oneTimeWorkRequest = OneTimeWorkRequest.Builder(BackgroundUpdaterWorker::class.java)
+                .addTag(Tags.TAG_BACKGROUND_UPDATER.name)
+                .setInitialDelay(target.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .build()
+
+            // Creates the request to start a worker.
+            val request = WorkManager.getInstance(ctx).enqueueUniqueWork(
+                Tags.NAME_BACKGROUND_UPDATER_WORK.name,
+                ExistingWorkPolicy.REPLACE,  // --- prevents multiple trigger-fires (?)
+                oneTimeWorkRequest
+            )
+
+            Logger.logWorker({}, "What do we have here? What's the result? ${request.result}")
+
+        }  // --- end of fun().
 
         fun scheduleMinutelyDebugReminder(ctx: Context) {
             Logger.logWorker({}, "Scheduling the worker reminder ...")

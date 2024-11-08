@@ -37,6 +37,10 @@ In the most recent update, GKI Salatiga activates the following scheduled notifi
 - **04:00:05 (Daily):** The SaRen devotional video
 - **12:00:05 (Daily):** The YKB devotional article reminder
 
+### Data Update
+
+GKI Salatiga automatically fetches the latest JSON data from its server every time the app launches. The user can pull down in some screens in order to invoke data update manually. There is also an hourly `WorkManager` that automatically updates the app's content data to the latest in the background.
+
 ### UI Class
 
 User interface classes are categorized into two main classifications: **Screen** and **Fragment**.
@@ -64,10 +68,9 @@ Each UI class file should bear a global companion object, useful in passing data
 
 ### October 2024
 
-- [ ] Add background feed fetcher (data updater) using `WorkManager`
+- [X] Add background feed fetcher (data updater) using `WorkManager`
 - [X] Add "ruang berbagi" (promotional) feature
 - [ ] Add search content feature
-- [ ] Create the wiki page and migrate documentations from `README.md` to the respective wiki pages
 - [X] Fix "Carousel not displaying the latest data"
 - [ ] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
 - [X] Fix "Notification appears at exact time of the day, but at both AM and PM"
@@ -85,6 +88,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
 - [ ] Add download progress display when downloading PDF files
 - [ ] Add the automatic PDF remover back-end functionality
+- [ ] Add the settings helper/documentation
 
 ## C. Privacy Policy
 

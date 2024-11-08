@@ -26,25 +26,34 @@ import org.gkisalatiga.plus.R
 class NotificationService {
     companion object {
 
-        const val DEBUG_CHANNEL_ID = "debug_notif"
-        const val DEBUG_NOTIFICATION_ID = 999990
+        /**
+         * The notification channel for debugging background data update.
+         * SOURCE: https://medium.com/@anandmali/creating-a-basic-android-notification-5e5ee1614aae
+         */
+        fun initDebugDataUpdateChannel(ctx: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val name = "Beta Version Notification Debugger"
+                val desc = "Only used in the back-end to trace notification errors."
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
+                val channel = NotificationChannel(NotificationServiceEnum.DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
 
-        const val SAREN_CHANNEL_ID = "saren_notif"
-        const val SAREN_NOTIFICATION_ID = 12526
-
-        const val YKB_HARIAN_CHANNEL_ID = "daily_ykb_notif"
-        const val YKB_HARIAN_NOTIFICATION_ID = 12891
+                // Do not use "ContextCompat.getSystemService".
+                // SOURCE: https://stackoverflow.com/a/61709171
+                val notificationManager: NotificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(channel)
+            }
+        }
 
         /**
          * The notification channel for fallback and debugging.
          * SOURCE: https://medium.com/@anandmali/creating-a-basic-android-notification-5e5ee1614aae
          */
-        fun initFallbackDebugChannel(ctx: Context) {
+        fun initDebugFallbackChannel(ctx: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val name = "Beta Version Notification Debugger"
                 val desc = "Only used in the back-end to trace notification errors."
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val channel = NotificationChannel(DEBUG_CHANNEL_ID, name, importance).apply { description = desc }
+                val channel = NotificationChannel(NotificationServiceEnum.DEBUG_FALLBACK_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
 
                 // Do not use "ContextCompat.getSystemService".
                 // SOURCE: https://stackoverflow.com/a/61709171
@@ -62,7 +71,7 @@ class NotificationService {
                 val name = "SaRen Pagi"
                 val desc = "Pengingat untuk bersaat teduh dan mendengarkan \"Sapaan dan Renungan Pagi\" setiap pukul 05:00 WIB di hari Senin-Sabtu."
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val channel = NotificationChannel(SAREN_CHANNEL_ID, name, importance).apply { description = desc }
+                val channel = NotificationChannel(NotificationServiceEnum.SAREN_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
 
                 // Do not use "ContextCompat.getSystemService".
                 // SOURCE: https://stackoverflow.com/a/61709171
@@ -80,12 +89,42 @@ class NotificationService {
                 val name = "Renungan YKB"
                 val desc = "Pengingat untuk membaca renungan YKB (Yayasan Komunikasi Bersama) di siang hari, setelah jam makan siang."
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val channel = NotificationChannel(YKB_HARIAN_CHANNEL_ID, name, importance).apply { description = desc }
+                val channel = NotificationChannel(NotificationServiceEnum.YKB_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
 
                 // Do not use "ContextCompat.getSystemService".
                 // SOURCE: https://stackoverflow.com/a/61709171
                 val notificationManager: NotificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.createNotificationChannel(channel)
+            }
+        }
+
+        /**
+         * Showing the debug (data update) notification.
+         *
+         * Also, add navigational actions and deep-linkings when the user clicks on the notifications.
+         * SOURCE: https://composables.com/tutorials/deeplinks
+         */
+        fun showDebugDataUpdateNotification(ctx: Context) {
+            val title = "Background Data Updater"
+            val content = "Updating the GKI Salatiga+ JSON data in the background ..."
+
+            // Prepares the post-user click action handler (i.e., opening an activity).
+            val intent = Intent(ctx, ActivityLauncher::class.java)
+            intent.setData(Uri.parse("https://www.gkisalatiga.org"))
+            val activity = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
+
+            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL.name)
+                .setSmallIcon(R.drawable.app_notif_icon)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setContentIntent(activity)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(content))  // --- showing multiline content.
+                .setAutoCancel(true)  // --- remove notification on user tap.
+
+            if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                with(NotificationManagerCompat.from(ctx)) {
+                    notify(NotificationServiceEnum.DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL.ordinal, builder.build())
+                }
             }
         }
 
@@ -104,7 +143,7 @@ class NotificationService {
             intent.setData(Uri.parse("https://www.gkisalatiga.org"))
             val activity = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
 
-            val builder = NotificationCompat.Builder(ctx, DEBUG_CHANNEL_ID)
+            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.DEBUG_FALLBACK_NOTIFICATION_CHANNEL.name)
                 .setSmallIcon(R.drawable.app_notif_icon)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -114,7 +153,7 @@ class NotificationService {
 
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 with(NotificationManagerCompat.from(ctx)) {
-                    notify(DEBUG_NOTIFICATION_ID, builder.build())
+                    notify(NotificationServiceEnum.DEBUG_FALLBACK_NOTIFICATION_CHANNEL.ordinal, builder.build())
                 }
             }
         }
@@ -131,7 +170,7 @@ class NotificationService {
             intent.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/saren"))
             val activity = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
 
-            val builder = NotificationCompat.Builder(ctx, SAREN_CHANNEL_ID)
+            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.SAREN_NOTIFICATION_CHANNEL.name)
                 .setSmallIcon(R.drawable.app_notif_icon)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -141,7 +180,7 @@ class NotificationService {
 
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 with(NotificationManagerCompat.from(ctx)) {
-                    notify(SAREN_NOTIFICATION_ID, builder.build())
+                    notify(NotificationServiceEnum.SAREN_NOTIFICATION_CHANNEL.ordinal, builder.build())
                 }
             }
         }
@@ -159,7 +198,7 @@ class NotificationService {
             intent.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/ykb"))
             val activity = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
 
-            val builder = NotificationCompat.Builder(ctx, YKB_HARIAN_CHANNEL_ID)
+            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.YKB_NOTIFICATION_CHANNEL.name)
                 .setSmallIcon(R.drawable.app_notif_icon)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -169,10 +208,17 @@ class NotificationService {
 
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 with(NotificationManagerCompat.from(ctx)) {
-                    notify(YKB_HARIAN_NOTIFICATION_ID, builder.build())
+                    notify(NotificationServiceEnum.YKB_NOTIFICATION_CHANNEL.ordinal, builder.build())
                 }
             }
         }
 
     }  // --- end of companion object.
 }  // --- end of class.
+
+enum class NotificationServiceEnum {
+    DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL,
+    DEBUG_FALLBACK_NOTIFICATION_CHANNEL,
+    SAREN_NOTIFICATION_CHANNEL,
+    YKB_NOTIFICATION_CHANNEL
+}

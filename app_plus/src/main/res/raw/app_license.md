@@ -1,7 +1,7 @@
 ## GNU Affero General Public License v3.0
 
-**GKI Salatiga**
-Copyright (C) 2024 **Komisi Sarana Prasarana dan Multimedia (SARPRAS) GKI Salatiga**
+**GKI Salatiga+**
+Copyright (C) 2024 **Komisi Sarana Prasarana dan Multimedia (SARPRAS), GKI Salatiga**
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

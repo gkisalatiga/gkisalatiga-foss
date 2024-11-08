@@ -11,11 +11,13 @@ package org.gkisalatiga.plus.lib
  */
 enum class Tags {
     /* WorkManager work names. */
+    NAME_BACKGROUND_UPDATER_WORK,
     NAME_DEBUG_WORK,
     NAME_SAREN_WORK,
     NAME_YKB_WORK,
 
     /* WorkManager periodic work tags. */
+    TAG_BACKGROUND_UPDATER,
     TAG_MINUTELY_DEBUG,
     TAG_SAREN_REMINDER,
     TAG_YKB_REMINDER,

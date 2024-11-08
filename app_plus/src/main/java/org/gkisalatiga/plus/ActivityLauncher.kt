@@ -527,9 +527,10 @@ class ActivityLauncher : ComponentActivity() {
      * This is only need on Android API 26+.
      */
     private fun initNotificationChannel() {
-        NotificationService.initFallbackDebugChannel(this)
-        NotificationService.initSarenNotificationChannel(this)
-        NotificationService.initYKBHarianNotificationChannel(this)
+        NotificationService.initDebugDataUpdateChannel(this@ActivityLauncher)
+        NotificationService.initDebugFallbackChannel(this@ActivityLauncher)
+        NotificationService.initSarenNotificationChannel(this@ActivityLauncher)
+        NotificationService.initYKBHarianNotificationChannel(this@ActivityLauncher)
     }
 
     /**
@@ -537,8 +538,9 @@ class ActivityLauncher : ComponentActivity() {
      * which will trigger notifications and stuffs.
      */
     private fun initWorkManager() {
-        WorkScheduler.scheduleSarenReminder(this)
-        WorkScheduler.scheduleYKBReminder(this)
+        WorkScheduler.scheduleBackgroundDataUpdater(this@ActivityLauncher)
+        WorkScheduler.scheduleSarenReminder(this@ActivityLauncher)
+        WorkScheduler.scheduleYKBReminder(this@ActivityLauncher)
     }
 
     /**
