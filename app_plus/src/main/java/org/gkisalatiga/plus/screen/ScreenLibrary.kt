@@ -126,7 +126,7 @@ class ScreenLibrary : ComponentActivity() {
         ) {
 
             /* Display the banner image. */
-            val imgSource = R.drawable.banner_ykb
+            val imgSource = R.drawable.banner_perpus
             val imgDescription = "Menu banner"
             Surface (
                 shape = RoundedCornerShape(20.dp),
