@@ -127,7 +127,8 @@ class ScreenPersembahan : ComponentActivity() {
                     AsyncImage(
                         ScreenPersembahanCompanion.OFFERTORY_QRIS_SOURCE,
                         contentDescription = "The QRIS code image to GKI Salatiga offertory account",
-                        error = painterResource(R.drawable.thumbnail_loading),
+                        error = painterResource(R.drawable.thumbnail_error),
+                        placeholder = painterResource(R.drawable.thumbnail_placeholder),
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.FillWidth
                     )

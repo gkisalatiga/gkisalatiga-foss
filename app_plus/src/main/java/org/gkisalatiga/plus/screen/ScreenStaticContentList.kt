@@ -142,7 +142,8 @@ class ScreenStaticContentList : ComponentActivity() {
                             AsyncImage(
                                 model = featuredImageURL,
                                 contentDescription = "Profile page content: $title",
-                                error = painterResource(R.drawable.thumbnail_loading_no_text),
+                                error = painterResource(R.drawable.thumbnail_error_notext),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                 modifier = Modifier.fillMaxWidth(),
                                 contentScale = ContentScale.Crop,
                                 colorFilter = ColorFilter.colorMatrix(

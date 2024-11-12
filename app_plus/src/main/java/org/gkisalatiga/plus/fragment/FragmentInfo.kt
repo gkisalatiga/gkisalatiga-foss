@@ -156,7 +156,8 @@ class FragmentInfo : ComponentActivity() {
                             AsyncImage(
                                 model = bannerURL,
                                 contentDescription = "Profile page: $title",
-                                error = painterResource(R.drawable.thumbnail_loading_no_text),
+                                error = painterResource(R.drawable.thumbnail_error_notext),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                 modifier = Modifier.fillMaxWidth(),
                                 contentScale = ContentScale.Crop,
                                 colorFilter = ColorFilter.colorMatrix(ColorMatrix(

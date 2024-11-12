@@ -23,8 +23,8 @@ class AppPreferences(private val ctx: Context) {
      * The mapped region must be of string, int, float, boolean, or long types.
      */
     private val ACTUAL_PREFERENCE_ITEM_VALUES: Map<PreferenceSettingItem, Any> = mapOf(
-        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_BEST to 6,
-        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_HIGH to 4,
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_BEST to 4,
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_HIGH to 3,
         PreferenceSettingItem.PREF_VAL_PDF_QUALITY_LOW to 1,
         PreferenceSettingItem.PREF_VAL_PDF_QUALITY_MEDIUM to 2,
         PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS.name,

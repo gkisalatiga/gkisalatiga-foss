@@ -59,6 +59,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -68,6 +69,7 @@ import net.engawapg.lib.zoomable.ScrollGesturePropagation
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.toggleScale
 import net.engawapg.lib.zoomable.zoomable
+import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.GallerySaver
@@ -244,6 +246,8 @@ class ScreenGaleriView : ComponentActivity() {
                     onDoubleTap = { position -> zoomState.toggleScale(ScreenGaleriViewCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
                     scrollGesturePropagation = ScrollGesturePropagation.ContentEdge
                 ).fillMaxSize().background(Color.White),
+                error = painterResource(R.drawable.thumbnail_error_stretched),
+                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                 contentDescription = "Gallery display view.",
                 contentScale = ContentScale.Fit
             )

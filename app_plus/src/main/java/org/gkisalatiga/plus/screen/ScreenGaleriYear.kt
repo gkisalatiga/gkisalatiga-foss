@@ -145,7 +145,8 @@ class ScreenGaleriYear : ComponentActivity() {
                             AsyncImage(
                                 model = StringFormatter.getGoogleDriveThumbnail(featuredImageID, 160),
                                 contentDescription = title,
-                                error = painterResource(R.drawable.thumbnail_loading),
+                                error = painterResource(R.drawable.thumbnail_error),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                 modifier = Modifier.fillMaxSize().weight(2f),
                                 contentScale = ContentScale.Crop
                             )

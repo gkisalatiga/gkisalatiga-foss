@@ -228,6 +228,7 @@ class ScreenLiturgi : ComponentActivity() {
                                     thumbnail,
                                     contentDescription = "Liturgy Book: $title",
                                     error = painterResource(R.drawable.menu_cover_liturgi),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder_vert_notext),
                                     modifier = Modifier.width(14.dp),
                                     contentScale = ContentScale.FillWidth
                                 )

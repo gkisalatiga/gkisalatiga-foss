@@ -267,7 +267,8 @@ class FragmentHome : ComponentActivity() {
                         AsyncImage(
                             model = currentNode.getString("banner"),
                             contentDescription = "Carousel Image ${it % actualPageCount}",
-                            error = painterResource(R.drawable.thumbnail_loading_no_text),
+                            error = painterResource(R.drawable.thumbnail_error_notext),
+                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )

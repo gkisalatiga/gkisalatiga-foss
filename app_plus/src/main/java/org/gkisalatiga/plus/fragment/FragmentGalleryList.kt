@@ -77,7 +77,8 @@ class FragmentGalleryList : ComponentActivity() {
                             AsyncImage(
                                 model = photoThumbnail,
                                 contentDescription = "",
-                                error = painterResource(R.drawable.thumbnail_loading),
+                                error = painterResource(R.drawable.thumbnail_error),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )

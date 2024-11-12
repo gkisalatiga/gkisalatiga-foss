@@ -247,7 +247,8 @@ class ScreenPukatBerkat : ComponentActivity() {
                                 AsyncImage(
                                     thumbnailImage,
                                     contentDescription = "Pukat Berkat: $title",
-                                    error = painterResource(R.drawable.thumbnail_loading_stretched),
+                                    error = painterResource(R.drawable.thumbnail_error_stretched),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
                                     contentScale = ContentScale.Crop
                                 )

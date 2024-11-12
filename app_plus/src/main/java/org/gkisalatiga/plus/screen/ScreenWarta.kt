@@ -228,6 +228,7 @@ class ScreenWarta : ComponentActivity() {
                                     thumbnail,
                                     contentDescription = "Church News Book: $title",
                                     error = painterResource(R.drawable.menu_cover_wj),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder_vert_notext),
                                     modifier = Modifier.width(14.dp),
                                     contentScale = ContentScale.FillWidth
                                 )

@@ -14,7 +14,6 @@ import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -109,6 +108,8 @@ class ScreenYKBList : ComponentActivity() {
                     model = imgSource,
                     contentDescription = imgDescription,
                     modifier = Modifier.fillMaxWidth(),
+                    error = painterResource(R.drawable.thumbnail_error),
+                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -155,7 +156,8 @@ class ScreenYKBList : ComponentActivity() {
                                 AsyncImage(
                                     if (thumbnail == "") ScreenYKBListCompanion.targetYKBArchiveBannerUrl else thumbnail,
                                     contentDescription = "",
-                                    error = painterResource(R.drawable.thumbnail_loading_stretched),
+                                    error = painterResource(R.drawable.thumbnail_error),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
                                     contentScale = ContentScale.Crop
                                 )

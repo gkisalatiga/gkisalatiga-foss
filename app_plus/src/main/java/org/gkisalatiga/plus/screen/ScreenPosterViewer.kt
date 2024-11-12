@@ -32,12 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import net.engawapg.lib.zoomable.ScrollGesturePropagation
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.toggleScale
 import net.engawapg.lib.zoomable.zoomable
+import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.lib.AppNavigation
 
 
@@ -77,6 +79,8 @@ class ScreenPosterViewer : ComponentActivity() {
                 onDoubleTap = { position -> zoomState.toggleScale(ScreenPosterViewerCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
                 scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
             ).fillMaxSize().background(Color.White),
+            error = painterResource(R.drawable.thumbnail_error_stretched),
+            placeholder = painterResource(R.drawable.thumbnail_placeholder),
             contentDescription = "Poster display view.",
             contentScale = ContentScale.Fit
         )

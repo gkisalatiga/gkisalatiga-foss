@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
-// import coil.compose.AsyncImage
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 
@@ -53,7 +52,8 @@ class FragmentGalleryStory : ComponentActivity() {
                 AsyncImage(
                     model = StringFormatter.getGoogleDriveThumbnail(featuredImageID, 240),
                     contentDescription = title,
-                    error = painterResource(R.drawable.thumbnail_loading),
+                    error = painterResource(R.drawable.thumbnail_error),
+                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )

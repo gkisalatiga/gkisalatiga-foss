@@ -173,7 +173,8 @@ class ScreenYKB : ComponentActivity() {
                                 AsyncImage(
                                     if (firstPostThumbnail == "") banner else firstPostThumbnail,
                                     contentDescription = "YKB: $title",
-                                    error = painterResource(R.drawable.thumbnail_loading_stretched),
+                                    error = painterResource(R.drawable.thumbnail_error),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
                                     contentScale = ContentScale.Crop
                                 )
