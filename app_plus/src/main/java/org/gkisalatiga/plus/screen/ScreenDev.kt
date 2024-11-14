@@ -10,6 +10,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -34,12 +35,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.FlipCameraAndroid
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -62,9 +63,9 @@ import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
+import kotlin.math.abs
 
 
 class ScreenDev : ComponentActivity() {
@@ -188,6 +189,21 @@ class ScreenDev : ComponentActivity() {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Alarm, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
                     Text(triggerMinutelyWorkManagerText, modifier = Modifier, textAlign = TextAlign.Center)
+                }
+            }
+
+            /* Trigger the changing of screen's orientation. */
+            val triggerOrientationChange =
+                stringResource(R.string.screen_dev_trigger_orientation_change)
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
+                onClick = {
+                    (ctx as Activity).requestedOrientation = abs(ctx.requestedOrientation - 1)
+                }
+            ) {
+                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.FlipCameraAndroid, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
+                    Text(triggerOrientationChange, modifier = Modifier, textAlign = TextAlign.Center)
                 }
             }
 

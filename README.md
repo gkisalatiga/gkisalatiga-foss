@@ -20,6 +20,8 @@ The application specifically use the `https://gkisalatiga.org/app/deeplink` URI 
 
 Currently, the list of registered deeplinks in this app is as follows:
 
+- **`https://gkisalatiga.org/app/deeplink/contributors`:** Opens the list of contributors of GKI Salatiga+
+- **`https://gkisalatiga.org/app/deeplink/main_graphics`:** Opens the main activity of the app
 - **`https://gkisalatiga.org/app/deeplink/saren`:** Opens the "SaRen" video playlist menu
 - **`https://gkisalatiga.org/app/deeplink/ykb`:** Opens the list of YKB daily devotionals
 
@@ -128,7 +130,9 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 
 ## E. Credits and Contributions
 
-We thank all the people who have contributed gratefully to the development of GKI Salatiga app.
+We thank all the people who have contributed gratefully to the development of GKI Salatiga app. This project was started on **July 12, 2024** and would not be possible without the help of these amazing people.
+
+May the heavenly Father bless all your lives!
 
 ### Advisors
 

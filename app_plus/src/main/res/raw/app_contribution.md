@@ -1,4 +1,10 @@
 
+## GKI Salatiga+ Contributors
+
+We thank all the people who have contributed gratefully to the development of GKI Salatiga app. This project was started on **July 12, 2024** and would not be possible without the help of these amazing people.
+
+May the heavenly Father bless all your lives!
+
 ### Advisors
 
 - Budi Santoso
