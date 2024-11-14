@@ -47,15 +47,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.fragment.FragmentGalleryList
 import org.gkisalatiga.plus.fragment.FragmentGalleryStory
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.json.JSONArray
 
 class ScreenGaleriList : ComponentActivity() {
@@ -136,10 +139,7 @@ class ScreenGaleriList : ComponentActivity() {
         ) {
             /* The navigation top bar. */
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
+                colors = TopAppBarColorScheme.default(),
                 title = {
                     Text(
                         topBarTitle,

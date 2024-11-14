@@ -1,25 +1,32 @@
-package org.gkisalatiga.plus.ui.theme
+package org.gkisalatiga.plus.composable
 
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import org.gkisalatiga.plus.lib.Colors
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Brown2,
-    secondary = Brown3,
-    tertiary = Brown4
+    primary = Colors.COLOR_SCHEME_PRIMARY,
+    secondary = Colors.COLOR_SCHEME_SECONDARY,
+    tertiary = Colors.COLOR_SCHEME_TERTIARY
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Brown4,
-    secondary = Brown3,
-    tertiary = Brown2,
-    primaryContainer = Brown1,
+    primary = Colors.COLOR_SCHEME_PRIMARY,
+    secondary = Colors.COLOR_SCHEME_SECONDARY,
+    tertiary = Colors.COLOR_SCHEME_TERTIARY,
+    primaryContainer = Color(Colors.MAIN_CONTAINER_COLOR),
 
     /* Overriding default values. */
     /*surface = Brown1,
@@ -39,8 +46,35 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+// Set of Material typography styles to start with
+private val Typography = Typography(
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp,
+    )
+    /* Other default text styles to override
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.5.sp
+    )
+    */
+)
+
 @Composable
-fun GKISalatigaPlusTheme(
+fun GKISalatigaAppTheme(
     // Disable dark mode because the coding for dark theme is complicated.
     darkTheme: Boolean = false,
 

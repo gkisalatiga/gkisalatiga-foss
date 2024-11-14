@@ -48,12 +48,10 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -61,7 +59,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -177,7 +174,7 @@ import org.gkisalatiga.plus.services.DeepLinkHandler
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
-import org.gkisalatiga.plus.ui.theme.GKISalatigaPlusTheme
+import org.gkisalatiga.plus.composable.GKISalatigaAppTheme
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -346,7 +343,7 @@ class ActivityLauncher : ComponentActivity() {
                 }
             }
 
-            GKISalatigaPlusTheme {
+            GKISalatigaAppTheme {
                 if (!GlobalCompanion.DEBUG_DISABLE_SPLASH_SCREEN) {
                     // Splash screen.
                     // SOURCE: https://medium.com/@fahadhabib01/animated-splash-screens-in-jetpack-compose-navigation-component-4e28f69ad559
@@ -461,7 +458,7 @@ class ActivityLauncher : ComponentActivity() {
             CircularProgressIndicator()
 
             val versionName = this@ActivityLauncher.packageManager.getPackageInfo(this@ActivityLauncher.packageName, 0).versionName
-            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = Color(Colors.SPLASHSCREEN_SUB_TEXT_COLOR), fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
+            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = Color(Colors.MAIN_SPLASHSCREEN_SUB_TEXT_COLOR), fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
         }
     }
 

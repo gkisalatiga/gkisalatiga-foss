@@ -75,6 +75,7 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Colors
@@ -266,7 +267,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                         TextButton(
                             modifier = Modifier.padding(top = 8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(Colors.YKB_ARCHIVE_BUTTON_COLOR)
+                                containerColor = Color(Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR)
                             ),
                             onClick = {
                                 if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
@@ -295,10 +296,7 @@ class ScreenPukatBerkat : ComponentActivity() {
         Column(modifier = Modifier.fillMaxWidth()) {
             /* The navigational topBar. */
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
+                colors = TopAppBarColorScheme.default(),
                 title = {
                     Text(
                         stringResource(R.string.screenpukatberkat_title),

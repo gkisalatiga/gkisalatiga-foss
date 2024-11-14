@@ -83,7 +83,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -107,7 +106,6 @@ import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
-import org.gkisalatiga.plus.ui.theme.Brown1
 
 class ScreenMain : ComponentActivity() {
 
@@ -142,7 +140,7 @@ class ScreenMain : ComponentActivity() {
 
     @Composable
     @ExperimentalMaterial3Api
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UseOfNonLambdaOffsetOverload")
+    @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter", "UseOfNonLambdaOffsetOverload")
     fun getComposable() {
         val ctx = LocalContext.current
         scope = rememberCoroutineScope()
@@ -409,7 +407,7 @@ class ScreenMain : ComponentActivity() {
                         colors = NavigationBarItemColors(
                             selectedIconColor = Color.Unspecified,
                             selectedTextColor = Color.Unspecified,
-                            selectedIndicatorColor = Brown1,
+                            selectedIndicatorColor = Color(Colors.MAIN_BOTTOM_BAR_COLOR),
                             unselectedIconColor = Color.Unspecified,
                             unselectedTextColor = Color.Unspecified,
                             disabledIconColor = Color.Unspecified,
@@ -550,7 +548,7 @@ class ScreenMainCompanion : Application () {
         /* The dynamic state of the top bar UI. */
         val mutableTopBarContainerTransparency = mutableFloatStateOf(0.0f)
         val topBarContainerColor = Color(Colors.MAIN_TOP_BAR_COLOR)
-        val topBarTitleContentColor = Color(Colors.MAIN_TOP_BAR_CONTENT_COLOR)
+        val topBarTitleContentColor = Colors.MAIN_TOP_BAR_CONTENT_COLOR
 
         /* The calculated top bar padding of the scaffolding. */
         var calculatedTopBarPadding = 0.dp
