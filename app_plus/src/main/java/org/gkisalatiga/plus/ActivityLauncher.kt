@@ -112,6 +112,7 @@ import org.gkisalatiga.plus.fragment.FragmentInfoCompanion
 import org.gkisalatiga.plus.fragment.FragmentServicesCompanion
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
@@ -443,7 +444,7 @@ class ActivityLauncher : ComponentActivity() {
         }
 
         // Displays the splash screen content.
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(Color(0xff071450))) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(Color(MAIN_DARK_BROWN))) {
             Image(painter = painterResource(id = R.drawable.splash_screen_foreground), contentDescription = "Splash screen logo", modifier = Modifier.scale(scale.value))
         }
 

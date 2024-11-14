@@ -100,9 +100,7 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 
 ## D. Attribution
 
-### License of Materials Used
-
-#### Open source materials used as hard-coded parts of the application
+### Open source materials used as hard-coded parts of the application
 
 - Android Studio Asset Studio Icon Library; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/studio/write/create-app-icons)
 - Android YouTube Player; Pierfrancesco Soffritti (C) 2023 (MIT) [Link](https://github.com/PierfrancescoSoffritti/android-youtube-player)
@@ -116,13 +114,13 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 - WorkManager Kotlin Extensions; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://mvnrepository.com/artifact/androidx.work/work-runtime-ktx)
 - Zoomable; Atsushi USUI (C) 2024 (Apache 2.0) [Link](https://github.com/usuiat/Zoomable)
 
-#### Open source materials dynamically used in the WebView
+### Open source materials dynamically used in the WebView
 
 - Framacarte; Framasoft (C) 2024 (CC BY-SA 4.0) [Link](https://framacarte.org/abc/en/)
 - OpenStreetMap; OpenStreetMap Foundation (OSMF) (C) 2024 (ODbL 1.0) [Link](https://www.openstreetmap.org)
 - Plus Jakarta Sans; Tokotype (C) 2020 (OFL 1.1) [Link](https://fonts.google.com/specimen/Plus+Jakarta+Sans?query=plus+jakarta+sans)
 
-#### License of biblical materials and electronic books used in the app per user's download consent
+### License of biblical materials and electronic books used in the app per user's download consent
 
 - Alkitab Yang Terbuka; Yayasan Lembaga SABDA (YLSA) (C) 2011-2024 (CC-BY-NC-SA-4.0) [Link 1](https://ebible.org/details.php?id=indayt) [Link 2](https://ayt.co)
 - Bible in Basic English; Samuel Henry Hooke, Cambridge Press (Public Domain) [Link](https://ebible.org/find/show.php?id=engBBE)

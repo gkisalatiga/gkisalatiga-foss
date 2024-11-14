@@ -137,7 +137,7 @@ class ScreenAgenda : ComponentActivity() {
                     val startPadding = if (isFirst) 0.dp else 5.dp; isFirst = false
                     Button(
                         onClick = { ScreenAgendaCompanion.mutableCurrentDay.value = key },
-                        modifier = Modifier.weight(1.0f).aspectRatio(1.0f).padding(start = startPadding).width(intrinsicSize = IntrinsicSize.Max),
+                        modifier = Modifier.weight(1.0f).padding(start = startPadding).width(intrinsicSize = IntrinsicSize.Max),
                         colors = ButtonDefaults.buttonColors(containerColor = if (key == selected.value) Color(Colors.AGENDA_ITEM_CHIP_SELECTED_BACKGROUND) else Color.White),
                         border =  if (key == selected.value) null else BorderStroke(1.dp, Color.Black),
                         shape = RoundedCornerShape(10.dp),
