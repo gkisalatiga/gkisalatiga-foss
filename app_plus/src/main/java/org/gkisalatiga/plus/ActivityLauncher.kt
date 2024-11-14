@@ -195,18 +195,8 @@ class ActivityLauncher : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        /* Handles deep-linking. */
-        intent?.data?.let {
-            Logger.logTest({}, "Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
-            if (it.host == "gkisalatiga.org" || it.host == "www.gkisalatiga.org") {
-                when (it.encodedPath) {
-                    "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
-                    "/app/deeplink/ykb" -> DeepLinkHandler.handleYKB()
-                    else -> if (it.encodedPath != null) DeepLinkHandler.openDomainURL("https://${it.host}${it.encodedPath}")
-                }
-            }
-        }  // --- end of intent?.data?.let {}
-    }  // --- end of onNewIntent.
+        handleDeepLink(intent, consumeAfterHandling = false)
+    }
 
     @SuppressLint("MissingSuperCall", "Recycle")
     override fun onActivityResult(
@@ -346,52 +336,20 @@ class ActivityLauncher : ComponentActivity() {
 
             GKISalatigaAppTheme {
                 if (!GlobalCompanion.DEBUG_DISABLE_SPLASH_SCREEN) {
-                    // Splash screen.
-                    // SOURCE: https://medium.com/@fahadhabib01/animated-splash-screens-in-jetpack-compose-navigation-component-4e28f69ad559
+
+                    // Display splash screen.
                     Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
                         val splashNavController = rememberNavController()
                         NavHost(navController = splashNavController, startDestination = "init_screen") {
-                            composable(
-                                "init_screen",
-                                deepLinks = listOf(
-                                    navDeepLink { uriPattern = "https://gkisalatiga.org" },
-                                    navDeepLink { uriPattern = "https://www.gkisalatiga.org" }
-                                )
-                            ) {
-                                /* Handles deep-linking. */
-                                if (intent?.data != null) {
-                                    intent?.data?.let {
-                                        Logger.logTest({}, "Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
-                                        if (it.host == "gkisalatiga.org" || it.host == "www.gkisalatiga.org") {
-                                            when (it.encodedPath) {
-                                                "/app/deeplink/main_graphics" -> Unit
-                                                "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
-                                                "/app/deeplink/ykb" -> DeepLinkHandler.handleYKB()
-                                                else -> if (it.encodedPath != null) DeepLinkHandler.openDomainURL("https://${it.host}${it.encodedPath}")
-                                            }
+                            composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
+                                if (intent?.data == null) initSplashScreen(splashNavController)
+                                else { handleDeepLink(intent, consumeAfterHandling = true); initMainGraphic() }
+                            }
 
-                                            // After deeplink handling, we must consume the intent data and replace it with other values.
-                                            // This solves issue: https://github.com/gkisalatiga/gkisalatiga-foss/issues/72.
-                                            intent?.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/main_graphics"))
-
-                                            // This activity was called from a URI call. Skip the splash screen.
-                                            initMainGraphic()
-                                        }
-                                    }  // --- end of intent?.data?.let {}
-
-                                /* Nothing matches, start the app from the beginning.*/
-                                } else {
-                                    // This isn't a URI action call. Open the app regularly.
-                                    initSplashScreen(splashNavController)
-                                }
-                            }  // --- end of navigation composable.
-
-                            composable ("main_screen") {
-                                // Just display the main graphic directly.
-                                initMainGraphic()
-                            }  // --- end of navigation composable.
+                            composable ("main_screen") { initMainGraphic() }
                         }  // --- end of NavHost.
                     }
+
                 } else {
                     // Just display the main graphic directly.
                     initMainGraphic()
@@ -399,6 +357,36 @@ class ActivityLauncher : ComponentActivity() {
             }  // --- end of GKISalatigaPlusTheme.
         }  // --- end of setContent().
     }  // --- end of onCreate().
+
+    /**
+     * This function handles how new deep links (e.g., upon clicking a notification)
+     * are treated in the app. This function also alters the intent data to prevent bugs
+     * similar to issue #72.
+     * @param intent the intent that manages the deep link information and carries information about the deep link routings.
+     * @param consumeAfterHandling whether the intent data should be consumed after deep link handling. Defaults to "true".
+     */
+    private fun handleDeepLink(intent: Intent?, consumeAfterHandling: Boolean = true) {
+        Logger.logDeepLink({}, "Handling deep link -> intent: $intent, consumeAfterHandling: $consumeAfterHandling")
+        if (intent?.data != null) {
+            val uri = intent.data!!
+            Logger.logDeepLink({}, "Received data: host: ${uri.host}, path: ${uri.path}, encodedPath: ${uri.encodedPath}, pathSegments: ${uri.pathSegments}")
+
+            if (uri.host == "gkisalatiga.org" || uri.host == "www.gkisalatiga.org") {
+                when (uri.encodedPath) {
+                    "/app/deeplink/contributors" -> DeepLinkHandler.handleContributors()
+                    "/app/deeplink/main_graphics" -> DeepLinkHandler.handleMainGraphics()
+                    "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
+                    "/app/deeplink/ykb" -> DeepLinkHandler.handleYKB()
+                    else -> if (uri.encodedPath != null) DeepLinkHandler.openDomainURL("https://${uri.host}${uri.encodedPath}")
+                }
+
+                // After deeplink handling, we must consume the intent data and replace it with other values.
+                // This solves issue: https://github.com/gkisalatiga/gkisalatiga-foss/issues/72.
+                if (consumeAfterHandling) intent.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/main_graphics"))
+            }
+
+        }  // --- end if.
+    }  // --- end of handleDeepLink().
 
     /**
      * This method reads the current saved preference associated with the app

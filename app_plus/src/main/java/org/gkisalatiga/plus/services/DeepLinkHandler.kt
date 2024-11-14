@@ -16,6 +16,14 @@ import org.json.JSONObject
 
 class DeepLinkHandler {
     companion object {
+        fun handleContributors() {
+            AppNavigation.navigateCold(NavigationRoutes.SCREEN_CONTRIB)
+        }
+
+        fun handleMainGraphics() {
+            AppNavigation.navigateCold(NavigationRoutes.SCREEN_MAIN)
+        }
+
         fun handleSaRen() {
             // The "all playlist" section.
             val allVideoPlaylists: JSONArray = MainCompanion.jsonRoot!!.getJSONArray("yt")

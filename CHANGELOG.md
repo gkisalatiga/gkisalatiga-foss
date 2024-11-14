@@ -10,6 +10,7 @@
 
 - Standardized the color scheme and improved the splash screen display
 - Updated several menu's banner graphics to match app's color palette
+- (Back-End) Improved deep link handling and routing mechanisms
 
 :hammer_and_wrench: **FIX**
 
