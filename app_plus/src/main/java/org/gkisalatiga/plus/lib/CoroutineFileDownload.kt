@@ -22,6 +22,8 @@ package org.gkisalatiga.plus.lib
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.model.CoroutineViewModel
@@ -29,12 +31,30 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.net.ConnectException
 import java.net.HttpURLConnection
+import java.net.SocketException
 import java.net.URL
+import java.net.UnknownHostException
+import java.util.concurrent.Executors
 
-class DownloadViewModel : CoroutineViewModel() {
+class CoroutineFileDownload : CoroutineViewModel() {
+
+    companion object {
+        private var isDownloadSucceeded = false
+        private var isDownloadCancelled = false
+    }
 
     private lateinit var downloadsDirectory: File
+    private val coroutineThread = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
+    /**
+     * Cancels the download process.
+     */
+    fun cancelDownload() {
+        Logger.logDownloader({}, "Retrieved call to cancel the download process.", LoggerType.VERBOSE)
+        isDownloadCancelled = true
+    }
 
     /**
      * Download a file while showing progress change to the user as the file is downloaded.
@@ -56,53 +76,114 @@ class DownloadViewModel : CoroutineViewModel() {
     }
 
     private fun proceedFileDownload(fileUrl: String, targetFilename: String, result: MutableLiveData<FileDownloadEvent>) {
-        launch(Dispatchers.IO) {
+
+        // Dispatches the actual downloader.
+        val job = launch(coroutineThread) {
             try {
-                performFileDownload(fileUrl, targetFilename, result)
+                val downloadTarget = File(downloadsDirectory, targetFilename)
+                val connection = URL(fileUrl).openConnection() as HttpURLConnection
+                val contentLength = connection.contentLength
+                val inputStream = BufferedInputStream(connection.inputStream)
+                val outputStream = FileOutputStream(downloadTarget.path)
+                val buffer = ByteArray(4096)
+                var downloadedFileSize = 0L
+                var currentRead = 0
+                while (currentRead != -1 && isActive) {
+                    downloadedFileSize += currentRead
+                    outputStream.write(buffer, 0, currentRead)
+                    currentRead = inputStream.read(buffer, 0, buffer.size)
+                    val progress = (100f * (downloadedFileSize.toFloat() / contentLength.toFloat())).toInt()
+
+                    // Negative download percentage means the link cannot be downloaded using this method.
+                    if (progress < 0) throw FileNotDownloadableException("Negative download progress detected: $progress%. The remote link $fileUrl may not be downloadable!")
+
+                    Logger.logRapidTest({}, "Download progress of $fileUrl: $progress%")
+                    result.postValue(FileDownloadEvent.Progress(progress))
+                }
+
+                // Closing the file.
+                Logger.logDownloader({}, "Closing the local file ...", LoggerType.VERBOSE)
+                outputStream.flush()  // --- ensuring all data is written to the file.
+                outputStream.close()
+                inputStream.close()
+
+                // Report successful download.
+                if (currentRead == -1) isDownloadSucceeded = true
                 return@launch
+
+            } catch (e: ConnectException) {
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Failure(msg))
+                Logger.logDownloader({}, msg, LoggerType.ERROR)
+
+            } catch (e: SocketException) {
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Failure(msg))
+                Logger.logDownloader({}, msg, LoggerType.ERROR)
+
+            } catch (e: UnknownHostException) {
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Failure(msg))
+                Logger.logDownloader({}, msg, LoggerType.ERROR)
+
             } catch (e: IOException) {
-                result.postValue(FileDownloadEvent.Failure("IOException: ${e.message}"))
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Failure(msg))
+                Logger.logDownloader({}, msg, LoggerType.ERROR)
+
             } catch (e: FileNotDownloadableException) {
-                result.postValue(FileDownloadEvent.Failure("FileNotDownloadableException: ${e.message}"))
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Failure(msg))
+                Logger.logDownloader({}, msg, LoggerType.ERROR)
+
             } catch (e: Exception) {
-                result.postValue(FileDownloadEvent.Failure("Exception: ${e.message}"))
+                val msg = "${e::class.simpleName}: ${e.message} ${e.stackTraceToString()}"
+                result.postValue(FileDownloadEvent.Failure(msg))
+                Logger.logDownloader({}, msg, LoggerType.ERROR)
+
             }
         }
-    }
 
-    private fun performFileDownload(fileUrl: String, targetFilename: String, result: MutableLiveData<FileDownloadEvent>) {
-        val downloadTarget = File(downloadsDirectory, targetFilename)
-        val connection = URL(fileUrl).openConnection() as HttpURLConnection
-        val contentLength = connection.contentLength
-        val inputStream = BufferedInputStream(connection.inputStream)
-        val outputStream = FileOutputStream(downloadTarget.path)
-        val buffer = ByteArray(4096)
-        var downloadedFileSize = 0L
-        var currentRead = 0
-        while (currentRead != -1 && isActive) {
-            downloadedFileSize += currentRead
-            outputStream.write(buffer, 0, currentRead)
-            currentRead = inputStream.read(buffer, 0, buffer.size)
-            val progress = (100f * (downloadedFileSize.toFloat() / contentLength.toFloat())).toInt()
-
-            // Negative download percentage means the link cannot be downloaded using this method.
-            if (progress < 0) throw FileNotDownloadableException("Negative download progress detected: $progress%. The remote link $fileUrl may not be downloadable!")
-
-            Logger.logRapidTest({}, "Download progress of $fileUrl: $progress%")
-            result.postValue(FileDownloadEvent.Progress(progress))
+        // The default message displayed when the job finishes.
+        job.invokeOnCompletion {
+            Logger.logDownloader({}, "Invoked the completion of the downloading of: ${fileUrl}", LoggerType.VERBOSE)
         }
-        outputStream.flush()  // --- ensuring all data is written to the file.
-        result.postValue(FileDownloadEvent.Success(downloadTarget.path))
-        outputStream.close()
-        inputStream.close()
-    }
 
-    private fun fileName(fileUrl: String): String = fileUrl.substring(fileUrl.lastIndexOf("/") + 1, fileUrl.length)
-    private fun targetFile(fileName: String): File = File(downloadsDirectory, fileName)
+        // Detects if the download is cancelled by the client.
+        // SOURCE: https://stackoverflow.com/a/76646799
+        launch(Dispatchers.Default) {
+            try {
+                while (true) {
+                    if (isDownloadCancelled) {
+                        isDownloadCancelled = false
+                        Logger.logDownloader({}, "Cancellation signal accepted and the download has been terminated!", LoggerType.VERBOSE)
+                        job.cancelChildren()
+                        job.cancel(); job.join()
+                        coroutineThread.close()
+                        throw DownloadCancelledByClientException()
+                    }
+                    if (isDownloadSucceeded) {
+                        isDownloadSucceeded = false
+                        val downloadTarget = File(downloadsDirectory, targetFilename)
+                        Logger.logDownloader({}, "Download successful: $downloadTarget", LoggerType.VERBOSE)
+                        result.postValue(FileDownloadEvent.Success(downloadTarget.path))
+                        break
+                    }
+                }
+            } catch (e: DownloadCancelledByClientException) {
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Cancelled(msg))
+                Logger.logDownloader({}, msg, LoggerType.WARNING)
+            }
+        }
+
+    }  // --- end of proceedFileDownload().
+
 }
 
 sealed class FileDownloadEvent {
     data class Progress(val percentage: Int) : FileDownloadEvent()
     data class Success(val downloadedFilePath: String) : FileDownloadEvent()
     data class Failure(val failure: String) : FileDownloadEvent()
+    data class Cancelled(val message: String) : FileDownloadEvent()
 }

@@ -4,7 +4,7 @@
  * Written by Samarthya Lykamanuella (github.com/groaking)
  */
 
-package org.gkisalatiga.plus.lib
+package org.gkisalatiga.plus.model
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -15,7 +15,9 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.gkisalatiga.plus.model.CoroutineViewModel
+import org.gkisalatiga.plus.lib.AppPreferences
+import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.PreferenceKeys
 import java.io.File
 
 /**
@@ -63,10 +65,10 @@ class PdfViewModel(ctx: Context) : CoroutineViewModel() {
         val result = MutableLiveData<PdfPageUiEvent>()
 
         // Debug logging, for solving problems.
-        Logger.logPDF({}, "Companion.pdfRenderer is null?: ${Companion.pdfRenderer == null}")
+        Logger.logPDF({}, "Companion.pdfRenderer is null?: ${pdfRenderer == null}")
 
-        if (Companion.pdfRenderer != null) {
-            Logger.logTest({}, "Companion.pdfRenderer pageCount: ${Companion.pdfRenderer!!.pageCount}")
+        if (pdfRenderer != null) {
+            Logger.logTest({}, "Companion.pdfRenderer pageCount: ${pdfRenderer!!.pageCount}")
         } else {
             // Prevents NPE.
             result.postValue(PdfPageUiEvent.Error("NPE detected in the PdfRenderer!"))
@@ -74,7 +76,7 @@ class PdfViewModel(ctx: Context) : CoroutineViewModel() {
         }
 
         // Assigning class-wide internal variable.
-        val pdfRenderer = Companion.pdfRenderer!!
+        val pdfRenderer = pdfRenderer!!
 
         launch(Dispatchers.IO) {
             while (true) {
@@ -97,7 +99,13 @@ class PdfViewModel(ctx: Context) : CoroutineViewModel() {
                     pdfPage.close()
 
                     // Posting the bitmap.
-                    result.postValue(PdfPageUiEvent.PageRendered("Page number $pageNumber has been successfully rendered!", pageNumber, bitmap))
+                    result.postValue(
+                        PdfPageUiEvent.PageRendered(
+                            "Page number $pageNumber has been successfully rendered!",
+                            pageNumber,
+                            bitmap
+                        )
+                    )
 
                     // Break free from this loop!
                     break

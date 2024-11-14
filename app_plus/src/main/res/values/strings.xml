@@ -160,6 +160,11 @@
     <string name="screen_persembahan_ok">OK</string>
 
     <!-- Applicable in ScreenPDFViewer. -->
+    <string name="screen_pdfviewer_loading_dialog_title">Mengunduh PDF</string>
+    <string name="screen_pdfviewer_loading_dialog_subtitle">Sedang mengunduh berkas %%% ke ponsel Anda. Tunggu sebentar.</string>
+    <string name="screen_pdfviewer_loading_dialog_btn_string">Batalkan</string>
+    <string name="screen_pdfviewer_error_dialog_title">Gagal Memuat PDF!</string>
+    <string name="screen_pdfviewer_error_dialog_btn_string">OK</string>
     <string name="screen_pdfviewer_info_dialog_title">Detil PDF</string>
     <string name="screen_pdfviewer_info_dialog_content_name_doc_title">Judul</string>
     <string name="screen_pdfviewer_info_dialog_content_name_doc_author">Penulis</string>

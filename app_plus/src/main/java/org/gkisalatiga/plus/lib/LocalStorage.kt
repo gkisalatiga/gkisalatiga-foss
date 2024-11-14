@@ -66,7 +66,7 @@ class LocalStorage(private val ctx: Context) {
         }
 
         // Debug the default local storage's type.
-        Logger.logTest({}, "getLocalStorageValue -> type.name: ${type.name}, key: $key, retVal: $retVal")
+        Logger.logLocalStorage({}, "getLocalStorageValue -> type.name: ${type.name}, key: $key, retVal: $retVal")
 
         // Hand over the local storage value the caller asks for.
         return retVal
@@ -84,7 +84,7 @@ class LocalStorage(private val ctx: Context) {
         val key = getCompositeKey(localKey, customKey)
 
         // Debug the local storage key-to-write value.
-        Logger.logTest({}, "setLocalStorageValue -> localStorageValue: [$localStorageValue], key: [$key], type: [$type]")
+        Logger.logLocalStorage({}, "setLocalStorageValue -> localStorageValue: [$localStorageValue], key: [$key], type: [$type]")
 
         with (localStorageObj.edit()) {
             // Detect local storage value type.

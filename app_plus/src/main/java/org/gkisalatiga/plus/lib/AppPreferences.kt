@@ -67,7 +67,7 @@ class AppPreferences(private val ctx: Context) {
             val defaultVal = DEFAULT_PREFERENCE_KEY_VALUES[prefKey]!!
 
             // Debug the default preference's type.
-            Logger.logTest({}, "Type of defaultVal = ${defaultVal::class.qualifiedName}, key = $prefKey, valued = $defaultVal")
+            Logger.logPrefs({}, "Type of defaultVal = ${defaultVal::class.qualifiedName}, key = $prefKey, valued = $defaultVal")
 
             // Initializing the default values to the preference store.
             with (prefObj.edit()) {
@@ -115,7 +115,7 @@ class AppPreferences(private val ctx: Context) {
         }
 
         // Debug the default preference's type.
-        Logger.logTest({}, "getPreferenceValue -> defaultVal type: ${defaultVal::class.qualifiedName}, key: $prefKey, defaultVal: $defaultVal, retVal: $retVal")
+        Logger.logPrefs({}, "getPreferenceValue -> defaultVal type: ${defaultVal::class.qualifiedName}, key: $prefKey, defaultVal: $defaultVal, retVal: $retVal")
 
         // Hand over the preference value the caller asks for.
         return retVal
@@ -128,7 +128,7 @@ class AppPreferences(private val ctx: Context) {
      */
     fun setPreferenceValue(prefKey: PreferenceKeys, prefValue: Any) {
         // Debug the preference key-to-write value.
-        Logger.logTest({}, "setPreferenceValue -> prefValue: $prefValue, prefKey: ${prefKey.name}, prefKey class: ${prefValue::class.qualifiedName}")
+        Logger.logPrefs({}, "setPreferenceValue -> prefValue: $prefValue, prefKey: ${prefKey.name}, prefKey class: ${prefValue::class.qualifiedName}")
 
         with (prefObj.edit()) {
             // Detect preference value type.

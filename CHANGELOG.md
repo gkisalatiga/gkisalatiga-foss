@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## Upcoming Release
+
+:star2: **NEW**
+
+- Fully supported internal PDF viewer with the ability to cancel ongoing PDF download operations
+
 ## v0.5.1-rc 2024.11.08 (29)
 
 :information_source: **INFO**
