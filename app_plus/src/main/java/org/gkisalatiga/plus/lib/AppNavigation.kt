@@ -89,7 +89,7 @@ class AppNavigation : Application() {
         fun popBack() {
             Logger.logTest({}, "popBack -> currentNavigationIndex: $currentNavigationIndex, navigationRouteHistory.size: ${navigationRouteHistory.size}")
 
-            currentNavigationIndex--
+            if (currentNavigationIndex > 0) currentNavigationIndex--
             if (currentNavigationIndex > 0 && navigationRouteHistory.size > 0) {
                 composeRoute(navigationRouteHistory[currentNavigationIndex - 1])
             } else if (currentNavigationIndex == 0) {
