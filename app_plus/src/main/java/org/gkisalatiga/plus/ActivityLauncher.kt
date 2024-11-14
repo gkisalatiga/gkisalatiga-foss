@@ -43,10 +43,12 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +59,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
@@ -121,6 +124,7 @@ import org.gkisalatiga.plus.screen.ScreenAgendaCompanion
 import org.gkisalatiga.plus.screen.ScreenAttribution
 import org.gkisalatiga.plus.screen.ScreenAttributionCompanion
 import org.gkisalatiga.plus.screen.ScreenBible
+import org.gkisalatiga.plus.screen.ScreenBlank
 import org.gkisalatiga.plus.screen.ScreenContrib
 import org.gkisalatiga.plus.screen.ScreenContribCompanion
 import org.gkisalatiga.plus.screen.ScreenDev
@@ -419,15 +423,15 @@ class ActivityLauncher : ComponentActivity() {
     @Composable
     @SuppressLint("ComposableNaming")
     private fun initSplashScreen(splashNavController: NavHostController) {
-        val scale = remember { androidx.compose.animation.core.Animatable(1.6f) }
-        val currentProgress = remember { androidx.compose.animation.core.Animatable(0.0f) }
+        val scale = remember { Animatable(1.6f) }
+        // val currentProgress = remember { Animatable(0.0f) }
 
         LaunchedEffect(Unit) { Logger.logInit({}, "Loading splash screen of the app ...") }
 
-        LaunchedEffect(key1 = true) {
+        /*LaunchedEffect(key1 = true) {
             // Animate the progress bar.
             currentProgress.animateTo(targetValue = 1.0f, animationSpec = tween(durationMillis = 750, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
-        }
+        }*/
 
         LaunchedEffect(key1 = true) {
             // Animate the logo.
@@ -444,15 +448,17 @@ class ActivityLauncher : ComponentActivity() {
         }
 
         Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom, modifier = Modifier.padding(bottom = 100.dp)) {
-            /* They said adding progress bar to the old splash screen (Android version below 12)
+            /**
+             * They said adding progress bar to the old splash screen (Android version below 12)
              * prevents the "Double Splash Screen" warning in the Google Play Console pre-launch report.
              * The first screen should contain not just one view in order to prevent the warning.
              * SOURCE: https://stackoverflow.com/a/77220306
+             * ---
+             * @ujepx64 recommended using circular progress instead.
+             * We'll see if this resolved the issue similar to adding a progress bar.
              */
-            LinearProgressIndicator(
-                progress = { currentProgress.value },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp),
-            )
+            CircularProgressIndicator()
+
             val versionName = this@ActivityLauncher.packageManager.getPackageInfo(this@ActivityLauncher.packageName, 0).versionName
             Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = Color(Colors.SPLASHSCREEN_SUB_TEXT_COLOR), fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
         }
@@ -485,6 +491,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda().getComposable() }
             composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution().getComposable() }
             composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible().getComposable()}
+            composable(NavigationRoutes.SCREEN_BLANK.name) {ScreenBlank().getComposable()}
             composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib().getComposable() }
             composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev().getComposable() }
             composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms().getComposable() }

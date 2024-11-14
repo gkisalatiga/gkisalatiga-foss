@@ -125,9 +125,6 @@ class ScreenMain : ComponentActivity() {
     private var calculatedTopPadding = 0.dp
     private var calculatedBottomPadding = 0.dp
 
-    // Used by the bottom nav to command the scrolling of the horizontal pager.
-    private var bottomNavPagerScrollTo = mutableIntStateOf(fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value))
-
     // Determines the top banner title.
     private var topBannerTitle = ""
 
@@ -148,7 +145,6 @@ class ScreenMain : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UseOfNonLambdaOffsetOverload")
     fun getComposable() {
         val ctx = LocalContext.current
-        val uriHandler = LocalUriHandler.current
         scope = rememberCoroutineScope()
 
         // Initializing the top banner title.
@@ -339,30 +335,30 @@ class ScreenMain : ComponentActivity() {
             val exitConfirm = stringResource(R.string.exit_confirmation_toast_string)
             val localContext = LocalContext.current
             BackHandler {
-                val curRoute = ScreenMainCompanion.mutableLastPagerPage.value
-                if (curRoute == NavigationRoutes.FRAG_MAIN_HOME) {
+                when (val curRoute = ScreenMainCompanion.mutableLastPagerPage.value) {
+                    NavigationRoutes.FRAG_MAIN_HOME -> {
 
-                    // Ensure "double tap the back button to exit".
-                    if (backPressedTime + 2000 > System.currentTimeMillis()) {
-                        // Exit the application.
-                        // SOURCE: https://stackoverflow.com/a/67402808
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(localContext, "You just clicked $curRoute and exited the app!", Toast.LENGTH_SHORT).show()
-                        (localContext as ComponentActivity).finish()
-                    } else {
-                        Toast.makeText(localContext, exitConfirm, Toast.LENGTH_LONG).show()
+                        // Ensure "double tap the back button to exit".
+                        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                            // Exit the application.
+                            // SOURCE: https://stackoverflow.com/a/67402808
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(localContext, "You just clicked $curRoute and exited the app!", Toast.LENGTH_SHORT).show()
+                            (localContext as ComponentActivity).finish()
+                        } else {
+                            Toast.makeText(localContext, exitConfirm, Toast.LENGTH_LONG).show()
+                        }
+
+                        backPressedTime = System.currentTimeMillis()
+
                     }
-
-                    backPressedTime = System.currentTimeMillis()
-
-                } else if (
-                    curRoute == NavigationRoutes.FRAG_MAIN_INFO ||
-                    curRoute == NavigationRoutes.FRAG_MAIN_SERVICES
-                ) {
-                    // Since we are in the main screen but not at fragment one,
-                    // navigate the app to fragment one.
-                    scope.launch { horizontalPagerState.animateScrollToPage(0) }
-                } else {
-                    // Do nothing.
+                    NavigationRoutes.FRAG_MAIN_INFO, NavigationRoutes.FRAG_MAIN_SERVICES -> {
+                        // Since we are in the main screen but not at fragment one,
+                        // navigate the app to fragment one.
+                        scope.launch { horizontalPagerState.animateScrollToPage(0) }
+                    }
+                    else -> {
+                        // Do nothing.
+                    }
                 }
             }
         }
