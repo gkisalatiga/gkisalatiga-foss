@@ -36,6 +36,7 @@ import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -363,10 +364,16 @@ class ActivityLauncher : ComponentActivity() {
                                         Logger.logTest({}, "Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
                                         if (it.host == "gkisalatiga.org" || it.host == "www.gkisalatiga.org") {
                                             when (it.encodedPath) {
+                                                "/app/deeplink/main_graphics" -> Unit
                                                 "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
                                                 "/app/deeplink/ykb" -> DeepLinkHandler.handleYKB()
                                                 else -> if (it.encodedPath != null) DeepLinkHandler.openDomainURL("https://${it.host}${it.encodedPath}")
                                             }
+
+                                            // After deeplink handling, we must consume the intent data and replace it with other values.
+                                            // This solves issue: https://github.com/gkisalatiga/gkisalatiga-foss/issues/72.
+                                            intent?.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/main_graphics"))
+
                                             // This activity was called from a URI call. Skip the splash screen.
                                             initMainGraphic()
                                         }
@@ -422,15 +429,8 @@ class ActivityLauncher : ComponentActivity() {
     @SuppressLint("ComposableNaming")
     private fun initSplashScreen(splashNavController: NavHostController) {
         val scale = remember { Animatable(1.6f) }
-        // val currentProgress = remember { Animatable(0.0f) }
 
         LaunchedEffect(Unit) { Logger.logInit({}, "Loading splash screen of the app ...") }
-
-        /*LaunchedEffect(key1 = true) {
-            // Animate the progress bar.
-            currentProgress.animateTo(targetValue = 1.0f, animationSpec = tween(durationMillis = 750, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
-        }*/
-
         LaunchedEffect(key1 = true) {
             // Animate the logo.
             scale.animateTo(targetValue = 0.5f, animationSpec = tween(durationMillis = 1250, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))

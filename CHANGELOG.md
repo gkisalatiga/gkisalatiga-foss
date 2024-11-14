@@ -9,6 +9,11 @@
 :four_leaf_clover: **IMPROVEMENT**
 
 - Standardized the color scheme and improved the splash screen display
+- Updated several menu's banner graphics to match app's color palette
+
+:hammer_and_wrench: **FIX**
+
+- Bug on fullscreen youtube player (especially from opening saren notification)
 
 ## v0.5.1-rc 2024.11.08 (29)
 
