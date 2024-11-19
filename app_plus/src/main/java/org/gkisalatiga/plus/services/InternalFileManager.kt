@@ -22,9 +22,7 @@ import java.io.File
  */
 class InternalFileManager (private val ctx: Context) {
     // The file creator to create the private file (as a downloaded file).
-    val CACHE_FILE_CREATOR = ctx.cacheDir
     val DATA_DIR_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DATA_DIR, Context.MODE_PRIVATE)
-    val DOWNLOAD_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DOWNLOAD_DIR, Context.MODE_PRIVATE)
     val PDF_POOL_PDF_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_POOL_DIR, Context.MODE_PRIVATE)
 
     // The string delimiter for encoding pdfAssociatedKey-pdfAbsolutePath pair as string.
@@ -101,7 +99,6 @@ class InternalFileManagerCompanion {
     companion object {
         /* The "app_..." suffix name for downloading files. */
         const val FILE_CREATOR_TARGET_DATA_DIR = "data"
-        const val FILE_CREATOR_TARGET_DOWNLOAD_DIR = "Downloads"
         const val FILE_CREATOR_TARGET_PDF_POOL_DIR = "pdf_pool"
     }
 }

@@ -77,6 +77,9 @@ import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PersistentLogger
 
@@ -133,26 +136,40 @@ class ScreenAbout : ComponentActivity() {
                         onClick = {
                             /* You know what this is. */
                             if (GlobalCompanion.DEBUG_ENABLE_EASTER_EGG) {
-                                // Ensures that the user (developer) has to click N-times before opening the dev menu.
-                                if (easterEggFirstClick + easterEggTimeout > System.currentTimeMillis()) {
-                                    /* Opens the easter egg. */
-                                    if (easterEggCurrentClicks >= easterEggMinClicks) {
-                                        easterEggCurrentClicks = 0
-                                        PersistentLogger(ctx).write({}, "The developer menu has been unlocked!")
-                                        Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
-                                        AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
-                                    } else {
-                                        easterEggCurrentClicks += 1
-                                    }
+
+                                // If we have unlocked the developer menu before, just go in directly.
+                                if (LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean) {
+                                    Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
+                                    AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
                                 } else {
-                                    easterEggCurrentClicks = 0
+                                    // Otherwise, ensure that the user (developer) has to click N-times before opening the dev menu.
+                                    // This will unlock the developer menu.
+                                    if (easterEggFirstClick + easterEggTimeout > System.currentTimeMillis()) {
+                                        /* Opens the easter egg. */
+                                        if (easterEggCurrentClicks >= easterEggMinClicks) {
+                                            easterEggCurrentClicks = 0
+
+                                            // Unlocks the dev menu.
+                                            PersistentLogger(ctx).write({}, "The developer menu has been unlocked!")
+                                            LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
+
+                                            // Navigate to the dev menu.
+                                            Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
+                                            AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
+                                        } else {
+                                            easterEggCurrentClicks += 1
+                                        }
+                                    } else {
+                                        easterEggCurrentClicks = 0
+                                    }
+
+                                    // Detecting the first time this button was clicked.
+                                    if (easterEggCurrentClicks == 0) {
+                                        Toast.makeText(ctx, "\uD83D\uDC23", Toast.LENGTH_SHORT).show()
+                                        easterEggFirstClick = System.currentTimeMillis()
+                                    }
                                 }
 
-                                // Detecting the first time this button was clicked.
-                                if (easterEggCurrentClicks == 0) {
-                                    Toast.makeText(ctx, "\uD83D\uDC23", Toast.LENGTH_SHORT).show()
-                                    easterEggFirstClick = System.currentTimeMillis()
-                                }
                             }
                         }
                     ) {

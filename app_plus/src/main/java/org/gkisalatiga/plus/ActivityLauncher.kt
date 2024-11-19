@@ -564,7 +564,7 @@ class ActivityLauncher : ComponentActivity() {
     private fun initData() {
 
         // The file creator to create the private file.
-        val fileCreator = InternalFileManager(this).DOWNLOAD_FILE_CREATOR
+        val fileCreator = InternalFileManager(this).DATA_DIR_FILE_CREATOR
 
         // Setting up the downloaded JSON's absolute paths.
         Logger.logInit({}, "Initializing the downloaded JSON paths ...")

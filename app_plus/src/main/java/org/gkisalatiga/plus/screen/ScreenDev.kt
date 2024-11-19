@@ -36,6 +36,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.FlipCameraAndroid
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -66,6 +67,8 @@ import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.PersistentLogger
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
@@ -185,8 +188,7 @@ class ScreenDev : ComponentActivity() {
             }
 
             /* Trigger a WorKManager that launches notification once every 20th second each minute. */
-            val triggerMinutelyWorkManagerText =
-                stringResource(R.string.screen_dev_trigger_minutely_work_manager)
+            val triggerMinutelyWorkManagerText = stringResource(R.string.screen_dev_trigger_minutely_work_manager)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
@@ -200,8 +202,7 @@ class ScreenDev : ComponentActivity() {
             }
 
             /* Trigger the changing of screen's orientation. */
-            val triggerOrientationChange =
-                stringResource(R.string.screen_dev_trigger_orientation_change)
+            val triggerOrientationChange = stringResource(R.string.screen_dev_trigger_orientation_change)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
@@ -212,6 +213,22 @@ class ScreenDev : ComponentActivity() {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.FlipCameraAndroid, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
                     Text(triggerOrientationChange, modifier = Modifier, textAlign = TextAlign.Center)
+                }
+            }
+
+            /* Locks the developer menu. */
+            val lockDeveloperMenu = stringResource(R.string.screen_dev_lock_dev_menu_change)
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
+                onClick = {
+                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, false, LocalStorageDataTypes.BOOLEAN)
+                    PersistentLogger(ctx).write({}, "The developer menu was locked!")
+                    AppNavigation.popBack()
+                }
+            ) {
+                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Lock, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
+                    Text(lockDeveloperMenu, modifier = Modifier, textAlign = TextAlign.Center)
                 }
             }
 

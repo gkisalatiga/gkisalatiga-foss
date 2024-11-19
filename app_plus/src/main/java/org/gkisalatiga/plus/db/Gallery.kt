@@ -14,7 +14,6 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -64,7 +63,7 @@ class Gallery(private val ctx: Context) {
 
         // Write the raw-resource-shipped file buffer as an actual file.
         // Creating the private file.
-        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, GalleryCompanion.savedFilename)
+        val privateFile = File(InternalFileManager(ctx).DATA_DIR_FILE_CREATOR, GalleryCompanion.savedFilename)
 
         // Writing the fallback file into an actual file in the app's internal storage.
         val out = FileOutputStream(privateFile)

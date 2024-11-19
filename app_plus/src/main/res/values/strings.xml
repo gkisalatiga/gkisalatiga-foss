@@ -207,7 +207,8 @@
     <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>
     <string name="screen_dev_trigger_minutely_work_manager">Picu WorkManager Menitan</string>
     <string name="screen_dev_trigger_orientation_change">Ganti Orientasi Ponsel</string>
+    <string name="screen_dev_lock_dev_menu_change">Kunci Menu Pengembang</string>
     <string name="screen_dev_welcome_developer">Selamat datang di menu pengembang!</string>
     <string name="screen_dev_title">Menu Pengembang</string>
-    <string name="screen_dev_desc">Selamat datang, Trio Developer!\nSam, Jeffrey, dan Joa \uD83D\uDDFF</string>
+    <string name="screen_dev_desc">Anda tidak seharusnya berada di sini \uD83D\uDDFF</string>
 </resources>

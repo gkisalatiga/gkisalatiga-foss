@@ -14,7 +14,6 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
 import java.io.File
@@ -62,7 +61,7 @@ class Modules(private val ctx: Context) {
 
         // Write the raw-resource-shipped file buffer as an actual file.
         // Creating the private file.
-        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, ModulesCompanion.savedFilename)
+        val privateFile = File(InternalFileManager(ctx).DATA_DIR_FILE_CREATOR, ModulesCompanion.savedFilename)
 
         // Writing the fallback file into an actual file in the app's internal storage.
         val out = FileOutputStream(privateFile)

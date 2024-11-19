@@ -62,7 +62,7 @@ class Static(private val ctx: Context) {
 
         // Write the raw-resource-shipped file buffer as an actual file.
         // Creating the private file.
-        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, StaticCompanion.savedFilename)
+        val privateFile = File(InternalFileManager(ctx).DATA_DIR_FILE_CREATOR, StaticCompanion.savedFilename)
 
         // Writing the fallback file into an actual file in the app's internal storage.
         val out = FileOutputStream(privateFile)
