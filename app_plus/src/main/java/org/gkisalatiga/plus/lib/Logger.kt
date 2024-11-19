@@ -157,6 +157,19 @@ class Logger {
         }
 
         /**
+         * Log messages as inferred by the persistent logger class.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logPersistentLogger (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-Persist"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER) doLog(tag, msgString, type)
+        }
+
+        /**
          * Log messages sent for the purpose of debugging app preferences.
          * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
          * @param msg The message to be logged to the terminal.

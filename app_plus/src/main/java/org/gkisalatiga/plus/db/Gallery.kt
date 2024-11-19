@@ -142,7 +142,6 @@ class Gallery(private val ctx: Context) {
     }
 }
 
-// TODO: Update to gallery JSON data v2
 @Suppress("MayBeConstant", "RedundantSuppression", "SpellCheckingInspection")
 class GalleryCompanion : Application() {
     companion object {

@@ -66,8 +66,11 @@ import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.PersistentLogger
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
+import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.math.abs
 
 
@@ -151,6 +154,7 @@ class ScreenDev : ComponentActivity() {
     }
 
     @Composable
+    @SuppressLint("SimpleDateFormat")
     private fun getQuickActions() {
         val ctx = LocalContext.current
         val uriHandler = LocalUriHandler.current
@@ -251,6 +255,7 @@ class ScreenDev : ComponentActivity() {
                 "DEBUG_ENABLE_LOG_CAT_INIT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT,
                 "DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE,
                 "DEBUG_ENABLE_LOG_CAT_PDF" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF,
+                "DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER,
                 "DEBUG_ENABLE_LOG_CAT_PREFERENCES" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PREFERENCES,
                 "DEBUG_ENABLE_LOG_CAT_RAPID_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_RAPID_TEST,
                 "DEBUG_ENABLE_LOG_CAT_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_TEST,
@@ -263,6 +268,18 @@ class ScreenDev : ComponentActivity() {
             /* Displaying all of the app's debug flag values. */
             debugFlags.entries.sortedBy { it.key }.forEach {
                 Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
+                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+            }
+
+            val appPersistText = stringResource(R.string.screen_dev_persistent_logger_title)
+            Spacer(Modifier.height(10.dp))
+            Text(appPersistText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(10.dp))
+
+            /* Displaying all PersistentLogger entries. */
+            PersistentLogger(ctx).getAll().entries.sortedBy { it.key.toLong() }.forEach {
+                val dateString = SimpleDateFormat("yyyy-MM-dd HH:mm").format(Date(it.key.toLong()))
+                Text(dateString, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
                 Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
             }
 

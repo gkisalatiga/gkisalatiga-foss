@@ -173,8 +173,7 @@ class ScreenSettings : ComponentActivity() {
         HorizontalDivider(Modifier.padding(horizontal = 20.dp))
 
         /* Settings: automatic deletion of PDF files that are no longer read after N days. */
-        // TODO: Re-enable this code block when the PDF autodeletion functionality is ready.
-        /*val expandedPdfAutoDelete = remember { mutableStateOf(false) }
+        val expandedPdfAutoDelete = remember { mutableStateOf(false) }
         val titlePdfAutoDelete = stringResource(R.string.screen_settings_pref_pdf_remove)
         Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.TopStart)) {
             Surface (onClick = { expandedPdfAutoDelete.value = true }, modifier = Modifier.fillMaxWidth()) {
@@ -198,7 +197,7 @@ class ScreenSettings : ComponentActivity() {
                     )
                 }
             }
-        }*/
+        }
 
     }
 
@@ -297,27 +296,27 @@ class ScreenSettings : ComponentActivity() {
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_always),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_7_days),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_14_days),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_30_days),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_never),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             )
         )
     }

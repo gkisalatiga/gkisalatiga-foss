@@ -59,6 +59,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -77,18 +78,10 @@ import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.PersistentLogger
 
 
 class ScreenAbout : ComponentActivity() {
-
-    // For displaying the license dialogs.
-    private val showLicenseDialog = mutableStateOf(false)
-
-    // For displaying generic markdown dialog.
-    private val showMarkdownDialog = mutableStateOf(false)
-    private var dialogMarkdownTitle = ""
-    private var dialogMarkdownContent = ""
-    private var dialogMarkdownIcon = Icons.Default.QuestionMark
 
     // The description of the application.
     private var appMainDescription = mutableStateOf("")
@@ -96,7 +89,7 @@ class ScreenAbout : ComponentActivity() {
     // Determines the time and number-of-clicks for opening the EasterEgg.
     private var easterEggFirstClick = 0.toLong()
     private var easterEggCurrentClicks = 0
-    private val easterEggMinClicks = 10
+    private val easterEggMinClicks = 12
     private val easterEggTimeout = 2000.toLong()
 
     @Composable
@@ -145,6 +138,7 @@ class ScreenAbout : ComponentActivity() {
                                     /* Opens the easter egg. */
                                     if (easterEggCurrentClicks >= easterEggMinClicks) {
                                         easterEggCurrentClicks = 0
+                                        PersistentLogger(ctx).write({}, "The developer menu has been unlocked!")
                                         Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
                                         AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
                                     } else {
@@ -165,7 +159,7 @@ class ScreenAbout : ComponentActivity() {
                         Box {
                             Box(Modifier.background(Color(MAIN_DARK_BROWN), shape = CircleShape).fillMaxSize())
                             Image(painterResource(R.mipmap.ic_launcher_foreground), "",
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier.fillMaxSize().scale(1.2f),
                                 contentScale = ContentScale.Crop
                             )
                         }

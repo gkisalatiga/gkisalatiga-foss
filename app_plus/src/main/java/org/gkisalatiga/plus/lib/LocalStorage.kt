@@ -38,6 +38,22 @@ class LocalStorage(private val ctx: Context) {
     }
 
     /**
+     * Return the decomposition of a composite key.
+     * @param compositeKey the composite key to decompose, containing a [LocalStorageKeys], an [LocalStorageCompanion.COMPOSITE_KEY_SEPARATOR], and the parameter value.
+     * @return a pair of [LocalStorageKeys] and its assigned parametric value.
+     */
+    fun getDecomposeKey(compositeKey: String) : Pair<LocalStorageKeys, String> {
+        val sep = LocalStorageCompanion.COMPOSITE_KEY_SEPARATOR
+        if (compositeKey.contains(sep)) {
+            val split = compositeKey.split(sep)
+            return Pair(LocalStorageKeys.valueOf(split[0]), split[1])
+        } else {
+            // This is not a composite key. Return only the singular key.
+            return Pair(LocalStorageKeys.valueOf(compositeKey), "")
+        }
+    }
+
+    /**
      * Returns the LocalStorage object.
      * It must be set to private so that only this class may be allowed to alter
      * the app's internal local storage.
@@ -77,6 +93,25 @@ class LocalStorage(private val ctx: Context) {
 
         // Hand over the local storage value the caller asks for.
         return retVal
+    }
+
+    /**
+     * Determines whether a given key or composite key in LocalStorage exists.
+     * @param localKey the local storage key to be considered for removal.
+     * @param customKey if available, the custom key that will compose the composite key for removal.
+     * @return true if exists, false if otherwise
+     */
+    fun hasKey(localKey: LocalStorageKeys, customKey: String = DEFAULT_CUSTOM_KEY_STRING) : Boolean {
+        return getCompositeKey(localKey, customKey).let { localStorageObj.contains(it) }
+    }
+
+    /**
+     * Removes a given LocalStorage pair from existence.
+     * @param localKey the local storage key to be considered for removal.
+     * @param customKey if available, the custom key that will compose the composite key for removal.
+     */
+    fun removeLocalStorageValue(localKey: LocalStorageKeys, customKey: String = DEFAULT_CUSTOM_KEY_STRING) {
+        getCompositeKey(localKey, customKey).let { if (localStorageObj.contains(it)) localStorageObj.edit().remove(it).apply() }
     }
 
     /**
@@ -146,7 +181,11 @@ enum class LocalStorageKeys {
 
     /* More sophisticated local storage keys that require the use of customKey. */
     LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION,
+    LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS,
+    LOCAL_KEY_GET_PDF_LAST_DOWNLOAD_MILLIS,
+    LOCAL_KEY_GET_PDF_METADATA,
     LOCAL_KEY_IS_PDF_FILE_DOWNLOADED,
+    LOCAL_KEY_IS_PDF_FILE_MARKED_AS_FAVORITE,
 }
 
 /**

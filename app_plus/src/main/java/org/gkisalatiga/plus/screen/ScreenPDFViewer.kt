@@ -108,6 +108,7 @@ import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.navigatorL
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.rememberedViewerPagerState
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.txtLoadingPercentageAnimatable
 import org.gkisalatiga.plus.services.InternalFileManager
+import org.json.JSONObject
 
 
 class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
@@ -370,6 +371,9 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                     currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(absolutePDFPathIfCached)
                     mutablePdfUiTotalPageCount.intValue = currentFilePdfRenderer.value!!.pageCount
 
+                    // Mark this PDF file as "just accessed" so that it won't be scheduled for deletion soon.
+                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS, System.currentTimeMillis(), LocalStorageDataTypes.LONG, url)
+
                     // Trigger recompositioning.
                     mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
                 }
@@ -483,12 +487,28 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
                     val outputPath = it.downloadedFilePath
 
+                    // Saving the download PDF file's metadata.
+                    val jsonMetadata = JSONObject()
+                        .put("title", ScreenPDFViewerCompanion.eBookTitle)
+                        .put("author", ScreenPDFViewerCompanion.eBookAuthor)
+                        .put("publisher", ScreenPDFViewerCompanion.eBookPublisher)
+                        .put("publisher-loc", ScreenPDFViewerCompanion.eBookPublisherLoc)
+                        .put("year", ScreenPDFViewerCompanion.eBookYear)
+                        .put("thumbnail", ScreenPDFViewerCompanion.eBookThumbnail)
+                        .put("download-url", ScreenPDFViewerCompanion.eBookUrl)
+                        .put("source", ScreenPDFViewerCompanion.eBookSource)
+                        .put("size", ScreenPDFViewerCompanion.eBookSize)
+                        .toString(0)
+
                     // Ensure that we don't download this PDF file again in the future.
                     LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, true, LocalStorageDataTypes.BOOLEAN, url)
                     LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, outputPath, LocalStorageDataTypes.STRING, url)
+                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_DOWNLOAD_MILLIS, System.currentTimeMillis(), LocalStorageDataTypes.LONG, url)
+                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_METADATA, jsonMetadata, LocalStorageDataTypes.STRING, url)
 
-                    // Register the file in the app's internal file manager so that it will be scheduled for cleaning.
-                    InternalFileManager(current.ctx).enlistDownloadedFileForCleanUp(eBookUrl, outputPath)
+                    // Only if this PDF file has not been made favorite before.
+                    if (!LocalStorage(current.ctx).hasKey(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_MARKED_AS_FAVORITE, url))
+                        LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_MARKED_AS_FAVORITE, false, LocalStorageDataTypes.BOOLEAN, url)
 
                     // Load the file directly if it exists.
                     currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(outputPath)

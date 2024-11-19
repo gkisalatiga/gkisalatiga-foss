@@ -202,6 +202,7 @@
     <string name="screen_dev_quick_action_title">Aksi Cepat</string>
     <string name="screen_dev_local_storage_title">LocalStorage</string>
     <string name="screen_dev_app_preferences_title">AppPreferences</string>
+    <string name="screen_dev_persistent_logger_title">PersistentLogger</string>
     <string name="screen_dev_debug_flags_title">Debugging Flags</string>
     <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>
     <string name="screen_dev_trigger_minutely_work_manager">Picu WorkManager Menitan</string>

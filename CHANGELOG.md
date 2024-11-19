@@ -5,6 +5,7 @@
 :star2: **NEW**
 
 - Fully supported internal PDF viewer with the ability to cancel ongoing PDF download operations
+- (Back-End) Added automatic PDF remover if a given PDF file has not been accessed for a given time
 
 :four_leaf_clover: **IMPROVEMENT**
 

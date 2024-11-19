@@ -175,6 +175,7 @@ import org.gkisalatiga.plus.services.InternalFileManager
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
 import org.gkisalatiga.plus.composable.GKISalatigaAppTheme
+import org.gkisalatiga.plus.lib.PersistentLogger
 import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 import java.io.File
 
@@ -271,6 +272,9 @@ class ActivityLauncher : ComponentActivity() {
 
         // Initializing the scheduled alarms.
         initWorkManager()
+
+        // Cleaning up stuffs.
+        initCleanUp()
 
         // TODO: Remove this code block after v0.6.0 launch. This code block causes screen blank during launch.
         /*// Block the app until all data is initialized.
@@ -390,6 +394,17 @@ class ActivityLauncher : ComponentActivity() {
     }  // --- end of handleDeepLink().
 
     /**
+     * This function carries out the cleaning up of stuffs.
+     */
+    private fun initCleanUp() {
+        Logger.logInit({}, "Cleaning up old PDF files ...")
+        InternalFileManager(this@ActivityLauncher).doPdfCleanUp()
+
+        Logger.logInit({}, "Cleaning up old persistent logger entries ...")
+        PersistentLogger(this@ActivityLauncher).cleanOldEntries()
+    }
+
+    /**
      * This method reads the current saved preference associated with the app
      * and pass it to the GlobalCompanion so that other functions can use them.
      */
@@ -399,9 +414,10 @@ class ActivityLauncher : ComponentActivity() {
         val appPreferences = AppPreferences(this)
 
         // Initializes the default/fallback preferences and launch value if this is a first launch.
-        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) < 0) {
+        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) <= 0) {
             appPreferences.initDefaultPreferences()
-            appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, -1, LocalStorageDataTypes.INT)
+            appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, 0, LocalStorageDataTypes.INT)
+            PersistentLogger(this@ActivityLauncher).write({}, "This is first app launch.")
         }
 
         // Increment the number of launch counts.
