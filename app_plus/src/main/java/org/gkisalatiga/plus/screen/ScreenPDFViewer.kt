@@ -371,9 +371,6 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                     currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(absolutePDFPathIfCached)
                     mutablePdfUiTotalPageCount.intValue = currentFilePdfRenderer.value!!.pageCount
 
-                    // Mark this PDF file as "just accessed" so that it won't be scheduled for deletion soon.
-                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS, System.currentTimeMillis(), LocalStorageDataTypes.LONG, url)
-
                     // Trigger recompositioning.
                     mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
                 }
@@ -382,6 +379,9 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
             // Only render the PDF if the file exists and the PDF viewer composable is triggerred.
             key (mutableTriggerPDFViewerRecomposition.value, currentFilePdfRenderer.value) {
                 if (rememberedViewerPagerState != null) Logger.logPDF({}, "mutablePdfUiPageCount.intValue: ${mutablePdfUiTotalPageCount.intValue}, mutableTotalPDFPage.intValue: ${mutablePdfUiTotalPageCount.intValue}, rememberedViewerPagerState!!.currentPage: ${rememberedViewerPagerState!!.currentPage}, mutableCurrentPDFPage.intValue: ${mutablePdfUiCurrentPage.intValue}")
+
+                // Mark this PDF file as "just accessed" so that it won't be scheduled for deletion soon.
+                LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS, System.currentTimeMillis(), LocalStorageDataTypes.LONG, url)
 
                 // Initiating the pager state.
                 val initialPage = 0

@@ -41,7 +41,7 @@ class InternalFileManager (private val ctx: Context) {
             if (!(it.value as Boolean)) {
                 val url = LocalStorage(ctx).getDecomposeKey(it.key).second
                 val absolutePdfPath = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
-                val lastAccessMillis = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_DOWNLOAD_MILLIS, LocalStorageDataTypes.LONG, url) as Long
+                val lastAccessMillis = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS, LocalStorageDataTypes.LONG, url) as Long
                 val prefKeepDaysOfCachedPdf = AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long
 
                 // Debug only.
