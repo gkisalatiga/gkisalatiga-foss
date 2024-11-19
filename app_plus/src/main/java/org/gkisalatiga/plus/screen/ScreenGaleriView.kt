@@ -45,7 +45,6 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -72,7 +71,6 @@ import net.engawapg.lib.zoomable.zoomable
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.GallerySaver
 import org.gkisalatiga.plus.lib.StringFormatter
 

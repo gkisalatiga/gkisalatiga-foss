@@ -49,7 +49,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -87,7 +86,8 @@ import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.CoroutineFileDownload
+import org.gkisalatiga.plus.lib.FileDownloadEvent
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
@@ -95,8 +95,6 @@ import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.model.PdfPageUiEvent
 import org.gkisalatiga.plus.model.PdfViewModel
-import org.gkisalatiga.plus.lib.CoroutineFileDownload
-import org.gkisalatiga.plus.lib.FileDownloadEvent
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableBitmapMap
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiCurrentPage
@@ -178,7 +176,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                             Text(loadingDialogSubtitle)
                             Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                                 LinearProgressIndicator(
-                                    progress = { ScreenPDFViewerCompanion.txtLoadingPercentageAnimatable.value },
+                                    progress = { txtLoadingPercentageAnimatable.value },
                                     modifier = Modifier.fillMaxWidth().weight(5.0f),
                                 )
                                 Text("${ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue}%",
@@ -250,7 +248,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                             Spacer(Modifier.fillMaxWidth().height(5.dp))
 
                             if (GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO) {
-                                val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, ScreenPDFViewerCompanion.eBookUrl) as String
+                                val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, eBookUrl) as String
                                 Text(infoDialogContentNameDocLocalPath, fontWeight = FontWeight.Bold)
                                 Text(pdfLocalPath)
                                 Spacer(Modifier.fillMaxWidth().height(5.dp))
@@ -271,7 +269,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
             // Show the PDF page navigator dialog.
             val minimumPdfPage = 1
-            val maximumPdfPage = ScreenPDFViewerCompanion.mutablePdfUiTotalPageCount.intValue
+            val maximumPdfPage = mutablePdfUiTotalPageCount.intValue
             val pageStringLocalized = stringResource(R.string.screen_pdfviewer_nav_page_string)
             val navigatorDialogTitle = stringResource(R.string.screen_pdfviewer_nav_title)
             if (ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value) {
@@ -338,7 +336,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
             // The page navigator.
             Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
-                Button(onClick = { ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = (ScreenPDFViewerCompanion.mutablePdfUiCurrentPage.intValue + 1).toString(); ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = true }) {
+                Button(onClick = { ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = (mutablePdfUiCurrentPage.intValue + 1).toString(); ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = true }) {
                     Text((mutablePdfUiCurrentPage.intValue + 1).toString() + " / " + mutablePdfUiTotalPageCount.intValue.toString(), textAlign = TextAlign.Center)
                 }
                 VerticalDivider(Modifier.fillMaxHeight().padding(vertical = 2.dp).padding(horizontal = 10.dp))
@@ -495,7 +493,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                         .put("publisher-loc", ScreenPDFViewerCompanion.eBookPublisherLoc)
                         .put("year", ScreenPDFViewerCompanion.eBookYear)
                         .put("thumbnail", ScreenPDFViewerCompanion.eBookThumbnail)
-                        .put("download-url", ScreenPDFViewerCompanion.eBookUrl)
+                        .put("download-url", eBookUrl)
                         .put("source", ScreenPDFViewerCompanion.eBookSource)
                         .put("size", ScreenPDFViewerCompanion.eBookSize)
                         .toString(0)

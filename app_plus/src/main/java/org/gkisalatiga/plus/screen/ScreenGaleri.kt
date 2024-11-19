@@ -59,7 +59,6 @@ import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONArray
 import org.json.JSONObject

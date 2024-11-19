@@ -12,7 +12,6 @@ package org.gkisalatiga.plus.lib
 import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 
 class PersistentLogger(private val ctx: Context) {
     private val persistLogObj = ctx.getSharedPreferences(PersistentLoggerCompanion.NAME_SHARED_PREFERENCES, MODE_PRIVATE)

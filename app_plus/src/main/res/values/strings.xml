@@ -214,5 +214,5 @@
     <string name="screen_dev_lock_dev_menu_change">Kunci Menu Pengembang</string>
     <string name="screen_dev_welcome_developer">Selamat datang di menu pengembang!</string>
     <string name="screen_dev_title">Menu Pengembang</string>
-    <string name="screen_dev_desc">Anda tidak seharusnya berada di sini \uD83D\uDDFF</string>
+    <string name="screen_dev_desc">Anda tidak seharusnya berada di sini.</string>
 </resources>

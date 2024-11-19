@@ -9,9 +9,6 @@
 
 package org.gkisalatiga.plus.lib
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.graphics.Color
 
 class Colors {

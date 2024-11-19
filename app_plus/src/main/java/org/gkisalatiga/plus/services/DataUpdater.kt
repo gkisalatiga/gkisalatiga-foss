@@ -10,9 +10,9 @@
 package org.gkisalatiga.plus.services
 
 import android.content.Context
-import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
@@ -20,7 +20,6 @@ import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Downloader
-import org.gkisalatiga.plus.lib.InvalidConnectionTestStringException
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.json.JSONObject

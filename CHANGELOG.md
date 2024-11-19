@@ -1,6 +1,11 @@
 # GKI Salatiga App Changelog
 
-## Upcoming Release
+## v0.5.2-rc 2024.11.20 (30)
+
+:information_source: **INFO**
+
+- This release includes code cleaning and import optimization
+- This release does not generate any app build
 
 :star2: **NEW**
 

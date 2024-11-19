@@ -68,7 +68,6 @@ import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -101,8 +100,8 @@ import org.gkisalatiga.plus.fragment.FragmentHome
 import org.gkisalatiga.plus.fragment.FragmentInfo
 import org.gkisalatiga.plus.fragment.FragmentServices
 import org.gkisalatiga.plus.global.GlobalCompanion
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes

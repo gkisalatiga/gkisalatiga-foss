@@ -10,9 +10,9 @@
 package org.gkisalatiga.plus.lib
 
 import android.content.Context
-import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion

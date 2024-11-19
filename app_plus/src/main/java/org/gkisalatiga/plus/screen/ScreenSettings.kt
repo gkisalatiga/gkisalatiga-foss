@@ -60,24 +60,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.PrefItemData
-import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
-import org.gkisalatiga.plus.lib.LocalStorage
-import org.gkisalatiga.plus.lib.LocalStorageDataTypes
-import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.lib.PreferenceSettingItem
 
@@ -296,7 +286,6 @@ class ScreenSettings : ComponentActivity() {
                 }
             },
             actions = {
-                // TODO: Re-enable this code block when the settings help menu is available.
                 IconButton(onClick = { ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value = true }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Help,

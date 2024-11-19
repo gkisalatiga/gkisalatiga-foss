@@ -38,11 +38,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -68,7 +66,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.view.allViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
@@ -80,7 +77,6 @@ import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.PreferenceKeys

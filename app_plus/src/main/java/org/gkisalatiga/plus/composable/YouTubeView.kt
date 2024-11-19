@@ -155,7 +155,7 @@ class YouTubeView {
                     }
 
                     // Loads and plays the video.
-                    youTubePlayer.loadVideo(youtubeVideoID!!, YouTubeViewCompanion.currentSecond.floatValue)
+                    youTubePlayer.loadVideo(youtubeVideoID, YouTubeViewCompanion.currentSecond.floatValue)
                     youTubePlayer.addListener(YouTubeViewCompanion.tracker)
                 }
             }, iFramePlayerOptions

@@ -53,11 +53,11 @@ import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
-import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.screen.ScreenVideoListCompanion
 import org.json.JSONArray
 import org.json.JSONObject
@@ -93,7 +93,7 @@ class FragmentServices : ComponentActivity() {
             // Assumes both "pinnedPlaylistTitle" and "pinnedPlaylistContent" have the same list size.
             pinnedPlaylistDictionary.forEach { obj ->
                 // Displaying the relevant YouTube-based church services.
-                getServicesUI((obj as JSONObject).getString("title"), obj.getJSONArray("content"))
+                getServicesUI(obj.getString("title"), obj.getJSONArray("content"))
             }
 
             // Opens the non-pinned video playlist.

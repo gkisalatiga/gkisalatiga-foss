@@ -10,17 +10,12 @@
 package org.gkisalatiga.plus.services
 
 import android.content.Context
-import android.net.ConnectivityManager
-import org.gkisalatiga.plus.db.Main
-import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.InvalidConnectionTestStringException
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.PreferenceKeys
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketException
