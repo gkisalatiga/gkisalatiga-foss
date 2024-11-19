@@ -20,6 +20,7 @@ The application specifically use the `https://gkisalatiga.org/app/deeplink` URI 
 
 Currently, the list of registered deeplinks in this app is as follows:
 
+- **`https://gkisalatiga.org/app/deeplink/consumption`:** Dummy for preventing deeplink redirection upon screen orientation change
 - **`https://gkisalatiga.org/app/deeplink/contributors`:** Opens the list of contributors of GKI Salatiga+
 - **`https://gkisalatiga.org/app/deeplink/main_graphics`:** Opens the main activity of the app
 - **`https://gkisalatiga.org/app/deeplink/saren`:** Opens the "SaRen" video playlist menu

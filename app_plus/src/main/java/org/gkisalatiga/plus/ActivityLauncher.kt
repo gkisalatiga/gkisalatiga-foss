@@ -373,6 +373,7 @@ class ActivityLauncher : ComponentActivity() {
 
             if (uri.host == "gkisalatiga.org" || uri.host == "www.gkisalatiga.org") {
                 when (uri.encodedPath) {
+                    "/app/deeplink/consumption" -> Unit
                     "/app/deeplink/contributors" -> DeepLinkHandler.handleContributors()
                     "/app/deeplink/main_graphics" -> DeepLinkHandler.handleMainGraphics()
                     "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
@@ -382,7 +383,7 @@ class ActivityLauncher : ComponentActivity() {
 
                 // After deeplink handling, we must consume the intent data and replace it with other values.
                 // This solves issue: https://github.com/gkisalatiga/gkisalatiga-foss/issues/72.
-                if (consumeAfterHandling) intent.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/main_graphics"))
+                if (consumeAfterHandling) intent.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/consumption"))
             }
 
         }  // --- end if.
