@@ -47,6 +47,13 @@ class AppPreferences(private val ctx: Context) {
     )
 
     /**
+     * Returns the map of all key-value pair of this SharedPrefereces.
+     */
+    fun getAll() : Map<String, Any?> {
+        return prefObj.all
+    }
+
+    /**
      * Returns the preference object.
      * It must be set to private so that only this class may be allowed to alter
      * the app's internal preferences.

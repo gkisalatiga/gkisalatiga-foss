@@ -200,6 +200,9 @@
     <!-- Developer strings. -->
     <string name="not_connected_to_internet">Anda tidak terhubung ke internet!</string>
     <string name="screen_dev_quick_action_title">Aksi Cepat</string>
+    <string name="screen_dev_local_storage_title">LocalStorage</string>
+    <string name="screen_dev_app_preferences_title">AppPreferences</string>
+    <string name="screen_dev_debug_flags_title">Debugging Flags</string>
     <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>
     <string name="screen_dev_trigger_minutely_work_manager">Picu WorkManager Menitan</string>
     <string name="screen_dev_trigger_orientation_change">Ganti Orientasi Ponsel</string>

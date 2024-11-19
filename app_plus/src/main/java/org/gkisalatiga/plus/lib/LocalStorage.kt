@@ -22,6 +22,13 @@ class LocalStorage(private val ctx: Context) {
     private val DEFAULT_CUSTOM_KEY_STRING = ""
 
     /**
+     * Returns the map of all key-value pair of this SharedPrefereces.
+     */
+    fun getAll() : Map<String, Any?> {
+        return localStorageObj.all
+    }
+
+    /**
      * Returns the composite key if a given custom key is passed for a LocalStorageKeys.
      * @param localKey the base LocalStorageKeys to be considered.
      * @param customKey the custom key which will compound the base localKey.
