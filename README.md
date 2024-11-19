@@ -91,7 +91,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
 - [X] Add download progress display when downloading PDF files
 - [X] Add the automatic PDF remover back-end functionality
-- [ ] Add the settings helper/documentation
+- [X] Add the settings helper/documentation
 
 ## C. Privacy Policy
 

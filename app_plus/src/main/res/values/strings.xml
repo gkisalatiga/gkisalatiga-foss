@@ -180,19 +180,23 @@
 
     <!-- Applicable in ScreenPDFViewer. -->
     <string name="screen_settings_pref_youtube_ui">Antarmuka Pemutar Video</string>
+    <string name="screen_settings_pref_youtube_ui_documentation">Menentukan antarmuka pemutar YouTube pada saat Anda membuka video ibadah, SaRen, dsb. Tampilan antarmuka baru lebih minimalis dan elegan, sedangkan tampilan antarmuka lama lebih kaya fitur.</string>
     <string name="screen_settings_pref_youtube_ui_item_new">Tampilan Baru</string>
     <string name="screen_settings_pref_youtube_ui_item_old">Tampilan Lama (Bawaan YouTube Embed)</string>
     <string name="screen_settings_pref_pdf_quality">Kualitas Render Halaman PDF</string>
+    <string name="screen_settings_pref_pdf_quality_documentation">Mengatur seberapa jernih laman pada pembaca berkas PDF. Semakin tinggi kualitas, semakin jelas tulisan dan gambar pada berkas PDF terbaca, namun performa ponsel menjadi semakin tidak stabil.</string>
     <string name="screen_settings_pref_pdf_quality_item_best">Paling Jernih</string>
     <string name="screen_settings_pref_pdf_quality_item_high">Tinggi</string>
     <string name="screen_settings_pref_pdf_quality_item_medium">Sedang</string>
     <string name="screen_settings_pref_pdf_quality_item_low">Rendah</string>
     <string name="screen_settings_pref_pdf_remove">Hapus Otomatis Berkas PDF yang Tidak Dibaca Setelah</string>
+    <string name="screen_settings_pref_pdf_remove_documentation">Mengatur kapan berkas PDF terunduh yang sudah tidak pernah dibaca harus dihapus. Hal ini mencegah penumpukan berkas PDF yang menyebabkan penuhnya penyimpanan ponsel.</string>
     <string name="screen_settings_pref_pdf_remove_item_always">1 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_7_days">7 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_14_days">14 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_30_days">30 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_never">Jangan Pernah Hapus</string>
+    <string name="screen_settings_help_dialog_title">Bantuan Pengaturan</string>
 
     <!-- Applicable in most screens. -->
     <string name="pdf_already_downloaded_localized">Tersimpan</string>

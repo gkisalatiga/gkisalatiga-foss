@@ -19,12 +19,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,6 +37,8 @@ import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -41,7 +46,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,15 +60,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.PrefItemData
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
-import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.lib.PreferenceSettingItem
 
@@ -104,10 +117,69 @@ class ScreenSettings : ComponentActivity() {
 
         }
 
+        // Prepare the help dialog.
+        getHelp()
+
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
         BackHandler { AppNavigation.popBack(); saveAndWritePref(ctx) }
+    }
+
+    @Composable
+    private fun getHelp() {
+        if (ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value) {
+            // The dialog title.
+            val helpDialogTitle = stringResource(R.string.screen_settings_help_dialog_title)
+
+            // The documentation icon.
+            val helpDocIcons = listOf(
+                Icons.Default.VideoLibrary,
+                Icons.Default.PictureAsPdf,
+                Icons.Default.AutoDelete,
+            )
+
+            // The documentation title.
+            val helpDocTitles = listOf(
+                stringResource(R.string.screen_settings_pref_youtube_ui),
+                stringResource(R.string.screen_settings_pref_pdf_quality),
+                stringResource(R.string.screen_settings_pref_pdf_remove),
+            )
+
+            // The documentation actual strings.
+            val helpDocContents = listOf(
+                stringResource(R.string.screen_settings_pref_youtube_ui_documentation),
+                stringResource(R.string.screen_settings_pref_pdf_quality_documentation),
+                stringResource(R.string.screen_settings_pref_pdf_remove_documentation),
+            )
+
+            AlertDialog(
+                onDismissRequest = {
+                    ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value = false
+                },
+                title = { Text(helpDialogTitle) },
+                text = {
+                    Column (Modifier.fillMaxWidth().height(400.dp).verticalScroll(
+                        rememberScrollState()
+                    )) {
+                        helpDocIcons.forEachIndexed { i, _ ->
+                            Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
+                                Icon(helpDocIcons[i], contentDescription = "Help doc icon $i", modifier = Modifier.size(20.dp).weight(1.0f))
+                                Text(helpDocTitles[i], fontWeight = FontWeight.Bold, modifier = Modifier.weight(7.0f).padding(start = 5.dp))
+                            }
+                            Spacer(Modifier.fillMaxWidth().height(5.dp))
+                            Text(helpDocContents[i])
+                            Spacer(Modifier.fillMaxWidth().height(15.dp))
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value = false }) {
+                        Text("OK", color = Color.White)
+                    }
+                }
+            )
+        }
     }
 
     @Composable
@@ -225,12 +297,12 @@ class ScreenSettings : ComponentActivity() {
             },
             actions = {
                 // TODO: Re-enable this code block when the settings help menu is available.
-                /*IconButton(onClick = { /* TODO */ }) {
+                IconButton(onClick = { ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value = true }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Help,
                         contentDescription = "Open the help menu of the settings."
                     )
-                }*/
+                }
             },
             scrollBehavior = scrollBehavior
         )
@@ -344,5 +416,8 @@ class ScreenSettingsCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* Whether to display settings help. */
+        val mutableShowSettingsHelpDialog = mutableStateOf(false)
     }
 }
