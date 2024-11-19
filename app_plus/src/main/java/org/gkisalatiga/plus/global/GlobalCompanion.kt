@@ -13,12 +13,23 @@ package org.gkisalatiga.plus.global
 
 import android.annotation.SuppressLint
 import android.app.Application
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.mutableStateOf
-import org.json.JSONObject
-import java.util.concurrent.Executors
+import kotlin.annotation.AnnotationRetention.SOURCE
+import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
+import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.annotation.AnnotationTarget.CONSTRUCTOR
+import kotlin.annotation.AnnotationTarget.EXPRESSION
+import kotlin.annotation.AnnotationTarget.FIELD
+import kotlin.annotation.AnnotationTarget.FILE
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.LOCAL_VARIABLE
+import kotlin.annotation.AnnotationTarget.PROPERTY
+import kotlin.annotation.AnnotationTarget.PROPERTY_GETTER
+import kotlin.annotation.AnnotationTarget.PROPERTY_SETTER
+import kotlin.annotation.AnnotationTarget.TYPE
+import kotlin.annotation.AnnotationTarget.TYPEALIAS
+import kotlin.annotation.AnnotationTarget.TYPE_PARAMETER
+import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 
 class GlobalCompanion : Application() {
 
@@ -27,14 +38,14 @@ class GlobalCompanion : Application() {
     companion object {
 
         /* ------------------------------------------------------------------------------------ */
-        /* The following constants are used in the "ScreenAbout" composable. */
+        /* App-wide pre-defined values and URLs. */
         const val ABOUT_CONTACT_MAIL = "dev.gkisalatiga@gmail.com"
         const val APP_CHANGELOG_URL = "https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/CHANGELOG.md"
         const val APP_FULL_LICENSE = "https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/LICENSE"
         const val APP_SOURCE_CODE_URL = "https://github.com/gkisalatiga/gkisalatiga-foss"
 
         /* ------------------------------------------------------------------------------------ */
-        /* Initializing the debugging toggles. */
+        /* Debugging toggles that can be set before app builds. */
 
         // Whether to enable the easter egg feature of the app and display it to the user.
         const val DEBUG_ENABLE_EASTER_EGG = true

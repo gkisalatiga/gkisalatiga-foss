@@ -5,59 +5,59 @@ We thank all the people who have contributed gratefully to the development of GK
 
 May the heavenly Father bless all your lives!
 
-### Advisors
+### Project Supervisors
 
-- Budi Santoso
-- Tunggul L. A. Dewanto
+- Budi S.
+- Tunggul L. A. D.
 
 ### Lead Developer & Programmer
 
-- Samarthya Lykamanuella
+- Samarthya L.
 
 ### Co-Developers
 
-- Joaquim P. Agung
-- Natanael J. Susanto
+- Joaquim P. A.
+- N. Jeffrey S.
 
 ### Pre-Release Testers
 
-- Bambang Setiadhy
-- Bayu Octariyanto
-- Bobby Wilianto
-- Chrissandhy Botmir
-- Christian R. Sukan
-- Danang Purnomo
-- Daniel E. Yudhianto
-- Elza C. Tampubolon
-- Enrico P. Wijaya
-- Erio R. P. Fanggidae
-- Eriyani T. Lunga
-- Ester Juliawati
-- Evangs Mailoa
-- Evelina Purnama
-- Gita Hastuti
-- Gita K. Dewi
-- Hendra Aribowo
-- Jack E. Parsaoran
-- Johnson U. Radda
-- Joshua A. Gracia
-- Lusiana Nurhayati
-- Nathalia Arviandri
-- Oktoviana B. Mowata
-- Reny Handayani
-- Ristiani G. Mendrofa
-- Samuel A. B. Sulistyo
-- Sriono Sudarso
-- Stefanus F. S. Harefa
-- Swarni N. Malimou
-- Visi P. Pananginan
+- Bambang S.
+- Bayu O.
+- Bobby W.
+- Chrissandhy B.
+- Christian R. S.
+- Danang P.
+- Daniel E. Y.
+- Elza C. T.
+- Enrico P. W.
+- Erio R. P. F.
+- Eriyani T. L.
+- Ester J.
+- Evangs M.
+- Evelina P.
+- Gita H.
+- Gita K. D.
+- Hendra A.
+- Jack E. P.
+- Johnson U. R.
+- Joshua A. G.
+- Lusiana N.
+- Nathalia A.
+- O. Betseba M.
+- Reny H.
+- Ristiani G. M.
+- Samuel A. B. S.
+- Sriono S.
+- Stefanus F. S. H.
+- Swarni N. M.
+- Visi P. P.
 - Wurjayanti
-- Yosua C. H. Kuncoro
+- Yosua C. H. K.
 
 ### Pre-Release Supporters
 
-- Amatya K. Paramasatya
-- Desemy C. N. Ballo
-- Helen R. Manurung
-- Joe E. M. Sau
-- William Handoko
+- A. Keiko P.
+- Desemy C. N. B.
+- Helen R. M.
+- Joe E. M. S.
+- William H.

@@ -104,7 +104,6 @@ import org.gkisalatiga.plus.lib.GallerySaver
 
 import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
-import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
 import org.gkisalatiga.plus.fragment.FragmentHomeCompanion
 import org.gkisalatiga.plus.fragment.FragmentInfoCompanion
 import org.gkisalatiga.plus.fragment.FragmentServicesCompanion
@@ -176,6 +175,7 @@ import org.gkisalatiga.plus.services.InternalFileManager
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
 import org.gkisalatiga.plus.composable.GKISalatigaAppTheme
+import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -291,7 +291,6 @@ class ActivityLauncher : ComponentActivity() {
             initCarouselState()
 
             // Initializes the scroll states and lazy scroll states.
-            FragmentGalleryListCompanion.rememberedLazyGridState = rememberLazyGridState()
             FragmentHomeCompanion.rememberedScrollState = rememberScrollState()
             FragmentInfoCompanion.rememberedScrollState = rememberScrollState()
             FragmentServicesCompanion.rememberedScrollState = rememberScrollState()
@@ -302,6 +301,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenDevCompanion.rememberedScrollState = rememberScrollState()
             ScreenFormsCompanion.rememberedScrollState = rememberScrollState()
             ScreenGaleriCompanion.rememberedScrollState = rememberScrollState()
+            ScreenGaleriListCompanion.rememberedLazyGridState = rememberLazyGridState()
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
             ScreenLiturgiCompanion.rememberedScrollState = rememberScrollState()

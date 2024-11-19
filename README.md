@@ -74,10 +74,10 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Add "ruang berbagi" (promotional) feature
 - [ ] Add search content feature
 - [X] Fix "Carousel not displaying the latest data"
-- [ ] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
+- [X] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
 - [X] Fix "Notification appears at exact time of the day, but at both AM and PM"
 - [X] Migrate/upgrade main JSON data to v2.0
-- [ ] Migrate/upgrade gallery JSON data to v2.0
+- [X] Migrate/upgrade gallery JSON data to v2.0
 - [X] Migrate/upgrade static JSON data to v2.0
 - [X] Remove ambiguous "upload date" of videos in "Content" tab
 
@@ -88,7 +88,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Rename `GlobalSchema` class to something more appropriate (e.g., `GlobalState` or `GlobalParameter`)
 - [X] Introduce "putArguments" implementation to `ScreenInternalHTMLCompanion` `ScreenYKBListCompanion`
 - [ ] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
-- [ ] Add download progress display when downloading PDF files
+- [X] Add download progress display when downloading PDF files
 - [ ] Add the automatic PDF remover back-end functionality
 - [ ] Add the settings helper/documentation
 

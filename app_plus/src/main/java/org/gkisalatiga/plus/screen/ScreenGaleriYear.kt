@@ -62,7 +62,7 @@ import org.json.JSONObject
 class ScreenGaleriYear : ComponentActivity() {
 
     @Composable
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
         Scaffold (
             topBar = { this.getTopBar() }
@@ -81,6 +81,8 @@ class ScreenGaleriYear : ComponentActivity() {
     }
 
     @Composable
+    @Suppress("RemoveCurlyBracesFromTemplate")
+    @SuppressLint("ComposableNaming")
     private fun getMainContent() {
         val ctx = LocalContext.current
 
@@ -88,7 +90,7 @@ class ScreenGaleriYear : ComponentActivity() {
         val galleryNode = GalleryCompanion.jsonRoot!!
 
         // Enlist the list of albums in the currently selected year.
-        val galleryYearList = galleryNode.getJSONArray(ScreenGaleriCompanion.targetGalleryYear)
+        val galleryYearList = ScreenGaleriCompanion.targetGalleryAlbumData
 
         // DEBUG. Always comment out.
         Logger.logTest({}, "Current object (1): ${galleryYearList}")
@@ -165,9 +167,11 @@ class ScreenGaleriYear : ComponentActivity() {
 
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
+    @Suppress("SpellCheckingInspection", "RedundantSuppression")
+    @SuppressLint("ComposableNaming")
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        val topBarTitle = "Kilas Balik Tahun " + ScreenGaleriCompanion.targetGalleryYear
+        val topBarTitle = ScreenGaleriCompanion.targetGalleryTitle
         CenterAlignedTopAppBar(
             colors = TopAppBarColorScheme.default(),
             title = {

@@ -71,7 +71,6 @@ import net.engawapg.lib.zoomable.toggleScale
 import net.engawapg.lib.zoomable.zoomable
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
-import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.GallerySaver
@@ -152,7 +151,7 @@ class ScreenGaleriView : ComponentActivity() {
             if (!ScreenGaleriViewCompanion.showScreenGaleriViewDownloadProgress.value) {
                 AppNavigation.popBack()
                 scope.launch {
-                    FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
+                    ScreenGaleriListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
                 }
             }
         }
@@ -282,7 +281,7 @@ class ScreenGaleriView : ComponentActivity() {
                     IconButton(onClick = {
                         AppNavigation.popBack()
                         scope.launch {
-                            FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
+                            ScreenGaleriListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
                         }
                     }) {
                         Icon(

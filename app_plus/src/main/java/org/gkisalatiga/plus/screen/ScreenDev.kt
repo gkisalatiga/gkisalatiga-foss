@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
@@ -199,6 +200,7 @@ class ScreenDev : ComponentActivity() {
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
                     (ctx as Activity).requestedOrientation = abs(ctx.requestedOrientation - 1)
+                    GlobalCompanion.isPortraitMode.value = ctx.requestedOrientation == 1
                 }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
