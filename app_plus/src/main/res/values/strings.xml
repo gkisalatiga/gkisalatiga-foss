@@ -178,7 +178,17 @@
     <string name="screen_pdfviewer_nav_title">Navigasi Halaman</string>
     <string name="screen_pdfviewer_nav_page_string">Halaman</string>
 
-    <!-- Applicable in ScreenPDFViewer. -->
+    <!-- Applicable in ScreenSearch. -->
+    <string name="screen_search_filter_and_sort_button">Filter &amp; Urutan</string>
+    <string name="screen_search_history_button">Riwayat</string>
+    <string name="screen_search_field_label">Cari di GKI Salatiga+</string>
+    <string name="screen_search_field_placeholder">Masukkan kata kunci pencarian</string>
+    <string name="screen_search_filter_dialog_title">Filter dan Urutan</string>
+    <string name="screen_search_history_dialog_title">Riwayat Pencarian</string>
+    <string name="screen_search_filter_dialog_apply_button">Terapkan</string>
+    <string name="screen_search_history_dialog_close_button">Tutup</string>
+
+    <!-- Applicable in ScreenSettings. -->
     <string name="screen_settings_pref_youtube_ui">Antarmuka Pemutar Video</string>
     <string name="screen_settings_pref_youtube_ui_documentation">Menentukan antarmuka pemutar YouTube pada saat Anda membuka video ibadah, SaRen, dsb. Tampilan antarmuka baru lebih minimalis dan elegan, sedangkan tampilan antarmuka lama lebih kaya fitur.</string>
     <string name="screen_settings_pref_youtube_ui_item_new">Tampilan Baru</string>

@@ -81,6 +81,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -479,7 +480,7 @@ class ActivityLauncher : ComponentActivity() {
         val currentActivityData = ActivityData(
             ctx = this@ActivityLauncher,
             scope = rememberCoroutineScope(),
-            lifecycleOwner = this@ActivityLauncher,
+            lifecycleOwner = LocalLifecycleOwner.current,
             lifecycleScope = this@ActivityLauncher.lifecycleScope,
         )
 
@@ -513,7 +514,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer().getComposable() }
             composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }
             composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat().getComposable()}
-            composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch().getComposable()}
+            composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(currentActivityData).getComposable()}
             composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings().getComposable()}
             composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList().getComposable() }
             composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList().getComposable() }

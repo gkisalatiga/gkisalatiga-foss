@@ -46,6 +46,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Church
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material.icons.outlined.Church
@@ -496,7 +497,7 @@ class ScreenMain : ComponentActivity() {
             title = {
                 Row (horizontalArrangement = Arrangement.Start) {
                     Image(painterResource(R.drawable.app_typography), stringResource(R.string.app_name_alias),
-                        modifier = Modifier.aspectRatio(5.68817f).weight(2.0f),
+                        modifier = Modifier.aspectRatio(5.68817f).weight(2.5f),
                         contentScale = ContentScale.Crop,
                         colorFilter = ColorFilter.tint(ScreenMainCompanion.topBarTitleContentColor)
                     )
@@ -505,18 +506,14 @@ class ScreenMain : ComponentActivity() {
             },
             navigationIcon = {},
             actions = {
-                /* TODO: Re-enable the search button once the functionality is ready.
-                IconButton(onClick = {
-                    GlobalCompanion.pushScreen.value = NavigationRoutes.SCREEN_SEARCH
-                    GlobalCompanion.popBackScreen.value = NavigationRoutes.SCREEN_MAIN
-                }) {
+                // TODO: Re-enable the search button once the functionality is ready.
+                IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SEARCH) }) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = stringResource(R.string.screensearch_title),
                         tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
-                */
                 IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SETTINGS) }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
