@@ -13,30 +13,24 @@ package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -51,17 +45,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -73,40 +63,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.LinkInteractionListener
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.SearchItemData
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.model.PdfViewModel
 import org.gkisalatiga.plus.model.SearchDataSortType
 import org.gkisalatiga.plus.model.SearchDataType
 import org.gkisalatiga.plus.model.SearchUiEvent
 import org.gkisalatiga.plus.model.SearchViewModel
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiCurrentPage
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiTotalPageCount
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.navigatorLazyListState
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.rememberedViewerPagerState
-import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.txtLoadingPercentageAnimatable
 
 class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
@@ -115,6 +89,38 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
     // The search text.
     private val text = mutableStateOf("")
+
+    // The filter checkbox state.
+    private val listFilterEnum = listOf(
+        SearchDataType.PDF_WARTA_JEMAAT,
+        SearchDataType.PDF_TATA_IBADAH,
+        SearchDataType.RENUNGAN_YKB,
+        SearchDataType.YOUTUBE_VIDEO,
+    )
+
+    // The filter checkbox label.
+    private val listFilterLabel = listOf(
+        "Warta Jemaat [EXTRACT]",
+        "Tata Ibadah [EXTRACT]",
+        "Renungan YKB [EXTRACT]",
+        "Siaran YouTube [EXTRACT]",
+    )
+
+    // The sorter radio button state.
+    private val listSortEnum = listOf(
+        SearchDataSortType.SORT_BY_NAME_ASCENDING,
+        SearchDataSortType.SORT_BY_NAME_DESCENDING,
+        SearchDataSortType.SORT_BY_DATE_ASCENDING,
+        SearchDataSortType.SORT_BY_DATE_DESCENDING,
+    )
+
+    // The sorter radio button label.
+    private val listSortLabel = listOf(
+        "Nama (A-Z) [EXTRACT]",
+        "Nama (Z-A) [EXTRACT]",
+        "Tanggal (dari paling lama) [EXTRACT]",
+        "Tanggal (dari paling baru) [EXTRACT]",
+    )
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -160,37 +166,6 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun getFilterDialog() {
-        // The filter checkbox state.
-        val listFilterEnum = listOf(
-            SearchDataType.PDF_WARTA_JEMAAT,
-            SearchDataType.PDF_TATA_IBADAH,
-            SearchDataType.RENUNGAN_YKB,
-            SearchDataType.YOUTUBE_VIDEO,
-        )
-
-        // The filter checkbox label.
-        val listFilterLabel = listOf(
-            "Warta Jemaat [EXTRACT]",
-            "Tata Ibadah [EXTRACT]",
-            "Renungan YKB [EXTRACT]",
-            "Siaran YouTube [EXTRACT]",
-        )
-
-        // The sorter radio button state.
-        val listSortEnum = listOf(
-            SearchDataSortType.SORT_BY_NAME_ASCENDING,
-            SearchDataSortType.SORT_BY_NAME_DESCENDING,
-            SearchDataSortType.SORT_BY_DATE_ASCENDING,
-            SearchDataSortType.SORT_BY_DATE_DESCENDING,
-        )
-
-        // The sorter radio button label.
-        val listSortLabel = listOf(
-            "Nama (A-Z) [EXTRACT]",
-            "Nama (Z-A) [EXTRACT]",
-            "Tanggal (dari paling lama) [EXTRACT]",
-            "Tanggal (dari paling baru) [EXTRACT]",
-        )
 
         // Handle events.
         fun filterApplyPressed() {
@@ -229,7 +204,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     )
                                 }
                                 Spacer(Modifier.size(10.dp))
-                                ClickableText(AnnotatedString(listFilterLabel[idx]), onClick = { changeState() })
+                                ClickableText(AnnotatedString(listFilterLabel[idx]), onClick = { changeState() }, modifier = Modifier.fillMaxWidth())
                             }
                         }
 
@@ -250,7 +225,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     )
                                 }
                                 Spacer(Modifier.size(10.dp))
-                                ClickableText(AnnotatedString(listSortLabel[idx]), onClick = { changeState() })
+                                ClickableText(AnnotatedString(listSortLabel[idx]), onClick = { changeState() }, modifier = Modifier.fillMaxWidth())
                             }
                         }
                     }
@@ -313,64 +288,68 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
         // Focus requester for the search TextField.
         val focusRequester = remember { FocusRequester() }
+        val requestSearchFocus: () -> Unit = { focusRequester.requestFocus(); current.keyboardController!!.show() }
 
-        /* This allows for the use of a sticky header. */
-        LazyColumn (Modifier.padding(20.dp)) {
-            stickyHeader {
-                /* The search bar. */
-                OutlinedTextField(
-                    value = text.value,
-                    trailingIcon = {
-                        if (text.value.isBlank()) {
-                            Surface(shape = CircleShape, onClick = { focusRequester.requestFocus(); current.keyboardController!!.show() }) { Icon(Icons.Default.Search, "Search Icon") }
-                        } else {
-                            Surface(shape = CircleShape, onClick = { text.value = "" }) { Icon(Icons.Default.Close, "Close Icon") }
-                        }
-                    },
-                    onValueChange = { text.value = it; handleSearchQuery() },
-                    label = { Text(searchFieldLabel) },
-                    placeholder = { Text(searchFieldPlaceholder) },
-                    modifier = Modifier.focusRequester(focusRequester).fillMaxWidth().padding(bottom = 10.dp),
-                    enabled = true,
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = { handleSearchQuery(); current.keyboardController!!.hide() })
-                )
-
-                /* Filter & history buttons. */
-                Row {
-                    Button(onClick = { ScreenSearchCompanion.mutableFilterDialogVisibilityState.value = true }) {
-                        Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                            Icon(Icons.AutoMirrored.Default.Sort, "Search results sorter")
-                            Spacer(Modifier.size(5.dp))
-                            Text(filterAndSortButtonText, textAlign = TextAlign.Center)
-                        }
+        Column (Modifier.padding(top = 20.dp).padding(horizontal = 20.dp)) {
+            /* The search bar. */
+            OutlinedTextField(
+                value = text.value,
+                trailingIcon = {
+                    if (text.value.isBlank()) {
+                        Surface(shape = CircleShape, onClick = { requestSearchFocus() }) { Icon(Icons.Default.Search, "Search Icon") }
+                    } else {
+                        Surface(shape = CircleShape, onClick = { requestSearchFocus(); text.value = ""; handleSearchQuery() }) { Icon(Icons.Default.Close, "Close Icon") }
                     }
-                    Spacer(Modifier.size(10.dp))
-                    Button(onClick = { ScreenSearchCompanion.mutableHistoryDialogVisibilityState.value = true }) {
-                        Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                            Icon(Icons.Default.History, "Search history view")
-                            Spacer(Modifier.size(5.dp))
-                            Text(searchHistoryButtonText, textAlign = TextAlign.Center)
-                        }
+                },
+                onValueChange = { text.value = it; handleSearchQuery() },
+                label = { Text(searchFieldLabel) },
+                placeholder = { Text(searchFieldPlaceholder) },
+                modifier = Modifier.focusRequester(focusRequester).fillMaxWidth().padding(bottom = 10.dp),
+                enabled = true,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { handleSearchQuery(); current.keyboardController!!.hide() })
+            )
+
+            /* Filter & history buttons. */
+            Row {
+                Button(onClick = { ScreenSearchCompanion.mutableFilterDialogVisibilityState.value = true }) {
+                    Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                        Icon(Icons.AutoMirrored.Default.Sort, "Search results sorter")
+                        Spacer(Modifier.size(5.dp))
+                        Text(filterAndSortButtonText, textAlign = TextAlign.Center)
                     }
                 }
-
-                /* Add a visually dividing divider :D */
-                HorizontalDivider(Modifier.padding(vertical = 20.dp))
-
-                // Focus on the search TextField at first face.
-                LaunchedEffect(Unit) { focusRequester.requestFocus(); current.keyboardController!!.show() }
+                Spacer(Modifier.size(10.dp))
+                Button(onClick = { ScreenSearchCompanion.mutableHistoryDialogVisibilityState.value = true }) {
+                    Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                        Icon(Icons.Default.History, "Search history view")
+                        Spacer(Modifier.size(5.dp))
+                        Text(searchHistoryButtonText, textAlign = TextAlign.Center)
+                    }
+                }
             }
 
-            item {
-                Text(ScreenSearchCompanion.mutableSearchResultMessage.value)
-            }
+            Text(ScreenSearchCompanion.mutableSearchResultMessage.value)
 
-            item {
-                if (ScreenSearchCompanion.mutableSearchResults.value != null) {
-                    ScreenSearchCompanion.mutableSearchResults.value!!.forEach {
-                        Text(it.content.getString("title"))
+            /* Add a visually dividing divider :D */
+            HorizontalDivider(Modifier.padding(vertical = 10.dp))
+
+            // Focus on the search TextField at first face.
+            LaunchedEffect(Unit) { requestSearchFocus() }
+        }
+
+        /* Displaying the search result items. */
+        LazyColumn {
+            listFilterEnum.forEachIndexed { idx, enum ->
+                val searchResultNodes: MutableList<SearchItemData> = mutableListOf<SearchItemData>().let { list -> ScreenSearchCompanion.mutableSearchResults.value?.forEach { if (it.dataType == enum) list.add(it) }; list }
+                if (searchResultNodes.isNotEmpty()) {
+                    stickyHeader { Text(listFilterLabel[idx].uppercase(), fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth()) }
+                    item {
+                        searchResultNodes.forEach {
+                            /* Filtering search item types. */
+                            Text(it.content.getString("title"), modifier = Modifier.fillMaxWidth())
+                        }
                     }
                 }
             }
@@ -407,17 +386,19 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     /**
      * Handles the searching and observes for any state change.
      */
-    private fun handleSearchQuery(searchTerm: String = text.value, searchFilter: List<SearchDataType> = ScreenSearchCompanion.mutableActiveFilterCriteria.value!!) {
+    private fun handleSearchQuery(searchTerm: String = text.value, searchFilter: List<SearchDataType> = ScreenSearchCompanion.mutableActiveFilterCriteria.value!!, searchSort: SearchDataSortType = ScreenSearchCompanion.mutableActiveSorterCriteria.value!!) {
         ScreenSearchCompanion.mutableSearchResults.value = null
-        searchViewModel.querySearch(searchTerm, searchFilter).observe(current.lifecycleOwner) {
+        searchViewModel.querySearch(searchTerm, searchFilter, searchSort).observe(current.lifecycleOwner) {
             when (it) {
                 is SearchUiEvent.SearchLoading -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
                 is SearchUiEvent.SearchError -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
+                is SearchUiEvent.SearchNotFound -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
+                is SearchUiEvent.SearchFilterEmpty -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
+                is SearchUiEvent.SearchQueryEmpty -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
                 is SearchUiEvent.SearchFinished -> {
                     ScreenSearchCompanion.mutableSearchResults.value = it.searchResult
                     ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
                 }
-                is SearchUiEvent.SearchNotFound -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
             }
         }
     }

@@ -15,11 +15,17 @@ import org.json.JSONObject
  * This data class is returned by the search view model
  * so that the matching contents can be displayed in [ScreenSearch].
  * @param matchingSearchQuery the search query which summons this search item data.
+ * @param title the title of this search item (for alphabetical sorting).
+ * @param date the date this search item was created (for sorting by date).
  * @param dataType the type of this search item corresponding to a given JSON data node.
  * @param content the content extracted from the JSON data.
+ * @param tag additional tag that needs to be specified to classify a given search item.
  */
 data class SearchItemData (
     val matchingSearchQuery: String,
+    val title: String,
+    val date: String,
     val dataType: SearchDataType,
     val content: JSONObject,
+    val tag: String = String(),
 )
