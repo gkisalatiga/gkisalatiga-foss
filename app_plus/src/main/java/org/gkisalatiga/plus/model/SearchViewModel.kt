@@ -93,6 +93,13 @@ enum class SearchDataType {
     YOUTUBE_VIDEO,
 }
 
+enum class SearchDataSortType {
+    SORT_BY_NAME_ASCENDING,
+    SORT_BY_NAME_DESCENDING,
+    SORT_BY_DATE_ASCENDING,
+    SORT_BY_DATE_DESCENDING,
+}
+
 sealed class SearchUiEvent {
     data class SearchLoading(val message: String, val eventIdentifier: SearchUiEventIdentifier = SearchUiEventIdentifier.EVENT_SEARCH_RESULT_LOADING) : SearchUiEvent()
     data class SearchFinished(val message: String, val queriedSearchItemCount: Int, val searchResult: List<SearchItemData>, val eventIdentifier: SearchUiEventIdentifier = SearchUiEventIdentifier.EVENT_SEARCH_FINISHED) : SearchUiEvent()

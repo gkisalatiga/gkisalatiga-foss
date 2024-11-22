@@ -7,6 +7,7 @@
 package org.gkisalatiga.plus.data
 
 import android.content.Context
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
@@ -30,4 +31,5 @@ data class ActivityData (
     val scope: CoroutineScope,
     val lifecycleOwner: LifecycleOwner,
     val lifecycleScope: LifecycleCoroutineScope,
+    val keyboardController: SoftwareKeyboardController?,
 )

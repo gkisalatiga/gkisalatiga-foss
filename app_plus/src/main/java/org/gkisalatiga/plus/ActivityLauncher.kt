@@ -72,6 +72,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -482,6 +483,7 @@ class ActivityLauncher : ComponentActivity() {
             scope = rememberCoroutineScope(),
             lifecycleOwner = LocalLifecycleOwner.current,
             lifecycleScope = this@ActivityLauncher.lifecycleScope,
+            keyboardController = LocalSoftwareKeyboardController.current,
         )
 
         // We use nav. host because it has built-in support for transition effect/animation.

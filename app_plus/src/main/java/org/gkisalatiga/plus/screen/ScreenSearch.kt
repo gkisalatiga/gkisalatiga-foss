@@ -18,6 +18,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,11 +31,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
@@ -46,27 +52,45 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.LinkInteractionListener
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
@@ -74,6 +98,7 @@ import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.SearchItemData
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.model.PdfViewModel
+import org.gkisalatiga.plus.model.SearchDataSortType
 import org.gkisalatiga.plus.model.SearchDataType
 import org.gkisalatiga.plus.model.SearchUiEvent
 import org.gkisalatiga.plus.model.SearchViewModel
@@ -87,6 +112,9 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
     // The view model for querying the search terms.
     private val searchViewModel = SearchViewModel(current.ctx)
+
+    // The search text.
+    private val text = mutableStateOf("")
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -106,30 +134,123 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
         }
 
-        // Show the filter/sorter dialog.
-        fun filterApplyPressed() {
-            ScreenSearchCompanion.mutableFilterDialogVisibilityState.value = false
+        if (ScreenSearchCompanion.mutableActiveFilterCriteria.value == null) {
+            ScreenSearchCompanion.mutableActiveFilterCriteria.value = mutableListOf(
+                SearchDataType.PDF_TATA_IBADAH,
+                SearchDataType.PDF_WARTA_JEMAAT,
+                SearchDataType.RENUNGAN_YKB,
+                SearchDataType.YOUTUBE_VIDEO,
+            )
         }
+
+        if (ScreenSearchCompanion.mutableActiveSorterCriteria.value == null)
+            ScreenSearchCompanion.mutableActiveSorterCriteria.value = SearchDataSortType.SORT_BY_DATE_ASCENDING
+
+        // Prepare the dialogs.
+        getFilterDialog()
+        getHistoryDialog()
+
+        // Ensure that when we are at the first screen upon clicking "back",
+        // the app is exited instead of continuing to navigate back to the previous screens.
+        // SOURCE: https://stackoverflow.com/a/69151539
+        BackHandler { current.keyboardController!!.hide(); AppNavigation.popBack() }
+
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun getFilterDialog() {
+        // The filter checkbox state.
+        val listFilterEnum = listOf(
+            SearchDataType.PDF_WARTA_JEMAAT,
+            SearchDataType.PDF_TATA_IBADAH,
+            SearchDataType.RENUNGAN_YKB,
+            SearchDataType.YOUTUBE_VIDEO,
+        )
+
+        // The filter checkbox label.
+        val listFilterLabel = listOf(
+            "Warta Jemaat [EXTRACT]",
+            "Tata Ibadah [EXTRACT]",
+            "Renungan YKB [EXTRACT]",
+            "Siaran YouTube [EXTRACT]",
+        )
+
+        // The sorter radio button state.
+        val listSortEnum = listOf(
+            SearchDataSortType.SORT_BY_NAME_ASCENDING,
+            SearchDataSortType.SORT_BY_NAME_DESCENDING,
+            SearchDataSortType.SORT_BY_DATE_ASCENDING,
+            SearchDataSortType.SORT_BY_DATE_DESCENDING,
+        )
+
+        // The sorter radio button label.
+        val listSortLabel = listOf(
+            "Nama (A-Z) [EXTRACT]",
+            "Nama (Z-A) [EXTRACT]",
+            "Tanggal (dari paling lama) [EXTRACT]",
+            "Tanggal (dari paling baru) [EXTRACT]",
+        )
+
+        // Handle events.
+        fun filterApplyPressed() {
+            ScreenSearchCompanion.mutableFilterDialogVisibilityState.value = false; handleSearchQuery()
+        }
+
+        // Actually display the filter dialog.
         val filterDialogTitle = stringResource(R.string.screen_search_filter_dialog_title)
-        val filterDialogSubtitle = stringResource(R.string.screen_pdfviewer_loading_dialog_title)
         val filterDialogButton = stringResource(R.string.screen_search_filter_dialog_apply_button)
         if (ScreenSearchCompanion.mutableFilterDialogVisibilityState.value) {
             AlertDialog(
+                modifier = Modifier.height(500.dp),
                 onDismissRequest = { filterApplyPressed() },
                 title = { Text(filterDialogTitle) },
                 text = {
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                            // The filter and sorter.
-                            Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
-                                Button(onClick = {  }) {
-                                    Row {
-                                        Icon(Icons.AutoMirrored.Default.Sort, "Search results sorter")
-                                        Text("Urutkan [EXTRACT]")
-                                    }
+                    Column (horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
+                        /* Filter. */
+                        Text("Cari dalam menu [EXTRACT]", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 2.dp))
+                        listFilterEnum.forEachIndexed { idx, filterType ->
+
+                            val isChecked = ScreenSearchCompanion.mutableActiveFilterCriteria.value!!.contains(filterType)
+                            fun changeState() {
+                                /** We don't use MutableList inside MutableState here because changing the list's content does not trigger recomposition. */
+                                if (isChecked)
+                                    ScreenSearchCompanion.mutableActiveFilterCriteria.value = ScreenSearchCompanion.mutableActiveFilterCriteria.value!! - filterType
+                                else
+                                    ScreenSearchCompanion.mutableActiveFilterCriteria.value = ScreenSearchCompanion.mutableActiveFilterCriteria.value!! + filterType
+                            }
+
+                            Row (Modifier.padding(horizontal = 10.dp), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
+                                CompositionLocalProvider(LocalMinimumInteractiveComponentSize.provides(Dp.Unspecified)) {
+                                    Checkbox(
+                                        modifier = Modifier.padding(5.dp),
+                                        checked = isChecked,
+                                        onCheckedChange = { changeState() }
+                                    )
                                 }
-                                Checkbox(checked = true, onCheckedChange = null)
-                                Text("Juga cari isi konten [EXTRACT]")
+                                Spacer(Modifier.size(10.dp))
+                                ClickableText(AnnotatedString(listFilterLabel[idx]), onClick = { changeState() })
+                            }
+                        }
+
+                        Spacer(Modifier.size(10.dp))
+
+                        /* Sorter. */
+                        Text("Urutkan berdasarkan [EXTRACT]", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 2.dp))
+                        listSortEnum.forEachIndexed { idx, sortType ->
+
+                            val changeState: () -> Unit = { ScreenSearchCompanion.mutableActiveSorterCriteria.value = sortType }
+
+                            Row (Modifier.padding(horizontal = 10.dp), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
+                                CompositionLocalProvider(LocalMinimumInteractiveComponentSize.provides(Dp.Unspecified)) {
+                                    RadioButton(
+                                        modifier = Modifier.padding(5.dp),
+                                        selected = ScreenSearchCompanion.mutableActiveSorterCriteria.value == sortType,
+                                        onClick = { changeState() }
+                                    )
+                                }
+                                Spacer(Modifier.size(10.dp))
+                                ClickableText(AnnotatedString(listSortLabel[idx]), onClick = { changeState() })
                             }
                         }
                     }
@@ -141,7 +262,10 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 }
             )
         }
+    }
 
+    @Composable
+    private fun getHistoryDialog() {
         // Show the history dialog.
         fun historyApplyPressed(selectedSearchTerm: String = String()) {
             ScreenSearchCompanion.mutableHistoryDialogVisibilityState.value = false
@@ -176,12 +300,6 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 }
             )
         }
-
-        // Ensure that when we are at the first screen upon clicking "back",
-        // the app is exited instead of continuing to navigate back to the previous screens.
-        // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler { AppNavigation.popBack() }
-
     }
 
     @Composable
@@ -193,29 +311,33 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         val searchFieldLabel = stringResource(R.string.screen_search_field_label)
         val searchFieldPlaceholder = stringResource(R.string.screen_search_field_placeholder)
 
+        // Focus requester for the search TextField.
+        val focusRequester = remember { FocusRequester() }
+
         /* This allows for the use of a sticky header. */
-        val text = remember { mutableStateOf("") }
         LazyColumn (Modifier.padding(20.dp)) {
             stickyHeader {
+                /* The search bar. */
                 OutlinedTextField(
                     value = text.value,
-                    trailingIcon = { Icon(Icons.Default.Search, "Search Icon") },
-                    onValueChange = {
-                        if (it == "\n") {
-                            text.value = "Gag!"
-                        } else text.value = it
+                    trailingIcon = {
+                        if (text.value.isBlank()) {
+                            Surface(shape = CircleShape, onClick = { focusRequester.requestFocus(); current.keyboardController!!.show() }) { Icon(Icons.Default.Search, "Search Icon") }
+                        } else {
+                            Surface(shape = CircleShape, onClick = { text.value = "" }) { Icon(Icons.Default.Close, "Close Icon") }
+                        }
                     },
+                    onValueChange = { text.value = it; handleSearchQuery() },
                     label = { Text(searchFieldLabel) },
                     placeholder = { Text(searchFieldPlaceholder) },
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                    modifier = Modifier.focusRequester(focusRequester).fillMaxWidth().padding(bottom = 10.dp),
                     enabled = true,
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = { handleSearchQuery(text.value, listOf(SearchDataType.PDF_TATA_IBADAH)) })
+                    keyboardActions = KeyboardActions(onSearch = { handleSearchQuery(); current.keyboardController!!.hide() })
                 )
-            }
 
-            item {
+                /* Filter & history buttons. */
                 Row {
                     Button(onClick = { ScreenSearchCompanion.mutableFilterDialogVisibilityState.value = true }) {
                         Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
@@ -233,11 +355,12 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                         }
                     }
                 }
-            }
 
-            item {
                 /* Add a visually dividing divider :D */
                 HorizontalDivider(Modifier.padding(vertical = 20.dp))
+
+                // Focus on the search TextField at first face.
+                LaunchedEffect(Unit) { focusRequester.requestFocus(); current.keyboardController!!.show() }
             }
 
             item {
@@ -269,7 +392,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { AppNavigation.popBack() }) {
+                IconButton(onClick = { current.keyboardController!!.hide(); AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""
@@ -284,13 +407,16 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     /**
      * Handles the searching and observes for any state change.
      */
-    private fun handleSearchQuery(searchTerm: String, searchFilter: List<SearchDataType>) {
+    private fun handleSearchQuery(searchTerm: String = text.value, searchFilter: List<SearchDataType> = ScreenSearchCompanion.mutableActiveFilterCriteria.value!!) {
         ScreenSearchCompanion.mutableSearchResults.value = null
         searchViewModel.querySearch(searchTerm, searchFilter).observe(current.lifecycleOwner) {
             when (it) {
                 is SearchUiEvent.SearchLoading -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
                 is SearchUiEvent.SearchError -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
-                is SearchUiEvent.SearchFinished -> ScreenSearchCompanion.mutableSearchResults.value = it.searchResult
+                is SearchUiEvent.SearchFinished -> {
+                    ScreenSearchCompanion.mutableSearchResults.value = it.searchResult
+                    ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
+                }
                 is SearchUiEvent.SearchNotFound -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
             }
         }
@@ -314,5 +440,9 @@ class ScreenSearchCompanion : Application() {
         /* The filter/sorter and history dialog. */
         val mutableFilterDialogVisibilityState = mutableStateOf(false)
         val mutableHistoryDialogVisibilityState = mutableStateOf(false)
+
+        /* Stores active filter and sort criteria. */
+        val mutableActiveFilterCriteria: MutableState<List<SearchDataType>?> = mutableStateOf(null)
+        val mutableActiveSorterCriteria: MutableState<SearchDataSortType?> = mutableStateOf(null)
     }
 }
