@@ -86,13 +86,14 @@ class SearchViewModel(ctx: Context) : CoroutineViewModel() {
 
                         // Opening the content of each YKB category.
                         val contentRoot = it.getJSONArray("posts")
-                        val contentRootTag = it.getString("title")
+                        val contentRootTag1 = it.getString("title")
+                        val contentRootTag2 = it.getString("banner")
                         val iterableContentRoot = mutableListOf<JSONObject>().let { root -> for (i in 0 until contentRoot.length()) root.add(i, contentRoot[i] as JSONObject); root }
 
                         // Iterating through every YKB post and finding matches.
                         iterableContentRoot.forEach { node ->
                             if (node != JSONObject() && node.getString("title").lowercase().contains(sanitizedSearchTerm))
-                                SearchItemData(sanitizedSearchTerm, node.getString("title"), node.getString("date"), SearchDataType.RENUNGAN_YKB, node, tag = contentRootTag).let { obj -> allSearchResults.add(obj) }
+                                SearchItemData(sanitizedSearchTerm, node.getString("title"), node.getString("date"), SearchDataType.RENUNGAN_YKB, node, tag1 = contentRootTag1, tag2 = contentRootTag2).let { obj -> allSearchResults.add(obj) }
                         }
                     }
                 }
@@ -115,7 +116,7 @@ class SearchViewModel(ctx: Context) : CoroutineViewModel() {
                         // Iterating through every YKB post and finding matches.
                         iterableContentRoot.forEach { node ->
                             if (node != JSONObject() && node.getString("title").lowercase().contains(sanitizedSearchTerm))
-                                SearchItemData(sanitizedSearchTerm, node.getString("title"), node.getString("date"), SearchDataType.YOUTUBE_VIDEO, node, tag = contentRootTag).let { obj -> allSearchResults.add(obj) }
+                                SearchItemData(sanitizedSearchTerm, node.getString("title"), node.getString("date"), SearchDataType.YOUTUBE_VIDEO, node, tag1 = contentRootTag).let { obj -> allSearchResults.add(obj) }
                         }
                     }
                 }

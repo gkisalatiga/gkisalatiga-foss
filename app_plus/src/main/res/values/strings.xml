@@ -180,13 +180,27 @@
 
     <!-- Applicable in ScreenSearch. -->
     <string name="screen_search_filter_and_sort_button">Filter &amp; Urutan</string>
-    <string name="screen_search_history_button">Riwayat</string>
+    <string name="screen_search_filter_dialog_apply_button">Terapkan</string>
+    <string name="screen_search_filter_dialog_subtitle_filter">Cari dalam menu</string>
+    <string name="screen_search_filter_dialog_subtitle_sort">Urutkan berdasarkan</string>
+    <string name="screen_search_filter_dialog_title">Filter dan Urutan</string>
     <string name="screen_search_field_label">Cari di GKI Salatiga+</string>
     <string name="screen_search_field_placeholder">Masukkan kata kunci pencarian</string>
-    <string name="screen_search_filter_dialog_title">Filter dan Urutan</string>
+    <string name="screen_search_history_button">Riwayat</string>
     <string name="screen_search_history_dialog_title">Riwayat Pencarian</string>
-    <string name="screen_search_filter_dialog_apply_button">Terapkan</string>
     <string name="screen_search_history_dialog_close_button">Tutup</string>
+    <string name="screen_search_message_filter_empty">Anda belum memilih kriteria filter pencarian apa pun.</string>
+    <string name="screen_search_message_loading">Sedang mencari. Harap tunggu.</string>
+    <string name="screen_search_message_not_found">Kata kunci pencarian tidak cocok dengan data apa pun!</string>
+    <string name="screen_search_message_ok">Menemukan %%%NUM%%% data dalam aplikasi.</string>
+    <string name="screen_search_qualifier_filter_liturgi">Tata Ibadah</string>
+    <string name="screen_search_qualifier_filter_wj">Warta Jemaat</string>
+    <string name="screen_search_qualifier_filter_ykb">Renungan YKB</string>
+    <string name="screen_search_qualifier_filter_yt">Siaran YouTube</string>
+    <string name="screen_search_qualifier_sort_date_asc">Nama (A-Z)</string>
+    <string name="screen_search_qualifier_sort_date_dsc">Nama (Z-A)</string>
+    <string name="screen_search_qualifier_sort_name_asc">Tanggal (dari paling lama)</string>
+    <string name="screen_search_qualifier_sort_name_dsc">Tanggal (dari paling baru)</string>
 
     <!-- Applicable in ScreenSettings. -->
     <string name="screen_settings_pref_youtube_ui">Antarmuka Pemutar Video</string>
@@ -209,7 +223,7 @@
     <string name="screen_settings_help_dialog_title">Bantuan Pengaturan</string>
 
     <!-- Applicable in most screens. -->
-    <string name="pdf_already_downloaded_localized">Tersimpan</string>
+    <string name="pdf_already_downloaded_localized">Terunduh</string>
 
     <!-- Developer strings. -->
     <string name="not_connected_to_internet">Anda tidak terhubung ke internet!</string>

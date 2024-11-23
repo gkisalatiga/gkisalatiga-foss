@@ -9,6 +9,7 @@
 
 :star2: **NEW**
 
+- Added content search functionality for menus: Warta Jemaat, Liturgi, YKB, and YouTube video
 - Fully supported internal PDF viewer with the ability to cancel ongoing PDF download operations
 - (Back-End) Added automatic PDF remover if a given PDF file has not been accessed for a given time
 

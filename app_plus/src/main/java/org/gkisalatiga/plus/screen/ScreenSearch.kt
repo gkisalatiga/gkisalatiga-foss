@@ -13,14 +13,19 @@ package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,15 +33,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -63,6 +74,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -72,11 +86,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.SearchItemData
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
+import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.LoggerType
+import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.model.SearchDataSortType
 import org.gkisalatiga.plus.model.SearchDataType
 import org.gkisalatiga.plus.model.SearchUiEvent
@@ -99,12 +125,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     )
 
     // The filter checkbox label.
-    private val listFilterLabel = listOf(
-        "Warta Jemaat [EXTRACT]",
-        "Tata Ibadah [EXTRACT]",
-        "Renungan YKB [EXTRACT]",
-        "Siaran YouTube [EXTRACT]",
-    )
+    private lateinit var listFilterLabel: List<String>
 
     // The sorter radio button state.
     private val listSortEnum = listOf(
@@ -115,16 +136,37 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     )
 
     // The sorter radio button label.
-    private val listSortLabel = listOf(
-        "Nama (A-Z) [EXTRACT]",
-        "Nama (Z-A) [EXTRACT]",
-        "Tanggal (dari paling lama) [EXTRACT]",
-        "Tanggal (dari paling baru) [EXTRACT]",
-    )
+    private lateinit var listSortLabel: List<String>
+
+    // The predefined search messages.
+    private lateinit var searchMsgFilterEmpty: String
+    private lateinit var searchMsgLoading: String
+    private lateinit var searchMsgNotFound: String
+    private lateinit var searchMsgOk: String
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+
+        listFilterLabel = listOf(
+            stringResource(R.string.screen_search_qualifier_filter_wj),
+            stringResource(R.string.screen_search_qualifier_filter_liturgi),
+            stringResource(R.string.screen_search_qualifier_filter_ykb),
+            stringResource(R.string.screen_search_qualifier_filter_yt),
+        )
+
+        listSortLabel = listOf(
+            stringResource(R.string.screen_search_qualifier_sort_name_asc),
+            stringResource(R.string.screen_search_qualifier_sort_name_dsc),
+            stringResource(R.string.screen_search_qualifier_sort_date_asc),
+            stringResource(R.string.screen_search_qualifier_sort_date_dsc),
+        )
+
+        searchMsgFilterEmpty = stringResource(R.string.screen_search_message_filter_empty)
+        searchMsgLoading = stringResource(R.string.screen_search_message_loading)
+        searchMsgNotFound = stringResource(R.string.screen_search_message_not_found)
+        searchMsgOk = stringResource(R.string.screen_search_message_ok)
+
         Scaffold (topBar = { getTopBar() }) {
 
             Column (
@@ -150,7 +192,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         }
 
         if (ScreenSearchCompanion.mutableActiveSorterCriteria.value == null)
-            ScreenSearchCompanion.mutableActiveSorterCriteria.value = SearchDataSortType.SORT_BY_DATE_ASCENDING
+            ScreenSearchCompanion.mutableActiveSorterCriteria.value = SearchDataSortType.SORT_BY_DATE_DESCENDING
 
         // Prepare the dialogs.
         getFilterDialog()
@@ -183,7 +225,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 text = {
                     Column (horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Center) {
                         /* Filter. */
-                        Text("Cari dalam menu [EXTRACT]", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 2.dp))
+                        Text(stringResource(R.string.screen_search_filter_dialog_subtitle_filter), fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 2.dp))
                         listFilterEnum.forEachIndexed { idx, filterType ->
 
                             val isChecked = ScreenSearchCompanion.mutableActiveFilterCriteria.value!!.contains(filterType)
@@ -211,7 +253,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                         Spacer(Modifier.size(10.dp))
 
                         /* Sorter. */
-                        Text("Urutkan berdasarkan [EXTRACT]", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 2.dp))
+                        Text(stringResource(R.string.screen_search_filter_dialog_subtitle_sort), fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 2.dp))
                         listSortEnum.forEachIndexed { idx, sortType ->
 
                             val changeState: () -> Unit = { ScreenSearchCompanion.mutableActiveSorterCriteria.value = sortType }
@@ -330,7 +372,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 }
             }
 
-            Text(ScreenSearchCompanion.mutableSearchResultMessage.value)
+            Text(ScreenSearchCompanion.mutableSearchResultMessage.value, modifier = Modifier.padding(top = 10.dp, bottom = 5.dp))
 
             /* Add a visually dividing divider :D */
             HorizontalDivider(Modifier.padding(vertical = 10.dp))
@@ -344,11 +386,265 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
             listFilterEnum.forEachIndexed { idx, enum ->
                 val searchResultNodes: MutableList<SearchItemData> = mutableListOf<SearchItemData>().let { list -> ScreenSearchCompanion.mutableSearchResults.value?.forEach { if (it.dataType == enum) list.add(it) }; list }
                 if (searchResultNodes.isNotEmpty()) {
-                    stickyHeader { Text(listFilterLabel[idx].uppercase(), fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth()) }
+                    stickyHeader {
+                        Box (Modifier.fillMaxWidth().padding(horizontal = 20.dp).background(Color.White)) { Text(listFilterLabel[idx].uppercase(), fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), fontSize = 16.sp) }
+                    }
                     item {
+                        /* Filtering search item types. */
+                        var isFirstCard = true
                         searchResultNodes.forEach {
-                            /* Filtering search item types. */
-                            Text(it.content.getString("title"), modifier = Modifier.fillMaxWidth())
+                            if (!isFirstCard) HorizontalDivider(Modifier.padding(horizontal = 20.dp)); isFirstCard = false
+
+                            when (it.dataType) {
+
+                                SearchDataType.PDF_TATA_IBADAH -> {
+
+                                    // Preparing the arguments.
+                                    val title = it.content.getString("title")
+                                    val urlId = StringFormatter.getGoogleDriveId( it.content.getString("link") )
+
+                                    // Let's obtain the download URL.
+                                    val url = StringFormatter.getGoogleDriveDownloadURL(urlId)
+
+                                    // Additional information of the PDF not present in the remote JSON main data.
+                                    val author = "Gereja Kristen Indonesia Salatiga"
+                                    val publisher = "Gereja Kristen Indonesia Salatiga"
+                                    val publisherLoc = "Kota Salatiga, Jawa Tengah 50742"
+                                    val year = it.content.getString("date").split('-')[0]
+                                    val thumbnail = it.content.getString("thumbnail")
+                                    val source = it.content.getString("post-page")
+                                    val size = it.content.getString("size")
+
+                                    Surface (
+                                        onClick = {
+                                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
+
+                                            // Navigate to the PDF viewer.
+                                            ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
+                                            AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Row (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                                            Surface(
+                                                shape = RoundedCornerShape(5.dp),
+                                                modifier = Modifier.weight(1.0f).fillMaxWidth()
+                                            ) {
+                                                AsyncImage(
+                                                    thumbnail,
+                                                    contentDescription = "Liturgy Book: $title",
+                                                    error = painterResource(R.drawable.menu_cover_liturgi),
+                                                    placeholder = painterResource(R.drawable.thumbnail_placeholder_vert_notext),
+                                                    contentScale = ContentScale.FillWidth
+                                                )
+                                            }
+                                            Column (modifier = Modifier.weight(6.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Top) {
+                                                Text(title, fontWeight = FontWeight.Bold)
+
+                                                val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+                                                val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
+                                                val badgeColor = Color(Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR)
+                                                if (isDownloaded) {
+                                                    // The downloaded PDF badge.
+                                                    Row (verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.size(18.dp).padding(end = 6.dp), tint = badgeColor)
+                                                        Text(isDownloadedTitle, maxLines = 1, overflow = TextOverflow.Ellipsis, color = badgeColor, fontSize = 12.5.sp, lineHeight = 13.sp)
+                                                    }
+                                                } else {
+                                                    // The file size.
+                                                    Row (verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.size(18.dp).padding(end = 6.dp))
+                                                        Text(size, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 12.5.sp, lineHeight = 13.sp)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                SearchDataType.PDF_WARTA_JEMAAT -> {
+
+                                    // Preparing the arguments.
+                                    val title = it.content.getString("title")
+                                    val urlId = StringFormatter.getGoogleDriveId( it.content.getString("link") )
+
+                                    // Let's obtain the download URL.
+                                    val url = StringFormatter.getGoogleDriveDownloadURL(urlId)
+
+                                    // Additional information of the PDF not present in the remote JSON main data.
+                                    val author = "Gereja Kristen Indonesia Salatiga"
+                                    val publisher = "Gereja Kristen Indonesia Salatiga"
+                                    val publisherLoc = "Kota Salatiga, Jawa Tengah 50742"
+                                    val year = it.content.getString("date").split('-')[0]
+                                    val thumbnail = it.content.getString("thumbnail")
+                                    val source = it.content.getString("post-page")
+                                    val size = it.content.getString("size")
+
+                                    Surface (
+                                        onClick = {
+                                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
+
+                                            // Navigate to the PDF viewer.
+                                            ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
+                                            AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Row (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                                            Surface(
+                                                shape = RoundedCornerShape(5.dp),
+                                                modifier = Modifier.weight(1.0f).fillMaxWidth()
+                                            ) {
+                                                AsyncImage(
+                                                    thumbnail,
+                                                    contentDescription = "Church News Book: $title",
+                                                    error = painterResource(R.drawable.menu_cover_wj),
+                                                    placeholder = painterResource(R.drawable.thumbnail_placeholder_vert_notext),
+                                                    contentScale = ContentScale.FillWidth
+                                                )
+                                            }
+                                            Column (modifier = Modifier.weight(6.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Top) {
+                                                Text(title, fontWeight = FontWeight.Bold)
+
+                                                val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+                                                val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
+                                                val badgeColor = Color(Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR)
+                                                if (isDownloaded) {
+                                                    // The downloaded PDF badge.
+                                                    Row (verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.size(18.dp).padding(end = 6.dp), tint = badgeColor)
+                                                        Text(isDownloadedTitle, maxLines = 1, overflow = TextOverflow.Ellipsis, color = badgeColor, fontSize = 12.5.sp, lineHeight = 13.sp)
+                                                    }
+                                                } else {
+                                                    // The file size.
+                                                    Row (verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.size(18.dp).padding(end = 6.dp))
+                                                        Text(size, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 12.5.sp, lineHeight = 13.sp)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                SearchDataType.RENUNGAN_YKB -> {
+
+                                    // Preparing the arguments.
+                                    val title = it.content.getString("title")
+                                    val thumbnail = it.content.getString("featured-image")
+                                    val date = StringFormatter.convertDateFromJSON(it.content.getString("date"))
+                                    val html = it.content.getString("html")
+
+                                    Surface (
+                                        onClick = {
+                                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
+
+                                            // Navigate to the WebView viewer.
+                                            ScreenInternalHTMLCompanion.internalWebViewTitle = title
+                                            ScreenInternalHTMLCompanion.targetHTMLContent = html
+
+                                            // Pushing the screen.
+                                            AppNavigation.navigate(NavigationRoutes.SCREEN_INTERNAL_HTML)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Row (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                                            Surface(
+                                                shape = RoundedCornerShape(5.dp),
+                                                modifier = Modifier.weight(1.0f).fillMaxWidth()
+                                            ) {
+                                                AsyncImage(
+                                                    if (thumbnail == "") it.tag2 else thumbnail,
+                                                    contentDescription = "YKB item banner: $title",
+                                                    error = painterResource(R.drawable.thumbnail_error),
+                                                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                                                    modifier = Modifier.aspectRatio(1f),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            }
+                                            Column (modifier = Modifier.weight(6.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Top) {
+                                                CompositionLocalProvider(LocalMinimumInteractiveComponentSize.provides(Dp.Unspecified)) {
+
+                                                    Text(title, fontWeight = FontWeight.Bold)
+
+                                                    // The devotion date.
+                                                    Row (verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(Icons.Default.CalendarMonth, "File download size icon", modifier = Modifier.size(18.dp).padding(end = 6.dp))
+                                                        Text(date, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 12.5.sp, lineHeight = 13.sp)
+                                                    }
+
+                                                    // The "tag".
+                                                    Row (verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(Icons.Default.FolderOpen, "Folder icon", modifier = Modifier.size(18.dp).padding(end = 6.dp))
+                                                        Text(it.tag1, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 12.5.sp, lineHeight = 13.sp)
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                SearchDataType.YOUTUBE_VIDEO -> {
+
+                                    // Preparing the arguments.
+                                    val title = it.content.getString("title")
+                                    val date = StringFormatter.convertDateFromJSON(it.content.getString("date"))
+                                    val url = it.content.getString("link")
+                                    val desc = it.content.getString("desc")
+                                    val thumbnail = it.content.getString("thumbnail")
+
+                                    Surface (
+                                        onClick = {
+                                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
+
+                                            // Trying to switch to the YouTube viewer and open the stream.
+                                            Logger.log({}, "Opening YouTube stream: $url.")
+                                            YouTubeViewCompanion.seekToZero()
+
+                                            // Put arguments to the YouTube video viewer.
+                                            YouTubeViewCompanion.putArguments(
+                                                date = date,
+                                                desc = desc,
+                                                thumbnail = thumbnail,
+                                                title = title,
+                                                yt_id = StringFormatter.getYouTubeIDFromUrl(url),
+                                                yt_link = url
+                                            )
+
+                                            // Navigate to the screen.
+                                            AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Row (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                                            Surface(
+                                                shape = RoundedCornerShape(5.dp),
+                                                modifier = Modifier.weight(2.5f).fillMaxWidth()
+                                            ) {
+                                                AsyncImage(
+                                                    thumbnail,
+                                                    contentDescription = "YouTube thumbnaiil: $title",
+                                                    error = painterResource(R.drawable.thumbnail_error_stretched),
+                                                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                                                    modifier = Modifier.aspectRatio(1.77778f).fillMaxHeight(),
+                                                    contentScale = ContentScale.Crop
+                                                )
+                                            }
+                                            Column (modifier = Modifier.weight(6.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Top) {
+                                                Text(title, fontWeight = FontWeight.Bold, maxLines = 3, overflow = TextOverflow.Ellipsis)
+
+                                                // The "tag".
+                                                Row (verticalAlignment = Alignment.CenterVertically) {
+                                                    Icon(Icons.Default.Subscriptions, "Playlist icon", modifier = Modifier.size(18.dp).padding(end = 6.dp))
+                                                    Text(it.tag1, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 12.5.sp, lineHeight = 13.sp)
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -390,14 +686,30 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         ScreenSearchCompanion.mutableSearchResults.value = null
         searchViewModel.querySearch(searchTerm, searchFilter, searchSort).observe(current.lifecycleOwner) {
             when (it) {
-                is SearchUiEvent.SearchLoading -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
-                is SearchUiEvent.SearchError -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
-                is SearchUiEvent.SearchNotFound -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
-                is SearchUiEvent.SearchFilterEmpty -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
-                is SearchUiEvent.SearchQueryEmpty -> ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
+                is SearchUiEvent.SearchError -> {
+                    ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
+                    Logger.log({}, it.message, LoggerType.VERBOSE)
+                }
+                is SearchUiEvent.SearchFilterEmpty -> {
+                    ScreenSearchCompanion.mutableSearchResultMessage.value = searchMsgFilterEmpty
+                    Logger.log({}, it.message, LoggerType.VERBOSE)
+                }
                 is SearchUiEvent.SearchFinished -> {
                     ScreenSearchCompanion.mutableSearchResults.value = it.searchResult
-                    ScreenSearchCompanion.mutableSearchResultMessage.value = it.message
+                    ScreenSearchCompanion.mutableSearchResultMessage.value = searchMsgOk.replace("%%%NUM%%%", it.searchResult.size.toString())
+                    Logger.log({}, it.message, LoggerType.VERBOSE)
+                }
+                is SearchUiEvent.SearchLoading -> {
+                    ScreenSearchCompanion.mutableSearchResultMessage.value = searchMsgLoading
+                    Logger.log({}, it.message, LoggerType.VERBOSE)
+                }
+                is SearchUiEvent.SearchNotFound -> {
+                    ScreenSearchCompanion.mutableSearchResultMessage.value = searchMsgNotFound
+                    Logger.log({}, it.message, LoggerType.VERBOSE)
+                }
+                is SearchUiEvent.SearchQueryEmpty -> {
+                    ScreenSearchCompanion.mutableSearchResultMessage.value = ""
+                    Logger.log({}, it.message, LoggerType.VERBOSE)
                 }
             }
         }

@@ -19,7 +19,7 @@ import org.json.JSONObject
  * @param date the date this search item was created (for sorting by date).
  * @param dataType the type of this search item corresponding to a given JSON data node.
  * @param content the content extracted from the JSON data.
- * @param tag additional tag that needs to be specified to classify a given search item.
+ * @param tag1 additional tag that needs to be specified to classify a given search item.
  */
 data class SearchItemData (
     val matchingSearchQuery: String,
@@ -27,5 +27,6 @@ data class SearchItemData (
     val date: String,
     val dataType: SearchDataType,
     val content: JSONObject,
-    val tag: String = String(),
+    val tag1: String = String(),
+    val tag2: String = String(),
 )

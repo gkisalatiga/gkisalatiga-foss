@@ -226,17 +226,7 @@ class ScreenLibrary : ComponentActivity() {
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
-                                // The file size.
-                                Row {
-                                    Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
-                                    Text(
-                                        size,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
+
                                 // The downloaded PDF badge.
                                 val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
                                 val badgeColor = Color(Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR)
@@ -250,6 +240,18 @@ class ScreenLibrary : ComponentActivity() {
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                             color = badgeColor
+                                        )
+                                    }
+                                } else {
+                                    // The file size.
+                                    Row {
+                                        Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
+                                        Text(
+                                            size,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 }
