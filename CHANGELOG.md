@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## Next Release
+
+:star2: **NEW**
+
+- Added content search functionality for menus: Warta Jemaat, Liturgi, YKB, and YouTube video
+
 ## v0.5.2-rc 2024.11.20 (30)
 
 :information_source: **INFO**
@@ -9,7 +15,6 @@
 
 :star2: **NEW**
 
-- Added content search functionality for menus: Warta Jemaat, Liturgi, YKB, and YouTube video
 - Fully supported internal PDF viewer with the ability to cancel ongoing PDF download operations
 - (Back-End) Added automatic PDF remover if a given PDF file has not been accessed for a given time
 
