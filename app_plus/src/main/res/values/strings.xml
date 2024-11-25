@@ -191,6 +191,7 @@
     <string name="screen_search_history_dialog_close_button">Tutup</string>
     <string name="screen_search_message_filter_empty">Anda belum memilih kriteria filter pencarian apa pun.</string>
     <string name="screen_search_message_loading">Sedang mencari. Harap tunggu.</string>
+    <string name="screen_search_message_no_history_record_found">Tidak ada riwayat pencarian yang tersimpan!</string>
     <string name="screen_search_message_not_found">Kata kunci pencarian tidak cocok dengan data apa pun!</string>
     <string name="screen_search_message_ok">Menemukan %%%NUM%%% data dalam aplikasi.</string>
     <string name="screen_search_qualifier_filter_liturgi">Tata Ibadah</string>

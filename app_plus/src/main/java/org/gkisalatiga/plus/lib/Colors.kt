@@ -24,7 +24,9 @@ class Colors {
         val MAIN_DARK_BROWN = Color(0xff482505)
         val MAIN_LIGHT_THEME_WHITE = Color(0xffffffff)
         val MAIN_PDF_DOWNLOADED_BADGE_COLOR = Color(0xff40c057)
+        val MAIN_SCREEN_BACKGROUND_COLOR = Color(0xffffffff)
         val MAIN_SPLASHSCREEN_SUB_TEXT_COLOR = Color(0xffffffff)
+        val MAIN_SURFACE_COLOR = Color(0xffffffff)
         val MAIN_TOP_BAR_COLOR = Color(0xff715446)
         val MAIN_TOP_BAR_CONTENT_COLOR = Color(0xffffffff)
 

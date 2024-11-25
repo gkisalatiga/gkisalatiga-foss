@@ -178,6 +178,7 @@ enum class LocalStorageKeys {
     LOCAL_KEY_LAST_CAROUSEL_BANNER_UPDATE,
     LOCAL_KEY_LAUNCH_COUNTS,
     LOCAL_KEY_LIST_OF_DOWNLOADED_PDF_CACHES,
+    LOCAL_KEY_SEARCH_HISTORY,
 
     /* More sophisticated local storage keys that require the use of customKey. */
     LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION,

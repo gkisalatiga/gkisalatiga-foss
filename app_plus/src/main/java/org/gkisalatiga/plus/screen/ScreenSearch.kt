@@ -22,21 +22,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -62,16 +69,19 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -95,6 +105,7 @@ import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.SearchItemData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
@@ -102,11 +113,14 @@ import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.model.SearchDataSortType
 import org.gkisalatiga.plus.model.SearchDataType
 import org.gkisalatiga.plus.model.SearchUiEvent
 import org.gkisalatiga.plus.model.SearchViewModel
+import org.json.JSONArray
+import org.json.JSONObject
 
 class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
@@ -114,7 +128,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     private val searchViewModel = SearchViewModel(current.ctx)
 
     // The search text.
-    private val text = mutableStateOf("")
+    private val text = ScreenSearchCompanion.mutableCurrentSearchString
 
     // The filter checkbox state.
     private val listFilterEnum = listOf(
@@ -144,6 +158,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     private lateinit var searchMsgNotFound: String
     private lateinit var searchMsgOk: String
 
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
@@ -173,7 +188,8 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())
+                    .padding(top = it.calculateTopPadding(), bottom = if (WindowInsets.isImeVisible) 0.dp else it.calculateBottomPadding())
+                    .imePadding()
                     .fillMaxSize()
             ) {
                 // Display the main "attribution" contents.
@@ -201,7 +217,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler { current.keyboardController!!.hide(); AppNavigation.popBack() }
+        BackHandler { current.keyboardController!!.hide(); AppNavigation.popBack(); text.value = "" }
 
     }
 
@@ -285,6 +301,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     private fun getHistoryDialog() {
         // Show the history dialog.
         fun historyApplyPressed(selectedSearchTerm: String = String()) {
+            text.value = selectedSearchTerm.ifBlank { text.value }
             ScreenSearchCompanion.mutableHistoryDialogVisibilityState.value = false
         }
         val historyDialogTitle = stringResource(R.string.screen_search_history_dialog_title)
@@ -294,19 +311,21 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 onDismissRequest = { historyApplyPressed() },
                 title = { Text(historyDialogTitle) },
                 text = {
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                        Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                            // The filter and sorter.
-                            Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
-                                Button(onClick = {  }) {
-                                    Row {
-                                        Icon(Icons.AutoMirrored.Default.Sort, "Search results sorter")
-                                        Text("Urutkan [EXTRACT]")
+                    key (ScreenSearchCompanion.mutableTriggerHistoryDialogRecomposition.value) {
+                        // Parse any previously saved search history as array.
+                        val parsedHistory = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_SEARCH_HISTORY, LocalStorageDataTypes.STRING) as String
+                        val parsedHistoryAsArray = if (parsedHistory.isBlank()) JSONArray() else JSONArray(parsedHistory)
+                        val parsedHistoryAsIterableList: MutableList<JSONObject> = mutableListOf<JSONObject>().let { list -> for (i in 0 until parsedHistoryAsArray.length()) list.add(i, parsedHistoryAsArray[i] as JSONObject); list }
+
+                        Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.heightIn(max = 300.dp).verticalScroll(rememberScrollState())) {
+                            if (parsedHistoryAsIterableList.size == 0) Text (stringResource(R.string.screen_search_message_no_history_record_found))
+                            else
+                                parsedHistoryAsIterableList.reversed().forEach {
+                                    Row(Modifier.padding(horizontal = 5.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
+                                        TextButton(onClick = { historyApplyPressed(it.getString("term")) }, modifier = Modifier.weight(6.0f)) { Text(it.getString("term"), textAlign = TextAlign.Start) }
+                                        IconButton(onClick = { removeSearchRecord(it) }, modifier = Modifier.weight(1.0f)) { Icon(Icons.Default.Close, "") }
                                     }
                                 }
-                                Checkbox(checked = true, onCheckedChange = null)
-                                Text("Juga cari isi konten [EXTRACT]")
-                            }
                         }
                     }
                 },
@@ -337,10 +356,12 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
             OutlinedTextField(
                 value = text.value,
                 trailingIcon = {
-                    if (text.value.isBlank()) {
-                        Surface(shape = CircleShape, onClick = { requestSearchFocus() }) { Icon(Icons.Default.Search, "Search Icon") }
-                    } else {
-                        Surface(shape = CircleShape, onClick = { requestSearchFocus(); text.value = ""; handleSearchQuery() }) { Icon(Icons.Default.Close, "Close Icon") }
+                    CompositionLocalProvider(LocalMinimumInteractiveComponentSize.provides(Dp.Unspecified)) {
+                        if (text.value.isBlank()) {
+                            IconButton(onClick = { requestSearchFocus(); handleSearchHistory() }) { Icon(Icons.Default.Search, "Search Icon") }
+                        } else {
+                            IconButton(onClick = { requestSearchFocus(); text.value = ""; handleSearchQuery() }) { Icon(Icons.Default.Close, "Close Icon") }
+                        }
                     }
                 },
                 onValueChange = { text.value = it; handleSearchQuery() },
@@ -350,7 +371,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 enabled = true,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { handleSearchQuery(); current.keyboardController!!.hide() })
+                keyboardActions = KeyboardActions(onSearch = { handleSearchQuery(); handleSearchHistory(); current.keyboardController!!.hide() })
             )
 
             /* Filter & history buttons. */
@@ -387,7 +408,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 val searchResultNodes: MutableList<SearchItemData> = mutableListOf<SearchItemData>().let { list -> ScreenSearchCompanion.mutableSearchResults.value?.forEach { if (it.dataType == enum) list.add(it) }; list }
                 if (searchResultNodes.isNotEmpty()) {
                     stickyHeader {
-                        Box (Modifier.fillMaxWidth().padding(horizontal = 20.dp).background(Color.White)) { Text(listFilterLabel[idx].uppercase(), fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth(), fontSize = 16.sp) }
+                        Box (Modifier.fillMaxWidth().background(Colors.MAIN_SCREEN_BACKGROUND_COLOR)) { Text(listFilterLabel[idx].uppercase(), fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 5.dp), fontSize = 16.sp) }
                     }
                     item {
                         /* Filtering search item types. */
@@ -418,6 +439,9 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     Surface (
                                         onClick = {
                                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
+
+                                            // Save the search history.
+                                            handleSearchHistory()
 
                                             // Navigate to the PDF viewer.
                                             ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
@@ -484,6 +508,9 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                         onClick = {
                                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
 
+                                            // Save the search history.
+                                            handleSearchHistory()
+
                                             // Navigate to the PDF viewer.
                                             ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
                                             AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)
@@ -538,6 +565,9 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     Surface (
                                         onClick = {
                                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
+
+                                            // Save the search history.
+                                            handleSearchHistory()
 
                                             // Navigate to the WebView viewer.
                                             ScreenInternalHTMLCompanion.internalWebViewTitle = title
@@ -597,6 +627,9 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     Surface (
                                         onClick = {
                                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, title, Toast.LENGTH_SHORT).show()
+
+                                            // Save the search history.
+                                            handleSearchHistory()
 
                                             // Trying to switch to the YouTube viewer and open the stream.
                                             Logger.log({}, "Opening YouTube stream: $url.")
@@ -667,7 +700,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { current.keyboardController!!.hide(); AppNavigation.popBack() }) {
+                IconButton(onClick = { current.keyboardController!!.hide(); AppNavigation.popBack(); text.value = "" }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""
@@ -677,6 +710,36 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
             actions = { },
             scrollBehavior = scrollBehavior
         )
+    }
+
+    /**
+     * Handles the recording of search history.
+     */
+    private fun handleSearchHistory(searchTerm: String = text.value) {
+        val now = System.currentTimeMillis()
+
+        // Parse any previously saved search history as array.
+        val parsedHistory = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_SEARCH_HISTORY, LocalStorageDataTypes.STRING) as String
+        val parsedHistoryAsArray = if (parsedHistory.isBlank()) JSONArray() else JSONArray(parsedHistory)
+        val parsedHistoryAsIterableList: MutableList<JSONObject> = mutableListOf<JSONObject>().let { list -> for (i in 0 until parsedHistoryAsArray.length()) list.add(i, parsedHistoryAsArray[i] as JSONObject); list }
+
+        // Ensures no two adjacent search terms in the history.
+        if (parsedHistoryAsIterableList.last().getString("term") == searchTerm) return
+
+        // Alter or append the history.
+        parsedHistoryAsArray.put(
+            JSONObject()
+                .put("date", now.toString())
+                .put("term", searchTerm)
+        )
+
+        // Trim redundant search histories.
+        val prefKeepNumberSearchHistory = AppPreferences(current.ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_NUMBERS_OF_SEARCH_HISTORY) as Int
+        if (parsedHistoryAsArray.length() > prefKeepNumberSearchHistory) parsedHistoryAsArray.remove(0)
+
+        // Save the history.
+        val parsedHistoryAsString = parsedHistoryAsArray.toString()
+        LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_SEARCH_HISTORY, parsedHistoryAsString, LocalStorageDataTypes.STRING)
     }
 
     /**
@@ -715,6 +778,27 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         }
     }
 
+    /**
+     * Removes a given search record from search history.
+     * @param objItem the JSONObject to remove from the history.
+     */
+    private fun removeSearchRecord(objItem: JSONObject) {
+        // Parse any previously saved search history as array.
+        val parsedHistory = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_SEARCH_HISTORY, LocalStorageDataTypes.STRING) as String
+        val parsedHistoryAsArray = if (parsedHistory.isBlank()) JSONArray() else JSONArray(parsedHistory)
+        val parsedHistoryAsIterableList: MutableList<JSONObject> = mutableListOf<JSONObject>().let { list -> for (i in 0 until parsedHistoryAsArray.length()) list.add(i, parsedHistoryAsArray[i] as JSONObject); list }
+
+        // Remove from history.
+        parsedHistoryAsIterableList.forEachIndexed { idx, obj -> if (obj.toString() == objItem.toString()) parsedHistoryAsArray.remove(idx) }
+
+        // Save the history.
+        val parsedHistoryAsString = parsedHistoryAsArray.toString()
+        LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_SEARCH_HISTORY, parsedHistoryAsString, LocalStorageDataTypes.STRING)
+
+        // Trigger recomposition of the list of history records.
+        ScreenSearchCompanion.mutableTriggerHistoryDialogRecomposition.value = !ScreenSearchCompanion.mutableTriggerHistoryDialogRecomposition.value
+    }
+
 }
 
 /**
@@ -726,9 +810,15 @@ class ScreenSearchCompanion : Application() {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
 
+        /* The current search string. */
+        val mutableCurrentSearchString = mutableStateOf("")
+
         /* Handles responses from the search view model. */
-        var mutableSearchResults: MutableState<List<SearchItemData>?> = mutableStateOf(null)
+        val mutableSearchResults: MutableState<List<SearchItemData>?> = mutableStateOf(null)
         val mutableSearchResultMessage = mutableStateOf("")
+
+        /* Triggers the recomposition of history record list. */
+        val mutableTriggerHistoryDialogRecomposition = mutableStateOf(false)
 
         /* The filter/sorter and history dialog. */
         val mutableFilterDialogVisibilityState = mutableStateOf(false)

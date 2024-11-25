@@ -28,22 +28,14 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Colors.COLOR_SCHEME_TERTIARY,
     primaryContainer = Colors.MAIN_CONTAINER_COLOR,
 
-    /* Overriding default values. */
-    /*surface = Brown1,
-    onPrimary = Brown1,
-    onSecondary = Brown1,
-    onTertiary = Brown1,
-    onBackground = Brown1,
-    onSurface = Brown1,*/
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    /* Other default colors to override */
+    background = Colors.MAIN_SCREEN_BACKGROUND_COLOR,
+    surface = Colors.MAIN_SURFACE_COLOR,
+    // onPrimary = Color.White,
+    // onSecondary = Color.White,
+    // onTertiary = Color.White,
+    // onBackground = Color(0xFF1C1B1F),
+    // onSurface = Color(0xFF1C1B1F),
 )
 
 // Set of Material typography styles to start with
