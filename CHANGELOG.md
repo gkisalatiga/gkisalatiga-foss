@@ -5,6 +5,7 @@
 :star2: **NEW**
 
 - Added content search functionality for menus: Warta Jemaat, Liturgi, YKB, and YouTube video
+- Added search history
 
 ## v0.5.2-rc 2024.11.20 (30)
 

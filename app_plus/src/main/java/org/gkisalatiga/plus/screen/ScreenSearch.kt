@@ -217,7 +217,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler { current.keyboardController!!.hide(); AppNavigation.popBack(); text.value = "" }
+        BackHandler { handleBack() }
 
     }
 
@@ -700,7 +700,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { current.keyboardController!!.hide(); AppNavigation.popBack(); text.value = "" }) {
+                IconButton(onClick = { handleBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = ""
@@ -710,6 +710,15 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
             actions = { },
             scrollBehavior = scrollBehavior
         )
+    }
+
+    private fun handleBack() {
+        ScreenSearchCompanion.mutableSearchResults.value = null
+        ScreenSearchCompanion.mutableSearchResultMessage.value = ""
+        current.keyboardController!!.hide()
+        text.value = ""
+
+        AppNavigation.popBack()
     }
 
     /**
@@ -724,7 +733,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         val parsedHistoryAsIterableList: MutableList<JSONObject> = mutableListOf<JSONObject>().let { list -> for (i in 0 until parsedHistoryAsArray.length()) list.add(i, parsedHistoryAsArray[i] as JSONObject); list }
 
         // Ensures no two adjacent search terms in the history.
-        if (parsedHistoryAsIterableList.last().getString("term") == searchTerm) return
+        if (parsedHistoryAsIterableList.isNotEmpty() && parsedHistoryAsIterableList.last().getString("term") == searchTerm) return
 
         // Alter or append the history.
         parsedHistoryAsArray.put(
