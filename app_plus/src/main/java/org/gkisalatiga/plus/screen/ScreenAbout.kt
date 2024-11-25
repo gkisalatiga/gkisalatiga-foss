@@ -171,7 +171,7 @@ class ScreenAbout : ComponentActivity() {
                         }
                     ) {
                         Box {
-                            Box(Modifier.background(Color(MAIN_DARK_BROWN), shape = CircleShape).fillMaxSize())
+                            Box(Modifier.background(MAIN_DARK_BROWN, shape = CircleShape).fillMaxSize())
                             Image(painterResource(R.mipmap.ic_launcher_foreground), "",
                                 modifier = Modifier.fillMaxSize().scale(1.2f),
                                 contentScale = ContentScale.Crop

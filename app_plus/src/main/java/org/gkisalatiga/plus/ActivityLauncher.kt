@@ -447,7 +447,7 @@ class ActivityLauncher : ComponentActivity() {
         }
 
         // Displays the splash screen content.
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(Color(MAIN_DARK_BROWN))) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(MAIN_DARK_BROWN)) {
             Image(painter = painterResource(id = R.drawable.splash_screen_foreground), contentDescription = "Splash screen logo", modifier = Modifier.scale(scale.value))
         }
 
@@ -464,7 +464,7 @@ class ActivityLauncher : ComponentActivity() {
             CircularProgressIndicator()
 
             val versionName = this@ActivityLauncher.packageManager.getPackageInfo(this@ActivityLauncher.packageName, 0).versionName
-            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = Color(Colors.MAIN_SPLASHSCREEN_SUB_TEXT_COLOR), fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
+            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = Colors.MAIN_SPLASHSCREEN_SUB_TEXT_COLOR, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
         }
     }
 

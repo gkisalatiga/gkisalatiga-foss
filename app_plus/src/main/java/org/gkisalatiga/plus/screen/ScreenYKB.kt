@@ -190,7 +190,7 @@ class ScreenYKB : ComponentActivity() {
                         TextButton(
                             modifier = Modifier.padding(top = 8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR)
+                                containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
                             ),
                             onClick = {
                                 // Set the content list.

@@ -101,8 +101,8 @@ class FragmentServices : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
-                color = Color(Colors.FRAGMENT_SERVICES_SHOWMORE_BACKGROUND),
-                contentColor = Color(Colors.FRAGMENT_SERVICES_SHOWMORE_CONTENT),
+                color = Colors.FRAGMENT_SERVICES_SHOWMORE_BACKGROUND,
+                contentColor = Colors.FRAGMENT_SERVICES_SHOWMORE_CONTENT,
                 onClick = {
                     AppNavigation.navigate(NavigationRoutes.SCREEN_MEDIA)
                 }

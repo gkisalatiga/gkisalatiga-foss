@@ -407,7 +407,7 @@ class ScreenMain : ComponentActivity() {
                         colors = NavigationBarItemColors(
                             selectedIconColor = Color.Unspecified,
                             selectedTextColor = Color.Unspecified,
-                            selectedIndicatorColor = Color(Colors.MAIN_BOTTOM_BAR_COLOR),
+                            selectedIndicatorColor = Colors.MAIN_BOTTOM_BAR_COLOR,
                             unselectedIconColor = Color.Unspecified,
                             unselectedTextColor = Color.Unspecified,
                             disabledIconColor = Color.Unspecified,
@@ -543,7 +543,7 @@ class ScreenMainCompanion : Application () {
 
         /* The dynamic state of the top bar UI. */
         val mutableTopBarContainerTransparency = mutableFloatStateOf(0.0f)
-        val topBarContainerColor = Color(Colors.MAIN_TOP_BAR_COLOR)
+        val topBarContainerColor = Colors.MAIN_TOP_BAR_COLOR
         val topBarTitleContentColor = Colors.MAIN_TOP_BAR_CONTENT_COLOR
 
         /* The calculated top bar padding of the scaffolding. */

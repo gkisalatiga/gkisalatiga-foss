@@ -197,10 +197,10 @@
     <string name="screen_search_qualifier_filter_wj">Warta Jemaat</string>
     <string name="screen_search_qualifier_filter_ykb">Renungan YKB</string>
     <string name="screen_search_qualifier_filter_yt">Siaran YouTube</string>
-    <string name="screen_search_qualifier_sort_date_asc">Nama (A-Z)</string>
-    <string name="screen_search_qualifier_sort_date_dsc">Nama (Z-A)</string>
-    <string name="screen_search_qualifier_sort_name_asc">Tanggal (dari paling lama)</string>
-    <string name="screen_search_qualifier_sort_name_dsc">Tanggal (dari paling baru)</string>
+    <string name="screen_search_qualifier_sort_date_asc">Tanggal (dari paling lama)</string>
+    <string name="screen_search_qualifier_sort_date_dsc">Tanggal (dari paling baru)</string>
+    <string name="screen_search_qualifier_sort_name_asc">Nama (A-Z)</string>
+    <string name="screen_search_qualifier_sort_name_dsc">Nama (Z-A)</string>
 
     <!-- Applicable in ScreenSettings. -->
     <string name="screen_settings_pref_youtube_ui">Antarmuka Pemutar Video</string>

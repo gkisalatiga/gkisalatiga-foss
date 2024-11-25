@@ -19,24 +19,24 @@ class Colors {
         val COLOR_SCHEME_TERTIARY = Color(0xffbd8c75)
 
         /* Main (default) colors of the app. */
-        const val MAIN_BOTTOM_BAR_COLOR = 0xffEBC1B3
-        const val MAIN_CONTAINER_COLOR = 0xff715446
-        const val MAIN_DARK_BROWN = 0xff482505
-        const val MAIN_LIGHT_THEME_WHITE = 0xffffffff
-        const val MAIN_PDF_DOWNLOADED_BADGE_COLOR = 0xff40c057
-        const val MAIN_SPLASHSCREEN_SUB_TEXT_COLOR = 0xffffffff
-        const val MAIN_TOP_BAR_COLOR = 0xff715446
+        val MAIN_BOTTOM_BAR_COLOR = Color(0xffEBC1B3)
+        val MAIN_CONTAINER_COLOR = Color(0xff715446)
+        val MAIN_DARK_BROWN = Color(0xff482505)
+        val MAIN_LIGHT_THEME_WHITE = Color(0xffffffff)
+        val MAIN_PDF_DOWNLOADED_BADGE_COLOR = Color(0xff40c057)
+        val MAIN_SPLASHSCREEN_SUB_TEXT_COLOR = Color(0xffffffff)
+        val MAIN_TOP_BAR_COLOR = Color(0xff715446)
         val MAIN_TOP_BAR_CONTENT_COLOR = Color(0xffffffff)
 
         /* Used in app's screens. */
-        const val SCREEN_AGENDA_ITEM_BACKGROUND = 0xffFFE8BB
-        const val SCREEN_AGENDA_ITEM_TIME_BACKGROUND = 0xff482505
-        const val SCREEN_AGENDA_ITEM_CHIP_SELECTED_BACKGROUND = 0xff482505
-        const val SCREEN_YKB_ARCHIVE_BUTTON_COLOR = 0xff482505
+        val SCREEN_AGENDA_ITEM_BACKGROUND = Color(0xffFFE8BB)
+        val SCREEN_AGENDA_ITEM_TIME_BACKGROUND = Color(0xff482505)
+        val SCREEN_AGENDA_ITEM_CHIP_SELECTED_BACKGROUND = Color(0xff482505)
+        val SCREEN_YKB_ARCHIVE_BUTTON_COLOR = Color(0xff482505)
 
         /* Used in app's fragments. */
-        const val FRAGMENT_SERVICES_SHOWMORE_BACKGROUND = 0xff97705d
-        const val FRAGMENT_SERVICES_SHOWMORE_CONTENT = 0xffffffff
+        val FRAGMENT_SERVICES_SHOWMORE_BACKGROUND = Color(0xff97705d)
+        val FRAGMENT_SERVICES_SHOWMORE_CONTENT = Color(0xffffffff)
 
         /* This is how we can theoretically create a color-changing scheme based on theme: */
         /*

@@ -138,7 +138,7 @@ class ScreenAgenda : ComponentActivity() {
                     Button(
                         onClick = { ScreenAgendaCompanion.mutableCurrentDay.value = key },
                         modifier = Modifier.weight(1.0f).padding(start = startPadding).width(intrinsicSize = IntrinsicSize.Max),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (key == selected.value) Color(Colors.SCREEN_AGENDA_ITEM_CHIP_SELECTED_BACKGROUND) else Color.White),
+                        colors = ButtonDefaults.buttonColors(containerColor = if (key == selected.value) Colors.SCREEN_AGENDA_ITEM_CHIP_SELECTED_BACKGROUND else Color.White),
                         border =  if (key == selected.value) null else BorderStroke(1.dp, Color.Black),
                         shape = RoundedCornerShape(10.dp),
                         contentPadding = PaddingValues(0.dp),
@@ -171,7 +171,7 @@ class ScreenAgenda : ComponentActivity() {
 
                 // Draw the list item for the current event.
                 Surface(shape = RoundedCornerShape(15.dp), modifier = Modifier.padding(top = 10.dp)) {
-                    Column (Modifier.fillMaxSize().background(Color(Colors.SCREEN_AGENDA_ITEM_BACKGROUND))) {
+                    Column (Modifier.fillMaxSize().background(Colors.SCREEN_AGENDA_ITEM_BACKGROUND)) {
                         Column (modifier = Modifier.fillMaxSize().padding(15.dp)) {
                             // The item title.
                             Text( todayNode.getJSONObject(index).getString("name"), fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -201,8 +201,8 @@ class ScreenAgenda : ComponentActivity() {
                         // Display time info.
                         Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxSize()) {
                             Surface(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp)) {
-                                Column(modifier = Modifier.background(Color(Colors.SCREEN_AGENDA_ITEM_TIME_BACKGROUND))) {
-                                    Text( todayNode.getJSONObject(index).getString("time"), modifier = Modifier.padding(horizontal = 10.dp).padding(vertical = 5.dp), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color(Colors.MAIN_LIGHT_THEME_WHITE))
+                                Column(modifier = Modifier.background(Colors.SCREEN_AGENDA_ITEM_TIME_BACKGROUND)) {
+                                    Text( todayNode.getJSONObject(index).getString("time"), modifier = Modifier.padding(horizontal = 10.dp).padding(vertical = 5.dp), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Colors.MAIN_LIGHT_THEME_WHITE)
                                 }
                             }
                         }

@@ -248,7 +248,7 @@ class ScreenWarta : ComponentActivity() {
 
                                 // The downloaded PDF badge.
                                 val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
-                                val badgeColor = Color(Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR)
+                                val badgeColor = Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR
                                 if (isDownloaded) {
                                     Row {
                                         Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp), tint = badgeColor)

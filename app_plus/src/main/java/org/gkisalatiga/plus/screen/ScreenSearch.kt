@@ -443,7 +443,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
                                                 val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
                                                 val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
-                                                val badgeColor = Color(Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR)
+                                                val badgeColor = Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR
                                                 if (isDownloaded) {
                                                     // The downloaded PDF badge.
                                                     Row (verticalAlignment = Alignment.CenterVertically) {
@@ -508,7 +508,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
                                                 val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
                                                 val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
-                                                val badgeColor = Color(Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR)
+                                                val badgeColor = Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR
                                                 if (isDownloaded) {
                                                     // The downloaded PDF badge.
                                                     Row (verticalAlignment = Alignment.CenterVertically) {

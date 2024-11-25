@@ -26,7 +26,7 @@ private val LightColorScheme = lightColorScheme(
     primary = Colors.COLOR_SCHEME_PRIMARY,
     secondary = Colors.COLOR_SCHEME_SECONDARY,
     tertiary = Colors.COLOR_SCHEME_TERTIARY,
-    primaryContainer = Color(Colors.MAIN_CONTAINER_COLOR),
+    primaryContainer = Colors.MAIN_CONTAINER_COLOR,
 
     /* Overriding default values. */
     /*surface = Brown1,
