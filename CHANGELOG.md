@@ -1,5 +1,17 @@
 # GKI Salatiga App Changelog
 
+## v0.6.0-rc.4 2024.11.26 (34)
+
+:hammer_and_wrench: **FIX**
+
+- Attempted to fix incomplete PDF download when using the signed Google Play APK
+
+## v0.6.0-rc.3 2024.11.26 (33)
+
+:hammer_and_wrench: **FIX**
+
+- Internal PDF viewer's page does not fill the entire screen's width
+
 ## v0.6.0-rc.2 2024.11.26 (32)
 
 :information_source: **INFO**
