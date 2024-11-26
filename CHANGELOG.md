@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## v0.6.0-rc.2 2024.11.26 (32)
+
+:information_source: **INFO**
+
+- This release ships minor patches to Google Play Store
+
 ## v0.6.0-rc 2024.11.26 (31)
 
 :star2: **NEW**
