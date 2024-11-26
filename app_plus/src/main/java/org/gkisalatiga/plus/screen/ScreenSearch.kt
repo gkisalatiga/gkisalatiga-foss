@@ -364,7 +364,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 trailingIcon = {
                     CompositionLocalProvider(LocalMinimumInteractiveComponentSize.provides(Dp.Unspecified)) {
                         if (text.value.isBlank()) {
-                            IconButton(onClick = { requestSearchFocus(); handleSearchHistory() }) { Icon(Icons.Default.Search, "Search Icon") }
+                            IconButton(onClick = { requestSearchFocus() }) { Icon(Icons.Default.Search, "Search Icon") }
                         } else {
                             IconButton(onClick = { requestSearchFocus(); text.value = ""; handleSearchQuery() }) { Icon(Icons.Default.Close, "Close Icon") }
                         }
@@ -740,6 +740,9 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 
         // Ensures no two adjacent search terms in the history.
         if (parsedHistoryAsIterableList.isNotEmpty() && parsedHistoryAsIterableList.last().getString("term") == searchTerm) return
+
+        // Ensures the actual term being recorded in the history is not empty.
+        if (searchTerm.isBlank()) return
 
         // Alter or append the history.
         parsedHistoryAsArray.put(

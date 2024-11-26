@@ -520,7 +520,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms().getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI.name) { ScreenGaleri().getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView(current).getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear().getComposable() }
             composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML().getComposable() }
             composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary().getComposable()}
@@ -531,7 +531,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia().getComposable() }
             composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan().getComposable() }
-            composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer().getComposable() }
+            composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }
             composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat().getComposable()}
             composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(current).getComposable()}

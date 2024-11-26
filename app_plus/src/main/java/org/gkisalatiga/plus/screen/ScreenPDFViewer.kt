@@ -419,7 +419,8 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
                     key(mutableTriggerPDFPageRecomposition.value) {
                         if (mutableBitmapMap.containsKey(pagerPage) && mutableBitmapMap[pagerPage] != null && mutableBitmapMap[pagerPage]!!::class == Bitmap::class) {
-                            PdfPage(mutableBitmapMap[pagerPage]!!)
+                            // PdfPage(mutableBitmapMap[pagerPage]!!, current.colors.mainZoomableBoxBackgroundColor)
+                            PdfPage(mutableBitmapMap[pagerPage]!!, Color.White)
                         }
                     }
 

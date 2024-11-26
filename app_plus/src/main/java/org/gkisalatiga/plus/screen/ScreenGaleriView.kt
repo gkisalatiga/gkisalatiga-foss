@@ -70,11 +70,12 @@ import net.engawapg.lib.zoomable.toggleScale
 import net.engawapg.lib.zoomable.zoomable
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.GallerySaver
 import org.gkisalatiga.plus.lib.StringFormatter
 
-class ScreenGaleriView : ComponentActivity() {
+class ScreenGaleriView (private val current : ActivityData) : ComponentActivity() {
 
     // The pager state.
     private lateinit var horizontalPagerState: PagerState
@@ -244,7 +245,7 @@ class ScreenGaleriView : ComponentActivity() {
                     zoomState,
                     onDoubleTap = { position -> zoomState.toggleScale(ScreenGaleriViewCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
                     scrollGesturePropagation = ScrollGesturePropagation.ContentEdge
-                ).fillMaxSize().background(Color.White),
+                ).fillMaxSize().background(current.colors.mainZoomableBoxBackgroundColor),
                 error = painterResource(R.drawable.thumbnail_error_stretched),
                 placeholder = painterResource(R.drawable.thumbnail_placeholder),
                 contentDescription = "Gallery display view.",

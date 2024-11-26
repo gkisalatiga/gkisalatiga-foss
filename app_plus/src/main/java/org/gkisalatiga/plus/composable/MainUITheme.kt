@@ -24,18 +24,18 @@ import org.gkisalatiga.plus.lib.Colors
 
 private val DarkColorScheme = darkColorScheme(
     onPrimary = Color.White,
+    onPrimaryContainer = Color.White,
     primary = Colors.MAIN_PRIMARY_COLOR,
+    primaryContainer = Colors.MAIN_CONTAINER_COLOR,
     secondary = Colors.MAIN_SECONDARY_COLOR,
     tertiary = Colors.MAIN_TERTIARY_COLOR,
 
     /* Other default colors to override */
-    /*
-    onTertiary = Color.Green,
+    /*onTertiary = Color.Green,
     onSecondary = Color.Red,
     onTertiaryContainer = Color.Blue,
     onSecondaryContainer = Color.Blue,
     surfaceVariant = Color.Blue,
-    onPrimaryContainer = Color.Red,
     surfaceContainerLowest = Color.Red,
     onBackground = Color.Red,
     onError = Color.Yellow,
@@ -57,8 +57,10 @@ private val DarkColorScheme = darkColorScheme(
     errorContainer = Color.Red,
     outline = Color.Red,
     outlineVariant = Color.Red,
-     */
-
+    background = Color.Yellow,
+    surfaceContainer = Color.Blue,
+    surfaceContainerHighest = Color.Yellow,
+    surface = Color.Cyan,*/
 )
 
 private val LightColorScheme = lightColorScheme(
