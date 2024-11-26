@@ -88,7 +88,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Migrate the scroll states from `GlobalSchema` to the companion object of each screen class
 - [X] Rename `GlobalSchema` class to something more appropriate (e.g., `GlobalState` or `GlobalParameter`)
 - [X] Introduce "putArguments" implementation to `ScreenInternalHTMLCompanion` `ScreenYKBListCompanion`
-- [ ] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
+- [X] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
 - [X] Add download progress display when downloading PDF files
 - [X] Add the automatic PDF remover back-end functionality
 - [X] Add the settings helper/documentation

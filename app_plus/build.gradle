@@ -16,10 +16,10 @@ android {
         applicationId "org.gkisalatiga.plus"
         minSdk 21
         targetSdk 34
-        versionCode 32
-        versionName "0.6.0-rc.2"
+        versionCode 34
+        versionName "0.6.0-rc.4"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             // Enables on-the-fly edit of drawable vectors.
             // SOURCE: https://stackoverflow.com/a/38418049

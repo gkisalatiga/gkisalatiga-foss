@@ -17,6 +17,7 @@ import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.annotation.Keep
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -107,7 +108,7 @@ import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.txtLoading
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
 
-
+@Keep
 class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
     // The view model for downloading files with progress.
