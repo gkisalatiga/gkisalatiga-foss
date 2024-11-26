@@ -73,7 +73,7 @@ Each UI class file should bear a global companion object, useful in passing data
 
 - [X] Add background feed fetcher (data updater) using `WorkManager`
 - [X] Add "ruang berbagi" (promotional) feature
-- [ ] Add search content feature
+- [X] Add search content feature
 - [X] Fix "Carousel not displaying the latest data"
 - [X] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
 - [X] Fix "Notification appears at exact time of the day, but at both AM and PM"
