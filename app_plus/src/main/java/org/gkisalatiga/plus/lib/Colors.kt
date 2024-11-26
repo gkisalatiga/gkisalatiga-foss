@@ -46,6 +46,7 @@ class Colors : Application() {
 }
 
 sealed class DynamicColorScheme (
+    val mainScreenBackgroundColor: Color,
     val mainSplashScreenBackgroundColor : Color,
     val mainSplashScreenForegroundColor : Color,
     val mainSplashScreenSubTextColor : Color,
@@ -63,8 +64,11 @@ sealed class DynamicColorScheme (
     val screenMainBottomNavUnselectedIconColor : Color,
     val screenMainBottomNavUnselectedTextColor : Color,
     val screenMainOverlayGradientBottomColor : Color,
+    val screenSearchClickableTextColor : Color,
+    val screenSearchHistoryItemTextColor : Color,
 ) {
     class DarkColorScheme : DynamicColorScheme(
+        mainScreenBackgroundColor = Color(0xff141218),
         mainSplashScreenBackgroundColor = Color(0xff482505),
         mainSplashScreenForegroundColor = Color.White,
         mainSplashScreenSubTextColor = Color.White,
@@ -82,8 +86,11 @@ sealed class DynamicColorScheme (
         screenMainBottomNavUnselectedIconColor = Color.White,
         screenMainBottomNavUnselectedTextColor = Color.White,
         screenMainOverlayGradientBottomColor = Color.Black,
+        screenSearchClickableTextColor = Color.White,
+        screenSearchHistoryItemTextColor = Color.White,
     )
     class LightColorScheme : DynamicColorScheme(
+        mainScreenBackgroundColor = Color.White,
         mainSplashScreenBackgroundColor = Color.White,
         mainSplashScreenForegroundColor = Color(0xff482505),
         mainSplashScreenSubTextColor = Color(0xff482505),
@@ -101,5 +108,7 @@ sealed class DynamicColorScheme (
         screenMainBottomNavUnselectedIconColor = Color.Black,
         screenMainBottomNavUnselectedTextColor = Color.Black,
         screenMainOverlayGradientBottomColor = Color.White,
+        screenSearchClickableTextColor = Color.Black,
+        screenSearchHistoryItemTextColor = Color(0xff715446)
     )
 }

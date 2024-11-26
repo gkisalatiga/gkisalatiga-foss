@@ -56,6 +56,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Subscriptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -82,10 +83,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -259,7 +262,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     )
                                 }
                                 Spacer(Modifier.size(10.dp))
-                                ClickableText(AnnotatedString(listFilterLabel[idx]), onClick = { changeState() }, modifier = Modifier.fillMaxWidth())
+                                ClickableText(AnnotatedString(listFilterLabel[idx]), onClick = { changeState() }, modifier = Modifier.fillMaxWidth(), style = TextStyle(color = current.colors.screenSearchClickableTextColor))
                             }
                         }
 
@@ -280,7 +283,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     )
                                 }
                                 Spacer(Modifier.size(10.dp))
-                                ClickableText(AnnotatedString(listSortLabel[idx]), onClick = { changeState() }, modifier = Modifier.fillMaxWidth())
+                                ClickableText(AnnotatedString(listSortLabel[idx]), onClick = { changeState() }, modifier = Modifier.fillMaxWidth(), style = TextStyle(color = current.colors.screenSearchClickableTextColor))
                             }
                         }
                     }
@@ -300,6 +303,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         fun historyApplyPressed(selectedSearchTerm: String = String()) {
             text.value = selectedSearchTerm.ifBlank { text.value }
             ScreenSearchCompanion.mutableHistoryDialogVisibilityState.value = false
+            handleSearchQuery()
         }
         val historyDialogTitle = stringResource(R.string.screen_search_history_dialog_title)
         val historyDialogButton = stringResource(R.string.screen_search_history_dialog_close_button)
@@ -319,7 +323,12 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                             else
                                 parsedHistoryAsIterableList.reversed().forEach {
                                     Row(Modifier.padding(horizontal = 5.dp).fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
-                                        TextButton(onClick = { historyApplyPressed(it.getString("term")) }, modifier = Modifier.weight(6.0f)) { Text(it.getString("term"), textAlign = TextAlign.Start) }
+                                        TextButton(
+                                            onClick = { historyApplyPressed(it.getString("term")) },
+                                            modifier = Modifier.weight(6.0f), colors = ButtonColors(containerColor = Color.Unspecified, contentColor = current.colors.screenSearchHistoryItemTextColor, disabledContentColor = Color.Unspecified, disabledContainerColor = Color.Unspecified)
+                                        ) {
+                                            Text(it.getString("term"), textAlign = TextAlign.Start)
+                                        }
                                         IconButton(onClick = { removeSearchRecord(it) }, modifier = Modifier.weight(1.0f)) { Icon(Icons.Default.Close, "") }
                                     }
                                 }
@@ -405,7 +414,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                 val searchResultNodes: MutableList<SearchItemData> = mutableListOf<SearchItemData>().let { list -> ScreenSearchCompanion.mutableSearchResults.value?.forEach { if (it.dataType == enum) list.add(it) }; list }
                 if (searchResultNodes.isNotEmpty()) {
                     stickyHeader {
-                        Box (Modifier.fillMaxWidth().background(Colors.MAIN_SCREEN_BACKGROUND_COLOR)) { Text(listFilterLabel[idx].uppercase(), fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 5.dp), fontSize = 16.sp) }
+                        Box (Modifier.fillMaxWidth().background(current.colors.mainScreenBackgroundColor)) { Text(listFilterLabel[idx].uppercase(), fontWeight = FontWeight.Bold, modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 5.dp), fontSize = 16.sp) }
                     }
                     item {
                         /* Filtering search item types. */
