@@ -32,6 +32,9 @@ class AppPreferences(private val ctx: Context) {
         PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14 to 1209600000L.toLong(),  // --- 14 days.
         PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30 to 2592000000L.toLong(),  // --- 30 days.
         PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER to 31536000000L.toLong(),  // --- 365 days, not actually "never"!
+        PreferenceSettingItem.PREF_VAL_THEME_DARK to "dark",
+        PreferenceSettingItem.PREF_VAL_THEME_LIGHT to "light",
+        PreferenceSettingItem.PREF_VAL_THEME_SYSTEM to "system",
         PreferenceSettingItem.PREF_VAL_YOUTUBE_UI_NEW to true,
         PreferenceSettingItem.PREF_VAL_YOUTUBE_UI_OLD to false,
     )
@@ -45,6 +48,7 @@ class AppPreferences(private val ctx: Context) {
         PreferenceKeys.PREF_KEY_KEEP_NUMBERS_OF_SEARCH_HISTORY to 100.toInt(),
         PreferenceKeys.PREF_KEY_OFFLINE_CHECK_FREQUENCY to 10000L.toLong(),  // --- 10 seconds.
         PreferenceKeys.PREF_KEY_PDF_RENDER_QUALITY_FACTOR to 2.toInt(),
+        PreferenceKeys.PREF_KEY_THEME_UI to "system",
         PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME to true,
     )
 
@@ -180,6 +184,7 @@ enum class PreferenceKeys {
     PREF_KEY_KEEP_NUMBERS_OF_SEARCH_HISTORY,
     PREF_KEY_OFFLINE_CHECK_FREQUENCY,
     PREF_KEY_PDF_RENDER_QUALITY_FACTOR,
+    PREF_KEY_THEME_UI,
     PREF_KEY_YOUTUBE_UI_THEME,
 }
 
@@ -196,6 +201,9 @@ enum class PreferenceSettingItem {
     PREF_VAL_PDF_REMOVE_DAY_14,
     PREF_VAL_PDF_REMOVE_DAY_30,
     PREF_VAL_PDF_REMOVE_NEVER,
+    PREF_VAL_THEME_DARK,
+    PREF_VAL_THEME_LIGHT,
+    PREF_VAL_THEME_SYSTEM,
     PREF_VAL_YOUTUBE_UI_NEW,
     PREF_VAL_YOUTUBE_UI_OLD,
 }

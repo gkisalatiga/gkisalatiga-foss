@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,8 +36,8 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
@@ -81,10 +80,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -403,7 +400,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
         }
 
         /* Displaying the search result items. */
-        LazyColumn {
+        LazyColumn (state = ScreenSearchCompanion.rememberedLazyListState!!) {
             listFilterEnum.forEachIndexed { idx, enum ->
                 val searchResultNodes: MutableList<SearchItemData> = mutableListOf<SearchItemData>().let { list -> ScreenSearchCompanion.mutableSearchResults.value?.forEach { if (it.dataType == enum) list.add(it) }; list }
                 if (searchResultNodes.isNotEmpty()) {
@@ -817,7 +814,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
 class ScreenSearchCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
-        var rememberedScrollState: ScrollState? = null
+        var rememberedLazyListState: LazyListState? = null
 
         /* The current search string. */
         val mutableCurrentSearchString = mutableStateOf("")

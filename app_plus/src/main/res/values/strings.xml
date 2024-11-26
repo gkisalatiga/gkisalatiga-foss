@@ -204,6 +204,11 @@
     <string name="screen_search_qualifier_sort_name_dsc">Nama (Z-A)</string>
 
     <!-- Applicable in ScreenSettings. -->
+    <string name="screen_settings_pref_app_theme">Tema Aplikasi</string>
+    <string name="screen_settings_pref_app_theme_documentation">Menentukan apakah aplikasi akan ditampilkan dalam tema gelap, terang, atau fleksibel mengikuti pengaturan sistem.</string>
+    <string name="screen_settings_pref_app_theme_item_dark">Gelap</string>
+    <string name="screen_settings_pref_app_theme_item_light">Terang</string>
+    <string name="screen_settings_pref_app_theme_item_system">Mengikuti Sistem</string>
     <string name="screen_settings_pref_youtube_ui">Antarmuka Pemutar Video</string>
     <string name="screen_settings_pref_youtube_ui_documentation">Menentukan antarmuka pemutar YouTube pada saat Anda membuka video ibadah, SaRen, dsb. Tampilan antarmuka baru lebih minimalis dan elegan, sedangkan tampilan antarmuka lama lebih kaya fitur.</string>
     <string name="screen_settings_pref_youtube_ui_item_new">Tampilan Baru</string>

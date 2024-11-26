@@ -55,6 +55,7 @@ import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
@@ -223,12 +224,10 @@ class FragmentInfo : ComponentActivity() {
                         }
 
                     })) {
-                        // Modify the icon's color.
-                        // SOURCE: https://stackoverflow.com/a/72365284
                         Image(
                             painter = painterResource(drawableIcon),
                             "Social Media CTA No. ${socialMediaNodeTitles[index]}",
-                            colorFilter = ColorFilter.tint(Color(0xffe6ad84))
+                            colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_ICON_TINT_COLOR)
                         )
                     }
                 }
@@ -240,7 +239,7 @@ class FragmentInfo : ComponentActivity() {
                 Text(stringResource(R.string.about_copyright_notice),
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    color = Color(0xffa46443),
+                    color = Colors.FRAGMENT_INFO_COPYRIGHT_TEXT_COLOR,
                     style = TextStyle (textAlign = TextAlign.Center),
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )

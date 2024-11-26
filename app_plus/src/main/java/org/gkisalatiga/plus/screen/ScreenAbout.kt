@@ -58,7 +58,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -73,7 +72,7 @@ import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN
+import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN_COLOR
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
@@ -171,7 +170,7 @@ class ScreenAbout : ComponentActivity() {
                         }
                     ) {
                         Box {
-                            Box(Modifier.background(MAIN_DARK_BROWN, shape = CircleShape).fillMaxSize())
+                            Box(Modifier.background(MAIN_DARK_BROWN_COLOR, shape = CircleShape).fillMaxSize())
                             Image(painterResource(R.mipmap.ic_launcher_foreground), "",
                                 modifier = Modifier.fillMaxSize().scale(1.2f),
                                 contentScale = ContentScale.Crop

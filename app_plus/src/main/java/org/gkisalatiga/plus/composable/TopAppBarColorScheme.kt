@@ -10,7 +10,7 @@ class TopAppBarColorScheme {
         @Composable
         @OptIn(ExperimentalMaterial3Api::class)
         fun default() = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Colors.COLOR_SCHEME_PRIMARY,
+            containerColor = Colors.MAIN_PRIMARY_COLOR,
             titleContentColor = Colors.MAIN_TOP_BAR_CONTENT_COLOR,
             navigationIconContentColor = Colors.MAIN_TOP_BAR_CONTENT_COLOR,
             actionIconContentColor = Colors.MAIN_TOP_BAR_CONTENT_COLOR,

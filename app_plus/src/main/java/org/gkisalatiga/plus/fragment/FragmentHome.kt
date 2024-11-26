@@ -34,6 +34,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,6 +60,7 @@ import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -301,14 +303,23 @@ class FragmentHome : ComponentActivity() {
 
             /* Displaying the top two menus. */
             Row {
-                btnRoutes.subList(0, 2).forEachIndexed { index, str ->
+                btnRoutes.subList(0, 2).forEachIndexed { index, _ ->
                     // The individual card item.
-                    Card (modifier = Modifier.padding(10.dp).fillMaxWidth().weight(1f), onClick = {
-                        // This will be triggered when the main menu button is clicked.
-                        if (btnRoutes[index] != NavigationRoutes.SCREEN_BLANK) {
-                            AppNavigation.navigate(btnRoutes[index])
+                    Card (
+                        modifier = Modifier.padding(10.dp).fillMaxWidth().weight(1f),
+                        colors = CardColors(
+                            containerColor = Colors.FRAGMENT_HOME_TOP_TWO_MENUS_CONTAINER_COLOR,
+                            contentColor = Colors.FRAGMENT_HOME_TOP_MENU_TINT_COLOR,
+                            disabledContainerColor = Color.Unspecified,
+                            disabledContentColor = Color.Unspecified
+                        ),
+                        onClick = {
+                            // This will be triggered when the main menu button is clicked.
+                            if (btnRoutes[index] != NavigationRoutes.SCREEN_BLANK) {
+                                AppNavigation.navigate(btnRoutes[index])
+                            }
                         }
-                    }) {
+                    ) {
                         Column (modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                             Surface(shape = RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp), modifier = Modifier.fillMaxWidth().aspectRatio(0.75f)) {
                                 Image(painter = painterResource(btnFeaturedCover[index]), "Top Menu Banner", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
@@ -365,7 +376,7 @@ class FragmentHome : ComponentActivity() {
                                 Image(
                                     painter = painterResource(btnIcons[offsetIndex]),
                                     contentDescription = btnDescriptions[offsetIndex],
-                                    colorFilter = ColorFilter.tint(Color.White),
+                                    colorFilter = ColorFilter.tint(Colors.FRAGMENT_HOME_TOP_MENU_TINT_COLOR),
                                     modifier = Modifier.fillMaxHeight(0.50f).aspectRatio(1.0f)
                                 )
                                 // Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -379,6 +390,7 @@ class FragmentHome : ComponentActivity() {
                                     overflow = TextOverflow.Visible,
                                     softWrap = true,
                                     fontSize = 12.sp,
+                                    color = Colors.FRAGMENT_HOME_TOP_MENU_TINT_COLOR,
                                     modifier = Modifier
                                         // .fillMaxHeight(0.50f)
                                         .padding(3.dp)

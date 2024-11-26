@@ -29,6 +29,8 @@
  * SOURCE: https://stackoverflow.com/a/60126585
  */
 
+@file:SuppressLint("ComposableNaming")
+
 package org.gkisalatiga.plus
 
 import android.annotation.SuppressLint
@@ -49,6 +51,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,7 +74,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -110,7 +115,7 @@ import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Colors
-import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN
+import org.gkisalatiga.plus.lib.DynamicColorScheme
 import org.gkisalatiga.plus.lib.GallerySaver
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
@@ -118,6 +123,7 @@ import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PersistentLogger
+import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.screen.ScreenAbout
 import org.gkisalatiga.plus.screen.ScreenAboutCompanion
 import org.gkisalatiga.plus.screen.ScreenAgenda
@@ -146,6 +152,7 @@ import org.gkisalatiga.plus.screen.ScreenLicenseCompanion
 import org.gkisalatiga.plus.screen.ScreenLiturgi
 import org.gkisalatiga.plus.screen.ScreenLiturgiCompanion
 import org.gkisalatiga.plus.screen.ScreenMain
+import org.gkisalatiga.plus.screen.ScreenMainCompanion
 import org.gkisalatiga.plus.screen.ScreenMedia
 import org.gkisalatiga.plus.screen.ScreenMediaCompanion
 import org.gkisalatiga.plus.screen.ScreenPDFViewer
@@ -158,6 +165,7 @@ import org.gkisalatiga.plus.screen.ScreenPrivacyCompanion
 import org.gkisalatiga.plus.screen.ScreenPukatBerkat
 import org.gkisalatiga.plus.screen.ScreenPukatBerkatCompanion
 import org.gkisalatiga.plus.screen.ScreenSearch
+import org.gkisalatiga.plus.screen.ScreenSearchCompanion
 import org.gkisalatiga.plus.screen.ScreenSettings
 import org.gkisalatiga.plus.screen.ScreenSettingsCompanion
 import org.gkisalatiga.plus.screen.ScreenStaticContentList
@@ -182,6 +190,8 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 class ActivityLauncher : ComponentActivity() {
+
+    private lateinit var current : ActivityData
 
     override fun onPause() {
         super.onPause()
@@ -239,15 +249,6 @@ class ActivityLauncher : ComponentActivity() {
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-        // Enable transparent status bar.
-        // SOURCE: https://youtu.be/Ruu44ZUhkBM?si=KTtR2GjZdqMa-rBs
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                android.graphics.Color.TRANSPARENT,
-                android.graphics.Color.TRANSPARENT
-            )
-        )
-
         // Lock the screen's orientation to portrait mode only.
         val targetOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         this.requestedOrientation = targetOrientation
@@ -277,20 +278,32 @@ class ActivityLauncher : ComponentActivity() {
         // Cleaning up stuffs.
         initCleanUp()
 
-        // TODO: Remove this code block after v0.6.0 launch. This code block causes screen blank during launch.
-        /*// Block the app until all data is initialized.
-        // Prevents "null pointer exception" when the JSON data in the multi-thread has not been prepared.
-        while (true) {
-            if (MainCompanion.jsonRoot != null && ModulesCompanion.jsonRoot != null && GalleryCompanion.jsonRoot != null && StaticCompanion.jsonRoot != null) {
-                break
-            } else {
-                Logger.logRapidTest({}, "Still initializing data ...", LoggerType.WARNING)
-            }
-        }*/
-
         // Initiate the Jetpack Compose composition.
         // This is the entry point of every composable, similar to "main()" function in Java.
         setContent {
+
+            // Check for dark mode UI state.
+            val prefDarkMode = AppPreferences(this@ActivityLauncher).getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String
+            val isDarkMode = (isSystemInDarkTheme() && prefDarkMode == "system") || prefDarkMode == "dark"
+            GlobalCompanion.isDarkModeUi.value = isDarkMode
+
+            // Prepare the activity-wide context variables.
+            current = ActivityData(
+                ctx = this@ActivityLauncher,
+                scope = rememberCoroutineScope(),
+                lifecycleOwner = LocalLifecycleOwner.current,
+                lifecycleScope = this@ActivityLauncher.lifecycleScope,
+                keyboardController = LocalSoftwareKeyboardController.current,
+                colors = if (isDarkMode) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme()
+            )
+
+            // Enable transparent status bar.
+            enableEdgeToEdge(
+                statusBarStyle = if (isDarkMode)
+                    SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                else
+                    SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+            )
 
             // Try to remember the state of the carousel.
             initCarouselState()
@@ -317,11 +330,19 @@ class ActivityLauncher : ComponentActivity() {
             ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
+            ScreenSearchCompanion.rememberedLazyListState = rememberLazyListState()
             ScreenSettingsCompanion.rememberedScrollState = rememberScrollState()
             ScreenStaticContentListCompanion.rememberedScrollState = rememberScrollState()
             ScreenWartaCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
+
+            // Pre-assign the overlay gradient.
+            ScreenMainCompanion.renderedOverlayGradient = Brush.verticalGradient(colorStops = arrayOf (
+                0.0f to Colors.SCREEN_MAIN_OVERLAY_GRADIENT_TOP_COLOR,
+                0.5f to Colors.SCREEN_MAIN_OVERLAY_GRADIENT_MIDDLE_COLOR,
+                1.0f to current.colors.screenMainOverlayGradientBottomColor
+            ))
 
             // Pre-assign pager states of non-main menus.
             ScreenPukatBerkatCompanion.pukatBerkatPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
@@ -339,7 +360,7 @@ class ActivityLauncher : ComponentActivity() {
                 }
             }
 
-            GKISalatigaAppTheme {
+            GKISalatigaAppTheme (darkTheme = isDarkMode) {
                 if (!GlobalCompanion.DEBUG_DISABLE_SPLASH_SCREEN) {
 
                     // Display splash screen.
@@ -432,7 +453,6 @@ class ActivityLauncher : ComponentActivity() {
      * @param splashNavController the nav. controller that will redirect the app to the main screen.
      */
     @Composable
-    @SuppressLint("ComposableNaming")
     private fun initSplashScreen(splashNavController: NavHostController) {
         val scale = remember { Animatable(1.6f) }
 
@@ -447,8 +467,16 @@ class ActivityLauncher : ComponentActivity() {
         }
 
         // Displays the splash screen content.
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(MAIN_DARK_BROWN)) {
-            Image(painter = painterResource(id = R.drawable.splash_screen_foreground), contentDescription = "Splash screen logo", modifier = Modifier.scale(scale.value))
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize().background(current.colors.mainSplashScreenBackgroundColor)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.splash_screen_foreground_vector),
+                contentDescription = "Splash screen logo",
+                modifier = Modifier.scale(scale.value),
+                colorFilter = ColorFilter.tint(current.colors.mainSplashScreenForegroundColor)
+            )
         }
 
         Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom, modifier = Modifier.padding(bottom = 100.dp)) {
@@ -464,7 +492,7 @@ class ActivityLauncher : ComponentActivity() {
             CircularProgressIndicator()
 
             val versionName = this@ActivityLauncher.packageManager.getPackageInfo(this@ActivityLauncher.packageName, 0).versionName
-            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = Colors.MAIN_SPLASHSCREEN_SUB_TEXT_COLOR, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
+            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = current.colors.mainSplashScreenSubTextColor, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
         }
     }
 
@@ -473,18 +501,8 @@ class ActivityLauncher : ComponentActivity() {
      * It also becomes the graphical base of all screens.
      */
     @Composable
-    @SuppressLint("ComposableNaming")
     private fun initMainGraphic() {
         Logger.logInit({}, "Initializing main graphic with the current screen route: ${AppNavigation.mutableCurrentNavigationRoute.value.name} ...")
-
-        // Prepare the activity-wide context variables.
-        val currentActivityData = ActivityData(
-            ctx = this@ActivityLauncher,
-            scope = rememberCoroutineScope(),
-            lifecycleOwner = LocalLifecycleOwner.current,
-            lifecycleScope = this@ActivityLauncher.lifecycleScope,
-            keyboardController = LocalSoftwareKeyboardController.current,
-        )
 
         // We use nav. host because it has built-in support for transition effect/animation.
         // We also use nav. host so that we can handle URI deep-linking, both from an external URL click and from a notification click.
@@ -493,7 +511,7 @@ class ActivityLauncher : ComponentActivity() {
         NavHost(navController = mainNavController, startDestination = AppNavigation.startingScreenRoute.name) {
             // TODO: Provide all screens with "ctx", "scope", and "lifecycleOwner"?
             composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout().getComposable() }
-            composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda().getComposable() }
+            composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda(current).getComposable() }
             composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution().getComposable() }
             composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible().getComposable()}
             composable(NavigationRoutes.SCREEN_BLANK.name) {ScreenBlank().getComposable()}
@@ -509,15 +527,15 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense().getComposable() }
             composable(NavigationRoutes.SCREEN_LITURGI.name) { ScreenLiturgi().getComposable() }
             composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive().getComposable() }
-            composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain().getComposable() }
+            composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain(current).getComposable() }
             composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia().getComposable() }
-            composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(currentActivityData).getComposable() }
+            composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan().getComposable() }
             composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer().getComposable() }
             composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }
             composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat().getComposable()}
-            composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(currentActivityData).getComposable()}
-            composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings().getComposable()}
+            composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings(current).getComposable()}
             composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList().getComposable() }
             composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList().getComposable() }
             composable(NavigationRoutes.SCREEN_WARTA.name) { ScreenWarta().getComposable() }

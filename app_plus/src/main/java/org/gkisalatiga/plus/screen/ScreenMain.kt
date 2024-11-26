@@ -71,7 +71,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -90,13 +89,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.MainPTR
 import org.gkisalatiga.plus.composable.MainPTRCompanion
 import org.gkisalatiga.plus.composable.OfflineSnackbarHost
 import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.fragment.FragmentHome
 import org.gkisalatiga.plus.fragment.FragmentInfo
 import org.gkisalatiga.plus.fragment.FragmentServices
@@ -107,7 +106,7 @@ import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
 
-class ScreenMain : ComponentActivity() {
+class ScreenMain (private val current : ActivityData) : ComponentActivity() {
 
     // For "double-press back" to exit.
     private var backPressedTime: Long = 0
@@ -132,9 +131,6 @@ class ScreenMain : ComponentActivity() {
     // Determines what background to show on the new top bar layout by user github.com/ujepx64.
     private var newTopBannerBackground = R.drawable.topbar_greetings_background
 
-    // The coroutine scope.
-    private lateinit var scope: CoroutineScope
-
     // The snackbar host state.
     private val snackbarHostState = OfflineSnackbarHostCompanion.snackbarHostState
 
@@ -142,11 +138,8 @@ class ScreenMain : ComponentActivity() {
     @ExperimentalMaterial3Api
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter", "UseOfNonLambdaOffsetOverload")
     fun getComposable() {
-        val ctx = LocalContext.current
-        scope = rememberCoroutineScope()
-
         // Initializing the top banner title.
-        topBannerTitle = ctx.resources.getString(R.string.app_name_alias)
+        topBannerTitle = current.ctx.resources.getString(R.string.app_name_alias)
 
         // Initializing the horizontal pager.
         horizontalPagerState = rememberPagerState ( pageCount = {fragRoutes.size}, initialPage = fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value) )
@@ -169,7 +162,7 @@ class ScreenMain : ComponentActivity() {
             floatingActionButton =  { },
             floatingActionButtonPosition = FabPosition.Center,
             modifier = Modifier.pullToRefresh(isRefreshing.value, pullToRefreshState!!, onRefresh = {
-                MainPTRCompanion.launchOnRefresh(ctx)
+                MainPTRCompanion.launchOnRefresh(current.ctx)
             })
         ) {
             calculatedTopPadding = it.calculateTopPadding()
@@ -316,7 +309,7 @@ class ScreenMain : ComponentActivity() {
             // Then notify user about this.
             val snackbarMessageString = stringResource(R.string.not_connected_to_internet)
             LaunchedEffect(GlobalCompanion.isConnectedToInternet.value) {
-                if (!GlobalCompanion.isConnectedToInternet.value) scope.launch {
+                if (!GlobalCompanion.isConnectedToInternet.value) current.scope.launch {
                     snackbarHostState.showSnackbar(
                         message = snackbarMessageString,
                         duration = SnackbarDuration.Short
@@ -352,7 +345,7 @@ class ScreenMain : ComponentActivity() {
                     NavigationRoutes.FRAG_MAIN_INFO, NavigationRoutes.FRAG_MAIN_SERVICES -> {
                         // Since we are in the main screen but not at fragment one,
                         // navigate the app to fragment one.
-                        scope.launch { horizontalPagerState.animateScrollToPage(0) }
+                        current.scope.launch { horizontalPagerState.animateScrollToPage(0) }
                     }
                     else -> {
                         // Do nothing.
@@ -405,16 +398,16 @@ class ScreenMain : ComponentActivity() {
                         label = { Text(item) },
                         selected = fragRoutes.indexOf(ScreenMainCompanion.mutableLastPagerPage.value) == index,
                         colors = NavigationBarItemColors(
-                            selectedIconColor = Color.Unspecified,
-                            selectedTextColor = Color.Unspecified,
-                            selectedIndicatorColor = Colors.MAIN_BOTTOM_BAR_COLOR,
-                            unselectedIconColor = Color.Unspecified,
-                            unselectedTextColor = Color.Unspecified,
+                            selectedIconColor = current.colors.screenMainBottomNavSelectedIconColor,
+                            selectedTextColor = current.colors.screenMainBottomNavSelectedTextColor,
+                            selectedIndicatorColor = current.colors.screenMainBottomNavSelectedIndicationColor,
+                            unselectedIconColor = current.colors.screenMainBottomNavUnselectedIconColor,
+                            unselectedTextColor = current.colors.screenMainBottomNavUnselectedTextColor,
                             disabledIconColor = Color.Unspecified,
                             disabledTextColor = Color.Unspecified
                         ),
                         onClick = {
-                            scope.launch { horizontalPagerState.animateScrollToPage(index) }
+                            current.scope.launch { horizontalPagerState.animateScrollToPage(index) }
                         }
                     )  // --- end of nav bar item.
 
@@ -436,7 +429,6 @@ class ScreenMain : ComponentActivity() {
         ) {
 
             /* Drawing the top bar greetings banner background. */
-            // SOURCE: https://stackoverflow.com/a/70965281
             Image (
                 painter = painterResource(newTopBannerBackground),
                 contentDescription = "FragmentHome Top Bar Greetings Banner",
@@ -445,17 +437,10 @@ class ScreenMain : ComponentActivity() {
             )
 
             /* To colorize the image. */
-            Box (Modifier.background(Color(0x77fdb308)).fillMaxSize()) {}
+            Box (Modifier.background(Colors.SCREEN_MAIN_COLORIZE_COLOR).fillMaxSize()) {}
 
             /* Drawing the overlapping top bar transparent gradient. */
-            // SOURCE: https://developer.android.com/develop/ui/compose/graphics/draw/brush
-            // SOURCE: https://stackoverflow.com/a/60479489
-            val overlayGradient = Brush.verticalGradient(colorStops = arrayOf (
-                // HSL (hue, saturation, lightness) must be in range (0..360, 0..1, 0..1)
-                0.0f to Color.hsl(38f, 0.98f, 0.51f),
-                0.5f to Color.Transparent,
-                1.0f to Color.White
-            ))
+            val overlayGradient = ScreenMainCompanion.renderedOverlayGradient!!
             Box (
                 modifier = Modifier
                     .background(overlayGradient)
@@ -496,7 +481,9 @@ class ScreenMain : ComponentActivity() {
             ),
             title = {
                 Row (horizontalArrangement = Arrangement.Start) {
-                    Image(painterResource(R.drawable.app_typography), stringResource(R.string.app_name_alias),
+                    Image(
+                        painter = painterResource(R.drawable.app_typography),
+                        contentDescription = stringResource(R.string.app_name_alias),
                         modifier = Modifier.aspectRatio(5.68817f).weight(2.5f),
                         contentScale = ContentScale.Crop,
                         colorFilter = ColorFilter.tint(ScreenMainCompanion.topBarTitleContentColor)
@@ -506,7 +493,6 @@ class ScreenMain : ComponentActivity() {
             },
             navigationIcon = {},
             actions = {
-                // TODO: Re-enable the search button once the functionality is ready.
                 IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SEARCH) }) {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -543,6 +529,7 @@ class ScreenMainCompanion : Application () {
 
         /* The dynamic state of the top bar UI. */
         val mutableTopBarContainerTransparency = mutableFloatStateOf(0.0f)
+        var renderedOverlayGradient: Brush? = null
         val topBarContainerColor = Colors.MAIN_TOP_BAR_COLOR
         val topBarTitleContentColor = Colors.MAIN_TOP_BAR_CONTENT_COLOR
 

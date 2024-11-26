@@ -4,6 +4,7 @@
 
 :star2: **NEW**
 
+- Added dark theme
 - Added content search functionality for menus: Warta Jemaat, Liturgi, YKB, and YouTube video
 - Added search history
 

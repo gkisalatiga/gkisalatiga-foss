@@ -63,7 +63,10 @@ class GlobalCompanion : Application() {
         /* Global states of the app. */
 
         // The status of internet connection.
-        var isConnectedToInternet = mutableStateOf(false)
+        val isConnectedToInternet = mutableStateOf(false)
+
+        // Whether we are in the dark mode.
+        val isDarkModeUi = mutableStateOf(false)
 
         // Current app's bars (both status bar and navigation bar) state of visibility.
         val isPhoneBarsVisible = mutableStateOf(true)

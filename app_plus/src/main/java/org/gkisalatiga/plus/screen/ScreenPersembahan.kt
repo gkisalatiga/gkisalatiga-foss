@@ -191,14 +191,7 @@ class ScreenPersembahan : ComponentActivity() {
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Surface(
-                    shape = CircleShape,
-                    onClick = {
-                        showOffertoryCodeTextDialog.value = true
-                    }
-                ) {
-                    Icon(Icons.AutoMirrored.Default.Help, "")
-                }
+                IconButton( onClick = { showOffertoryCodeTextDialog.value = true } ) { Icon(Icons.AutoMirrored.Default.Help, "") }
             }
 
             // The JSON node for offertory code.
