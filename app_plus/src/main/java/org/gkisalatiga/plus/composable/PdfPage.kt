@@ -8,6 +8,7 @@ package org.gkisalatiga.plus.composable
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,7 +33,7 @@ fun PdfPage(pageBitmap: Bitmap, backgroundColor: Color) {
             zoomState,
             onDoubleTap = { position -> zoomState.toggleScale(PdfPageCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
             scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
-        ).wrapContentSize().background(backgroundColor),
+        ).wrapContentSize().fillMaxWidth().background(backgroundColor),
         contentDescription = "PdfPage Bitmap Rendering Composable",
         contentScale = ContentScale.Fit
     )
