@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 30,
-      "versionName": "0.5.2-rc",
+      "versionCode": 34,
+      "versionName": "0.6.0-rc.4",
       "outputFile": "app_plus-release.apk"
     }
   ],

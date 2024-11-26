@@ -1,5 +1,12 @@
 # GKI Salatiga App Changelog
 
+## v0.6.0-rc.5 2024.11.26 (35)
+
+:hammer_and_wrench: **FIX**
+
+- Fixed incomplete PDF download when using the Kotlin R8 release compilation
+- Fixed PDF download cancellation does not halt the back-end of data transfer
+
 ## v0.6.0-rc.4 2024.11.26 (34)
 
 :hammer_and_wrench: **FIX**

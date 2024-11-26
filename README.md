@@ -95,7 +95,7 @@ Each UI class file should bear a global companion object, useful in passing data
 
 ### December 2024
 
-- [ ] Upload a new release with native debug code
+- [X] Upload a new release with native debug code
 
 ## C. Privacy Policy
 

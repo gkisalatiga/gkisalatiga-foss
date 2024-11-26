@@ -19,9 +19,10 @@
 
 package org.gkisalatiga.plus.lib
 
+import androidx.annotation.Keep
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.isActive
@@ -38,6 +39,7 @@ import java.net.URL
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
 
+@Keep
 class CoroutineFileDownload : CoroutineViewModel() {
 
     companion object {
@@ -46,7 +48,10 @@ class CoroutineFileDownload : CoroutineViewModel() {
     }
 
     private lateinit var downloadsDirectory: File
+    private lateinit var currentJob: Job
     private val coroutineThread = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+    // private var currentJob: Job? = null
+    private val coroutineThread2 = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
     /**
      * Cancels the download process.
@@ -54,6 +59,20 @@ class CoroutineFileDownload : CoroutineViewModel() {
     fun cancelDownload() {
         Logger.logDownloader({}, "Retrieved call to cancel the download process.", LoggerType.VERBOSE)
         isDownloadCancelled = true
+
+        // launch (Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
+        /*launch (coroutineThread) {
+            while (true) {
+                try {
+                    currentJob.cancelChildren()
+                    currentJob.cancel()
+                    currentJob.join()
+                    Logger.logDownloader({}, "All current jobs have been joined together.", LoggerType.VERBOSE)
+
+                    break
+                } catch (e: Exception) { Logger.logRapidTest({}, "Attempting to cancel the process ... [${e.message}]") }
+            }
+        }*/
     }
 
     /**
@@ -78,7 +97,7 @@ class CoroutineFileDownload : CoroutineViewModel() {
     private fun proceedFileDownload(fileUrl: String, targetFilename: String, result: MutableLiveData<FileDownloadEvent>) {
 
         // Dispatches the actual downloader.
-        val job = launch(coroutineThread) {
+        currentJob = launch(coroutineThread) {
             try {
                 val downloadTarget = File(downloadsDirectory, targetFilename)
                 val connection = URL(fileUrl).openConnection() as HttpURLConnection
@@ -88,11 +107,17 @@ class CoroutineFileDownload : CoroutineViewModel() {
                 val buffer = ByteArray(4096)
                 var downloadedFileSize = 0L
                 var currentRead = 0
+                var progress = 0
                 while (currentRead != -1 && isActive) {
+                    if (isDownloadCancelled) {
+                        isDownloadCancelled = false
+                        throw DownloadCancelledByClientException()
+                    }
+
                     downloadedFileSize += currentRead
                     outputStream.write(buffer, 0, currentRead)
                     currentRead = inputStream.read(buffer, 0, buffer.size)
-                    val progress = (100f * (downloadedFileSize.toFloat() / contentLength.toFloat())).toInt()
+                    progress = (100f * (downloadedFileSize.toFloat() / contentLength.toFloat())).toInt()
 
                     // Negative download percentage means the link cannot be downloaded using this method.
                     if (progress < 0) throw FileNotDownloadableException("Negative download progress detected: $progress%. The remote link $fileUrl may not be downloadable!")
@@ -108,7 +133,17 @@ class CoroutineFileDownload : CoroutineViewModel() {
                 inputStream.close()
 
                 // Report successful download.
-                if (currentRead == -1) isDownloadSucceeded = true
+                /*if (currentRead == -1 || progress == 100) isDownloadSucceeded = true
+                else throw IncompleteDownloadException()
+                return@launch*/
+                if (currentRead == -1 || progress == 100) {
+                    // isDownloadSucceeded = true
+                    Logger.logDownloader({}, "Download successful: $downloadTarget", LoggerType.VERBOSE)
+                    result.postValue(FileDownloadEvent.Success(downloadTarget.path))
+
+                    // coroutineThread2.close()
+                }
+                else throw IncompleteDownloadException()
                 return@launch
 
             } catch (e: ConnectException) {
@@ -136,6 +171,16 @@ class CoroutineFileDownload : CoroutineViewModel() {
                 result.postValue(FileDownloadEvent.Failure(msg))
                 Logger.logDownloader({}, msg, LoggerType.ERROR)
 
+            } catch (e: DownloadCancelledByClientException) {
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Cancelled(msg))
+                Logger.logDownloader({}, msg, LoggerType.WARNING)
+
+            } catch (e: IncompleteDownloadException) {
+                val msg = "${e::class.simpleName}: ${e.message}"
+                result.postValue(FileDownloadEvent.Failure(msg))
+                Logger.logDownloader({}, msg, LoggerType.ERROR)
+
             } catch (e: Exception) {
                 val msg = "${e::class.simpleName}: ${e.message} ${e.stackTraceToString()}"
                 result.postValue(FileDownloadEvent.Failure(msg))
@@ -145,13 +190,14 @@ class CoroutineFileDownload : CoroutineViewModel() {
         }
 
         // The default message displayed when the job finishes.
-        job.invokeOnCompletion {
-            Logger.logDownloader({}, "Invoked the completion of the downloading of: ${fileUrl}", LoggerType.VERBOSE)
+        //job.invokeOnCompletion {
+        currentJob.invokeOnCompletion {
+            Logger.logDownloader({}, "Invoked the completion of the downloading of: $fileUrl", LoggerType.VERBOSE)
         }
 
         // Detects if the download is cancelled by the client.
         // SOURCE: https://stackoverflow.com/a/76646799
-        launch(Dispatchers.Default) {
+        /*val job2 = launch(coroutineThread2) {
             try {
                 while (true) {
                     if (isDownloadCancelled) {
@@ -162,20 +208,28 @@ class CoroutineFileDownload : CoroutineViewModel() {
                         coroutineThread.close()
                         throw DownloadCancelledByClientException()
                     }
-                    if (isDownloadSucceeded) {
+                    /*if (isDownloadSucceeded) {
                         isDownloadSucceeded = false
                         val downloadTarget = File(downloadsDirectory, targetFilename)
                         Logger.logDownloader({}, "Download successful: $downloadTarget", LoggerType.VERBOSE)
+                        job.join(); coroutineThread.close()
                         result.postValue(FileDownloadEvent.Success(downloadTarget.path))
                         break
-                    }
+                    }*/
                 }
             } catch (e: DownloadCancelledByClientException) {
                 val msg = "${e::class.simpleName}: ${e.message}"
                 result.postValue(FileDownloadEvent.Cancelled(msg))
                 Logger.logDownloader({}, msg, LoggerType.WARNING)
             }
+
+            return@launch
         }
+
+        // The default message displayed when the job finishes.
+        job2.invokeOnCompletion {
+            Logger.logDownloader({}, "User download cancellation observer has been invoked to finish.", LoggerType.VERBOSE)
+        }*/
 
     }  // --- end of proceedFileDownload().
 
