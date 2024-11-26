@@ -61,7 +61,7 @@ class PdfViewModel(ctx: Context) : CoroutineViewModel() {
      * @param renderQuality determines the resolution of the rendered PDF page. higher value means better quality but slower rendering. The value must be > 0.
      * @return the [PdfUiEvent] resembling the current state of PDF rendering.
      */
-    fun loadPdfPage(pageNumber: Int, renderQuality: Int) : MutableLiveData<PdfPageUiEvent> {
+    fun loadPdfPage(pageNumber: Int) : MutableLiveData<PdfPageUiEvent> {
         val result = MutableLiveData<PdfPageUiEvent>()
 
         // Debug logging, for solving problems.

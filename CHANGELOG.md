@@ -1,12 +1,13 @@
 # GKI Salatiga App Changelog
 
-## Next Release
+## v0.6.0-rc 2024.11.26 (31)
 
 :star2: **NEW**
 
 - Added dark theme
 - Added content search functionality for menus: Warta Jemaat, Liturgi, YKB, and YouTube video
 - Added search history
+- Added e-book module reader menu
 
 ## v0.5.2-rc 2024.11.20 (30)
 

@@ -78,6 +78,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -294,7 +295,8 @@ class ActivityLauncher : ComponentActivity() {
                 lifecycleOwner = LocalLifecycleOwner.current,
                 lifecycleScope = this@ActivityLauncher.lifecycleScope,
                 keyboardController = LocalSoftwareKeyboardController.current,
-                colors = if (isDarkMode) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme()
+                colors = if (isDarkMode) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme(),
+                uriHandler = LocalUriHandler.current,
             )
 
             // Enable transparent status bar.

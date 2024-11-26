@@ -69,7 +69,6 @@ import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.StringFormatter
 
 class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {

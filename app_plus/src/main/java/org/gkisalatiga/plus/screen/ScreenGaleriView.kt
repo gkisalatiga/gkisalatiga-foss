@@ -199,7 +199,6 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
             onClick = {
                 val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage)
                 val name = currentPhotoObject.getString("name")
-                val date = currentPhotoObject.getString("date")
                 val id = currentPhotoObject.getString("id")
 
                 // Obtain the download URL.
@@ -228,7 +227,6 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
             // The photo's specific metadata.
             val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(page)
             val name = currentPhotoObject.getString("name")
-            val date = currentPhotoObject.getString("date")
             val id = currentPhotoObject.getString("id")
 
             // The image URL.

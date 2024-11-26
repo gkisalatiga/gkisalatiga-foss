@@ -13,7 +13,6 @@ package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import androidx.activity.ComponentActivity
@@ -362,7 +361,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                 // Attempt to download the file, if not exists.
                 if (!isAlreadyDownloaded) {
                     Logger.logPDF({}, "Downloading the PDF file: $url")
-                    handlePdfDownload(current.ctx, url, lifecycleOwner)
+                    handlePdfDownload(url, lifecycleOwner)
 
                 } else {
                     // Load the file directly if it exists.
@@ -392,7 +391,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                     // Request PDF page rendering.
                     LaunchedEffect(Unit) {
                         Logger.logTest({}, "pagerPage: $pagerPage, pagerPage+1: ${pagerPage + 1}", LoggerType.WARNING)
-                        pdfRendererViewModel.loadPdfPage(pagerPage, 2).observe(lifecycleOwner) {
+                        pdfRendererViewModel.loadPdfPage(pagerPage).observe(lifecycleOwner) {
                             when (it) {
                                 is PdfPageUiEvent.Error -> {
                                     Logger.logPDF({}, it.message)
@@ -466,7 +465,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
     /**
      * This function handles the PDF downloading.
      */
-    private fun handlePdfDownload(ctx: Context, url: String, lifecycleOwner: LifecycleOwner) {
+    private fun handlePdfDownload(url: String, lifecycleOwner: LifecycleOwner) {
         val targetDownloadDir = InternalFileManager(current.ctx).PDF_POOL_PDF_FILE_CREATOR
         val targetFilename = System.currentTimeMillis()
 

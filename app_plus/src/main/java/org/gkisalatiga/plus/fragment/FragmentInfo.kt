@@ -126,7 +126,7 @@ class FragmentInfo : ComponentActivity() {
 
             /* Display the individual "church info" card. */
             Column ( modifier = Modifier.padding(top = 10.dp) ) {
-                staticDataList.forEachIndexed { index, itemObject ->
+                staticDataList.forEachIndexed { _, itemObject ->
 
                     // The card title, thumbnail, etc.
                     var bannerURL = itemObject.getString("banner")

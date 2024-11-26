@@ -13,8 +13,8 @@ dependencyResolutionManagement {
 
         // Composable markdown support using "compose-markdown"
         // SOURCE: https://github.com/jeziellago/compose-markdown
-        maven { url 'https://jitpack.io' }
+        maven { url "https://jitpack.io" }
     }
 }
 rootProject.name = "GKI Salatiga+"
-include ':app_plus'
+include ":app_plus"

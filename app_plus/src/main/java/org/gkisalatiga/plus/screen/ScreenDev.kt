@@ -114,7 +114,6 @@ class ScreenDev : ComponentActivity() {
                     .verticalScroll(scrollState)) {
 
                 /* Show app logo, name, and version. */
-                val welcomeDevText = stringResource(R.string.screen_dev_welcome_developer)
                 Box (Modifier.padding(vertical = 15.dp).padding(top = 10.dp)) {
                     Surface (shape = CircleShape, modifier = Modifier.size(100.dp)) {
                         Box {

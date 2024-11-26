@@ -8,6 +8,7 @@ package org.gkisalatiga.plus.data
 
 import android.content.Context
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
@@ -34,4 +35,5 @@ data class ActivityData (
     val lifecycleScope: LifecycleCoroutineScope,
     val keyboardController: SoftwareKeyboardController?,
     val colors: DynamicColorScheme,
+    val uriHandler: UriHandler,
 )

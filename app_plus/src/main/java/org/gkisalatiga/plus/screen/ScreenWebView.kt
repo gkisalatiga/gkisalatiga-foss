@@ -142,6 +142,7 @@ class ScreenWebView : ComponentActivity() {
                             } catch (e) { }
                         """.trimIndent()
 
+                    @Deprecated("Deprecated in Java")
                     override fun shouldOverrideUrlLoading(
                         view: WebView?,
                         url: String?

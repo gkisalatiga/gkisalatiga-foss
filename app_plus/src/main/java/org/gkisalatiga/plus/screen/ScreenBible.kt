@@ -32,7 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -74,7 +73,6 @@ class ScreenBible : ComponentActivity() {
 
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
         /* Displaying the markdown content. */
         Box(Modifier.background(Color.Transparent)) {

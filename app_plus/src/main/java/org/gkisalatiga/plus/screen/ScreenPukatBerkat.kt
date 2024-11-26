@@ -58,7 +58,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -200,7 +199,6 @@ class ScreenPukatBerkat : ComponentActivity() {
             /* Iterating through every Pukat Berkat item. */
             for (i in 0 until enumeratedPukatBerkatList.size) {
                 val curList = enumeratedPukatBerkatList[i]
-                val curListSize = enumeratedPukatBerkatList.size
 
                 // Debug test.
                 // Logger.logTest({}, "Testing of enumeratedPukatBerkatList -> [curListSize] $curListSize ::  [curList] $curList")

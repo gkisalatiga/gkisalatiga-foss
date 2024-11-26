@@ -100,7 +100,6 @@ class ScreenAbout : ComponentActivity() {
         // SOURCE: https://stackoverflow.com/a/6593822
         val pInfo: PackageInfo = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
         val vName = pInfo.versionName
-        val vCode = pInfo.versionCode
 
         // Get app name.
         // SOURCE: https://stackoverflow.com/a/15114434
@@ -210,7 +209,6 @@ class ScreenAbout : ComponentActivity() {
 
     @Composable
     private fun getAppInfo() {
-        val ctx = LocalContext.current
         val uriHandler = LocalUriHandler.current
 
         /* Section: App Info */

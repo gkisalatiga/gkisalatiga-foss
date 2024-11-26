@@ -93,6 +93,10 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Add the automatic PDF remover back-end functionality
 - [X] Add the settings helper/documentation
 
+### December 2024
+
+- [ ] Upload a new release with native debug code
+
 ## C. Privacy Policy
 
 The latest privacy policy document of GKI Salatiga can be read in this [GitHub repository file](https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/PRIVACY_POLICY.md). However, this **README** file has summarized the privacy policy as follows:

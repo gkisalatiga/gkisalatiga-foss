@@ -9,6 +9,8 @@
  * SOURCE: https://stackoverflow.com/a/52844621
  */
 
+@file:Suppress("SpellCheckingInspection")
+
 package org.gkisalatiga.plus.global
 
 import android.app.Application
@@ -24,7 +26,6 @@ class GlobalCompanion : Application() {
         /* App-wide pre-defined values and URLs. */
         const val ABOUT_CONTACT_MAIL = "dev.gkisalatiga@gmail.com"
         const val APP_CHANGELOG_URL = "https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/CHANGELOG.md"
-        const val APP_FULL_LICENSE = "https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/LICENSE"
         const val APP_SOURCE_CODE_URL = "https://github.com/gkisalatiga/gkisalatiga-foss"
 
         /* ------------------------------------------------------------------------------------ */
@@ -34,7 +35,7 @@ class GlobalCompanion : Application() {
         const val DEBUG_ENABLE_EASTER_EGG = true
 
         // Whether to display the debugger's toast.
-        const val DEBUG_ENABLE_TOAST = true
+        const val DEBUG_ENABLE_TOAST = false
 
         // Whether to display the debugger's logcat logging.
         const val DEBUG_ENABLE_LOG_CAT = true
@@ -54,7 +55,7 @@ class GlobalCompanion : Application() {
         const val DEBUG_ENABLE_LOG_CAT_WORKER = true
 
         // Whether to display extraneous information in various screens.
-        const val DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO = true
+        const val DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO = false
 
         // Whether to hide the splash screen.
         const val DEBUG_DISABLE_SPLASH_SCREEN = false

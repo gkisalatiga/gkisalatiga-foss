@@ -263,7 +263,6 @@ class ScreenVideoLive : ComponentActivity() {
      */
     @Composable
     private fun getNormalPlayer() {
-        val ctx = LocalContext.current
         Scaffold (
             topBar = { if (!YouTubeViewCompanion.isFullscreen.value) this.getTopBar() },
             snackbarHost = { OfflineSnackbarHost() },
