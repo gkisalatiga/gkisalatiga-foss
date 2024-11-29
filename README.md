@@ -96,6 +96,11 @@ Each UI class file should bear a global companion object, useful in passing data
 ### December 2024
 
 - [X] Upload a new release with native debug code
+- [ ] Fix "Double Splash Screen" issue by actually implementing the `SplashScreen` API on Android 12+
+- [ ] Fix "Content Labeling Warning" by adding labels to clickable objects
+- [ ] Add notification prompt the the `FragmentHome` if the user hasn't granted notification permission
+- [ ] Add "Sinode GKI" logo to the app
+- [ ] Improved icon sets and color theming in dark mode
 
 ## C. Privacy Policy
 
@@ -153,11 +158,16 @@ May the heavenly Father bless all your lives!
 - Joaquim P. Agung
 - Natanael J. Susanto
 
+### Project Intern
+
+- Alfina G. Y. Christy
+
 ### Pre-Release Testers
 
 - Bambang Setiadhy
 - Bayu Octariyanto
 - Bobby Wilianto
+- Budi Santoso
 - Chrissandhy Botmir
 - Christian R. Sukan
 - Danang Purnomo
@@ -173,9 +183,11 @@ May the heavenly Father bless all your lives!
 - Gita K. Dewi
 - Hendra Aribowo
 - Jack E. Parsaoran
+- Joaquim P. Agung
 - Johnson U. Radda
 - Joshua A. Gracia
 - Lusiana Nurhayati
+- Natanael J. Susanto
 - Nathalia Arviandri
 - Oktoviana B. Mowata
 - Reny Handayani
@@ -184,6 +196,7 @@ May the heavenly Father bless all your lives!
 - Sriono Sudarso
 - Stefanus F. S. Harefa
 - Swarni N. Malimou
+- Tunggul L. A. Dewanto
 - Visi P. Pananginan
 - Wurjayanti
 - Yosua C. H. Kuncoro
