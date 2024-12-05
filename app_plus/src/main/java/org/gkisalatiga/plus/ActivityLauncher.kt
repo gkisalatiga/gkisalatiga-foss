@@ -512,38 +512,38 @@ class ActivityLauncher : ComponentActivity() {
         val mainNavController = rememberNavController()
         NavHost(navController = mainNavController, startDestination = AppNavigation.startingScreenRoute.name) {
             // TODO: Provide all screens with "ctx", "scope", and "lifecycleOwner"?
-            composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout().getComposable() }
+            composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout(current).getComposable() }
             composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda(current).getComposable() }
-            composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution().getComposable() }
-            composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible().getComposable()}
-            composable(NavigationRoutes.SCREEN_BLANK.name) {ScreenBlank().getComposable()}
-            composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib().getComposable() }
-            composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev().getComposable() }
-            composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI.name) { ScreenGaleri().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList().getComposable() }
+            composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_BLANK.name) {ScreenBlank(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI.name) { ScreenGaleri(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList(current).getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView(current).getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear().getComposable() }
-            composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML().getComposable() }
-            composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary().getComposable()}
-            composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense().getComposable() }
-            composable(NavigationRoutes.SCREEN_LITURGI.name) { ScreenLiturgi().getComposable() }
-            composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive().getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_LITURGI.name) { ScreenLiturgi(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive(current).getComposable() }
             composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain(current).getComposable() }
-            composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia().getComposable() }
+            composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(current).getComposable() }
-            composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan().getComposable() }
+            composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan(current).getComposable() }
             composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer(current).getComposable() }
-            composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }
-            composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat().getComposable()}
+            composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat(current).getComposable()}
             composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(current).getComposable()}
             composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings(current).getComposable()}
-            composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList().getComposable() }
-            composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList().getComposable() }
-            composable(NavigationRoutes.SCREEN_WARTA.name) { ScreenWarta().getComposable() }
-            composable(NavigationRoutes.SCREEN_WEBVIEW.name) { ScreenWebView().getComposable() }
-            composable(NavigationRoutes.SCREEN_YKB.name) {ScreenYKB().getComposable()}
-            composable(NavigationRoutes.SCREEN_YKB_LIST.name) {ScreenYKBList().getComposable()}
+            composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_WARTA.name) { ScreenWarta(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_WEBVIEW.name) { ScreenWebView(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_YKB.name) {ScreenYKB(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_YKB_LIST.name) {ScreenYKBList(current).getComposable()}
         }
 
         // Watch for the state change in the parameter "currentNavigationRoute".

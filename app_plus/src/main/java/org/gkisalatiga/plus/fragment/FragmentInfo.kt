@@ -40,8 +40,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -51,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
@@ -61,7 +60,7 @@ import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
 import org.json.JSONObject
 
-class FragmentInfo : ComponentActivity() {
+class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
 
     // The trigger to open an URL in an external browser.
     private var doTriggerBrowserOpen = mutableStateOf(false)
@@ -99,7 +98,6 @@ class FragmentInfo : ComponentActivity() {
 
     @Composable
     fun getComposable() {
-        val ctx = LocalContext.current
 
         // Converting JSONArray to regular lists.
         val staticDataList: MutableList<JSONObject> = mutableListOf()
@@ -137,7 +135,7 @@ class FragmentInfo : ComponentActivity() {
 
                     Card(
                         onClick = {
-                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Display the church profile content folder list.
                             ScreenStaticContentListCompanion.targetStaticFolder = itemObject
@@ -217,7 +215,7 @@ class FragmentInfo : ComponentActivity() {
                             // SOURCE: https://stackoverflow.com/a/59365539
                             val emailIntent = Intent(Intent.ACTION_SENDTO)
                             emailIntent.setData(Uri.parse("mailto:${socialMediaCTATargets[index]}"))
-                            ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
+                            current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
                         } else {
                             doTriggerBrowserOpen.value = true
                             externalLinkURL.value = socialMediaCTATargets[index]
@@ -252,7 +250,7 @@ class FragmentInfo : ComponentActivity() {
             if (doTriggerBrowserOpen.value) {
                 // Opens in an external browser.
                 // SOURCE: https://stackoverflow.com/a/69103918
-                LocalUriHandler.current.openUri(externalLinkURL.value)
+                current.uriHandler.openUri(externalLinkURL.value)
 
                 doTriggerBrowserOpen.value = false
             }

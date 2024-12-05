@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## Next Release
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Implemented `ActivityData` in all screens and fragments, replacing `LocalContext` and `LocalUriHandler`
+
 ## v0.6.0-rc.5 2024.11.26 (35)
 
 :hammer_and_wrench: **FIX**

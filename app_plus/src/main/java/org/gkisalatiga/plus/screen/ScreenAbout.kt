@@ -59,8 +59,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN_COLOR
@@ -80,7 +79,7 @@ import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PersistentLogger
 
 
-class ScreenAbout : ComponentActivity() {
+class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
 
     // The description of the application.
     private var appMainDescription = mutableStateOf("")
@@ -91,10 +90,12 @@ class ScreenAbout : ComponentActivity() {
     private val easterEggMinClicks = 12
     private val easterEggTimeout = 2000.toLong()
 
+    // The local context.
+    private val ctx = current.ctx
+
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
 
         // Obtain the app's essential information.
         // SOURCE: https://stackoverflow.com/a/6593822
@@ -209,7 +210,6 @@ class ScreenAbout : ComponentActivity() {
 
     @Composable
     private fun getAppInfo() {
-        val uriHandler = LocalUriHandler.current
 
         /* Section: App Info */
         Column (Modifier.fillMaxWidth()) {
@@ -258,7 +258,7 @@ class ScreenAbout : ComponentActivity() {
             val sourceCodeText = stringResource(R.string.screen_about_kode_sumber)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { uriHandler.openUri(GlobalCompanion.APP_SOURCE_CODE_URL) }
+                onClick = { current.uriHandler.openUri(GlobalCompanion.APP_SOURCE_CODE_URL) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Code, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -271,7 +271,7 @@ class ScreenAbout : ComponentActivity() {
             val changelogText = stringResource(R.string.screen_about_log_perubahan)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { uriHandler.openUri(GlobalCompanion.APP_CHANGELOG_URL) }
+                onClick = { current.uriHandler.openUri(GlobalCompanion.APP_CHANGELOG_URL) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.History, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -285,7 +285,6 @@ class ScreenAbout : ComponentActivity() {
 
     @Composable
     private fun getAuthorInfo() {
-        val ctx = LocalContext.current
 
         /* Section: Author Info */
         Column (Modifier.fillMaxWidth()) {
@@ -317,7 +316,7 @@ class ScreenAbout : ComponentActivity() {
                     // SOURCE: https://stackoverflow.com/a/59365539
                     val emailIntent = Intent(Intent.ACTION_SENDTO)
                     emailIntent.setData(Uri.parse("mailto:${GlobalCompanion.ABOUT_CONTACT_MAIL}"))
-                    ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
+                    current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
                 }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {

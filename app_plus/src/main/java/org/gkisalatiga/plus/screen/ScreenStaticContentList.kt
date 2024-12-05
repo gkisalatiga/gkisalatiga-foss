@@ -45,7 +45,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,18 +53,18 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONObject
 
 
-class ScreenStaticContentList : ComponentActivity() {
+class ScreenStaticContentList (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
 
         Scaffold (
             topBar = { this.getTopBar() }
@@ -85,7 +84,6 @@ class ScreenStaticContentList : ComponentActivity() {
 
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
         // The selected static folder's folder content.
         val folderContent = ScreenStaticContentListCompanion.targetStaticFolder!!
@@ -119,7 +117,7 @@ class ScreenStaticContentList : ComponentActivity() {
                     // Displaying the individual card.
                     Card(
                         onClick = {
-                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Display the church profile content folder list.
                             ScreenInternalHTMLCompanion.targetHTMLContent = it.getString("html")

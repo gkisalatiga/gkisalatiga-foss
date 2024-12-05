@@ -57,7 +57,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -194,7 +193,6 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
 
     @Composable
     private fun getFloatingActionButton() {
-        val ctx = LocalContext.current
         FloatingActionButton (
             onClick = {
                 val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage)
@@ -204,7 +202,7 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
                 // Obtain the download URL.
                 val downloadURL = StringFormatter.getGoogleDriveDownloadURL(id)
 
-                GallerySaver().saveImageFromURL(ctx, downloadURL, name)
+                GallerySaver().saveImageFromURL(current.ctx, downloadURL, name)
             },
             shape = CircleShape,
             modifier = Modifier.scale(1.5f).offset(0.dp, 30.dp)

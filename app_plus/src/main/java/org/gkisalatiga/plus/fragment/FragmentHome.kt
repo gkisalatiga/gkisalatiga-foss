@@ -45,7 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,6 +56,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -68,7 +68,9 @@ import org.gkisalatiga.plus.screen.ScreenPosterViewerCompanion
 import org.gkisalatiga.plus.screen.ScreenWebViewCompanion
 import kotlin.math.ceil
 
-class FragmentHome : ComponentActivity() {
+class FragmentHome (private val current : ActivityData) : ComponentActivity() {
+
+    private val ctx = current.ctx
 
     // The following defines the visible menu buttons shown in the main menu,
     // as well as their corresponding navigation targets.
@@ -124,7 +126,6 @@ class FragmentHome : ComponentActivity() {
 
     @Composable
     fun getComposable() {
-        val ctx = LocalContext.current
 
         /* Initialized the "lateinit" variables. */
         btnLabels = listOf(
@@ -219,7 +220,7 @@ class FragmentHome : ComponentActivity() {
                     /* Display the carousel banner image. */
                     Surface (
                         shape = RoundedCornerShape(15.dp),
-                        modifier = Modifier.padding(LocalContext.current.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
+                        modifier = Modifier.padding(ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
                         onClick = {
                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
 

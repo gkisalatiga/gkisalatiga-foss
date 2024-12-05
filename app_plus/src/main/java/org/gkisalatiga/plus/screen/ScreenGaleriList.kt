@@ -58,12 +58,13 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONArray
 
-class ScreenGaleriList : ComponentActivity() {
+class ScreenGaleriList (private val current : ActivityData) : ComponentActivity() {
 
     // The pager state.
     private lateinit var horizontalPagerState: PagerState

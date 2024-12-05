@@ -52,8 +52,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
@@ -77,12 +76,13 @@ import java.util.Date
 import kotlin.math.abs
 
 
-class ScreenDev : ComponentActivity() {
+class ScreenDev (private val current : ActivityData) : ComponentActivity() {
+
+    private val ctx = current.ctx
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
 
         // Obtain the app's essential information.
         // SOURCE: https://stackoverflow.com/a/6593822
@@ -158,8 +158,6 @@ class ScreenDev : ComponentActivity() {
     @Composable
     @SuppressLint("SimpleDateFormat")
     private fun getQuickActions() {
-        val ctx = LocalContext.current
-        val uriHandler = LocalUriHandler.current
 
         /* The quick actions menu. */
         Column (Modifier.fillMaxWidth()) {

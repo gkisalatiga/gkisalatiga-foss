@@ -42,8 +42,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,12 +49,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.services.ClipManager
 
-class ScreenWebView : ComponentActivity() {
+class ScreenWebView (private val current : ActivityData) : ComponentActivity() {
 
     // The trigger to open an URL in an external browser.
     private var doTriggerBrowserOpen = mutableStateOf(false)
@@ -88,10 +87,7 @@ class ScreenWebView : ComponentActivity() {
         // Handles opening URLs in external browser.
         key(doTriggerBrowserOpen.value) {
             if (doTriggerBrowserOpen.value) {
-                // Opens in an external browser.
-                // SOURCE: https://stackoverflow.com/a/69103918
-                LocalUriHandler.current.openUri(ScreenWebViewCompanion.webViewTargetURL)
-
+                current.uriHandler.openUri(ScreenWebViewCompanion.webViewTargetURL)
                 doTriggerBrowserOpen.value = false
             }
         }
@@ -251,7 +247,6 @@ class ScreenWebView : ComponentActivity() {
      */
     @Composable
     private fun getLinkConfirmationDialog() {
-        val ctx = LocalContext.current
         val notificationText = stringResource(R.string.webview_visit_link_link_copied)
         if (showLinkConfirmationDialog.value) {
             AlertDialog(
@@ -266,7 +261,7 @@ class ScreenWebView : ComponentActivity() {
                             val clipData = ClipData.newPlainText("text", ScreenWebViewCompanion.webViewTargetURL)
                             ClipManager.clipManager!!.setPrimaryClip(clipData)
 
-                            Toast.makeText(ctx, notificationText, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(current.ctx, notificationText, Toast.LENGTH_SHORT).show()
                         }) {
                             OutlinedTextField(
                                 modifier = Modifier.fillMaxWidth(),

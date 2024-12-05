@@ -59,8 +59,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -73,6 +71,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -81,7 +80,7 @@ import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONObject
 
-class ScreenPukatBerkat : ComponentActivity() {
+class ScreenPukatBerkat (private val current : ActivityData) : ComponentActivity() {
 
     // The pager state.
     private val horizontalPagerState = ScreenPukatBerkatCompanion.pukatBerkatPagerState!!
@@ -156,8 +155,6 @@ class ScreenPukatBerkat : ComponentActivity() {
 
     @Composable
     private fun getSectionUI(dictIndex: String, intIndex: Int) {
-        val ctx = LocalContext.current
-        val uriHandler = LocalUriHandler.current
 
         /* Converting JSONArray to regular list. */
         val pukatBerkatListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("pukat-berkat")
@@ -225,7 +222,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                         // Set the PosterViewer parameters.
                         ScreenPosterViewerCompanion.posterViewerTitle = title
@@ -266,11 +263,8 @@ class ScreenPukatBerkat : ComponentActivity() {
                                 containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
                             ),
                             onClick = {
-                                if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
-
-                                // Opens in an external browser.
-                                // SOURCE: https://stackoverflow.com/a/69103918
-                                uriHandler.openUri(contactURL)
+                                if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
+                                current.uriHandler.openUri(contactURL)
                             }
                         ) {
                             Row (verticalAlignment = Alignment.CenterVertically) {

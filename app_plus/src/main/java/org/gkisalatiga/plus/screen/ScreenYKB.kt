@@ -48,7 +48,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -67,7 +67,7 @@ import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ScreenYKB : ComponentActivity() {
+class ScreenYKB (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -90,7 +90,6 @@ class ScreenYKB : ComponentActivity() {
     
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
         val scrollState = ScreenYKBCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
@@ -156,7 +155,7 @@ class ScreenYKB : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the WebView viewer.
                         ScreenInternalHTMLCompanion.internalWebViewTitle = title

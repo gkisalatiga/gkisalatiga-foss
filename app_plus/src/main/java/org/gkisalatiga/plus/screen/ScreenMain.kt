@@ -81,7 +81,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -280,7 +279,6 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                     // Shows the main content.
                     Surface (
                         modifier = Modifier.offset(y = (ScreenMainCompanion.mutableScreenMainContentTopOffset.floatValue).dp).fillMaxSize().zIndex(10f),
-                        // modifier = Modifier.padding(top = LocalContext.current.resources.getDimension(R.dimen.new_topbar_content_top_y_offset).dp).fillMaxSize().zIndex(10f),
                         shape = RoundedCornerShape(25.dp, 25.dp, 0.dp, 0.dp)
                     ) {
                         // Enabling pager for managing and layouting multiple fragments in a given screen.
@@ -296,9 +294,9 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                             beyondViewportPageCount = 2
                         ) { page ->
                             when (page) {
-                                0 -> FragmentHome().getComposable()
-                                1 -> FragmentServices().getComposable()
-                                2 -> FragmentInfo().getComposable()
+                                0 -> FragmentHome(current).getComposable()
+                                1 -> FragmentServices(current).getComposable()
+                                2 -> FragmentInfo(current).getComposable()
                             }
                         }
                     }
@@ -324,7 +322,6 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
             // the app is exited instead of continuing to navigate back to the previous screens.
             // SOURCE: https://stackoverflow.com/a/69151539
             val exitConfirm = stringResource(R.string.exit_confirmation_toast_string)
-            val localContext = LocalContext.current
             BackHandler {
                 when (val curRoute = ScreenMainCompanion.mutableLastPagerPage.value) {
                     NavigationRoutes.FRAG_MAIN_HOME -> {
@@ -333,10 +330,10 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                         if (backPressedTime + 2000 > System.currentTimeMillis()) {
                             // Exit the application.
                             // SOURCE: https://stackoverflow.com/a/67402808
-                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(localContext, "You just clicked $curRoute and exited the app!", Toast.LENGTH_SHORT).show()
-                            (localContext as ComponentActivity).finish()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked $curRoute and exited the app!", Toast.LENGTH_SHORT).show()
+                            (current.ctx as ComponentActivity).finish()
                         } else {
-                            Toast.makeText(localContext, exitConfirm, Toast.LENGTH_LONG).show()
+                            Toast.makeText(current.ctx, exitConfirm, Toast.LENGTH_LONG).show()
                         }
 
                         backPressedTime = System.currentTimeMillis()
@@ -445,7 +442,7 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                 modifier = Modifier
                     .background(overlayGradient)
                     .fillMaxSize()
-                    .padding(LocalContext.current.resources.getDimension(R.dimen.new_topbar_canvas_padding).dp)
+                    .padding(current.ctx.resources.getDimension(R.dimen.new_topbar_canvas_padding).dp)
                     .padding(top = calculatedTopPadding)
             ) {
                 Column {
