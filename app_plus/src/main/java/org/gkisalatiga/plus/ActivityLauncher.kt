@@ -363,7 +363,7 @@ class ActivityLauncher : ComponentActivity() {
 
             GKISalatigaAppTheme (darkTheme = isDarkMode) {
                 // Display splash screen.
-                Surface(color = DynamicColorScheme.DarkColorScheme().mainSplashScreenBackgroundColor, modifier = Modifier.fillMaxSize()) {
+                Surface(color = if (isDarkMode) Color.Black else Color.White, modifier = Modifier.fillMaxSize()) {
                     val splashNavController = rememberNavController()
                     NavHost(navController = splashNavController, startDestination = "init_screen") {
                         composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
