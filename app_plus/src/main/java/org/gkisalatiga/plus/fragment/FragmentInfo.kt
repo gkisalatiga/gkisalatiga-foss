@@ -110,8 +110,8 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
         val scrollState = FragmentInfoCompanion.rememberedScrollState!!
         Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(state = scrollState)

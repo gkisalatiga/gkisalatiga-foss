@@ -90,6 +90,7 @@ class Main(private val ctx: Context) {
         return JSONObject(inputAsString).getJSONObject("data")
     }
 
+    @Suppress("unused")
     fun getFallbackMainMetadata(): JSONObject {
         // Loading the local JSON file.
         // SOURCE: https://stackoverflow.com/a/2856501
@@ -125,33 +126,17 @@ class Main(private val ctx: Context) {
      * Please run Downloader().initMetaData() before executing this function.
      */
     fun getMainData(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(MainCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (MainCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(MainCompanion.absolutePathToJSONFile)
-            return JSONObject(this._parsedJSONString).getJSONObject("data")
-        } else {
-            return getFallbackMainData()
-        }
-
+        this.loadJSON(MainCompanion.absolutePathToJSONFile)
+        return JSONObject(this._parsedJSONString).getJSONObject("data")
     }
 
     fun getMainMetadata(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(MainCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (MainCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(MainCompanion.absolutePathToJSONFile)
-            return JSONObject(this._parsedJSONString).getJSONObject("meta")
-        } else {
-            return getFallbackMainMetadata()
-        }
-
+        this.loadJSON(MainCompanion.absolutePathToJSONFile)
+        return JSONObject(this._parsedJSONString).getJSONObject("meta")
     }
 
 }

@@ -75,7 +75,7 @@ class Gallery(private val ctx: Context) {
         return JSONObject(inputAsString).getJSONArray("gallery")
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
+    @Suppress("MemberVisibilityCanBePrivate", "unused")
     fun getFallbackGalleryMetadata(): JSONObject {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
@@ -109,35 +109,17 @@ class Gallery(private val ctx: Context) {
      * Please run Downloader().initMetaData() before executing this function.
      */
     fun getGalleryData(): JSONArray {
-        // Determines if we have already downloaded the JSON file.
-        @Suppress("LocalVariableName")
-        val JSONExists = File(GalleryCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GalleryCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONArray("gallery")
-        } else {
-            return getFallbackGalleryData()
-        }
-
+        this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONArray("gallery")
     }
 
     fun getGalleryMetadata(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        @Suppress("LocalVariableName")
-        val JSONExists = File(GalleryCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GalleryCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONObject("meta")
-        } else {
-            return getFallbackGalleryMetadata()
-        }
-
+        this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONObject("meta")
     }
 }
 

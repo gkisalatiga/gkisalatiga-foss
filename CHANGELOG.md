@@ -4,7 +4,9 @@
 
 :four_leaf_clover: **IMPROVEMENT**
 
+- (Back-End) Compressed the fallback JSON data to conserve more space
 - (Back-End) Implemented `ActivityData` in all screens and fragments, replacing `LocalContext` and `LocalUriHandler`
+- (Back-End) Removed JSON fallback calling when app launch count is more than one to prevent old data from showing up
 
 ## v0.6.0-rc.5 2024.11.26 (35)
 

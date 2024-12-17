@@ -74,6 +74,7 @@ class Static(private val ctx: Context) {
         return JSONObject(inputAsString).getJSONArray("static")
     }
 
+    @Suppress("unused")
     fun getFallbackStaticMetadata(): JSONObject {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
@@ -107,33 +108,17 @@ class Static(private val ctx: Context) {
      * Please run Downloader().initMetaData() before executing this function.
      */
     fun getStaticData(): JSONArray {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(StaticCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (StaticCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(StaticCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONArray("static")
-        } else {
-            return getFallbackStaticData()
-        }
-
+        this.loadJSON(StaticCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONArray("static")
     }
 
     fun getStaticMetadata(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(StaticCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (StaticCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(StaticCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONObject("meta")
-        } else {
-            return getFallbackStaticMetadata()
-        }
-
+        this.loadJSON(StaticCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONObject("meta")
     }
 
 }

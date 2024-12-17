@@ -73,6 +73,7 @@ class Modules(private val ctx: Context) {
         return JSONObject(inputAsString).getJSONObject("modules")
     }
 
+    @Suppress("unused")
     fun getFallbackModulesMetadata(): JSONObject {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_modules)
@@ -106,33 +107,17 @@ class Modules(private val ctx: Context) {
      * Please run Downloader().initMetaData() before executing this function.
      */
     fun getModulesData(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(ModulesCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (ModulesCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONObject("modules")
-        } else {
-            return getFallbackModulesData()
-        }
-
+        this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONObject("modules")
     }
 
     fun getModulesMetadata(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(ModulesCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (ModulesCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONObject("meta")
-        } else {
-            return getFallbackModulesMetadata()
-        }
-
+        this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONObject("meta")
     }
 }
 

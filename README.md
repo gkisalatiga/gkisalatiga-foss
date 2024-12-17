@@ -101,7 +101,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Add notification prompt the the `FragmentHome` if the user hasn't granted notification permission
 - [ ] Add "Sinode GKI" logo to the app
 - [ ] Improved icon sets and color theming in dark mode
-- [ ] Remove JSON data fallback completely when launch count is more than 1 (prevent data not updated when offline)
+- [X] Remove JSON data fallback completely when launch count is more than 1 (prevent data not updated when offline)
 
 ## C. Privacy Policy
 
