@@ -486,11 +486,10 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                     Image(
                         painter = painterResource(R.drawable.app_typography),
                         contentDescription = stringResource(R.string.app_name_alias),
-                        modifier = Modifier.aspectRatio(5.68817f).weight(2.5f),
-                        contentScale = ContentScale.Crop,
-                        colorFilter = ColorFilter.tint(ScreenMainCompanion.topBarTitleContentColor)
+                        modifier = Modifier.fillMaxWidth().weight(2.5f).padding(vertical = 10.dp),//Modifier.aspectRatio(5.68817f).weight(2.5f),
+                        contentScale = ContentScale.Fit,
                     )
-                    Spacer(Modifier.weight(3.0f))
+                    Spacer(Modifier.weight(0.75f))
                 }
             },
             navigationIcon = {},

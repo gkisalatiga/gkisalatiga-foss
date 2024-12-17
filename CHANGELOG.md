@@ -4,6 +4,7 @@
 
 :four_leaf_clover: **IMPROVEMENT**
 
+- Added "GKI" logo to several locations of interest in the app
 - Attempted to solve "Content Labeling Warning" by adding labels to clickable objects
 - Attempted to solve "Double Splash Screen" by implementing Android 12+ splash screen API
 - (Back-End) Compressed the fallback JSON data to conserve more space

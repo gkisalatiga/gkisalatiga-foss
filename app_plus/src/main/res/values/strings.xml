@@ -134,16 +134,16 @@
 
     <!-- Constant string used in the new top bar layout. -->
     <string name="new_topbar_greetings">Syalom!</string>
-    <string name="new_topbar_person_name">Sobat GKIS terkasih</string>
+    <string name="new_topbar_person_name">Jemaat &amp; simpatisan GKIS terkasih</string>
 
     <!-- Confirmation string for "press again to exit". -->
     <string name="exit_confirmation_toast_string">Tekan sekali lagi untuk keluar dari aplikasi.</string>
 
     <!-- The app copyright notice. -->
-    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGKI Salatiga 2024</string>
+    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGereja Kristen Indonesia Salatiga 2024</string>
 
     <!-- Email chooser intent. -->
-    <string name="email_chooser_title">Kirim surel dengan ...</string>
+    <string name="email_chooser_title">Kirim surel dengan &#8230;</string>
 
     <!-- Applicable in ScreenAbout. -->
     <string name="screen_about_tentang_aplikasi">Tentang Aplikasi</string>

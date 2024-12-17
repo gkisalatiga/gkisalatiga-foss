@@ -96,12 +96,12 @@ Each UI class file should bear a global companion object, useful in passing data
 ### December 2024
 
 - [X] Upload a new release with native debug code
-- [X] Fix "Double Splash Screen" issue by actually implementing the `SplashScreen` API on Android 12+
+- [ ] Fix "Double Splash Screen" issue by actually implementing the `SplashScreen` API on Android 12+
 - [X] Fix "Content Labeling Warning" by adding labels to clickable objects
 - [X] Fix YouTube player suddenly stops when changing screen orientation (caused by commit 560426d "Added dark theme")
 - [ ] Add notification prompt the the `FragmentHome` if the user hasn't granted notification permission
-- [ ] Add "Sinode GKI" logo to the app
-- [ ] Improve icon sets and color theming in dark mode
+- [X] Add "Sinode GKI" logo to the app
+- [X] Improve icon sets ~and color theming in dark mode~
 - [X] Remove JSON data fallback completely when launch count is more than 1 (prevent data not updated when offline)
 
 ## C. Privacy Policy
@@ -122,6 +122,7 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 - Compose UI - Coil; Coil Contributors (C) 2024 (Apache 2.0) [Link](https://github.com/coil-kt/coil)
 - CoroutineFileDownload; Jovche Mitrejchevski (C) 2018 (Apache 2.0) [Link](https://github.com/mitrejcevski/coroutineFileDownload)
 - Jetpack Compose Material3; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.0-beta04)
+- Material Design Icons; Pictogrammers (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/mdi/), [Link 2](https://github.com/Templarian/MaterialDesign)
 - Material Symbols & Icons - Google Fonts; The Android Open Source Project (C) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
 - Phosphor; Phosphor Icons (C) 2024 (MIT) [Link 1](https://icon-sets.iconify.design/ph), [Link 2](https://github.com/phosphor-icons/core)
 - RemixIcon Icon Set; Remix-Design (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/ri), [Link 2](https://github.com/Remix-Design/RemixIcon)

@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
@@ -85,7 +86,7 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
 
     // The list of social media icons.
     private val socialMediaIcons = listOf(
-        R.drawable.remixicon_wordpress_fill_48,
+        R.drawable.mdi__internet_48,
         R.drawable.remixicon_facebook_box_fill_48,
         R.drawable.remixicon_instagram_fill_48,
         R.drawable.remixicon_youtube_fill_48,
@@ -225,7 +226,7 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                         Image(
                             painter = painterResource(drawableIcon),
                             "Social Media CTA No. ${socialMediaNodeTitles[index]}",
-                            colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_ICON_TINT_COLOR)
+                            colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_COPYRIGHT_TEXT_COLOR)
                         )
                     }
                 }
@@ -237,9 +238,17 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                 Text(stringResource(R.string.about_copyright_notice),
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    color = Colors.FRAGMENT_INFO_COPYRIGHT_TEXT_COLOR,
+                    color = Colors.FRAGMENT_INFO_ICON_TINT_COLOR,
                     style = TextStyle (textAlign = TextAlign.Center),
                     modifier = Modifier.padding(horizontal = 20.dp)
+                )
+                Spacer(Modifier.height(25.dp))
+                @Suppress("SpellCheckingInspection")
+                Image(
+                    painter = painterResource(R.drawable.logo_gki),
+                    "Logo Gereja Kristen Indonesia",
+                    colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_ICON_TINT_COLOR),
+                    modifier = Modifier.size(75.dp)
                 )
             }
 
