@@ -39,6 +39,7 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -85,6 +86,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -235,8 +237,16 @@ class ActivityLauncher : ComponentActivity() {
         // Preamble logging to the terminal.
         Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
 
+        // Handle the splash screen transition.
+        // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
+        // val splashScreen = installSplashScreen()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) installSplashScreen()
+
         // Call the superclass. (The default behavior. DO NOT CHANGE!)
         super.onCreate(savedInstanceState)
+
+        // Keep the splash screen visible for this Activity.
+        // splashScreen.setKeepOnScreenCondition { true }
 
         // Initializes the app's internally saved preferences.
         initPreferencesAndLocalStorage()
@@ -357,8 +367,15 @@ class ActivityLauncher : ComponentActivity() {
                     val splashNavController = rememberNavController()
                     NavHost(navController = splashNavController, startDestination = "init_screen") {
                         composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
-                            if (intent?.data == null) initSplashScreen()
-                            else { handleDeepLink(intent, consumeAfterHandling = true); initMainGraphic() }
+                            if (intent?.data == null) {
+                                /* Display the splash screen because no intent is passed for this session. */
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) initSplashScreen()
+                                else initMainGraphic()
+                                // splashScreen.setKeepOnScreenCondition { false }
+                            }
+                            else {
+                                handleDeepLink(intent, consumeAfterHandling = true); initMainGraphic()
+                            }
                         }
 
                         composable ("main_screen") { initMainGraphic() }
