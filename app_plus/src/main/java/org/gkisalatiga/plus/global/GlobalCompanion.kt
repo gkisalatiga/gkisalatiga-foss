@@ -57,9 +57,6 @@ class GlobalCompanion : Application() {
         // Whether to display extraneous information in various screens.
         const val DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO = false
 
-        // Whether to hide the splash screen.
-        const val DEBUG_DISABLE_SPLASH_SCREEN = false
-
         /* ------------------------------------------------------------------------------------ */
         /* Global states of the app. */
 

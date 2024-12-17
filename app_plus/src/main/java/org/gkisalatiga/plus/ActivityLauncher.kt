@@ -363,24 +363,17 @@ class ActivityLauncher : ComponentActivity() {
             }
 
             GKISalatigaAppTheme (darkTheme = isDarkMode) {
-                if (!GlobalCompanion.DEBUG_DISABLE_SPLASH_SCREEN) {
+                // Display splash screen.
+                Surface(color = DynamicColorScheme.DarkColorScheme().mainSplashScreenBackgroundColor, modifier = Modifier.fillMaxSize()) {
+                    val splashNavController = rememberNavController()
+                    NavHost(navController = splashNavController, startDestination = "init_screen") {
+                        composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
+                            if (intent?.data == null) initSplashScreen()
+                            else { handleDeepLink(intent, consumeAfterHandling = true); initMainGraphic() }
+                        }
 
-                    // Display splash screen.
-                    Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-                        val splashNavController = rememberNavController()
-                        NavHost(navController = splashNavController, startDestination = "init_screen") {
-                            composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
-                                if (intent?.data == null) initSplashScreen(splashNavController)
-                                else { handleDeepLink(intent, consumeAfterHandling = true); initMainGraphic() }
-                            }
-
-                            composable ("main_screen") { initMainGraphic() }
-                        }  // --- end of NavHost.
-                    }
-
-                } else {
-                    // Just display the main graphic directly.
-                    initMainGraphic()
+                        composable ("main_screen") { initMainGraphic() }
+                    }  // --- end of NavHost.
                 }
             }  // --- end of GKISalatigaPlusTheme.
         }  // --- end of setContent().
@@ -452,49 +445,35 @@ class ActivityLauncher : ComponentActivity() {
 
     /**
      * This method determines what is shown during splash screen.
-     * @param splashNavController the nav. controller that will redirect the app to the main screen.
      */
     @Composable
-    private fun initSplashScreen(splashNavController: NavHostController) {
-        val scale = remember { Animatable(1.6f) }
+    private fun initSplashScreen() {
+        Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
+            val splashNavController = rememberNavController()
+            NavHost(navController = splashNavController, startDestination = "init_screen") {
+                composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
+                    Logger.logInit({}, "Loading splash screen (legacy Android API) of the app ...")
+                    LaunchedEffect(key1 = true) {
+                        // Determines the duration of the splash screen.
+                        delay(500)
+                        splashNavController.navigate("main_screen")
+                    }
 
-        LaunchedEffect(Unit) { Logger.logInit({}, "Loading splash screen of the app ...") }
-        LaunchedEffect(key1 = true) {
-            // Animate the logo.
-            scale.animateTo(targetValue = 0.5f, animationSpec = tween(durationMillis = 1250, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
+                    // Displays the splash screen content.
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize().background(current.colors.mainSplashScreenBackgroundColor)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.splash_screen_icon),
+                            contentDescription = "Splash screen logo",
+                            colorFilter = ColorFilter.tint(current.colors.mainSplashScreenForegroundColor)
+                        )
+                    }
+                }
 
-            // Determines the duration of the splash screen.
-            delay(100)
-            splashNavController.navigate("main_screen")
-        }
-
-        // Displays the splash screen content.
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize().background(current.colors.mainSplashScreenBackgroundColor)
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.splash_screen_foreground_vector),
-                contentDescription = "Splash screen logo",
-                modifier = Modifier.scale(scale.value),
-                colorFilter = ColorFilter.tint(current.colors.mainSplashScreenForegroundColor)
-            )
-        }
-
-        Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom, modifier = Modifier.padding(bottom = 100.dp)) {
-            /**
-             * They said adding progress bar to the old splash screen (Android version below 12)
-             * prevents the "Double Splash Screen" warning in the Google Play Console pre-launch report.
-             * The first screen should contain not just one view in order to prevent the warning.
-             * SOURCE: https://stackoverflow.com/a/77220306
-             * ---
-             * @ujepx64 recommended using circular progress instead.
-             * We'll see if this resolved the issue similar to adding a progress bar.
-             */
-            CircularProgressIndicator()
-
-            val versionName = this@ActivityLauncher.packageManager.getPackageInfo(this@ActivityLauncher.packageName, 0).versionName
-            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = current.colors.mainSplashScreenSubTextColor, fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
+                composable ("main_screen") { initMainGraphic() }
+            }
         }
     }
 

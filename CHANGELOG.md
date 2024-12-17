@@ -5,6 +5,7 @@
 :four_leaf_clover: **IMPROVEMENT**
 
 - Attempted to solve "Content Labeling Warning" by adding labels to clickable objects
+- Attempted to solve "Double Splash Screen" by implementing Android 12+ splash screen API
 - (Back-End) Compressed the fallback JSON data to conserve more space
 - (Back-End) Implemented `ActivityData` in all screens and fragments, replacing `LocalContext` and `LocalUriHandler`
 - (Back-End) Removed JSON fallback calling when app launch count is more than one to prevent old data from showing up

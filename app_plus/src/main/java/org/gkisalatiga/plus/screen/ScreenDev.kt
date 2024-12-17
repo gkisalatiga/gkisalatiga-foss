@@ -276,7 +276,6 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 "DEBUG_ENABLE_LOG_CAT_UPDATER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_UPDATER,
                 "DEBUG_ENABLE_LOG_CAT_WORKER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_WORKER,
                 "DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO" to GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO,
-                "DEBUG_DISABLE_SPLASH_SCREEN" to GlobalCompanion.DEBUG_DISABLE_SPLASH_SCREEN,
             )
 
             /* Displaying all of the app's debug flag values. */

@@ -9,11 +9,7 @@
         <item name="colorSecondary">@color/brown_500</item>
         <item name="colorSecondaryVariant">@color/brown_700</item>
         <item name="colorOnSecondary">@color/white</item>
-        <!--
-        <item name="colorSecondary">@color/purple_200</item>
-        <item name="colorSecondaryVariant">@color/purple_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        -->
+
         <!-- Status bar color. -->
         <!-- <item name="android:statusBarColor">?attr/colorPrimaryVariant</item> -->
         <item name="android:windowTranslucentStatus">true</item>

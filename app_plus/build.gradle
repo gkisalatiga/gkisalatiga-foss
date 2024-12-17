@@ -155,4 +155,8 @@ dependencies {
     // Better, more advanced VerticalPager and HorizontalPager zoomable modifier.
     implementation("net.engawapg.lib:zoomable:1.6.2")
 
+    // Splash screen API for Android 12+ devices.
+    // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 }
