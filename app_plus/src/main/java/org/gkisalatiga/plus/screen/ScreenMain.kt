@@ -83,6 +83,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -405,6 +407,9 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                         ),
                         onClick = {
                             current.scope.launch { horizontalPagerState.animateScrollToPage(index) }
+                        },
+                        modifier = Modifier.semantics {
+                            this.contentDescription = "Bottom navigation menu: $item"
                         }
                     )  // --- end of nav bar item.
 
@@ -490,21 +495,30 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
             },
             navigationIcon = {},
             actions = {
-                IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SEARCH) }) {
+                IconButton(
+                    onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SEARCH) },
+                    modifier = Modifier.semantics { this.contentDescription = "GKI Salatiga+ search button" }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = stringResource(R.string.screensearch_title),
                         tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
-                IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SETTINGS) }) {
+                IconButton(
+                    onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SETTINGS) },
+                    modifier = Modifier.semantics { this.contentDescription = "GKI Salatiga+ settings button" }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(R.string.screensettings_title),
                         tint = ScreenMainCompanion.topBarTitleContentColor
                     )
                 }
-                IconButton(onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_ABOUT) }) {
+                IconButton(
+                    onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_ABOUT) },
+                    modifier = Modifier.semantics { this.contentDescription = "GKI Salatiga+ about button" }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = stringResource(R.string.screenabout_title),

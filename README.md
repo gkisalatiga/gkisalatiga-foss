@@ -97,7 +97,7 @@ Each UI class file should bear a global companion object, useful in passing data
 
 - [X] Upload a new release with native debug code
 - [ ] Fix "Double Splash Screen" issue by actually implementing the `SplashScreen` API on Android 12+
-- [ ] Fix "Content Labeling Warning" by adding labels to clickable objects
+- [X] Fix "Content Labeling Warning" by adding labels to clickable objects
 - [ ] Add notification prompt the the `FragmentHome` if the user hasn't granted notification permission
 - [ ] Add "Sinode GKI" logo to the app
 - [ ] Improved icon sets and color theming in dark mode
