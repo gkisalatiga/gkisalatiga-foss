@@ -192,8 +192,6 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 class ActivityLauncher : ComponentActivity() {
 
-    private lateinit var current : ActivityData
-
     override fun onPause() {
         super.onPause()
         GlobalCompanion.isRunningInBackground.value = true
@@ -211,6 +209,7 @@ class ActivityLauncher : ComponentActivity() {
         handleDeepLink(intent, consumeAfterHandling = false)
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     @SuppressLint("MissingSuperCall", "Recycle")
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -288,17 +287,6 @@ class ActivityLauncher : ComponentActivity() {
             val isDarkMode = (isSystemInDarkTheme() && prefDarkMode == "system") || prefDarkMode == "dark"
             GlobalCompanion.isDarkModeUi.value = isDarkMode
 
-            // Prepare the activity-wide context variables.
-            current = ActivityData(
-                ctx = this@ActivityLauncher,
-                scope = rememberCoroutineScope(),
-                lifecycleOwner = LocalLifecycleOwner.current,
-                lifecycleScope = this@ActivityLauncher.lifecycleScope,
-                keyboardController = LocalSoftwareKeyboardController.current,
-                colors = if (isDarkMode) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme(),
-                uriHandler = LocalUriHandler.current,
-            )
-
             // Enable transparent status bar.
             enableEdgeToEdge(
                 statusBarStyle = if (isDarkMode)
@@ -340,10 +328,11 @@ class ActivityLauncher : ComponentActivity() {
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
 
             // Pre-assign the overlay gradient.
+            val gradientColorSet = if (isDarkMode) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme()
             ScreenMainCompanion.renderedOverlayGradient = Brush.verticalGradient(colorStops = arrayOf (
                 0.0f to Colors.SCREEN_MAIN_OVERLAY_GRADIENT_TOP_COLOR,
                 0.5f to Colors.SCREEN_MAIN_OVERLAY_GRADIENT_MIDDLE_COLOR,
-                1.0f to current.colors.screenMainOverlayGradientBottomColor
+                1.0f to gradientColorSet.screenMainOverlayGradientBottomColor
             ))
 
             // Pre-assign pager states of non-main menus.
@@ -462,12 +451,12 @@ class ActivityLauncher : ComponentActivity() {
                     // Displays the splash screen content.
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize().background(current.colors.mainSplashScreenBackgroundColor)
+                        modifier = Modifier.fillMaxSize().background(DynamicColorScheme.DarkColorScheme().mainSplashScreenBackgroundColor)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.splash_screen_icon),
                             contentDescription = "Splash screen logo",
-                            colorFilter = ColorFilter.tint(current.colors.mainSplashScreenForegroundColor)
+                            colorFilter = ColorFilter.tint(DynamicColorScheme.DarkColorScheme().mainSplashScreenForegroundColor)
                         )
                     }
                 }
@@ -484,6 +473,17 @@ class ActivityLauncher : ComponentActivity() {
     @Composable
     private fun initMainGraphic() {
         Logger.logInit({}, "Initializing main graphic with the current screen route: ${AppNavigation.mutableCurrentNavigationRoute.value.name} ...")
+
+        // Prepare the activity-wide context variables.
+        val current = ActivityData(
+            ctx = this@ActivityLauncher,
+            scope = rememberCoroutineScope(),
+            lifecycleOwner = LocalLifecycleOwner.current,
+            lifecycleScope = this@ActivityLauncher.lifecycleScope,
+            keyboardController = LocalSoftwareKeyboardController.current,
+            colors = if (GlobalCompanion.isDarkModeUi.value) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme(),
+            uriHandler = LocalUriHandler.current,
+        )
 
         // We use nav. host because it has built-in support for transition effect/animation.
         // We also use nav. host so that we can handle URI deep-linking, both from an external URL click and from a notification click.

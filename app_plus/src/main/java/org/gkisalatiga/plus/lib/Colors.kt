@@ -13,7 +13,7 @@ import android.app.Application
 import androidx.compose.ui.graphics.Color
 
 // TODO: Migrate the Colors class to the sealed class [DynamicColorScheme].
-class Colors : Application() {
+class Colors {
     companion object {
         /* Main (default) colors of the app. */
         val MAIN_CONTAINER_COLOR = Color(0xff715446)

@@ -10,6 +10,10 @@
 - (Back-End) Implemented `ActivityData` in all screens and fragments, replacing `LocalContext` and `LocalUriHandler`
 - (Back-End) Removed JSON fallback calling when app launch count is more than one to prevent old data from showing up
 
+:hammer_and_wrench: **FIX**
+
+- Fixed YouTube player suddenly stops playing when the screen orientation changes (caused by commit 560426d "Added dark theme")
+
 ## v0.6.0-rc.5 2024.11.26 (35)
 
 :hammer_and_wrench: **FIX**
