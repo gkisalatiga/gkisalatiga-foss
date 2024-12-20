@@ -69,6 +69,7 @@ import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.PersistentLogger
+import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
 import java.text.SimpleDateFormat
@@ -220,6 +221,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 onClick = {
                     LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, false, LocalStorageDataTypes.BOOLEAN)
                     PersistentLogger(ctx).write({}, "The developer menu was locked!")
+                    EnableDevMode.disableDebugToggles()
                     AppNavigation.popBack()
                 }
             ) {
@@ -258,7 +260,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
 
             // The list of all debug flags.
             val debugFlags : Map<String, Boolean> = mapOf(
-                "DEBUG_ENABLE_EASTER_EGG" to GlobalCompanion.DEBUG_ENABLE_EASTER_EGG,
+                "DEBUG_ENABLE_EASTER_EGG" to GlobalCompanion.ENABLE_EASTER_EGG,
                 "DEBUG_ENABLE_TOAST" to GlobalCompanion.DEBUG_ENABLE_TOAST,
                 "DEBUG_ENABLE_LOG_CAT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT,
                 "DEBUG_ENABLE_LOG_CAT_BOOT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT,

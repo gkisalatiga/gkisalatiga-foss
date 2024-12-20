@@ -77,6 +77,7 @@ import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PersistentLogger
+import org.gkisalatiga.plus.services.EnableDevMode
 
 
 class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
@@ -87,7 +88,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
     // Determines the time and number-of-clicks for opening the EasterEgg.
     private var easterEggFirstClick = 0.toLong()
     private var easterEggCurrentClicks = 0
-    private val easterEggMinClicks = 12
+    private val easterEggMinClicks = 14
     private val easterEggTimeout = 2000.toLong()
 
     // The local context.
@@ -131,7 +132,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
                         modifier = Modifier.size(100.dp),
                         onClick = {
                             /* You know what this is. */
-                            if (GlobalCompanion.DEBUG_ENABLE_EASTER_EGG) {
+                            if (GlobalCompanion.ENABLE_EASTER_EGG) {
 
                                 // If we have unlocked the developer menu before, just go in directly.
                                 if (LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean) {
@@ -148,6 +149,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
                                             // Unlocks the dev menu.
                                             PersistentLogger(ctx).write({}, "The developer menu has been unlocked!")
                                             LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
+                                            EnableDevMode.activateDebugToggles()
 
                                             // Navigate to the dev menu.
                                             Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()

@@ -32,30 +32,36 @@ class GlobalCompanion : Application() {
         /* Debugging toggles that can be set before app builds. */
 
         // Whether to enable the easter egg feature of the app and display it to the user.
-        const val DEBUG_ENABLE_EASTER_EGG = true
+        const val ENABLE_EASTER_EGG = true
+
+        /* ------------------------------------------------------------------------------------ */
+        /* Debugging toggles that must be activated by enabling the developer mode. */
 
         // Whether to display the debugger's toast.
-        const val DEBUG_ENABLE_TOAST = false
+        var DEBUG_ENABLE_TOAST = false
 
         // Whether to display the debugger's logcat logging.
-        const val DEBUG_ENABLE_LOG_CAT = true
-        const val DEBUG_ENABLE_LOG_CAT_BOOT = true
-        const val DEBUG_ENABLE_LOG_CAT_CONN_TEST = true
-        const val DEBUG_ENABLE_LOG_CAT_DOWNLOADER = true
-        const val DEBUG_ENABLE_LOG_CAT_DEEP_LINK = true
-        const val DEBUG_ENABLE_LOG_CAT_DUMP = true
-        const val DEBUG_ENABLE_LOG_CAT_INIT = true
-        const val DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE = true
-        const val DEBUG_ENABLE_LOG_CAT_PDF = true
-        const val DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER = true
-        const val DEBUG_ENABLE_LOG_CAT_PREFERENCES = true
-        const val DEBUG_ENABLE_LOG_CAT_RAPID_TEST = true
-        const val DEBUG_ENABLE_LOG_CAT_TEST = true
-        const val DEBUG_ENABLE_LOG_CAT_UPDATER = true
-        const val DEBUG_ENABLE_LOG_CAT_WORKER = true
+        var DEBUG_ENABLE_LOG_CAT = false
+        var DEBUG_ENABLE_LOG_CAT_BOOT = false
+        var DEBUG_ENABLE_LOG_CAT_CONN_TEST = false
+        var DEBUG_ENABLE_LOG_CAT_DOWNLOADER = false
+        var DEBUG_ENABLE_LOG_CAT_DEEP_LINK = false
+        var DEBUG_ENABLE_LOG_CAT_DUMP = false
+        var DEBUG_ENABLE_LOG_CAT_INIT = false
+        var DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE = false
+        var DEBUG_ENABLE_LOG_CAT_PDF = false
+        var DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER = false
+        var DEBUG_ENABLE_LOG_CAT_PREFERENCES = false
+        var DEBUG_ENABLE_LOG_CAT_RAPID_TEST = false
+        var DEBUG_ENABLE_LOG_CAT_TEST = false
+        var DEBUG_ENABLE_LOG_CAT_UPDATER = false
+        var DEBUG_ENABLE_LOG_CAT_WORKER = false
 
         // Whether to display extraneous information in various screens.
-        const val DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO = false
+        var DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO = false
+
+        // Whether to display notification when updating the JSON data in the background.
+        var DEBUG_SHOW_DATA_UPDATER_NOTIFICATION = false
 
         /* ------------------------------------------------------------------------------------ */
         /* Global states of the app. */

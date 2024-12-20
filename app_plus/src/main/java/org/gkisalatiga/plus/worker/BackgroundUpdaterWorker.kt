@@ -9,6 +9,7 @@ package org.gkisalatiga.plus.worker
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.services.DataUpdater
 import org.gkisalatiga.plus.services.NotificationService
@@ -24,7 +25,8 @@ class BackgroundUpdaterWorker(private val context: Context, private val params: 
 
         // Perform the work.
         DataUpdater(context).updateData()
-        NotificationService.showDebugDataUpdateNotification(context)
+        if (GlobalCompanion.DEBUG_SHOW_DATA_UPDATER_NOTIFICATION)
+            NotificationService.showDebugDataUpdateNotification(context)
 
         Logger.logWorker({}, "What do we have here? ${params.tags}")
 

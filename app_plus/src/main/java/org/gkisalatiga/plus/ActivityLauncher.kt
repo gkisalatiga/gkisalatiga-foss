@@ -186,6 +186,7 @@ import org.gkisalatiga.plus.services.ClipManager
 import org.gkisalatiga.plus.services.ConnectionChecker
 import org.gkisalatiga.plus.services.DataUpdater
 import org.gkisalatiga.plus.services.DeepLinkHandler
+import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
@@ -447,6 +448,10 @@ class ActivityLauncher : ComponentActivity() {
         val now = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
         appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1, LocalStorageDataTypes.INT)
         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
+
+        // Developer mode.
+        val isDevMode = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
+        if (isDevMode) EnableDevMode.activateDebugToggles() else EnableDevMode.disableDebugToggles()
     }
 
     /**
@@ -507,7 +512,6 @@ class ActivityLauncher : ComponentActivity() {
         // SOURCE: https://composables.com/tutorials/deeplinks
         val mainNavController = rememberNavController()
         NavHost(navController = mainNavController, startDestination = AppNavigation.startingScreenRoute.name) {
-            // TODO: Provide all screens with "ctx", "scope", and "lifecycleOwner"?
             composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout(current).getComposable() }
             composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda(current).getComposable() }
             composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution(current).getComposable() }
