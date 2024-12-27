@@ -105,6 +105,14 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Improve icon sets ~and color theming in dark mode~
 - [X] Remove JSON data fallback completely when launch count is more than 1 (prevent data not updated when offline)
 
+### January 2025
+
+- [ ] Reduced the amount of visible page dots indication in the main menu's carousel
+- [ ] Split among carousel types: poster, video, article
+- [ ] Add QRIS image save button
+- [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
+- [ ] Add non-open source, non-hard-coded third party resources attribution
+
 ## C. Privacy Policy
 
 The latest privacy policy document of GKI Salatiga can be read in this [GitHub repository file](https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/PRIVACY_POLICY.md). However, this **README** file has summarized the privacy policy as follows:
