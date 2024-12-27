@@ -10,7 +10,7 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon</item>
 
         <!-- Required for animated icons. -->
-        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="windowSplashScreenAnimationDuration">500</item>
 
         <!-- Set the theme of the Activity that directly follows your splash screen. This is required. -->
         <item name="postSplashScreenTheme">@style/Theme.GKISalatigaPlus</item>

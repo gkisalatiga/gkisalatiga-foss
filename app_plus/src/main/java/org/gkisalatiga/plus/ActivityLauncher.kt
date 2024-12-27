@@ -47,52 +47,36 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -189,6 +173,7 @@ import org.gkisalatiga.plus.services.DeepLinkHandler
 import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.gkisalatiga.plus.services.NotificationService
+import org.gkisalatiga.plus.services.PermissionChecker
 import org.gkisalatiga.plus.services.WorkScheduler
 import java.io.File
 
@@ -205,6 +190,8 @@ class ActivityLauncher : ComponentActivity() {
         super.onResume()
         GlobalCompanion.isRunningInBackground.value = false
         Logger.log({}, "App has been restored to foreground.")
+
+        PermissionChecker(this@ActivityLauncher).checkNotificationPermission()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -242,6 +229,9 @@ class ActivityLauncher : ComponentActivity() {
         // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
         // val splashScreen = installSplashScreen()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) installSplashScreen()
+
+        // Handle notification permission.
+        PermissionChecker(this@ActivityLauncher).checkNotificationPermission()
 
         // Call the superclass. (The default behavior. DO NOT CHANGE!)
         super.onCreate(savedInstanceState)
@@ -559,8 +549,7 @@ class ActivityLauncher : ComponentActivity() {
      * This is only need on Android API 26+.
      */
     private fun initNotificationChannel() {
-        NotificationService.initDebugDataUpdateChannel(this@ActivityLauncher)
-        NotificationService.initDebugFallbackChannel(this@ActivityLauncher)
+        NotificationService.initDebuggerChannel(this@ActivityLauncher)
         NotificationService.initSarenNotificationChannel(this@ActivityLauncher)
         NotificationService.initYKBHarianNotificationChannel(this@ActivityLauncher)
     }

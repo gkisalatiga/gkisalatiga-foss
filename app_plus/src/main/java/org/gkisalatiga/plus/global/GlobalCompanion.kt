@@ -27,6 +27,7 @@ class GlobalCompanion : Application() {
         const val ABOUT_CONTACT_MAIL = "dev.gkisalatiga@gmail.com"
         const val APP_CHANGELOG_URL = "https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/CHANGELOG.md"
         const val APP_SOURCE_CODE_URL = "https://github.com/gkisalatiga/gkisalatiga-foss"
+        const val APP_GOOGLE_PLAY_LISTING = "https://play.google.com/store/apps/details?id=org.gkisalatiga.plus"
 
         /* ------------------------------------------------------------------------------------ */
         /* Debugging toggles that can be set before app builds. */
@@ -80,6 +81,15 @@ class GlobalCompanion : Application() {
 
         // Whether the app is running in background.
         val isRunningInBackground = mutableStateOf(false)
+
+        // Whether notification permission has already been granted.
+        val isNotificationGranted = mutableStateOf(false)
+
+        // Whether new app update is found.
+        val isAppUpdateAvailable = mutableStateOf(false)
+
+        // The latest version update as specified in the feeds.
+        val lastAppUpdateVersionName = mutableStateOf("")
 
     }
 }

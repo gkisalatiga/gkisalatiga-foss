@@ -173,8 +173,8 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
                     /* DEBUG: Testing notification trigger. */
-                    NotificationService.showDebugDataUpdateNotification(ctx)
                     NotificationService.showDebugNotification(ctx)
+                    NotificationService.showDebugDataUpdateNotification(ctx)
                     NotificationService.showSarenNotification(ctx)
                     NotificationService.showYKBHarianNotification(ctx)
                 }

@@ -27,33 +27,14 @@ class NotificationService {
     companion object {
 
         /**
-         * The notification channel for debugging background data update.
-         * SOURCE: https://medium.com/@anandmali/creating-a-basic-android-notification-5e5ee1614aae
-         */
-        fun initDebugDataUpdateChannel(ctx: Context) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val name = "Beta Version Notification Debugger"
-                val desc = "Only used in the back-end to trace notification errors."
-                val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val channel = NotificationChannel(NotificationServiceEnum.DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
-
-                // Do not use "ContextCompat.getSystemService".
-                // SOURCE: https://stackoverflow.com/a/61709171
-                val notificationManager: NotificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.createNotificationChannel(channel)
-            }
-        }
-
-        /**
          * The notification channel for fallback and debugging.
-         * SOURCE: https://medium.com/@anandmali/creating-a-basic-android-notification-5e5ee1614aae
          */
-        fun initDebugFallbackChannel(ctx: Context) {
+        fun initDebuggerChannel(ctx: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val name = "Beta Version Notification Debugger"
-                val desc = "Only used in the back-end to trace notification errors."
+                val name = "Debugger"
+                val desc = "Notifikasi yang muncul saat mode pengembang dinyalakan."
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val channel = NotificationChannel(NotificationServiceEnum.DEBUG_FALLBACK_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
+                val channel = NotificationChannel(NotificationServiceEnum.DEBUGGER_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
 
                 // Do not use "ContextCompat.getSystemService".
                 // SOURCE: https://stackoverflow.com/a/61709171
@@ -113,7 +94,7 @@ class NotificationService {
             intent.setData(Uri.parse("https://www.gkisalatiga.org"))
             val activity = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
 
-            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL.name)
+            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.DEBUGGER_NOTIFICATION_CHANNEL.name)
                 .setSmallIcon(R.drawable.app_notif_icon)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -123,7 +104,7 @@ class NotificationService {
 
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 with(NotificationManagerCompat.from(ctx)) {
-                    notify(NotificationServiceEnum.DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL.ordinal, builder.build())
+                    notify(NotificationServiceEnum.DEBUGGER_NOTIFICATION_CHANNEL.ordinal, builder.build())
                 }
             }
         }
@@ -143,7 +124,7 @@ class NotificationService {
             intent.setData(Uri.parse("https://www.gkisalatiga.org"))
             val activity = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
 
-            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.DEBUG_FALLBACK_NOTIFICATION_CHANNEL.name)
+            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.DEBUGGER_NOTIFICATION_CHANNEL.name)
                 .setSmallIcon(R.drawable.app_notif_icon)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -153,7 +134,7 @@ class NotificationService {
 
             if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 with(NotificationManagerCompat.from(ctx)) {
-                    notify(NotificationServiceEnum.DEBUG_FALLBACK_NOTIFICATION_CHANNEL.ordinal, builder.build())
+                    notify(NotificationServiceEnum.DEBUGGER_NOTIFICATION_CHANNEL.ordinal, builder.build())
                 }
             }
         }
@@ -217,8 +198,7 @@ class NotificationService {
 }  // --- end of class.
 
 enum class NotificationServiceEnum {
-    DEBUG_DATA_UPDATE_NOTIFICATION_CHANNEL,
-    DEBUG_FALLBACK_NOTIFICATION_CHANNEL,
+    DEBUGGER_NOTIFICATION_CHANNEL,
     SAREN_NOTIFICATION_CHANNEL,
     YKB_NOTIFICATION_CHANNEL
 }

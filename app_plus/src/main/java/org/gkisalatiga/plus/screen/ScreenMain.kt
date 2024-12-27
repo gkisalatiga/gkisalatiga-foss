@@ -71,6 +71,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -106,6 +107,7 @@ import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.services.PermissionChecker
 
 class ScreenMain (private val current : ActivityData) : ComponentActivity() {
 
@@ -148,6 +150,11 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
         // Connects the horizontal pager with the bottom bar.
         LaunchedEffect(horizontalPagerState.targetPage) {
             ScreenMainCompanion.mutableLastPagerPage.value = fragRoutes[horizontalPagerState.targetPage]
+        }
+
+        // Check whether notification permission is already granted.
+        LaunchedEffect(Unit) {
+            PermissionChecker(current.ctx).checkNotificationPermission()
         }
 
         // The pull-to-refresh indicator states.
@@ -488,6 +495,7 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                         contentDescription = stringResource(R.string.app_name_alias),
                         modifier = Modifier.fillMaxWidth().weight(2.5f).padding(vertical = 10.dp),//Modifier.aspectRatio(5.68817f).weight(2.5f),
                         contentScale = ContentScale.Fit,
+                        alignment = Alignment.CenterStart
                     )
                     Spacer(Modifier.weight(0.75f))
                 }

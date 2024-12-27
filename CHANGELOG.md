@@ -1,6 +1,11 @@
 # GKI Salatiga App Changelog
 
-## Next Release
+## v0.6.1 2024.12.28 (36)
+
+:star2: **NEW**
+
+- Added main menu prompt for notification permission on Android API 33 and above
+- Added main menu prompt to update the application
 
 :four_leaf_clover: **IMPROVEMENT**
 

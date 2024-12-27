@@ -11,6 +11,12 @@
     <string name="bottomnav_menu_services">Siaran</string>
     <string name="bottomnav_menu_info">Gereja</string>
     <string name="bottomnav_menu_events">Acara</string>
+    <string name="subtext_notification_denied">Nyalakan untuk memperoleh pengingat renungan harian, ibadah, dan pengumuman seputar gereja.</string>
+    <string name="subtext_notification_granted">Mantap! Izin notifikasi aplikasi sudah diberikan.</string>
+    <string name="subtext_update_available">Versi GKI Salatiga+ terbaru (%%%VERSION%%%) telah tersedia di Google Play Store. Ketuk untuk mengunduh sekarang.</string>
+    <string name="subtext_update_latest">Anda telah menginstal aplikasi GKI Salatiga+ versi terbaru.</string>
+    <string name="titlecard_notification">Notifikasi GKI Salatiga+</string>
+    <string name="titlecard_update">Pembaruan Aplikasi</string>
 
     <!-- Constant strings for screen titles. -->
     <string name="screenabout_title">Tentang</string>
