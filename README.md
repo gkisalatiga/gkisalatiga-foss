@@ -109,6 +109,8 @@ Each UI class file should bear a global companion object, useful in passing data
 
 - [ ] Reduced the amount of visible page dots indication in the main menu's carousel
 - [ ] Split among carousel types: poster, video, article
+- [X] Migrate the JSON data source to `gkisalatiga/gkisplus-data-json` repository
+- [ ] Add street address of GKI Salatiga
 - [ ] Add QRIS image save button
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Add non-open source, non-hard-coded third party resources attribution

@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## v0.6.2 2024.12.29 (37)
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Migrated the JSON repository source to `gkisalatiga/gkisplus-data-json`
+
 ## v0.6.1 2024.12.28 (36)
 
 :star2: **NEW**

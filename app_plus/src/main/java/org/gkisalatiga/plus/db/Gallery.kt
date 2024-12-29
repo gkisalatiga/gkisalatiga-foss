@@ -126,7 +126,7 @@ class Gallery(private val ctx: Context) {
 @Suppress("MayBeConstant", "RedundantSuppression", "SpellCheckingInspection")
 class GalleryCompanion : Application() {
     companion object {
-        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-gallery.min.json"
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/data/gkisplus-gallery.min.json"
 
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()

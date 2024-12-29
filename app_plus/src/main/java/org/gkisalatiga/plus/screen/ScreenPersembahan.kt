@@ -289,7 +289,7 @@ class ScreenPersembahan (private val current : ActivityData) : ComponentActivity
 class ScreenPersembahanCompanion : Application() {
     companion object {
         /* The QRIS image for offertories. */
-        const val OFFERTORY_QRIS_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/images/qris_gkis.png"
+        const val OFFERTORY_QRIS_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/res/qris_gkis.png"
 
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null

@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
 class ConnectionChecker(private val ctx: Context) {
 
     companion object {
-        const val CONNECTION_TEST_FILE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/refs/heads/main/test.txt"
+        const val CONNECTION_TEST_FILE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/refs/heads/main/v2/res/test.txt"
         const val CONNECTION_TEST_STRING = "--conn. test file. do not remove"
     }
 

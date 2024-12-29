@@ -143,7 +143,7 @@ class Main(private val ctx: Context) {
 
 class MainCompanion : Application() {
     companion object {
-        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/gkisplus-main.min.json"
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/data/gkisplus-main.min.json"
 
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
