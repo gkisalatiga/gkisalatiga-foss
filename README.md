@@ -114,6 +114,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Add QRIS image save button
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Add non-open source, non-hard-coded third party resources attribution
+- [ ] Fix bottom keyboard padding when typing in forms menu
 
 ## C. Privacy Policy
 
