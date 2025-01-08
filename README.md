@@ -115,6 +115,9 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Add non-open source, non-hard-coded third party resources attribution
 - [ ] Fix bottom keyboard padding when typing in forms menu
+- [ ] Pukat Berkat: Remove all dummy contents, substitute instead with CTA to propose a new advertisement
+- [ ] Pukat Berkat: change name to "Lapak Jemaat"
+- [ ] Agenda: Add form to borrow room & differentiate regular from non-regular items
 
 ## C. Privacy Policy
 
