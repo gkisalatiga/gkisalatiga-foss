@@ -234,6 +234,13 @@
     <string name="screen_settings_pref_pdf_remove_item_never">Jangan Pernah Hapus</string>
     <string name="screen_settings_help_dialog_title">Bantuan Pengaturan</string>
 
+    <!-- Applicable in ScreenAgenda. -->
+    <string name="screen_agenda_type_proposal_text">Proposal</string>
+    <string name="screen_agenda_type_regular_text">Rutin</string>
+    <string name="screen_agenda_type_chip_show_all_text">Semua</string>
+    <string name="screen_agenda_type_chip_show_only_proposal_text">Hanya Proposal</string>
+    <string name="screen_agenda_type_chip_show_only_regular_text">Hanya Rutin</string>
+
     <!-- Applicable in most screens. -->
     <string name="pdf_already_downloaded_localized">Terunduh</string>
 
