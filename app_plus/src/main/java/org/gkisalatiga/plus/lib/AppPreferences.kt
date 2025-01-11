@@ -23,15 +23,18 @@ class AppPreferences(private val ctx: Context) {
      * The mapped region must be of string, int, float, boolean, or long types.
      */
     private val ACTUAL_PREFERENCE_ITEM_VALUES: Map<PreferenceSettingItem, Any> = mapOf(
-        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_BEST to 6,
-        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_HIGH to 4,
-        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_LOW to 1,
-        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_MEDIUM to 2,
-        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS.name,
-        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7 to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7.name,
-        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14 to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14.name,
-        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30 to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30.name,
-        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER.name,
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_BEST to 4.toInt(),
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_HIGH to 3.toInt(),
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_LOW to 1.toInt(),
+        PreferenceSettingItem.PREF_VAL_PDF_QUALITY_MEDIUM to 2.toInt(),
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS to 86400000L.toLong(),  // --- 1 day.
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7 to 604800000L.toLong(),  // --- 7 days.
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14 to 1209600000L.toLong(),  // --- 14 days.
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30 to 2592000000L.toLong(),  // --- 30 days.
+        PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER to 31536000000L.toLong(),  // --- 365 days, not actually "never"!
+        PreferenceSettingItem.PREF_VAL_THEME_DARK to "dark",
+        PreferenceSettingItem.PREF_VAL_THEME_LIGHT to "light",
+        PreferenceSettingItem.PREF_VAL_THEME_SYSTEM to "system",
         PreferenceSettingItem.PREF_VAL_YOUTUBE_UI_NEW to true,
         PreferenceSettingItem.PREF_VAL_YOUTUBE_UI_OLD to false,
     )
@@ -40,11 +43,21 @@ class AppPreferences(private val ctx: Context) {
      * The default values of preference keys.
      */
     private val DEFAULT_PREFERENCE_KEY_VALUES: Map<PreferenceKeys, Any> = mapOf(
-        PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES to PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14.name.toString(),
-        PreferenceKeys.PREF_KEY_OFFLINE_CHECK_FREQUENCY to 10000.toLong(),  // --- 10000 means 10 seconds.
+        PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_PERSISTENT_LOG_ENTRIES to 2592000000L.toLong(),  // --- 30 days.
+        PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES to ACTUAL_PREFERENCE_ITEM_VALUES[PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14]!! as Long,
+        PreferenceKeys.PREF_KEY_KEEP_NUMBERS_OF_SEARCH_HISTORY to 100.toInt(),
+        PreferenceKeys.PREF_KEY_OFFLINE_CHECK_FREQUENCY to 10000L.toLong(),  // --- 10 seconds.
         PreferenceKeys.PREF_KEY_PDF_RENDER_QUALITY_FACTOR to 2.toInt(),
+        PreferenceKeys.PREF_KEY_THEME_UI to "system",
         PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME to true,
     )
+
+    /**
+     * Returns the map of all key-value pair of this SharedPrefereces.
+     */
+    fun getAll() : Map<String, Any?> {
+        return prefObj.all
+    }
 
     /**
      * Returns the preference object.
@@ -67,7 +80,7 @@ class AppPreferences(private val ctx: Context) {
             val defaultVal = DEFAULT_PREFERENCE_KEY_VALUES[prefKey]!!
 
             // Debug the default preference's type.
-            Logger.logTest({}, "Type of defaultVal = ${defaultVal::class.qualifiedName}, key = $prefKey, valued = $defaultVal")
+            Logger.logPrefs({}, "Type of defaultVal = ${defaultVal::class.qualifiedName}, key = $prefKey, valued = $defaultVal")
 
             // Initializing the default values to the preference store.
             with (prefObj.edit()) {
@@ -115,7 +128,7 @@ class AppPreferences(private val ctx: Context) {
         }
 
         // Debug the default preference's type.
-        Logger.logTest({}, "getPreferenceValue -> defaultVal type: ${defaultVal::class.qualifiedName}, key: $prefKey, defaultVal: $defaultVal, retVal: $retVal")
+        Logger.logPrefs({}, "getPreferenceValue -> defaultVal type: ${defaultVal::class.qualifiedName}, key: $prefKey, defaultVal: $defaultVal, retVal: $retVal")
 
         // Hand over the preference value the caller asks for.
         return retVal
@@ -128,7 +141,7 @@ class AppPreferences(private val ctx: Context) {
      */
     fun setPreferenceValue(prefKey: PreferenceKeys, prefValue: Any) {
         // Debug the preference key-to-write value.
-        Logger.logTest({}, "setPreferenceValue -> prefValue: $prefValue, prefKey: ${prefKey.name}, prefKey class: ${prefValue::class.qualifiedName}")
+        Logger.logPrefs({}, "setPreferenceValue -> prefValue: $prefValue, prefKey: ${prefKey.name}, prefKey class: ${prefValue::class.qualifiedName}")
 
         with (prefObj.edit()) {
             // Detect preference value type.
@@ -167,8 +180,11 @@ class AppPreferencesCompanion : Application () {
  */
 enum class PreferenceKeys {
     PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES,
+    PREF_KEY_KEEP_DAYS_OF_PERSISTENT_LOG_ENTRIES,
+    PREF_KEY_KEEP_NUMBERS_OF_SEARCH_HISTORY,
     PREF_KEY_OFFLINE_CHECK_FREQUENCY,
     PREF_KEY_PDF_RENDER_QUALITY_FACTOR,
+    PREF_KEY_THEME_UI,
     PREF_KEY_YOUTUBE_UI_THEME,
 }
 
@@ -185,6 +201,9 @@ enum class PreferenceSettingItem {
     PREF_VAL_PDF_REMOVE_DAY_14,
     PREF_VAL_PDF_REMOVE_DAY_30,
     PREF_VAL_PDF_REMOVE_NEVER,
+    PREF_VAL_THEME_DARK,
+    PREF_VAL_THEME_LIGHT,
+    PREF_VAL_THEME_SYSTEM,
     PREF_VAL_YOUTUBE_UI_NEW,
     PREF_VAL_YOUTUBE_UI_OLD,
 }

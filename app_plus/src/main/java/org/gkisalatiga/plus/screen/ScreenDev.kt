@@ -10,6 +10,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -34,12 +35,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.FlipCameraAndroid
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,8 +52,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,17 +60,30 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.AppPreferences
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
+import org.gkisalatiga.plus.lib.PersistentLogger
+import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
+import java.text.SimpleDateFormat
+import java.util.Date
+import kotlin.math.abs
 
 
-class ScreenDev : ComponentActivity() {
+class ScreenDev (private val current : ActivityData) : ComponentActivity() {
+
+    private val ctx = current.ctx
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
 
         // Obtain the app's essential information.
         // SOURCE: https://stackoverflow.com/a/6593822
@@ -102,7 +115,6 @@ class ScreenDev : ComponentActivity() {
                     .verticalScroll(scrollState)) {
 
                 /* Show app logo, name, and version. */
-                val welcomeDevText = stringResource(R.string.screen_dev_welcome_developer)
                 Box (Modifier.padding(vertical = 15.dp).padding(top = 10.dp)) {
                     Surface (shape = CircleShape, modifier = Modifier.size(100.dp)) {
                         Box {
@@ -145,9 +157,8 @@ class ScreenDev : ComponentActivity() {
     }
 
     @Composable
+    @SuppressLint("SimpleDateFormat")
     private fun getQuickActions() {
-        val ctx = LocalContext.current
-        val uriHandler = LocalUriHandler.current
 
         /* The quick actions menu. */
         Column (Modifier.fillMaxWidth()) {
@@ -162,8 +173,8 @@ class ScreenDev : ComponentActivity() {
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
                     /* DEBUG: Testing notification trigger. */
-                    NotificationService.showDebugDataUpdateNotification(ctx)
                     NotificationService.showDebugNotification(ctx)
+                    NotificationService.showDebugDataUpdateNotification(ctx)
                     NotificationService.showSarenNotification(ctx)
                     NotificationService.showYKBHarianNotification(ctx)
                 }
@@ -175,8 +186,7 @@ class ScreenDev : ComponentActivity() {
             }
 
             /* Trigger a WorKManager that launches notification once every 20th second each minute. */
-            val triggerMinutelyWorkManagerText =
-                stringResource(R.string.screen_dev_trigger_minutely_work_manager)
+            val triggerMinutelyWorkManagerText = stringResource(R.string.screen_dev_trigger_minutely_work_manager)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
                 onClick = {
@@ -189,6 +199,105 @@ class ScreenDev : ComponentActivity() {
                 }
             }
 
+            /* Trigger the changing of screen's orientation. */
+            val triggerOrientationChange = stringResource(R.string.screen_dev_trigger_orientation_change)
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
+                onClick = {
+                    (ctx as Activity).requestedOrientation = abs(ctx.requestedOrientation - 1)
+                    GlobalCompanion.isPortraitMode.value = ctx.requestedOrientation == 1
+                }
+            ) {
+                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.FlipCameraAndroid, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
+                    Text(triggerOrientationChange, modifier = Modifier, textAlign = TextAlign.Center)
+                }
+            }
+
+            /* Locks the developer menu. */
+            val lockDeveloperMenu = stringResource(R.string.screen_dev_lock_dev_menu_change)
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
+                onClick = {
+                    LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, false, LocalStorageDataTypes.BOOLEAN)
+                    PersistentLogger(ctx).write({}, "The developer menu was locked!")
+                    EnableDevMode.disableDebugToggles()
+                    AppNavigation.popBack()
+                }
+            ) {
+                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Lock, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
+                    Text(lockDeveloperMenu, modifier = Modifier, textAlign = TextAlign.Center)
+                }
+            }
+
+            val appLocalText = stringResource(R.string.screen_dev_local_storage_title)
+            Spacer(Modifier.height(10.dp))
+            Text(appLocalText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(10.dp))
+
+            /* Displaying all LocalStorage values. */
+            LocalStorage(ctx).getAll().entries.sortedBy { it.key }.forEach {
+                Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
+                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+            }
+
+            val appPrefText = stringResource(R.string.screen_dev_app_preferences_title)
+            Spacer(Modifier.height(10.dp))
+            Text(appPrefText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(10.dp))
+
+            /* Displaying all AppPreferences values. */
+            AppPreferences(ctx).getAll().entries.sortedBy { it.key }.forEach {
+                Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
+                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+            }
+
+            val appDebugFlagsText = stringResource(R.string.screen_dev_debug_flags_title)
+            Spacer(Modifier.height(10.dp))
+            Text(appDebugFlagsText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(10.dp))
+
+            // The list of all debug flags.
+            val debugFlags : Map<String, Boolean> = mapOf(
+                "DEBUG_ENABLE_EASTER_EGG" to GlobalCompanion.ENABLE_EASTER_EGG,
+                "DEBUG_ENABLE_TOAST" to GlobalCompanion.DEBUG_ENABLE_TOAST,
+                "DEBUG_ENABLE_LOG_CAT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT,
+                "DEBUG_ENABLE_LOG_CAT_BOOT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT,
+                "DEBUG_ENABLE_LOG_CAT_CONN_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST,
+                "DEBUG_ENABLE_LOG_CAT_DOWNLOADER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER,
+                "DEBUG_ENABLE_LOG_CAT_DEEP_LINK" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DEEP_LINK,
+                "DEBUG_ENABLE_LOG_CAT_DUMP" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DUMP,
+                "DEBUG_ENABLE_LOG_CAT_INIT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT,
+                "DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE,
+                "DEBUG_ENABLE_LOG_CAT_PDF" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF,
+                "DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER,
+                "DEBUG_ENABLE_LOG_CAT_PREFERENCES" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PREFERENCES,
+                "DEBUG_ENABLE_LOG_CAT_RAPID_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_RAPID_TEST,
+                "DEBUG_ENABLE_LOG_CAT_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_TEST,
+                "DEBUG_ENABLE_LOG_CAT_UPDATER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_UPDATER,
+                "DEBUG_ENABLE_LOG_CAT_WORKER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_WORKER,
+                "DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO" to GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO,
+            )
+
+            /* Displaying all of the app's debug flag values. */
+            debugFlags.entries.sortedBy { it.key }.forEach {
+                Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
+                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+            }
+
+            val appPersistText = stringResource(R.string.screen_dev_persistent_logger_title)
+            Spacer(Modifier.height(10.dp))
+            Text(appPersistText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(10.dp))
+
+            /* Displaying all PersistentLogger entries. */
+            PersistentLogger(ctx).getAll().entries.sortedBy { it.key.toLong() }.forEach {
+                val dateString = SimpleDateFormat("yyyy-MM-dd HH:mm").format(Date(it.key.toLong()))
+                Text(dateString, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
+                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+            }
+
         }  // --- end of column: section app info.
     }
 
@@ -197,10 +306,7 @@ class ScreenDev : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screendev_title),

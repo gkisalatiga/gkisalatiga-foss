@@ -43,13 +43,11 @@ import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Diversity1
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.OpenInBrowser
-import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -59,10 +57,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,22 +67,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
-import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN_COLOR
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.PersistentLogger
+import org.gkisalatiga.plus.services.EnableDevMode
 
 
-class ScreenAbout : ComponentActivity() {
-
-    // For displaying the license dialogs.
-    private val showLicenseDialog = mutableStateOf(false)
-
-    // For displaying generic markdown dialog.
-    private val showMarkdownDialog = mutableStateOf(false)
-    private var dialogMarkdownTitle = ""
-    private var dialogMarkdownContent = ""
-    private var dialogMarkdownIcon = Icons.Default.QuestionMark
+class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
 
     // The description of the application.
     private var appMainDescription = mutableStateOf("")
@@ -94,19 +88,20 @@ class ScreenAbout : ComponentActivity() {
     // Determines the time and number-of-clicks for opening the EasterEgg.
     private var easterEggFirstClick = 0.toLong()
     private var easterEggCurrentClicks = 0
-    private val easterEggMinClicks = 10
+    private val easterEggMinClicks = 14
     private val easterEggTimeout = 2000.toLong()
+
+    // The local context.
+    private val ctx = current.ctx
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
 
         // Obtain the app's essential information.
         // SOURCE: https://stackoverflow.com/a/6593822
         val pInfo: PackageInfo = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
         val vName = pInfo.versionName
-        val vCode = pInfo.versionCode
 
         // Get app name.
         // SOURCE: https://stackoverflow.com/a/15114434
@@ -137,33 +132,49 @@ class ScreenAbout : ComponentActivity() {
                         modifier = Modifier.size(100.dp),
                         onClick = {
                             /* You know what this is. */
-                            if (GlobalCompanion.DEBUG_ENABLE_EASTER_EGG) {
-                                // Ensures that the user (developer) has to click N-times before opening the dev menu.
-                                if (easterEggFirstClick + easterEggTimeout > System.currentTimeMillis()) {
-                                    /* Opens the easter egg. */
-                                    if (easterEggCurrentClicks >= easterEggMinClicks) {
-                                        easterEggCurrentClicks = 0
-                                        Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
-                                        AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
-                                    } else {
-                                        easterEggCurrentClicks += 1
-                                    }
+                            if (GlobalCompanion.ENABLE_EASTER_EGG) {
+
+                                // If we have unlocked the developer menu before, just go in directly.
+                                if (LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean) {
+                                    Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
+                                    AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
                                 } else {
-                                    easterEggCurrentClicks = 0
+                                    // Otherwise, ensure that the user (developer) has to click N-times before opening the dev menu.
+                                    // This will unlock the developer menu.
+                                    if (easterEggFirstClick + easterEggTimeout > System.currentTimeMillis()) {
+                                        /* Opens the easter egg. */
+                                        if (easterEggCurrentClicks >= easterEggMinClicks) {
+                                            easterEggCurrentClicks = 0
+
+                                            // Unlocks the dev menu.
+                                            PersistentLogger(ctx).write({}, "The developer menu has been unlocked!")
+                                            LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
+                                            EnableDevMode.activateDebugToggles()
+
+                                            // Navigate to the dev menu.
+                                            Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
+                                            AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
+                                        } else {
+                                            easterEggCurrentClicks += 1
+                                        }
+                                    } else {
+                                        easterEggCurrentClicks = 0
+                                    }
+
+                                    // Detecting the first time this button was clicked.
+                                    if (easterEggCurrentClicks == 0) {
+                                        Toast.makeText(ctx, "\uD83D\uDC23", Toast.LENGTH_SHORT).show()
+                                        easterEggFirstClick = System.currentTimeMillis()
+                                    }
                                 }
 
-                                // Detecting the first time this button was clicked.
-                                if (easterEggCurrentClicks == 0) {
-                                    Toast.makeText(ctx, "\uD83D\uDC23", Toast.LENGTH_SHORT).show()
-                                    easterEggFirstClick = System.currentTimeMillis()
-                                }
                             }
                         }
                     ) {
                         Box {
-                            Box(Modifier.background(Color(MAIN_DARK_BROWN), shape = CircleShape).fillMaxSize())
+                            Box(Modifier.background(MAIN_DARK_BROWN_COLOR, shape = CircleShape).fillMaxSize())
                             Image(painterResource(R.mipmap.ic_launcher_foreground), "",
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier.fillMaxSize().scale(1.2f),
                                 contentScale = ContentScale.Crop
                             )
                         }
@@ -201,8 +212,6 @@ class ScreenAbout : ComponentActivity() {
 
     @Composable
     private fun getAppInfo() {
-        val ctx = LocalContext.current
-        val uriHandler = LocalUriHandler.current
 
         /* Section: App Info */
         Column (Modifier.fillMaxWidth()) {
@@ -251,7 +260,7 @@ class ScreenAbout : ComponentActivity() {
             val sourceCodeText = stringResource(R.string.screen_about_kode_sumber)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { uriHandler.openUri(GlobalCompanion.APP_SOURCE_CODE_URL) }
+                onClick = { current.uriHandler.openUri(GlobalCompanion.APP_SOURCE_CODE_URL) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Code, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -264,7 +273,7 @@ class ScreenAbout : ComponentActivity() {
             val changelogText = stringResource(R.string.screen_about_log_perubahan)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { uriHandler.openUri(GlobalCompanion.APP_CHANGELOG_URL) }
+                onClick = { current.uriHandler.openUri(GlobalCompanion.APP_CHANGELOG_URL) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.History, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -278,7 +287,6 @@ class ScreenAbout : ComponentActivity() {
 
     @Composable
     private fun getAuthorInfo() {
-        val ctx = LocalContext.current
 
         /* Section: Author Info */
         Column (Modifier.fillMaxWidth()) {
@@ -310,7 +318,7 @@ class ScreenAbout : ComponentActivity() {
                     // SOURCE: https://stackoverflow.com/a/59365539
                     val emailIntent = Intent(Intent.ACTION_SENDTO)
                     emailIntent.setData(Uri.parse("mailto:${GlobalCompanion.ABOUT_CONTACT_MAIL}"))
-                    ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
+                    current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
                 }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -328,10 +336,7 @@ class ScreenAbout : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenabout_title),

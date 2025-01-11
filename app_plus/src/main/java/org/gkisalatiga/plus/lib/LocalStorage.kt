@@ -22,12 +22,35 @@ class LocalStorage(private val ctx: Context) {
     private val DEFAULT_CUSTOM_KEY_STRING = ""
 
     /**
+     * Returns the map of all key-value pair of this SharedPrefereces.
+     */
+    fun getAll() : Map<String, Any?> {
+        return localStorageObj.all
+    }
+
+    /**
      * Returns the composite key if a given custom key is passed for a LocalStorageKeys.
      * @param localKey the base LocalStorageKeys to be considered.
      * @param customKey the custom key which will compound the base localKey.
      */
     fun getCompositeKey(localKey: LocalStorageKeys, customKey: String = DEFAULT_CUSTOM_KEY_STRING): String {
         return localKey.name + LocalStorageCompanion.COMPOSITE_KEY_SEPARATOR + customKey
+    }
+
+    /**
+     * Return the decomposition of a composite key.
+     * @param compositeKey the composite key to decompose, containing a [LocalStorageKeys], an [LocalStorageCompanion.COMPOSITE_KEY_SEPARATOR], and the parameter value.
+     * @return a pair of [LocalStorageKeys] and its assigned parametric value.
+     */
+    fun getDecomposeKey(compositeKey: String) : Pair<LocalStorageKeys, String> {
+        val sep = LocalStorageCompanion.COMPOSITE_KEY_SEPARATOR
+        if (compositeKey.contains(sep)) {
+            val split = compositeKey.split(sep)
+            return Pair(LocalStorageKeys.valueOf(split[0]), split[1])
+        } else {
+            // This is not a composite key. Return only the singular key.
+            return Pair(LocalStorageKeys.valueOf(compositeKey), "")
+        }
     }
 
     /**
@@ -66,10 +89,29 @@ class LocalStorage(private val ctx: Context) {
         }
 
         // Debug the default local storage's type.
-        Logger.logTest({}, "getLocalStorageValue -> type.name: ${type.name}, key: $key, retVal: $retVal")
+        Logger.logLocalStorage({}, "getLocalStorageValue -> type.name: ${type.name}, key: $key, retVal: $retVal")
 
         // Hand over the local storage value the caller asks for.
         return retVal
+    }
+
+    /**
+     * Determines whether a given key or composite key in LocalStorage exists.
+     * @param localKey the local storage key to be considered for removal.
+     * @param customKey if available, the custom key that will compose the composite key for removal.
+     * @return true if exists, false if otherwise
+     */
+    fun hasKey(localKey: LocalStorageKeys, customKey: String = DEFAULT_CUSTOM_KEY_STRING) : Boolean {
+        return getCompositeKey(localKey, customKey).let { localStorageObj.contains(it) }
+    }
+
+    /**
+     * Removes a given LocalStorage pair from existence.
+     * @param localKey the local storage key to be considered for removal.
+     * @param customKey if available, the custom key that will compose the composite key for removal.
+     */
+    fun removeLocalStorageValue(localKey: LocalStorageKeys, customKey: String = DEFAULT_CUSTOM_KEY_STRING) {
+        getCompositeKey(localKey, customKey).let { if (localStorageObj.contains(it)) localStorageObj.edit().remove(it).apply() }
     }
 
     /**
@@ -84,7 +126,7 @@ class LocalStorage(private val ctx: Context) {
         val key = getCompositeKey(localKey, customKey)
 
         // Debug the local storage key-to-write value.
-        Logger.logTest({}, "setLocalStorageValue -> localStorageValue: [$localStorageValue], key: [$key], type: [$type]")
+        Logger.logLocalStorage({}, "setLocalStorageValue -> localStorageValue: [$localStorageValue], key: [$key], type: [$type]")
 
         with (localStorageObj.edit()) {
             // Detect local storage value type.
@@ -136,10 +178,16 @@ enum class LocalStorageKeys {
     LOCAL_KEY_LAST_CAROUSEL_BANNER_UPDATE,
     LOCAL_KEY_LAUNCH_COUNTS,
     LOCAL_KEY_LIST_OF_DOWNLOADED_PDF_CACHES,
+    LOCAL_KEY_SEARCH_HISTORY,
 
     /* More sophisticated local storage keys that require the use of customKey. */
     LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION,
+    LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS,
+    LOCAL_KEY_GET_PDF_LAST_DOWNLOAD_MILLIS,
+    LOCAL_KEY_GET_PDF_METADATA,
+    LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED,
     LOCAL_KEY_IS_PDF_FILE_DOWNLOADED,
+    LOCAL_KEY_IS_PDF_FILE_MARKED_AS_FAVORITE,
 }
 
 /**

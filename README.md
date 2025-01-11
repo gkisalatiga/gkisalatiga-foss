@@ -20,6 +20,9 @@ The application specifically use the `https://gkisalatiga.org/app/deeplink` URI 
 
 Currently, the list of registered deeplinks in this app is as follows:
 
+- **`https://gkisalatiga.org/app/deeplink/consumption`:** Dummy for preventing deeplink redirection upon screen orientation change
+- **`https://gkisalatiga.org/app/deeplink/contributors`:** Opens the list of contributors of GKI Salatiga+
+- **`https://gkisalatiga.org/app/deeplink/main_graphics`:** Opens the main activity of the app
 - **`https://gkisalatiga.org/app/deeplink/saren`:** Opens the "SaRen" video playlist menu
 - **`https://gkisalatiga.org/app/deeplink/ykb`:** Opens the list of YKB daily devotionals
 
@@ -70,12 +73,12 @@ Each UI class file should bear a global companion object, useful in passing data
 
 - [X] Add background feed fetcher (data updater) using `WorkManager`
 - [X] Add "ruang berbagi" (promotional) feature
-- [ ] Add search content feature
+- [X] Add search content feature
 - [X] Fix "Carousel not displaying the latest data"
-- [ ] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
+- [X] Fix double splash screen on Android 12 or higher (or, perhaps, just remove splash screen entirely?)
 - [X] Fix "Notification appears at exact time of the day, but at both AM and PM"
 - [X] Migrate/upgrade main JSON data to v2.0
-- [ ] Migrate/upgrade gallery JSON data to v2.0
+- [X] Migrate/upgrade gallery JSON data to v2.0
 - [X] Migrate/upgrade static JSON data to v2.0
 - [X] Remove ambiguous "upload date" of videos in "Content" tab
 
@@ -85,10 +88,36 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Migrate the scroll states from `GlobalSchema` to the companion object of each screen class
 - [X] Rename `GlobalSchema` class to something more appropriate (e.g., `GlobalState` or `GlobalParameter`)
 - [X] Introduce "putArguments" implementation to `ScreenInternalHTMLCompanion` `ScreenYKBListCompanion`
-- [ ] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
-- [ ] Add download progress display when downloading PDF files
-- [ ] Add the automatic PDF remover back-end functionality
-- [ ] Add the settings helper/documentation
+- [X] Run a test: Migration from `v0.4.5-rc` and `v0.5.0-rc` to `v0.6.0-rc`
+- [X] Add download progress display when downloading PDF files
+- [X] Add the automatic PDF remover back-end functionality
+- [X] Add the settings helper/documentation
+
+### December 2024
+
+- [X] Upload a new release with native debug code
+- [X] Fix "Double Splash Screen" issue by actually implementing the `SplashScreen` API on Android 12+
+- [X] Fix "Content Labeling Warning" by adding labels to clickable objects
+- [X] Fix YouTube player suddenly stops when changing screen orientation (caused by commit 560426d "Added dark theme")
+- [X] Add notification prompt in the `FragmentHome` if the user hasn't granted notification permission
+- [X] Add notification prompt in the `FragmentHome` about new app update
+- [X] Add "Sinode GKI" logo to the app
+- [X] Improve icon sets ~and color theming in dark mode~
+- [X] Remove JSON data fallback completely when launch count is more than 1 (prevent data not updated when offline)
+
+### January 2025
+
+- [ ] Reduced the amount of visible page dots indication in the main menu's carousel
+- [ ] Split among carousel types: poster, video, article
+- [X] Migrate the JSON data source to `gkisalatiga/gkisplus-data-json` repository
+- [ ] Add street address of GKI Salatiga
+- [ ] Add QRIS image save button
+- [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
+- [ ] Add non-open source, non-hard-coded third party resources attribution
+- [ ] Fix bottom keyboard padding when typing in forms menu
+- [ ] Pukat Berkat: Remove all dummy contents, substitute instead with CTA to propose a new advertisement
+- [ ] Pukat Berkat: change name to "Lapak Jemaat"
+- [ ] Agenda: Add form to borrow room & differentiate regular from non-regular items
 
 ## C. Privacy Policy
 
@@ -100,9 +129,7 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 
 ## D. Attribution
 
-### License of Materials Used
-
-#### Open source materials used as hard-coded parts of the application
+### Open source materials used as hard-coded parts of the application
 
 - Android Studio Asset Studio Icon Library; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/studio/write/create-app-icons)
 - Android YouTube Player; Pierfrancesco Soffritti (C) 2023 (MIT) [Link](https://github.com/PierfrancescoSoffritti/android-youtube-player)
@@ -110,20 +137,92 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 - Compose UI - Coil; Coil Contributors (C) 2024 (Apache 2.0) [Link](https://github.com/coil-kt/coil)
 - CoroutineFileDownload; Jovche Mitrejchevski (C) 2018 (Apache 2.0) [Link](https://github.com/mitrejcevski/coroutineFileDownload)
 - Jetpack Compose Material3; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.0-beta04)
+- Material Design Icons; Pictogrammers (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/mdi/), [Link 2](https://github.com/Templarian/MaterialDesign)
 - Material Symbols & Icons - Google Fonts; The Android Open Source Project (C) 2024 (SIL Open Font License) [Link](https://fonts.google.com/icons)
 - Phosphor; Phosphor Icons (C) 2024 (MIT) [Link 1](https://icon-sets.iconify.design/ph), [Link 2](https://github.com/phosphor-icons/core)
 - RemixIcon Icon Set; Remix-Design (C) 2024 (Apache 2.0) [Link 1](https://icon-sets.iconify.design/ri), [Link 2](https://github.com/Remix-Design/RemixIcon)
 - WorkManager Kotlin Extensions; The Android Open Source Project (C) 2024 (Apache 2.0) [Link](https://mvnrepository.com/artifact/androidx.work/work-runtime-ktx)
 - Zoomable; Atsushi USUI (C) 2024 (Apache 2.0) [Link](https://github.com/usuiat/Zoomable)
 
-#### Open source materials dynamically used in the WebView
+### Open source materials dynamically used in the WebView
 
 - Framacarte; Framasoft (C) 2024 (CC BY-SA 4.0) [Link](https://framacarte.org/abc/en/)
 - OpenStreetMap; OpenStreetMap Foundation (OSMF) (C) 2024 (ODbL 1.0) [Link](https://www.openstreetmap.org)
 - Plus Jakarta Sans; Tokotype (C) 2020 (OFL 1.1) [Link](https://fonts.google.com/specimen/Plus+Jakarta+Sans?query=plus+jakarta+sans)
 
-#### License of biblical materials and electronic books used in the app per user's download consent
+### License of biblical materials and electronic books used in the app per user's download consent
 
 - Alkitab Yang Terbuka; Yayasan Lembaga SABDA (YLSA) (C) 2011-2024 (CC-BY-NC-SA-4.0) [Link 1](https://ebible.org/details.php?id=indayt) [Link 2](https://ayt.co)
 - Bible in Basic English; Samuel Henry Hooke, Cambridge Press (Public Domain) [Link](https://ebible.org/find/show.php?id=engBBE)
 - World English Bible; Michael Paul Johnson (Public Domain) [Link 1](https://ebible.org/find/show.php?id=engwebp) [Link 2](https://worldenglish.bible)
+
+## E. Credits and Contributions
+
+We thank all the people who have contributed gratefully to the development of GKI Salatiga app. This project was started on **July 12, 2024** and would not be possible without the help of these amazing people.
+
+May the heavenly Father bless all your lives!
+
+### Advisors
+
+- Budi Santoso
+- Tunggul L. A. Dewanto
+
+### Lead Developer & Programmer
+
+- Samarthya Lykamanuella
+
+### Co-Developers
+
+- Joaquim P. Agung
+- Natanael J. Susanto
+
+### Project Intern
+
+- Alfina G. Y. Christy
+
+### Pre-Release Testers
+
+- Bambang Setiadhy
+- Bayu Octariyanto
+- Bobby Wilianto
+- Budi Santoso
+- Chrissandhy Botmir
+- Christian R. Sukan
+- Danang Purnomo
+- Daniel E. Yudhianto
+- Elza C. Tampubolon
+- Enrico P. Wijaya
+- Erio R. P. Fanggidae
+- Eriyani T. Lunga
+- Ester Juliawati
+- Evangs Mailoa
+- Evelina Purnama
+- Gita Hastuti
+- Gita K. Dewi
+- Hendra Aribowo
+- Jack E. Parsaoran
+- Joaquim P. Agung
+- Johnson U. Radda
+- Joshua A. Gracia
+- Lusiana Nurhayati
+- Natanael J. Susanto
+- Nathalia Arviandri
+- Oktoviana B. Mowata
+- Reny Handayani
+- Ristiani G. Mendrofa
+- Samuel A. B. Sulistyo
+- Sriono Sudarso
+- Stefanus F. S. Harefa
+- Swarni N. Malimou
+- Tunggul L. A. Dewanto
+- Visi P. Pananginan
+- Wurjayanti
+- Yosua C. H. Kuncoro
+
+### Pre-Release Supporters
+
+- Amatya K. Paramasatya
+- Desemy C. N. Ballo
+- Helen R. Manurung
+- Joe E. M. Sau
+- William Handoko

@@ -1,46 +1,71 @@
 
-### Lead Developer
+## GKI Salatiga+ Contributors
+
+We thank all the people who have contributed gratefully to the development of GKI Salatiga app. This project was started on **July 12, 2024** and would not be possible without the help of these amazing people.
+
+May the heavenly Father bless all your lives!
+
+### Advisors
+
+- Budi Santoso
+- Tunggul L. A. Dewanto
+
+### Lead Developer & Programmer
 
 - Samarthya Lykamanuella
 
 ### Co-Developers
 
-- Joaquim Pulitzer Agung
-- Natanael Jeffrey Susanto
+- Joaquim P. Agung
+- Natanael J. Susanto
 
-### Beta Testers
+### Project Intern
+
+- Alfina G. Y. Christy
+
+### Pre-Release Testers
 
 - Bambang Setiadhy
 - Bayu Octariyanto
 - Bobby Wilianto
 - Budi Santoso
 - Chrissandhy Botmir
-- Christian Rinaldy Sukan
+- Christian R. Sukan
 - Danang Purnomo
-- Daniel Eko Yudhianto
-- Elza Catharina Tampubolon
-- Enrico Putra Wijaya
-- Erio Rahadian Pamungkas Fanggidae
-- Eriyani Tenga Lunga
+- Daniel E. Yudhianto
+- Elza C. Tampubolon
+- Enrico P. Wijaya
+- Erio R. P. Fanggidae
+- Eriyani T. Lunga
 - Ester Juliawati
 - Evangs Mailoa
 - Evelina Purnama
 - Gita Hastuti
-- Gita Kartika Dewi
+- Gita K. Dewi
 - Hendra Aribowo
-- Jack Edward Parsaoran
-- Johnson Umbu Radda
-- Joshua Abdi Gracia
+- Jack E. Parsaoran
+- Joaquim P. Agung
+- Johnson U. Radda
+- Joshua A. Gracia
 - Lusiana Nurhayati
+- Natanael J. Susanto
 - Nathalia Arviandri
-- Oktoviana Betseba Mowata
+- Oktoviana B. Mowata
 - Reny Handayani
-- Ristiani Gani Mendrofa
-- Samuel Arif Budiman Sulistyo
+- Ristiani G. Mendrofa
+- Samuel A. B. Sulistyo
 - Sriono Sudarso
-- Stefanus Francois Saro Harefa
-- Swarni Nioni Malimou
-- Tunggul Laras Agung Dewanto
-- Visi Prisilia Pananginan
+- Stefanus F. S. Harefa
+- Swarni N. Malimou
+- Tunggul L. A. Dewanto
+- Visi P. Pananginan
 - Wurjayanti
-- Yosua Candana Hidayat Kuncoro
+- Yosua C. H. Kuncoro
+
+### Pre-Release Supporters
+
+- Amatya K. Paramasatya
+- Desemy C. N. Ballo
+- Helen R. Manurung
+- Joe E. M. Sau
+- William Handoko

@@ -5,8 +5,10 @@ plugins {
     // ---
     // Version 8.1.1 seems to support SDK 34. We try to hide the AGP version incompatibility warning.
     // SOURCE: https://stackoverflow.com/a/77059278
-    id 'com.android.application' version '8.1.1' apply false
-    id 'com.android.library' version '8.1.1' apply false
+    //noinspection AndroidGradlePluginVersion
+    id "com.android.application" version "8.1.1" apply false
+    //noinspection AndroidGradlePluginVersion
+    id "com.android.library" version "8.1.1" apply false
 
     // This version should fix "The binary version of its metadata is 1.9.9999, expected version is 1.7.1" error
     // during compilation of released-and-signed packages.
@@ -14,7 +16,7 @@ plugins {
 
     // This version seems to work with Coil.
     // SOURCE: https://www.perplexity.ai/search/what-version-of-kotlin-is-coil-N0fStb71SUuKPKl9bu.ZHQ
-    id 'org.jetbrains.kotlin.android' version '1.9.23' apply false
+    id "org.jetbrains.kotlin.android" version "1.9.23" apply false
 
     // This version works with the rest of Composable features but Coil.
     // id 'org.jetbrains.kotlin.android' version '1.7.20' apply false

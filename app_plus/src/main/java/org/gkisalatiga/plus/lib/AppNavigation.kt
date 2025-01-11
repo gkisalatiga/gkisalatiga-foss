@@ -16,10 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 class AppNavigation : Application() {
     companion object {
         // This is the default screen to display.
-        public val DEFAULT_SCREEN_ROUTE = NavigationRoutes.SCREEN_MAIN
+        val DEFAULT_SCREEN_ROUTE = NavigationRoutes.SCREEN_MAIN
 
         // The starting screen route variable is used for screen navigation during cold start.
-        public var startingScreenRoute = DEFAULT_SCREEN_ROUTE
+        var startingScreenRoute = DEFAULT_SCREEN_ROUTE
 
         // This list stores the history of screen navigation. */
         private var navigationRouteHistory: MutableList<NavigationRoutes> = mutableListOf()
@@ -29,10 +29,10 @@ class AppNavigation : Application() {
         private var currentNavigationIndex: Int = 0
 
         // This value is exposed so that the nav. host in ActivityLauncher can switch between screens.
-        public val mutableCurrentNavigationRoute: MutableState<NavigationRoutes> = mutableStateOf(DEFAULT_SCREEN_ROUTE)
+        val mutableCurrentNavigationRoute: MutableState<NavigationRoutes> = mutableStateOf(DEFAULT_SCREEN_ROUTE)
 
         // Changing the boolean value of this mutable variable automatically triggers recomposition of the current screen.
-        public val mutableRecomposeCurrentScreen = mutableStateOf(false)
+        val mutableRecomposeCurrentScreen = mutableStateOf(false)
 
         /**
          * This function is the actual function that does mutableCurrentNavigationRoute value change
@@ -89,7 +89,7 @@ class AppNavigation : Application() {
         fun popBack() {
             Logger.logTest({}, "popBack -> currentNavigationIndex: $currentNavigationIndex, navigationRouteHistory.size: ${navigationRouteHistory.size}")
 
-            currentNavigationIndex--
+            if (currentNavigationIndex > 0) currentNavigationIndex--
             if (currentNavigationIndex > 0 && navigationRouteHistory.size > 0) {
                 composeRoute(navigationRouteHistory[currentNavigationIndex - 1])
             } else if (currentNavigationIndex == 0) {

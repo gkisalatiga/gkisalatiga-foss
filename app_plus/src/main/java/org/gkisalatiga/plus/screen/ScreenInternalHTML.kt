@@ -26,7 +26,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,9 +34,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.lib.AppNavigation
 
-class ScreenInternalHTML : ComponentActivity() {
+class ScreenInternalHTML (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -106,10 +107,7 @@ class ScreenInternalHTML : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     ScreenInternalHTMLCompanion.internalWebViewTitle,

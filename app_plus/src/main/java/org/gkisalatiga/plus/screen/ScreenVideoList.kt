@@ -35,7 +35,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Surface
@@ -50,7 +49,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +62,9 @@ import org.gkisalatiga.plus.composable.MainPTR
 import org.gkisalatiga.plus.composable.MainPTRCompanion
 import org.gkisalatiga.plus.composable.OfflineSnackbarHost
 import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -72,7 +72,7 @@ import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONObject
 
-class ScreenVideoList : ComponentActivity() {
+class ScreenVideoList (private val current : ActivityData) : ComponentActivity() {
 
     // The snackbar host state.
     private val snackbarHostState = OfflineSnackbarHostCompanion.snackbarHostState
@@ -81,7 +81,6 @@ class ScreenVideoList : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
         val scope = rememberCoroutineScope()
 
         // The pull-to-refresh indicator states.
@@ -92,7 +91,7 @@ class ScreenVideoList : ComponentActivity() {
             topBar = { getTopBar() },
             snackbarHost = { OfflineSnackbarHost() },
             modifier = Modifier.pullToRefresh(isRefreshing.value, pullToRefreshState!!, onRefresh = {
-                MainPTRCompanion.launchOnRefresh(ctx)
+                MainPTRCompanion.launchOnRefresh(current.ctx)
             })) {
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
                 getMainContent()
@@ -124,7 +123,6 @@ class ScreenVideoList : ComponentActivity() {
     
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
@@ -156,7 +154,7 @@ class ScreenVideoList : ComponentActivity() {
                         val thumbnail = listOfVideoContent[0].getString("thumbnail")
 
                         // Debug logging.
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
@@ -179,7 +177,8 @@ class ScreenVideoList : ComponentActivity() {
                     AsyncImage(
                         listOfVideoContent[0].getString("thumbnail"),
                         contentDescription = "",
-                        error = painterResource(R.drawable.thumbnail_loading_stretched),
+                        error = painterResource(R.drawable.thumbnail_error_stretched),
+                        placeholder = painterResource(R.drawable.thumbnail_placeholder),
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
@@ -202,7 +201,7 @@ class ScreenVideoList : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening YouTube stream: $url.")
@@ -228,7 +227,8 @@ class ScreenVideoList : ComponentActivity() {
                         AsyncImage(
                             model = thumbnail,
                             contentDescription = title,
-                            error = painterResource(R.drawable.thumbnail_loading_stretched),
+                            error = painterResource(R.drawable.thumbnail_error_stretched),
+                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
                             modifier = Modifier.aspectRatio(1.77778f).fillMaxHeight(),
                             contentScale = ContentScale.Crop,
                         )
@@ -254,10 +254,7 @@ class ScreenVideoList : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     ScreenVideoListCompanion.videoListTitle,

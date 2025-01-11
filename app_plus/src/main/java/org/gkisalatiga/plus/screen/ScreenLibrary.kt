@@ -16,13 +16,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,47 +28,37 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Upcoming
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.db.Modules
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -79,13 +66,11 @@ import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
-import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
-import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONObject
 
 
-class ScreenLibrary : ComponentActivity() {
+class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -116,7 +101,6 @@ class ScreenLibrary : ComponentActivity() {
     @Composable
     @SuppressLint("ComposableNaming")
     private fun getMainContent() {
-        val ctx = LocalContext.current
         val libraryAsJSONArray = ModulesCompanion.jsonRoot!!.getJSONArray("library")
 
         Column(
@@ -175,12 +159,12 @@ class ScreenLibrary : ComponentActivity() {
                 val size = it["size"] as String
 
                 // Whether this PDF has been downloaded.
-                val isDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+                val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
 
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the PDF viewer.
                         ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
@@ -193,14 +177,15 @@ class ScreenLibrary : ComponentActivity() {
                             // The first post thumbnail.
                             Surface(
                                 shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.weight(1.0f).fillMaxHeight()
+                                modifier = Modifier.weight(1.0f).fillMaxWidth()
                             ) {
                                 AsyncImage(
                                     thumbnail,
                                     contentDescription = "Library Book: $title",
-                                    error = painterResource(R.drawable.thumbnail_loading_stretched),
+                                    error = painterResource(R.drawable.thumbnail_error_vert_notext),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder_vert_notext),
                                     modifier = Modifier.width(14.dp),
-                                    contentScale = ContentScale.Crop
+                                    contentScale = ContentScale.FillWidth
                                 )
                             }
                             Column(
@@ -239,20 +224,10 @@ class ScreenLibrary : ComponentActivity() {
                                         overflow = TextOverflow.Ellipsis
                                     )
                                 }
-                                // The file size.
-                                Row {
-                                    Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
-                                    Text(
-                                        size,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
+
                                 // The downloaded PDF badge.
                                 val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
-                                val badgeColor = Color(Colors.APP_PDF_DOWNLOADED_BADGE_COLOR)
+                                val badgeColor = Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR
                                 if (isDownloaded) {
                                     Row {
                                         Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp), tint = badgeColor)
@@ -263,6 +238,18 @@ class ScreenLibrary : ComponentActivity() {
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                             color = badgeColor
+                                        )
+                                    }
+                                } else {
+                                    // The file size.
+                                    Row {
+                                        Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
+                                        Text(
+                                            size,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 }
@@ -282,10 +269,7 @@ class ScreenLibrary : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenlibrary_title),

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Theme.GKISalatigaPlus.Starting" parent="Theme.SplashScreen">
+        <!-- Android 12+ splash screen API. -->
+        <!-- SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate -->
+        <!-- Set the splash screen background, animated icon, and animation duration. -->
+        <item name="windowSplashScreenBackground">#ff482505</item>
+
+        <!-- Use windowSplashScreenAnimatedIcon to add a drawable or an animated drawable. One of these is required. -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon</item>
+
+        <!-- Required for animated icons. -->
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+
+        <!-- Set the theme of the Activity that directly follows your splash screen. This is required. -->
+        <item name="postSplashScreenTheme">@style/Theme.GKISalatigaPlus</item>
+    </style>
+</resources>

@@ -27,7 +27,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,20 +36,20 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.json.JSONArray
 import org.json.JSONObject
 
 
-class ScreenAttribution : ComponentActivity() {
+class ScreenAttribution (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -83,14 +82,10 @@ class ScreenAttribution : ComponentActivity() {
 
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
-
-        // This is used to open external URLs.
-        val uriHandler = LocalUriHandler.current
 
         // Load the JSON file containing attributions of all open source programs
         // and code which are used by this app.
-        val attribJSON: JSONObject = Main(ctx).getAttributions()
+        val attribJSON: JSONObject = Main(current.ctx).getAttributions()
         val attribArray: JSONArray = attribJSON.getJSONArray("opensource-attributions")
 
         // Convert JSONArray to regular list.
@@ -107,13 +102,13 @@ class ScreenAttribution : ComponentActivity() {
 
             /* The attribution card. */
             Surface (
-                onClick = { uriHandler.openUri(it.getString("link")) },
+                onClick = { current.uriHandler.openUri(it.getString("link")) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 10.dp).padding(top = 5.dp), verticalArrangement = Arrangement.Center) {
                     Text(it.getString("title"), fontWeight = FontWeight.Bold)
                     Text("Copyright (C) ${it.getString("year")} ${it.getString("author")}")
-                    TextButton(onClick = { uriHandler.openUri(it.getString("license-url")) }) {
+                    TextButton(onClick = { current.uriHandler.openUri(it.getString("license-url")) }) {
                         Text(it.getString("license"))
                     }
                 }
@@ -128,10 +123,7 @@ class ScreenAttribution : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenattrib_title),

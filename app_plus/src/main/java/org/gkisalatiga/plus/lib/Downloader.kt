@@ -10,9 +10,9 @@
 package org.gkisalatiga.plus.lib
 
 import android.content.Context
-import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
@@ -35,7 +35,7 @@ import java.util.concurrent.Executors
 class Downloader(private val ctx: Context) {
 
     // The file creator to create the private file.
-    private val fileCreator = InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR
+    private val fileCreator = InternalFileManager(ctx).DATA_DIR_FILE_CREATOR
 
     // The download wait time before retrying. (In millisecond.)
     private val DOWNLOAD_WAIT_DELAY = 5000L

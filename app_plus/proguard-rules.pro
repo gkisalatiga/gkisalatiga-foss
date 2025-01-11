@@ -11,6 +11,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep public class androidx.lifecycle.LiveData
+-keep public class androidx.lifecycle.MutableLiveData
+-keep public class java.util.concurrent.Executors
+-keep public class org.gkisalatiga.plus.lib.CoroutineFileDownload
+-keep public class org.gkisalatiga.plus.screen.ScreenPDFViewer
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.

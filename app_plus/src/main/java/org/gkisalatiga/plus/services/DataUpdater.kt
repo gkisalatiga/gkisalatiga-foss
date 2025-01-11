@@ -10,9 +10,10 @@
 package org.gkisalatiga.plus.services
 
 import android.content.Context
-import org.gkisalatiga.plus.db.Main
+import android.content.pm.PackageInfo
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
@@ -20,7 +21,6 @@ import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.Downloader
-import org.gkisalatiga.plus.lib.InvalidConnectionTestStringException
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
 import org.json.JSONObject
@@ -35,7 +35,7 @@ class DataUpdater(private val ctx: Context) {
 
     companion object {
         // The location of the remote feeds.json file to check for updates.
-        private const val FEEDS_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/v2/data/feeds.min.json"
+        private const val FEEDS_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/data/feeds.min.json"
     }
 
     private fun getLastGalleryUpdate() : Int {
@@ -83,6 +83,22 @@ class DataUpdater(private val ctx: Context) {
             try {
                 // Retrieving the feed JSON file to check if update is even necessary.
                 val feedJSONObject = getMostRecentFeeds()
+
+                // Obtaining variables for testing of app update.
+                val feedIsUpdateCheckEnabled = feedJSONObject.getJSONObject("app-update").getInt("enable-update-check")
+                val feedVersionCode = feedJSONObject.getJSONObject("app-update").getInt("version-code")
+                val feedVersionName = feedJSONObject.getJSONObject("app-update").getString("version-name")
+                // val feedDownloadUrl = feedJSONObject.getJSONObject("app-update").getString("download-url")
+
+                GlobalCompanion.lastAppUpdateVersionName.value = feedVersionName
+
+                // Obtain the app's essential information.
+                // SOURCE: https://stackoverflow.com/a/6593822
+                val pInfo: PackageInfo = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
+                val vCode = pInfo.versionCode
+
+                // Updating the state of app update.
+                GlobalCompanion.isAppUpdateAvailable.value = (feedIsUpdateCheckEnabled == 1 && vCode < feedVersionCode)
 
                 // Testing the last download timestamps of the JSON files.
                 Logger.logTest({}, "gkisplus-main -> local: ${getLastMainDataUpdate()}, online: ${feedJSONObject.getInt("last-main-update")}")

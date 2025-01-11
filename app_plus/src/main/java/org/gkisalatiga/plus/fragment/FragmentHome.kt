@@ -7,6 +7,8 @@
 package org.gkisalatiga.plus.fragment
 
 import android.app.Application
+import android.content.Intent
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -27,15 +29,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -44,8 +56,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,17 +68,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.screen.ScreenInternalHTMLCompanion
 import org.gkisalatiga.plus.screen.ScreenPosterViewerCompanion
 import org.gkisalatiga.plus.screen.ScreenWebViewCompanion
+import org.gkisalatiga.plus.screen.ScreenYKBListCompanion
 import kotlin.math.ceil
 
-class FragmentHome : ComponentActivity() {
+class FragmentHome (private val current : ActivityData) : ComponentActivity() {
 
     // The following defines the visible menu buttons shown in the main menu,
     // as well as their corresponding navigation targets.
@@ -122,35 +138,34 @@ class FragmentHome : ComponentActivity() {
 
     @Composable
     fun getComposable() {
-        val ctx = LocalContext.current
 
         /* Initialized the "lateinit" variables. */
         btnLabels = listOf(
-            ctx.resources.getString(R.string.btn_mainmenu_wj),
-            ctx.resources.getString(R.string.btn_mainmenu_liturgi),
-            ctx.resources.getString(R.string.btn_mainmenu_agenda),
-            ctx.resources.getString(R.string.btn_mainmenu_offertory),
-            ctx.resources.getString(R.string.btn_mainmenu_ykb),
-            ctx.resources.getString(R.string.btn_mainmenu_form),
-            ctx.resources.getString(R.string.btn_mainmenu_gallery),
+            current.ctx.resources.getString(R.string.btn_mainmenu_wj),
+            current.ctx.resources.getString(R.string.btn_mainmenu_liturgi),
+            current.ctx.resources.getString(R.string.btn_mainmenu_agenda),
+            current.ctx.resources.getString(R.string.btn_mainmenu_offertory),
+            current.ctx.resources.getString(R.string.btn_mainmenu_ykb),
+            current.ctx.resources.getString(R.string.btn_mainmenu_form),
+            current.ctx.resources.getString(R.string.btn_mainmenu_gallery),
             // TODO: Re-enable the bible and library menu once the functionalities are ready.
-            // ctx.resources.getString(R.string.btn_mainmenu_bible),
-            ctx.resources.getString(R.string.btn_mainmenu_library),
-            ctx.resources.getString(R.string.btn_mainmenu_pukatberkat),
+            // current.ctx.resources.getString(R.string.btn_mainmenu_bible),
+            current.ctx.resources.getString(R.string.btn_mainmenu_library),
+            current.ctx.resources.getString(R.string.btn_mainmenu_pukatberkat),
         )
         btnDescriptions = listOf(
-            ctx.resources.getString(R.string.btn_desc_mainmenu_wj),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_liturgi),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_agenda),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_offertory),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_ykb),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_form),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_gallery),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_media),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_wj),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_liturgi),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_agenda),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_offertory),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_ykb),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_form),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_gallery),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_media),
             // TODO: Re-enable the bible and library menu once the functionalities are ready.
-            // ctx.resources.getString(R.string.btn_desc_mainmenu_bible),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_library),
-            ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat),
+            // current.ctx.resources.getString(R.string.btn_desc_mainmenu_bible),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_library),
+            current.ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat),
         )
 
         // The following defines each individual featured cover image of the menu.
@@ -217,9 +232,9 @@ class FragmentHome : ComponentActivity() {
                     /* Display the carousel banner image. */
                     Surface (
                         shape = RoundedCornerShape(15.dp),
-                        modifier = Modifier.padding(LocalContext.current.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
+                        modifier = Modifier.padding(current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
                         onClick = {
-                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
 
                             // Get the type of the current carousel banner.
                             val currentType = currentNode.getString("type")
@@ -267,7 +282,8 @@ class FragmentHome : ComponentActivity() {
                         AsyncImage(
                             model = currentNode.getString("banner"),
                             contentDescription = "Carousel Image ${it % actualPageCount}",
-                            error = painterResource(R.drawable.thumbnail_loading_no_text),
+                            error = painterResource(R.drawable.thumbnail_error_notext),
+                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
@@ -300,14 +316,23 @@ class FragmentHome : ComponentActivity() {
 
             /* Displaying the top two menus. */
             Row {
-                btnRoutes.subList(0, 2).forEachIndexed { index, str ->
+                btnRoutes.subList(0, 2).forEachIndexed { index, _ ->
                     // The individual card item.
-                    Card (modifier = Modifier.padding(10.dp).fillMaxWidth().weight(1f), onClick = {
-                        // This will be triggered when the main menu button is clicked.
-                        if (btnRoutes[index] != NavigationRoutes.SCREEN_BLANK) {
-                            AppNavigation.navigate(btnRoutes[index])
+                    Card (
+                        modifier = Modifier.padding(10.dp).fillMaxWidth().weight(1f),
+                        colors = CardColors(
+                            containerColor = Colors.FRAGMENT_HOME_TOP_TWO_MENUS_CONTAINER_COLOR,
+                            contentColor = Colors.FRAGMENT_HOME_TOP_MENU_TINT_COLOR,
+                            disabledContainerColor = Color.Unspecified,
+                            disabledContentColor = Color.Unspecified
+                        ),
+                        onClick = {
+                            // This will be triggered when the main menu button is clicked.
+                            if (btnRoutes[index] != NavigationRoutes.SCREEN_BLANK) {
+                                AppNavigation.navigate(btnRoutes[index])
+                            }
                         }
-                    }) {
+                    ) {
                         Column (modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                             Surface(shape = RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp), modifier = Modifier.fillMaxWidth().aspectRatio(0.75f)) {
                                 Image(painter = painterResource(btnFeaturedCover[index]), "Top Menu Banner", contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
@@ -364,7 +389,7 @@ class FragmentHome : ComponentActivity() {
                                 Image(
                                     painter = painterResource(btnIcons[offsetIndex]),
                                     contentDescription = btnDescriptions[offsetIndex],
-                                    colorFilter = ColorFilter.tint(Color.White),
+                                    colorFilter = ColorFilter.tint(Colors.FRAGMENT_HOME_TOP_MENU_TINT_COLOR),
                                     modifier = Modifier.fillMaxHeight(0.50f).aspectRatio(1.0f)
                                 )
                                 // Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -378,6 +403,7 @@ class FragmentHome : ComponentActivity() {
                                     overflow = TextOverflow.Visible,
                                     softWrap = true,
                                     fontSize = 12.sp,
+                                    color = Colors.FRAGMENT_HOME_TOP_MENU_TINT_COLOR,
                                     modifier = Modifier
                                         // .fillMaxHeight(0.50f)
                                         .padding(3.dp)
@@ -400,6 +426,57 @@ class FragmentHome : ComponentActivity() {
 
                 }
             }  // --- end of for loop.
+
+            HorizontalDivider(Modifier.padding(vertical = 20.dp))
+
+            // App update prompt.
+            val isAppUpdateAvailable = GlobalCompanion.isAppUpdateAvailable.value
+            val titleCardUpdate = stringResource(R.string.titlecard_update)
+            val subTextUpdate =
+                if (isAppUpdateAvailable)
+                    stringResource(R.string.subtext_update_available)
+                        .replace("%%%VERSION%%%", GlobalCompanion.lastAppUpdateVersionName.value)
+                else
+                    stringResource(R.string.subtext_update_latest)
+            Card(
+                onClick = {
+                    current.uriHandler.openUri(GlobalCompanion.APP_GOOGLE_PLAY_LISTING)
+                },
+                enabled = isAppUpdateAvailable,
+                modifier = Modifier.padding(bottom = 10.dp)
+            ) {
+                Row ( modifier = Modifier.fillMaxSize().padding(12.5.dp), verticalAlignment = Alignment.CenterVertically ) {
+                    Icon(Icons.Default.Update, "Notification icon (decorative)", modifier = Modifier.weight(0.8f).fillMaxHeight(1.0f).aspectRatio(1.0f).padding(5.dp).padding(start = 5.dp))
+                    Column(modifier = Modifier.weight(5.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Center) {
+                        Text(titleCardUpdate, fontSize = 18.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(subTextUpdate, fontSize = 14.sp, fontWeight = FontWeight.Normal, textAlign = TextAlign.Justify, modifier = Modifier.padding(top = 2.dp), lineHeight = 16.sp)
+                    }
+                }
+            }
+            
+            // App notification permission prompt.
+            val isNotificationGranted = GlobalCompanion.isNotificationGranted.value
+            val titleCardNotification = stringResource(R.string.titlecard_notification)
+            val subTextNotification = if (isNotificationGranted) stringResource(R.string.subtext_notification_granted) else stringResource(R.string.subtext_notification_denied)
+            Card(
+                onClick = {
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, current.ctx.packageName)
+                    current.ctx.startActivity(intent)
+                },
+                enabled = !isNotificationGranted,
+                modifier = Modifier.padding(bottom = 10.dp)
+            ) {
+                Row ( modifier = Modifier.fillMaxSize().padding(12.5.dp), verticalAlignment = Alignment.CenterVertically ) {
+                    Icon(Icons.Default.NotificationsActive, "Notification icon (decorative)", modifier = Modifier.weight(0.8f).fillMaxHeight(1.0f).aspectRatio(1.0f).padding(5.dp).padding(start = 5.dp))
+                    Column(modifier = Modifier.weight(5.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Center) {
+                        Text(titleCardNotification, fontSize = 18.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(subTextNotification, fontSize = 14.sp, fontWeight = FontWeight.Normal, textAlign = TextAlign.Justify, modifier = Modifier.padding(top = 2.dp), lineHeight = 16.sp)
+                    }
+                }
+            }
+            
         }  // --- end of scrollable column.
 
     }  // --- end of getComposable().

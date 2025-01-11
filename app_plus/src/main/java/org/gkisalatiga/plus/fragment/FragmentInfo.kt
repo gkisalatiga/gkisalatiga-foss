@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
@@ -40,8 +41,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -51,16 +50,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
 import org.json.JSONObject
 
-class FragmentInfo : ComponentActivity() {
+class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
 
     // The trigger to open an URL in an external browser.
     private var doTriggerBrowserOpen = mutableStateOf(false)
@@ -85,7 +86,7 @@ class FragmentInfo : ComponentActivity() {
 
     // The list of social media icons.
     private val socialMediaIcons = listOf(
-        R.drawable.remixicon_wordpress_fill_48,
+        R.drawable.mdi__internet_48,
         R.drawable.remixicon_facebook_box_fill_48,
         R.drawable.remixicon_instagram_fill_48,
         R.drawable.remixicon_youtube_fill_48,
@@ -98,7 +99,6 @@ class FragmentInfo : ComponentActivity() {
 
     @Composable
     fun getComposable() {
-        val ctx = LocalContext.current
 
         // Converting JSONArray to regular lists.
         val staticDataList: MutableList<JSONObject> = mutableListOf()
@@ -111,8 +111,8 @@ class FragmentInfo : ComponentActivity() {
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
         val scrollState = FragmentInfoCompanion.rememberedScrollState!!
         Column(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(state = scrollState)
@@ -125,7 +125,7 @@ class FragmentInfo : ComponentActivity() {
 
             /* Display the individual "church info" card. */
             Column ( modifier = Modifier.padding(top = 10.dp) ) {
-                staticDataList.forEachIndexed { index, itemObject ->
+                staticDataList.forEachIndexed { _, itemObject ->
 
                     // The card title, thumbnail, etc.
                     var bannerURL = itemObject.getString("banner")
@@ -136,7 +136,7 @@ class FragmentInfo : ComponentActivity() {
 
                     Card(
                         onClick = {
-                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Display the church profile content folder list.
                             ScreenStaticContentListCompanion.targetStaticFolder = itemObject
@@ -156,7 +156,8 @@ class FragmentInfo : ComponentActivity() {
                             AsyncImage(
                                 model = bannerURL,
                                 contentDescription = "Profile page: $title",
-                                error = painterResource(R.drawable.thumbnail_loading_no_text),
+                                error = painterResource(R.drawable.thumbnail_error_notext),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                 modifier = Modifier.fillMaxWidth(),
                                 contentScale = ContentScale.Crop,
                                 colorFilter = ColorFilter.colorMatrix(ColorMatrix(
@@ -215,19 +216,17 @@ class FragmentInfo : ComponentActivity() {
                             // SOURCE: https://stackoverflow.com/a/59365539
                             val emailIntent = Intent(Intent.ACTION_SENDTO)
                             emailIntent.setData(Uri.parse("mailto:${socialMediaCTATargets[index]}"))
-                            ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
+                            current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
                         } else {
                             doTriggerBrowserOpen.value = true
                             externalLinkURL.value = socialMediaCTATargets[index]
                         }
 
                     })) {
-                        // Modify the icon's color.
-                        // SOURCE: https://stackoverflow.com/a/72365284
                         Image(
                             painter = painterResource(drawableIcon),
                             "Social Media CTA No. ${socialMediaNodeTitles[index]}",
-                            colorFilter = ColorFilter.tint(Color(0xffe6ad84))
+                            colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_COPYRIGHT_TEXT_COLOR)
                         )
                     }
                 }
@@ -239,9 +238,17 @@ class FragmentInfo : ComponentActivity() {
                 Text(stringResource(R.string.about_copyright_notice),
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    color = Color(0xffa46443),
+                    color = Colors.FRAGMENT_INFO_ICON_TINT_COLOR,
                     style = TextStyle (textAlign = TextAlign.Center),
                     modifier = Modifier.padding(horizontal = 20.dp)
+                )
+                Spacer(Modifier.height(25.dp))
+                @Suppress("SpellCheckingInspection")
+                Image(
+                    painter = painterResource(R.drawable.logo_gki),
+                    "Logo Gereja Kristen Indonesia",
+                    colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_ICON_TINT_COLOR),
+                    modifier = Modifier.size(75.dp)
                 )
             }
 
@@ -252,7 +259,7 @@ class FragmentInfo : ComponentActivity() {
             if (doTriggerBrowserOpen.value) {
                 // Opens in an external browser.
                 // SOURCE: https://stackoverflow.com/a/69103918
-                LocalUriHandler.current.openUri(externalLinkURL.value)
+                current.uriHandler.openUri(externalLinkURL.value)
 
                 doTriggerBrowserOpen.value = false
             }

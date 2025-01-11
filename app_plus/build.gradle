@@ -1,20 +1,25 @@
+//file:noinspection SpellCheckingInspection
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
 }
 
 android {
-    namespace 'org.gkisalatiga.plus'
+    namespace "org.gkisalatiga.plus"
     compileSdk 34
+
+    // For generating native debug symbols.
+    // SOURCE: https://stackoverflow.com/a/63436935
+    ndkVersion "25.1.8937393"
 
     defaultConfig {
         applicationId "org.gkisalatiga.plus"
         minSdk 21
         targetSdk 34
-        versionCode 29
-        versionName "0.5.1-rc"
+        versionCode 37
+        versionName "0.6.2"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             // Enables on-the-fly edit of drawable vectors.
             // SOURCE: https://stackoverflow.com/a/38418049
@@ -35,7 +40,18 @@ android {
             // SOURCE: https://developer.android.com/build/shrink-code#groovy
             shrinkResources true
 
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Enable native code inspection so that we can debug and trace errors
+            // after R8 shrinkage on production.
+            // SOURCE: https://developer.android.com/build/shrink-code#native-crash-support
+            ndk {
+                debugSymbolLevel "SYMBOL_TABLE"
+            }
+
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '.debug'
         }
     }
     compileOptions {
@@ -43,7 +59,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
 
         // SOURCE: https://stackoverflow.com/q/65545018
         freeCompilerArgs += [
@@ -66,41 +82,48 @@ android {
         // SOURCE: https://developer.android.com/jetpack/androidx/releases/compose-kotlin
         // kotlinCompilerExtensionVersion = '1.3.0'
         // kotlinCompilerExtensionVersion = '1.4.6'
-        kotlinCompilerExtensionVersion = '1.5.13'
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.5.1'
-    implementation platform('androidx.compose:compose-bom:2022.10.00')
-    implementation 'androidx.compose.ui:ui'
-    implementation 'androidx.compose.ui:ui-graphics'
-    implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
-    debugImplementation 'androidx.compose.ui:ui-tooling'
-    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    //noinspection GradleDependency
+    implementation "androidx.core:core-ktx:1.8.0"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "com.google.android.material:material:1.12.0"
+    //noinspection GradleDependency
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
+    //noinspection GradleDependency
+    implementation "androidx.activity:activity-compose:1.5.1"
+    //noinspection GradleDependency
+    implementation platform("androidx.compose:compose-bom:2022.10.00")
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-graphics"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.material3:material3"
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.2.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
+    //noinspection GradleDependency
+    androidTestImplementation platform("androidx.compose:compose-bom:2022.10.00")
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
 
     // Enable screen navigation in Jetpack Compose
     // SOURCE: https://medium.com/@KaushalVasava/navigation-in-jetpack-compose-full-guide-beginner-to-advanced-950c1133740
-    implementation('androidx.navigation:navigation-compose:2.7.7')
+    //noinspection GradleDependency
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     // Enable ModalDrawerSheet functionality
     // SOURCE: https://www.composables.com/material3/modalbottomsheet
+    //noinspection GradleDependency
     implementation("androidx.compose.material3:material3:1.3.0-beta04")
 
     // Enable loading async images from the internet
@@ -126,10 +149,14 @@ dependencies {
 
     // To allow WorkManager to start background services and works, even after device restart.
     // SOURCE: https://medium.com/@denniskirimi.dk/android-workmanager-37e08c070439
-    // ---
+    //noinspection GradleDependency
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 
     // Better, more advanced VerticalPager and HorizontalPager zoomable modifier.
     implementation("net.engawapg.lib:zoomable:1.6.2")
+
+    // Splash screen API for Android 12+ devices.
+    // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
 }

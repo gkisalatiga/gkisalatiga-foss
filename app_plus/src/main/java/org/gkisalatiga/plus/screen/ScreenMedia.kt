@@ -35,7 +35,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -60,7 +61,7 @@ import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ScreenMedia : ComponentActivity() {
+class ScreenMedia (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -110,7 +111,7 @@ class ScreenMedia : ComponentActivity() {
             // Assumes both "pinnedPlaylistTitle" and "pinnedPlaylistContent" have the same list size.
             ordinaryPlaylistDictionary.forEach { obj ->
                 // Displaying the relevant YouTube-based church services.
-                getMediaUI((obj as JSONObject).getString("title"), (obj as JSONObject).getJSONArray("content"))
+                getMediaUI(obj.getString("title"), obj.getJSONArray("content"))
             }
         }
 
@@ -163,7 +164,8 @@ class ScreenMedia : ComponentActivity() {
                 AsyncImage(
                     (sectionContent[0] as JSONObject).getString("thumbnail"),
                     contentDescription = "",
-                    error = painterResource(R.drawable.thumbnail_loading_stretched),
+                    error = painterResource(R.drawable.thumbnail_error_stretched),
+                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop
                 )
@@ -180,10 +182,7 @@ class ScreenMedia : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenmedia_title),

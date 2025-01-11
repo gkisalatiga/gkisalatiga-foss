@@ -1,5 +1,87 @@
 # GKI Salatiga App Changelog
 
+## v0.6.2 2024.12.29 (37)
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Migrated the JSON repository source to `gkisalatiga/gkisplus-data-json`
+
+## v0.6.1 2024.12.28 (36)
+
+:star2: **NEW**
+
+- Added main menu prompt for notification permission on Android API 33 and above
+- Added main menu prompt to update the application
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- Added "GKI" logo to several locations of interest in the app
+- Attempted to solve "Content Labeling Warning" by adding labels to clickable objects
+- Attempted to solve "Double Splash Screen" by implementing Android 12+ splash screen API
+- (Back-End) Compressed the fallback JSON data to conserve more space
+- (Back-End) Implemented `ActivityData` in all screens and fragments, replacing `LocalContext` and `LocalUriHandler`
+- (Back-End) Removed JSON fallback calling when app launch count is more than one to prevent old data from showing up
+
+:hammer_and_wrench: **FIX**
+
+- Fixed YouTube player suddenly stops playing when the screen orientation changes (caused by commit 560426d "Added dark theme")
+
+## v0.6.0-rc.5 2024.11.26 (35)
+
+:hammer_and_wrench: **FIX**
+
+- Fixed incomplete PDF download when using the Kotlin R8 release compilation
+- Fixed PDF download cancellation does not halt the back-end of data transfer
+
+## v0.6.0-rc.4 2024.11.26 (34)
+
+:hammer_and_wrench: **FIX**
+
+- Attempted to fix incomplete PDF download when using the signed Google Play APK
+
+## v0.6.0-rc.3 2024.11.26 (33)
+
+:hammer_and_wrench: **FIX**
+
+- Internal PDF viewer's page does not fill the entire screen's width
+
+## v0.6.0-rc.2 2024.11.26 (32)
+
+:information_source: **INFO**
+
+- This release ships minor patches to Google Play Store
+
+## v0.6.0-rc 2024.11.26 (31)
+
+:star2: **NEW**
+
+- Added dark theme
+- Added content search functionality for menus: Warta Jemaat, Liturgi, YKB, and YouTube video
+- Added search history
+- Added e-book module reader menu
+
+## v0.5.2-rc 2024.11.20 (30)
+
+:information_source: **INFO**
+
+- This release includes code cleaning and import optimization
+- This release does not generate any app build
+
+:star2: **NEW**
+
+- Fully supported internal PDF viewer with the ability to cancel ongoing PDF download operations
+- (Back-End) Added automatic PDF remover if a given PDF file has not been accessed for a given time
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- Standardized the color scheme and improved the splash screen display
+- Updated several menu's banner graphics to match app's color palette
+- (Back-End) Improved deep link handling and routing mechanisms
+
+:hammer_and_wrench: **FIX**
+
+- Bug on fullscreen youtube player (especially from opening saren notification)
+
 ## v0.5.1-rc 2024.11.08 (29)
 
 :information_source: **INFO**

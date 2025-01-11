@@ -39,9 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,18 +49,19 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
-import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.screen.ScreenVideoListCompanion
 import org.json.JSONArray
 import org.json.JSONObject
 
-class FragmentServices : ComponentActivity() {
+class FragmentServices (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     fun getComposable() {
@@ -93,7 +92,7 @@ class FragmentServices : ComponentActivity() {
             // Assumes both "pinnedPlaylistTitle" and "pinnedPlaylistContent" have the same list size.
             pinnedPlaylistDictionary.forEach { obj ->
                 // Displaying the relevant YouTube-based church services.
-                getServicesUI((obj as JSONObject).getString("title"), obj.getJSONArray("content"))
+                getServicesUI(obj.getString("title"), obj.getJSONArray("content"))
             }
 
             // Opens the non-pinned video playlist.
@@ -101,8 +100,8 @@ class FragmentServices : ComponentActivity() {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
-                color = Color(Colors.FRAGMENT_SERVICES_SHOWMORE_BACKGROUND),
-                contentColor = Color(Colors.FRAGMENT_SERVICES_SHOWMORE_CONTENT),
+                color = Colors.FRAGMENT_SERVICES_SHOW_MORE_BACKGROUND,
+                contentColor = Colors.FRAGMENT_SERVICES_SHOW_MORE_CONTENT,
                 onClick = {
                     AppNavigation.navigate(NavigationRoutes.SCREEN_MEDIA)
                 }
@@ -159,7 +158,6 @@ class FragmentServices : ComponentActivity() {
         }
 
         /* Displaying the individual item of this section. */
-        val ctx = LocalContext.current
         LazyRow {
             // Left-right padding.
             item { Spacer(modifier = Modifier.width(5.dp)) }
@@ -180,7 +178,7 @@ class FragmentServices : ComponentActivity() {
 
                 Card (
                     onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "The card $title is clicked", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "The card $title is clicked", Toast.LENGTH_SHORT).show()
 
                         // Trying to switch to the YouTube viewer and open the stream.
                         Logger.log({}, "Opening the YouTube stream: $url.")
@@ -203,7 +201,8 @@ class FragmentServices : ComponentActivity() {
                         AsyncImage(
                             model = thumbnail,
                             contentDescription = title,
-                            error = painterResource(R.drawable.thumbnail_loading_stretched),
+                            error = painterResource(R.drawable.thumbnail_error_stretched),
+                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
                             modifier = Modifier.fillMaxWidth().aspectRatio(1.77778f),
                             contentScale = ContentScale.Crop
                         )

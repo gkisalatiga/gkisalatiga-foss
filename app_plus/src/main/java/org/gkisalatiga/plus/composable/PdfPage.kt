@@ -8,7 +8,8 @@ package org.gkisalatiga.plus.composable
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +25,7 @@ import net.engawapg.lib.zoomable.zoomable
  * @param pageBitmap the [Bitmap] to be displayed in the current PDF page.
  */
 @Composable
-fun PdfPage(pageBitmap: Bitmap) {
+fun PdfPage(pageBitmap: Bitmap, backgroundColor: Color) {
     val zoomState = rememberZoomState()
     AsyncImage(
         pageBitmap,
@@ -32,7 +33,7 @@ fun PdfPage(pageBitmap: Bitmap) {
             zoomState,
             onDoubleTap = { position -> zoomState.toggleScale(PdfPageCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
             scrollGesturePropagation = ScrollGesturePropagation.NotZoomed
-        ).fillMaxSize().background(Color.White),
+        ).wrapContentSize().fillMaxWidth().background(backgroundColor),
         contentDescription = "PdfPage Bitmap Rendering Composable",
         contentScale = ContentScale.Fit
     )

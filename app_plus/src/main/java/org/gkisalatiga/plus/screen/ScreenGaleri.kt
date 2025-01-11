@@ -38,7 +38,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,7 +47,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,15 +54,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.json.JSONArray
+import org.json.JSONObject
 
-class ScreenGaleri : ComponentActivity() {
+class ScreenGaleri (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
         Scaffold (
             topBar = { this.getTopBar() }
@@ -84,23 +86,16 @@ class ScreenGaleri : ComponentActivity() {
     }
 
     @Composable
+    @SuppressLint("ComposableNaming")
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
-        // The agenda node.
+        // The gallery node.
         val galleryNode = GalleryCompanion.jsonRoot!!
 
-        // Enlist the list of years, corresponding to name of days.
-        val galleryYearList = mutableListOf(String())
-        galleryNode.keys().forEach {
-            galleryYearList.add(it)
-        }
-
-        // Remove the first element; JSONArray starts at one.
-        galleryYearList.removeAt(0)
-
-        // Sort the list alphanumerically.
-        galleryYearList.sort()
+        // Enlist the list galleries, the top parent (root) album.
+        val galleryAlbumRoots = mutableListOf(JSONObject())
+        for (i in 0 until galleryNode.length() ) galleryAlbumRoots.add(i, galleryNode.getJSONObject(i))
+        galleryAlbumRoots.sortBy { if (it.toString() != "{}") it.getString("title") else "" }
 
         // The column's saved scroll state.
         val scrollState = ScreenGaleriCompanion.rememberedScrollState!!
@@ -128,27 +123,31 @@ class ScreenGaleri : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Draw the form selection elements. */
-            galleryYearList.forEach {
-                // Determining the text title.
-                val title = "Kilas Balik Tahun " + it.toString()
+            galleryAlbumRoots.forEach {
+                // Ensures we only select non-empty JSON objects.
+                if (it.toString() != "{}") {
+                    // Determining the text title.
+                    val title = it.getString("title")
 
-                // Displaying the individual card.
-                Card(
-                    onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery folder year: $it", Toast.LENGTH_SHORT).show()
+                    // Displaying the individual card.
+                    Card(
+                        onClick = {
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "Opening gallery folder year: $title", Toast.LENGTH_SHORT).show()
 
-                        // Navigate to the WebView viewer.
-                        ScreenGaleriCompanion.targetGalleryYear = it
-                        AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_YEAR)
-                    },
-                    modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
-                ) {
-                    Row ( modifier = Modifier.padding(5.dp).fillMaxSize().padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically ) {
-                        Text(title, fontSize = 18.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(start = 5.dp).weight(5f), maxLines = 2, overflow = TextOverflow.Ellipsis)
-                        // The "arrow forward" icon.
-                        Icon(Icons.AutoMirrored.Default.ArrowForward, "", modifier = Modifier.padding(vertical = 5.dp).padding(end = 5.dp).padding(start = 10.dp).fillMaxHeight())
-                    }
-                }  // --- end of card.
+                            // Navigate to the WebView viewer.
+                            ScreenGaleriCompanion.targetGalleryTitle = title
+                            ScreenGaleriCompanion.targetGalleryAlbumData = it.getJSONArray("album-data")
+                            AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_YEAR)
+                        },
+                        modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
+                    ) {
+                        Row ( modifier = Modifier.padding(5.dp).fillMaxSize().padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically ) {
+                            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(start = 5.dp).weight(5f), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                            // The "arrow forward" icon.
+                            Icon(Icons.AutoMirrored.Default.ArrowForward, "", modifier = Modifier.padding(vertical = 5.dp).padding(end = 5.dp).padding(start = 10.dp).fillMaxHeight())
+                        }
+                    }  // --- end of card.
+                }
             }  // --- end of forEach.
 
         }  // --- end of column.
@@ -157,13 +156,11 @@ class ScreenGaleri : ComponentActivity() {
 
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
+    @SuppressLint("ComposableNaming")
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screengallery_title),
@@ -186,19 +183,13 @@ class ScreenGaleri : ComponentActivity() {
 
 }
 
+@Suppress("SpellCheckingInspection")
 class ScreenGaleriCompanion : Application() {
     companion object {
-        internal var targetGalleryYear: String = ""
+        internal var targetGalleryTitle: String = ""
+        internal var targetGalleryAlbumData: JSONArray = JSONArray()
 
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
-
-        /**
-         * This function neatly and thoroughly passes the respective arguments to the screen's handler.
-         * @param year the target gallery year to display in the gallery album.
-         */
-        fun putArguments(year: String) {
-            targetGalleryYear = year
-        }
     }
 }

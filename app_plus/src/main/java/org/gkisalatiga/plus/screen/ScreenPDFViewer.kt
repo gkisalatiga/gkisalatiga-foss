@@ -13,13 +13,14 @@ package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.annotation.Keep
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,11 +45,10 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -82,18 +82,19 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.PdfPage
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.CoroutineFileDownload
+import org.gkisalatiga.plus.lib.FileDownloadEvent
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
-import org.gkisalatiga.plus.lib.PdfPageUiEvent
-import org.gkisalatiga.plus.lib.PdfViewModel
-import org.gkisalatiga.plus.lib.DownloadViewModel
-import org.gkisalatiga.plus.lib.FileDownloadEvent
+import org.gkisalatiga.plus.model.PdfPageUiEvent
+import org.gkisalatiga.plus.model.PdfViewModel
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableBitmapMap
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiCurrentPage
@@ -103,13 +104,15 @@ import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTri
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableTriggerPDFViewerRecomposition
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.navigatorLazyListState
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.rememberedViewerPagerState
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.txtLoadingPercentageAnimatable
 import org.gkisalatiga.plus.services.InternalFileManager
+import org.json.JSONObject
 
-
+@Keep
 class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
     // The view model for downloading files with progress.
-    private val downloadWithProgressViewModel = DownloadViewModel()
+    private val downloadWithProgressViewModel = CoroutineFileDownload()
 
     // The view model for rendering the PDF files.
     private val pdfRendererViewModel = PdfViewModel(current.ctx)
@@ -134,31 +137,68 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                 ) { getMainContent() }
             }
 
-            // The download progress circle.
-            if (ScreenPDFViewerCompanion.mutableShowDownloadProgressScrim.value) {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))  // Semi-transparent scrim
-                    .clickable(onClick = { /* Disable user input during progression. */ }),
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
+            // Show some error alert dialogs.
+            fun alertDialogDismiss() {
+                ScreenPDFViewerCompanion.mutableShowAlertDialog.value = false
+                AppNavigation.popBack()
             }
-
-            // Show some alert dialogs.
+            val alertDialogTitle = stringResource(R.string.screen_pdfviewer_error_dialog_title)
+            val alertDialogBtnString = stringResource(R.string.screen_pdfviewer_error_dialog_btn_string)
             if (ScreenPDFViewerCompanion.mutableShowAlertDialog.value) {
                 AlertDialog(
-                    onDismissRequest = {
-                        ScreenPDFViewerCompanion.mutableShowAlertDialog.value = false
-                    },
-                    title = { Text(ScreenPDFViewerCompanion.txtAlertDialogTitle) },
-                    text = { Text(ScreenPDFViewerCompanion.txtAlertDialogSubtitle) },
+                    onDismissRequest = { alertDialogDismiss() },
+                    title = { Text(alertDialogTitle) },
+                    text = { Text(ScreenPDFViewerCompanion.txtAlertDialogSubtitle.value) },
                     confirmButton = {
-                        Button(onClick = { ScreenPDFViewerCompanion.mutableShowAlertDialog.value = false }) {
-                            Text("OK", color = Color.White)
+                        Button(onClick = { alertDialogDismiss() }) {
+                            Text(alertDialogBtnString, color = Color.White)
                         }
                     }
                 )
+            }
+
+            // Show some dialogs displayed during downloads/loadings.
+            fun loadingDialogDismiss() {
+                downloadWithProgressViewModel.cancelDownload()
+                ScreenPDFViewerCompanion.mutableShowLoadingDialog.value = false
+                AppNavigation.popBack()
+            }
+            val loadingDialogTitle = stringResource(R.string.screen_pdfviewer_loading_dialog_title)
+            val loadingDialogSubtitle = stringResource(R.string.screen_pdfviewer_loading_dialog_subtitle)
+                .replace("%%%", ScreenPDFViewerCompanion.eBookTitle)
+            val loadingDialogBtnString = stringResource(R.string.screen_pdfviewer_loading_dialog_btn_string)
+            if (ScreenPDFViewerCompanion.mutableShowLoadingDialog.value) {
+                AlertDialog(
+                    onDismissRequest = { loadingDialogDismiss() },
+                    title = { Text(loadingDialogTitle) },
+                    text = {
+                        Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(loadingDialogSubtitle)
+                            Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                                LinearProgressIndicator(
+                                    progress = { txtLoadingPercentageAnimatable.value },
+                                    modifier = Modifier.fillMaxWidth().weight(5.0f),
+                                )
+                                Text("${ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue}%",
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.weight(1.0f),
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        Button(onClick = { loadingDialogDismiss() }) {
+                            Text(loadingDialogBtnString, color = Color.White)
+                        }
+                    }
+                )
+            }
+
+            // Animating the progress bar during downloads.
+            LaunchedEffect(key1 = ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue) {
+                val floatPercentage = ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue.toFloat() / 100
+                txtLoadingPercentageAnimatable.animateTo(targetValue = floatPercentage, animationSpec = tween(durationMillis = 75, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
             }
 
             // Show the PDF information dialog.
@@ -208,7 +248,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                             Spacer(Modifier.fillMaxWidth().height(5.dp))
 
                             if (GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO) {
-                                val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, ScreenPDFViewerCompanion.eBookUrl) as String
+                                val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, eBookUrl) as String
                                 Text(infoDialogContentNameDocLocalPath, fontWeight = FontWeight.Bold)
                                 Text(pdfLocalPath)
                                 Spacer(Modifier.fillMaxWidth().height(5.dp))
@@ -229,7 +269,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
             // Show the PDF page navigator dialog.
             val minimumPdfPage = 1
-            val maximumPdfPage = ScreenPDFViewerCompanion.mutablePdfUiTotalPageCount.intValue
+            val maximumPdfPage = mutablePdfUiTotalPageCount.intValue
             val pageStringLocalized = stringResource(R.string.screen_pdfviewer_nav_page_string)
             val navigatorDialogTitle = stringResource(R.string.screen_pdfviewer_nav_title)
             if (ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value) {
@@ -282,10 +322,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler {
-            // Do not return back if we are downloading.
-            if (!ScreenPDFViewerCompanion.mutableShowDownloadProgressScrim.value) AppNavigation.popBack()
-        }
+        BackHandler { AppNavigation.popBack() }
     }
 
     @Composable
@@ -299,7 +336,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
             // The page navigator.
             Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
-                Button(onClick = { ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = (ScreenPDFViewerCompanion.mutablePdfUiCurrentPage.intValue + 1).toString(); ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = true }) {
+                Button(onClick = { ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = (mutablePdfUiCurrentPage.intValue + 1).toString(); ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = true }) {
                     Text((mutablePdfUiCurrentPage.intValue + 1).toString() + " / " + mutablePdfUiTotalPageCount.intValue.toString(), textAlign = TextAlign.Center)
                 }
                 VerticalDivider(Modifier.fillMaxHeight().padding(vertical = 2.dp).padding(horizontal = 10.dp))
@@ -325,7 +362,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                 // Attempt to download the file, if not exists.
                 if (!isAlreadyDownloaded) {
                     Logger.logPDF({}, "Downloading the PDF file: $url")
-                    handlePdfDownload(current.ctx, url, lifecycleOwner)
+                    handlePdfDownload(url, lifecycleOwner)
 
                 } else {
                     // Load the file directly if it exists.
@@ -341,6 +378,9 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
             key (mutableTriggerPDFViewerRecomposition.value, currentFilePdfRenderer.value) {
                 if (rememberedViewerPagerState != null) Logger.logPDF({}, "mutablePdfUiPageCount.intValue: ${mutablePdfUiTotalPageCount.intValue}, mutableTotalPDFPage.intValue: ${mutablePdfUiTotalPageCount.intValue}, rememberedViewerPagerState!!.currentPage: ${rememberedViewerPagerState!!.currentPage}, mutableCurrentPDFPage.intValue: ${mutablePdfUiCurrentPage.intValue}")
 
+                // Mark this PDF file as "just accessed" so that it won't be scheduled for deletion soon.
+                LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS, System.currentTimeMillis(), LocalStorageDataTypes.LONG, url)
+
                 // Initiating the pager state.
                 val initialPage = 0
                 rememberedViewerPagerState = rememberPagerState(initialPage = initialPage) { mutablePdfUiTotalPageCount.intValue }
@@ -352,7 +392,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                     // Request PDF page rendering.
                     LaunchedEffect(Unit) {
                         Logger.logTest({}, "pagerPage: $pagerPage, pagerPage+1: ${pagerPage + 1}", LoggerType.WARNING)
-                        pdfRendererViewModel.loadPdfPage(pagerPage, 2).observe(lifecycleOwner) {
+                        pdfRendererViewModel.loadPdfPage(pagerPage).observe(lifecycleOwner) {
                             when (it) {
                                 is PdfPageUiEvent.Error -> {
                                     Logger.logPDF({}, it.message)
@@ -379,7 +419,8 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
                     key(mutableTriggerPDFPageRecomposition.value) {
                         if (mutableBitmapMap.containsKey(pagerPage) && mutableBitmapMap[pagerPage] != null && mutableBitmapMap[pagerPage]!!::class == Bitmap::class) {
-                            PdfPage(mutableBitmapMap[pagerPage]!!)
+                            // PdfPage(mutableBitmapMap[pagerPage]!!, current.colors.mainZoomableBoxBackgroundColor)
+                            PdfPage(mutableBitmapMap[pagerPage]!!, Color.White)
                         }
                     }
 
@@ -394,10 +435,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     ScreenPDFViewerCompanion.eBookTitle,
@@ -428,17 +466,19 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
     /**
      * This function handles the PDF downloading.
      */
-    private fun handlePdfDownload(ctx: Context, url: String, lifecycleOwner: LifecycleOwner) {
+    private fun handlePdfDownload(url: String, lifecycleOwner: LifecycleOwner) {
         val targetDownloadDir = InternalFileManager(current.ctx).PDF_POOL_PDF_FILE_CREATOR
         val targetFilename = System.currentTimeMillis()
 
-        // Disable user input during download.
-        ScreenPDFViewerCompanion.mutableShowDownloadProgressScrim.value = true
+        // Display the loading dialog during download.
+        val message = "Downloading $targetFilename.pdf into ${targetDownloadDir.absolutePath}"
+        ScreenPDFViewerCompanion.showLoadingDialog(message, 0)
 
+        // Do the downloading.
         downloadWithProgressViewModel.downloadFile(url, "$targetFilename.pdf", targetDownloadDir).observe(lifecycleOwner) {
             when (it) {
                 is FileDownloadEvent.Progress -> {
-                    ScreenPDFViewerCompanion.mutablePdfDownloadStatusMessage.value = "Downloading... ${it.percentage}%"
+                    ScreenPDFViewerCompanion.showLoadingDialog(message, it.percentage)
                 }
 
                 is FileDownloadEvent.Success -> {
@@ -446,12 +486,28 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
 
                     val outputPath = it.downloadedFilePath
 
+                    // Saving the download PDF file's metadata.
+                    val jsonMetadata = JSONObject()
+                        .put("title", ScreenPDFViewerCompanion.eBookTitle)
+                        .put("author", ScreenPDFViewerCompanion.eBookAuthor)
+                        .put("publisher", ScreenPDFViewerCompanion.eBookPublisher)
+                        .put("publisher-loc", ScreenPDFViewerCompanion.eBookPublisherLoc)
+                        .put("year", ScreenPDFViewerCompanion.eBookYear)
+                        .put("thumbnail", ScreenPDFViewerCompanion.eBookThumbnail)
+                        .put("download-url", eBookUrl)
+                        .put("source", ScreenPDFViewerCompanion.eBookSource)
+                        .put("size", ScreenPDFViewerCompanion.eBookSize)
+                        .toString(0)
+
                     // Ensure that we don't download this PDF file again in the future.
                     LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, true, LocalStorageDataTypes.BOOLEAN, url)
                     LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, outputPath, LocalStorageDataTypes.STRING, url)
+                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_DOWNLOAD_MILLIS, System.currentTimeMillis(), LocalStorageDataTypes.LONG, url)
+                    LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_METADATA, jsonMetadata, LocalStorageDataTypes.STRING, url)
 
-                    // Register the file in the app's internal file manager so that it will be scheduled for cleaning.
-                    InternalFileManager(current.ctx).enlistDownloadedFileForCleanUp(eBookUrl, outputPath)
+                    // Only if this PDF file has not been made favorite before.
+                    if (!LocalStorage(current.ctx).hasKey(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_MARKED_AS_FAVORITE, url))
+                        LocalStorage(current.ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_MARKED_AS_FAVORITE, false, LocalStorageDataTypes.BOOLEAN, url)
 
                     // Load the file directly if it exists.
                     currentFilePdfRenderer.value = pdfRendererViewModel.initPdfRenderer(outputPath)
@@ -460,19 +516,19 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                     // Trigger recomposition of the PDF viewer, if this is new download.
                     mutableTriggerPDFViewerRecomposition.value = !mutableTriggerPDFViewerRecomposition.value
 
-                    // Re-enable user input.
-                    ScreenPDFViewerCompanion.mutableShowDownloadProgressScrim.value = false
+                    // Close the download dialog.
+                    ScreenPDFViewerCompanion.mutableShowLoadingDialog.value = false
                 }
 
                 is FileDownloadEvent.Failure -> {
                     ScreenPDFViewerCompanion.mutablePdfDownloadStatusMessage.value = it.failure
 
                     // Displaying the error message.
-                    ScreenPDFViewerCompanion.showAlertDialog("Gagal Mengunduh!", it.failure)
-
-                    // Re-enable user input.
-                    ScreenPDFViewerCompanion.mutableShowDownloadProgressScrim.value = false
+                    ScreenPDFViewerCompanion.showAlertDialog(it.failure)
                 }
+
+                is FileDownloadEvent.Cancelled -> Unit
+
             }
         }
     }
@@ -490,10 +546,13 @@ class ScreenPDFViewerCompanion : Application() {
         internal var mutableBitmapMap: MutableMap<Int, Bitmap> = mutableMapOf()
 
         /* Stores the state of the current PDF page reading. */
-        internal val mutablePdfDownloadStatusMessage = mutableStateOf("")
         internal val mutablePdfUiEventMessage = mutableStateOf("")
         internal val mutablePdfUiCurrentPage = mutableIntStateOf(0)
         internal val mutablePdfUiTotalPageCount = mutableIntStateOf(0)
+
+        /* Stores the state of the current PDF downloading/loading. */
+        internal val mutablePdfDownloadPercentage = mutableIntStateOf(0)
+        internal val mutablePdfDownloadStatusMessage = mutableStateOf("")
 
         /* Mutable trigger signals for PDF composition. */
         internal val mutableTriggerPDFViewerRecomposition = mutableStateOf(false)
@@ -506,13 +565,11 @@ class ScreenPDFViewerCompanion : Application() {
         internal val mutableShowPdfNavigatorDialog = mutableStateOf(false)
         internal val mutableCurrentFieldPageNumberValue = mutableStateOf("")
 
-        /* Displaying the scrim to disable user input during downloads. */
-        internal val mutableShowDownloadProgressScrim = mutableStateOf(false)
-
         /* Displaying alert messages. */
         internal val mutableShowAlertDialog = mutableStateOf(false)
-        internal var txtAlertDialogTitle: String = String()
-        internal var txtAlertDialogSubtitle: String = String()
+        internal val mutableShowLoadingDialog = mutableStateOf(false)
+        internal val txtAlertDialogSubtitle = mutableStateOf("")
+        internal val txtLoadingPercentageAnimatable = Animatable(0.0f)
 
         /* These information are essential to the screen. */
         internal var eBookTitle: String = String()
@@ -559,13 +616,27 @@ class ScreenPDFViewerCompanion : Application() {
 
         /**
          * Displaying the alert dialog.
-         * @param title the title to be shown on top of the dialog.
          * @param subtitle the subtitle/content of the alert dialog.
          */
-        fun showAlertDialog(title: String, subtitle: String) {
-            txtAlertDialogTitle = title
-            txtAlertDialogSubtitle = subtitle
-            mutableShowAlertDialog.value = true
+        fun showAlertDialog(subtitle: String) {
+            txtAlertDialogSubtitle.value = subtitle
+            if (!mutableShowAlertDialog.value) mutableShowAlertDialog.value = true
+            if (mutableShowLoadingDialog.value) mutableShowLoadingDialog.value = false
+        }
+
+        /**
+         * Displaying the dialog when downloading/loading the PDF files.
+         * @param status the status of the current PDF download.
+         * @param percentage the download percentage of the PDF file.
+         */
+        fun showLoadingDialog(status: String, percentage: Int) {
+            // Updating the states.
+            mutablePdfDownloadStatusMessage.value = status
+            mutablePdfDownloadPercentage.intValue = percentage
+
+            // Displaying (hiding) the dialogs.
+            if (mutableShowAlertDialog.value) mutableShowAlertDialog.value = false
+            if (!mutableShowLoadingDialog.value) mutableShowLoadingDialog.value = true
         }
 
         /* The pager state for the PDF viewer. */

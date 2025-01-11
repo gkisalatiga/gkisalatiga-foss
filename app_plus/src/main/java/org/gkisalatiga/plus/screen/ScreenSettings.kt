@@ -10,6 +10,7 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import androidx.activity.ComponentActivity
@@ -19,21 +20,27 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AutoDelete
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.RadioButtonChecked
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -41,7 +48,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -53,12 +59,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.PrefItemData
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
@@ -66,14 +74,16 @@ import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.lib.PreferenceSettingItem
 
 
-class ScreenSettings : ComponentActivity() {
+class ScreenSettings(private val current: ActivityData) : ComponentActivity() {
 
     /* The currently set preferences. */
+    private val mutableCurrentSettingOfAppTheme: MutableState<PrefItemData?> = mutableStateOf(null)
     private val mutableCurrentSettingOfYouTubeUi: MutableState<PrefItemData?> = mutableStateOf(null)
     private val mutableCurrentSettingOfPdfQuality: MutableState<PrefItemData?> = mutableStateOf(null)
     private val mutableCurrentSettingOfPdfAutoRemove: MutableState<PrefItemData?> = mutableStateOf(null)
 
     /* Stores preference item list. */
+    private lateinit var APP_THEME_PREF_ITEM_LIST: List<PrefItemData>
     private lateinit var YOUTUBE_UI_PREF_ITEM_LIST: List<PrefItemData>
     private lateinit var PDF_QUALITY_PREF_ITEM_LIST: List<PrefItemData>
     private lateinit var PDF_AUTO_DELETE_PREF_ITEM_LIST: List<PrefItemData>
@@ -81,10 +91,8 @@ class ScreenSettings : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
-
         // Init the data objects.
-        initPrefItemData(ctx)
+        initPrefItemData()
         initCurrentPrefValues()
 
         // Draw the screen.
@@ -101,14 +109,106 @@ class ScreenSettings : ComponentActivity() {
 
         }
 
+        // Prepare the help dialog.
+        getHelp()
+
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
         // SOURCE: https://stackoverflow.com/a/69151539
-        BackHandler { AppNavigation.popBack(); saveAndWritePref(ctx) }
+        BackHandler { AppNavigation.popBack() }
+    }
+
+    @Composable
+    private fun getHelp() {
+        if (ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value) {
+            // The dialog title.
+            val helpDialogTitle = stringResource(R.string.screen_settings_help_dialog_title)
+
+            // The documentation icon.
+            val helpDocIcons = listOf(
+                Icons.Default.Palette,
+                Icons.Default.VideoLibrary,
+                Icons.Default.PictureAsPdf,
+                Icons.Default.AutoDelete,
+            )
+
+            // The documentation title.
+            val helpDocTitles = listOf(
+                stringResource(R.string.screen_settings_pref_app_theme),
+                stringResource(R.string.screen_settings_pref_youtube_ui),
+                stringResource(R.string.screen_settings_pref_pdf_quality),
+                stringResource(R.string.screen_settings_pref_pdf_remove),
+            )
+
+            // The documentation actual strings.
+            val helpDocContents = listOf(
+                stringResource(R.string.screen_settings_pref_app_theme_documentation),
+                stringResource(R.string.screen_settings_pref_youtube_ui_documentation),
+                stringResource(R.string.screen_settings_pref_pdf_quality_documentation),
+                stringResource(R.string.screen_settings_pref_pdf_remove_documentation),
+            )
+
+            AlertDialog(
+                onDismissRequest = {
+                    ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value = false
+                },
+                title = { Text(helpDialogTitle) },
+                text = {
+                    Column (Modifier.fillMaxWidth().height(400.dp).verticalScroll(
+                        rememberScrollState()
+                    )) {
+                        helpDocIcons.forEachIndexed { i, _ ->
+                            Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
+                                Icon(helpDocIcons[i], contentDescription = "Help doc icon $i", modifier = Modifier.size(20.dp).weight(1.0f))
+                                Text(helpDocTitles[i], fontWeight = FontWeight.Bold, modifier = Modifier.weight(7.0f).padding(start = 5.dp))
+                            }
+                            Spacer(Modifier.fillMaxWidth().height(5.dp))
+                            Text(helpDocContents[i])
+                            Spacer(Modifier.fillMaxWidth().height(15.dp))
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value = false }) {
+                        Text("OK", color = Color.White)
+                    }
+                }
+            )
+        }
     }
 
     @Composable
     private fun getMainContent() {
+
+        /* Settings: modify app theme. */
+        val expandedAppTheme = remember { mutableStateOf(false) }
+        val titleAppTheme = stringResource(R.string.screen_settings_pref_app_theme)
+        Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.TopStart)) {
+            Surface (onClick = { expandedAppTheme.value = true }, modifier = Modifier.fillMaxWidth()) {
+                Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 20.dp)) {
+                    Icon(Icons.Default.Palette, contentDescription = "Settings menu icon", modifier = Modifier.size(40.dp))
+                    Column (modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.Start) {
+                        Text(titleAppTheme, fontWeight = FontWeight.Bold)
+                        Text(mutableCurrentSettingOfAppTheme.value!!.stringText)
+                    }
+                }
+            }
+            DropdownMenu(expanded = expandedAppTheme.value, onDismissRequest = { expandedAppTheme.value = false }, modifier = Modifier.width(300.dp)) {
+                APP_THEME_PREF_ITEM_LIST.forEach {
+                    DropdownMenuItem(
+                        text = { Text(it.stringText) },
+                        onClick = { expandedAppTheme.value = false; mutableCurrentSettingOfAppTheme.value = it; saveAndWritePref(); (current.ctx as Activity).recreate() },
+                        leadingIcon = {
+                            if (it == mutableCurrentSettingOfAppTheme.value) Icon(Icons.Default.RadioButtonChecked, contentDescription = null)
+                            else Icon(Icons.Default.RadioButtonUnchecked, contentDescription = null)
+                        }
+                    )
+                }
+            }
+
+        }
+
+        HorizontalDivider(Modifier.padding(horizontal = 20.dp))
 
         /* Settings: modify the UI of the YouTube player. */
         val expandedVideoUi = remember { mutableStateOf(false) }
@@ -127,7 +227,7 @@ class ScreenSettings : ComponentActivity() {
                 YOUTUBE_UI_PREF_ITEM_LIST.forEach {
                     DropdownMenuItem(
                         text = { Text(it.stringText) },
-                        onClick = { expandedVideoUi.value = false; mutableCurrentSettingOfYouTubeUi.value = it },
+                        onClick = { expandedVideoUi.value = false; mutableCurrentSettingOfYouTubeUi.value = it; saveAndWritePref() },
                         leadingIcon = {
                             if (it == mutableCurrentSettingOfYouTubeUi.value) Icon(Icons.Default.RadioButtonChecked, contentDescription = null)
                             else Icon(Icons.Default.RadioButtonUnchecked, contentDescription = null)
@@ -157,7 +257,7 @@ class ScreenSettings : ComponentActivity() {
                 PDF_QUALITY_PREF_ITEM_LIST.forEach {
                     DropdownMenuItem(
                         text = { Text(it.stringText) },
-                        onClick = { expandedPdfQuality.value = false; mutableCurrentSettingOfPdfQuality.value = it },
+                        onClick = { expandedPdfQuality.value = false; mutableCurrentSettingOfPdfQuality.value = it; saveAndWritePref() },
                         leadingIcon = {
                             if (it == mutableCurrentSettingOfPdfQuality.value) Icon(Icons.Default.RadioButtonChecked, contentDescription = null)
                             else Icon(Icons.Default.RadioButtonUnchecked, contentDescription = null)
@@ -170,8 +270,7 @@ class ScreenSettings : ComponentActivity() {
         HorizontalDivider(Modifier.padding(horizontal = 20.dp))
 
         /* Settings: automatic deletion of PDF files that are no longer read after N days. */
-        // TODO: Re-enable this code block when the PDF autodeletion functionality is ready.
-        /*val expandedPdfAutoDelete = remember { mutableStateOf(false) }
+        val expandedPdfAutoDelete = remember { mutableStateOf(false) }
         val titlePdfAutoDelete = stringResource(R.string.screen_settings_pref_pdf_remove)
         Box(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.TopStart)) {
             Surface (onClick = { expandedPdfAutoDelete.value = true }, modifier = Modifier.fillMaxWidth()) {
@@ -187,7 +286,7 @@ class ScreenSettings : ComponentActivity() {
                 PDF_AUTO_DELETE_PREF_ITEM_LIST.forEach {
                     DropdownMenuItem(
                         text = { Text(it.stringText) },
-                        onClick = { expandedPdfAutoDelete.value = false; mutableCurrentSettingOfPdfAutoRemove.value = it },
+                        onClick = { expandedPdfAutoDelete.value = false; mutableCurrentSettingOfPdfAutoRemove.value = it; saveAndWritePref() },
                         leadingIcon = {
                             if (it == mutableCurrentSettingOfPdfAutoRemove.value) Icon(Icons.Default.RadioButtonChecked, contentDescription = null)
                             else Icon(Icons.Default.RadioButtonUnchecked, contentDescription = null)
@@ -195,20 +294,16 @@ class ScreenSettings : ComponentActivity() {
                     )
                 }
             }
-        }*/
+        }
 
     }
 
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
     private fun getTopBar() {
-        val ctx = LocalContext.current
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screensettings_title),
@@ -217,7 +312,7 @@ class ScreenSettings : ComponentActivity() {
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { AppNavigation.popBack(); saveAndWritePref(ctx) }) {
+                IconButton(onClick = { AppNavigation.popBack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = "Back button"
@@ -225,19 +320,22 @@ class ScreenSettings : ComponentActivity() {
                 }
             },
             actions = {
-                // TODO: Re-enable this code block when the settings help menu is available.
-                /*IconButton(onClick = { /* TODO */ }) {
+                IconButton(onClick = { ScreenSettingsCompanion.mutableShowSettingsHelpDialog.value = true }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Help,
                         contentDescription = "Open the help menu of the settings."
                     )
-                }*/
+                }
             },
             scrollBehavior = scrollBehavior
         )
     }
 
     private fun initCurrentPrefValues() {
+        APP_THEME_PREF_ITEM_LIST.forEach {
+            if (it.isActive) mutableCurrentSettingOfAppTheme.value = it
+        }
+
         YOUTUBE_UI_PREF_ITEM_LIST.forEach {
             if (it.isActive) mutableCurrentSettingOfYouTubeUi.value = it
         }
@@ -253,7 +351,26 @@ class ScreenSettings : ComponentActivity() {
 
     @Composable
     @SuppressLint("ComposableNaming")
-    private fun initPrefItemData(ctx: Context) {
+    private fun initPrefItemData(ctx: Context = current.ctx) {
+        /* Preference item data for the app's dark/light mode UI. */
+        APP_THEME_PREF_ITEM_LIST = listOf(
+            PrefItemData(
+                prefItem = PreferenceSettingItem.PREF_VAL_THEME_DARK,
+                stringText = stringResource(R.string.screen_settings_pref_app_theme_item_dark),
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_THEME_DARK) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String)
+            ),
+            PrefItemData(
+                prefItem = PreferenceSettingItem.PREF_VAL_THEME_LIGHT,
+                stringText = stringResource(R.string.screen_settings_pref_app_theme_item_light),
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_THEME_LIGHT) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String)
+            ),
+            PrefItemData(
+                prefItem = PreferenceSettingItem.PREF_VAL_THEME_SYSTEM,
+                stringText = stringResource(R.string.screen_settings_pref_app_theme_item_system),
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_THEME_SYSTEM) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String)
+            ),
+        )
+
         /* Preference item data of YouTube UI. */
         YOUTUBE_UI_PREF_ITEM_LIST = listOf(
             PrefItemData(
@@ -297,32 +414,37 @@ class ScreenSettings : ComponentActivity() {
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_always),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_7_days),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_7) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_14_days),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_30_days),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_30) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             ),
             PrefItemData(
                 prefItem = PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER,
                 stringText = stringResource(R.string.screen_settings_pref_pdf_remove_item_never),
-                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as String)
+                isActive = AppPreferences(ctx).getActualItemValue(PreferenceSettingItem.PREF_VAL_PDF_REMOVE_NEVER) == (AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES) as Long)
             )
         )
     }
 
-    private fun saveAndWritePref(ctx: Context) {
+    private fun saveAndWritePref(ctx: Context = current.ctx) {
+        AppPreferences(ctx).setPreferenceValue(
+            PreferenceKeys.PREF_KEY_THEME_UI,
+            AppPreferences(ctx).getActualItemValue(mutableCurrentSettingOfAppTheme.value!!.prefItem)!!
+        )
+
         AppPreferences(ctx).setPreferenceValue(
             PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME,
             AppPreferences(ctx).getActualItemValue(mutableCurrentSettingOfYouTubeUi.value!!.prefItem)!!
@@ -345,5 +467,8 @@ class ScreenSettingsCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* Whether to display settings help. */
+        val mutableShowSettingsHelpDialog = mutableStateOf(false)
     }
 }

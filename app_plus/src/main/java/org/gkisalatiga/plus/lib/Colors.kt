@@ -9,33 +9,109 @@
 
 package org.gkisalatiga.plus.lib
 
+import android.app.Application
+import androidx.compose.ui.graphics.Color
+
+// TODO: Migrate the Colors class to the sealed class [DynamicColorScheme].
 class Colors {
     companion object {
-        const val APP_PDF_DOWNLOADED_BADGE_COLOR = 0xff40c057
+        /* Main (default) colors of the app. */
+        val MAIN_CONTAINER_COLOR = Color(0xff715446)
+        val MAIN_DARK_BROWN_COLOR = Color(0xff482505)
+        val MAIN_PDF_DOWNLOADED_BADGE_COLOR = Color(0xff40c057)
+        val MAIN_PRIMARY_COLOR = Color(0xff715446)
+        val MAIN_SCREEN_BACKGROUND_COLOR = Color(0xffffffff)
+        val MAIN_SECONDARY_COLOR = Color(0xff97705d)
+        val MAIN_SURFACE_COLOR = Color(0xffffffff)
+        val MAIN_SURFACE_CONTAINER_COLOR = Color(0xfff3edf8)
+        val MAIN_SURFACE_CONTAINER_HIGHEST_COLOR = Color(0xffe6e0e9)
+        val MAIN_TERTIARY_COLOR = Color(0xffbd8c75)
+        val MAIN_TOP_BAR_COLOR = Color(0xff715446)
+        val MAIN_TOP_BAR_CONTENT_COLOR = Color(0xffffffff)
 
-        const val MAIN_DARK_BROWN = 0xff482505
-        const val AGENDA_ITEM_BACKGROUND = 0xffFFE8BB
-        const val AGENDA_ITEM_TIME_BACKGROUND = 0xff482505
-        const val AGENDA_ITEM_CHIP_SELECTED_BACKGROUND = 0xff482505
-        const val LIGHT_THEME_WHITE = 0xffffffff
-        const val MAIN_TOP_BAR_COLOR = 0xff715446
-        const val MAIN_TOP_BAR_CONTENT_COLOR = 0xffffffff
-        const val YKB_ARCHIVE_BUTTON_COLOR = 0xff482505
+        /* Used in app's screens. */
+        val SCREEN_MAIN_COLORIZE_COLOR = Color(0x77fdb308)
+        val SCREEN_MAIN_OVERLAY_GRADIENT_MIDDLE_COLOR = Color.Transparent
+        val SCREEN_MAIN_OVERLAY_GRADIENT_TOP_COLOR = Color(0xff825303)
+        val SCREEN_YKB_ARCHIVE_BUTTON_COLOR = Color(0xff482505)
 
-        const val SPLASHSCREEN_SUB_TEXT_COLOR = 0xffffffff
-
-        /* Used in FragmentServices */
-        const val FRAGMENT_SERVICES_SHOWMORE_BACKGROUND = 0xff97705d
-        const val FRAGMENT_SERVICES_SHOWMORE_CONTENT = 0xffffffff
-
-        /* This is how we can theoretically create a color-changing scheme based on theme: */
-        /*
-        // Cannot use "const" with "when"
-        val ABC = when (Theme) {
-            Theme1 -> Color1
-            Theme2 -> Color2
-            else -> ColorDefault
-        }
-        */
+        /* Used in app's fragments. */
+        val FRAGMENT_HOME_TOP_MENU_TINT_COLOR = Color(0xffFFFFFF)
+        val FRAGMENT_HOME_TOP_TWO_MENUS_CONTAINER_COLOR = Color(0xff715446)
+        val FRAGMENT_INFO_COPYRIGHT_TEXT_COLOR = Color(0xffa46443)
+        val FRAGMENT_INFO_ICON_TINT_COLOR = Color(0xffe6ad84)
+        val FRAGMENT_SERVICES_SHOW_MORE_BACKGROUND = Color(0xff97705d)
+        val FRAGMENT_SERVICES_SHOW_MORE_CONTENT = Color(0xffffffff)
     }
+}
+
+sealed class DynamicColorScheme (
+    val mainScreenBackgroundColor: Color,
+    val mainSplashScreenBackgroundColor : Color,
+    val mainSplashScreenForegroundColor : Color,
+    val mainSplashScreenSubTextColor : Color,
+    val mainZoomableBoxBackgroundColor : Color,
+    val screenAgendaChipSelectedBackgroundColor : Color,
+    val screenAgendaChipUnselectedBackgroundColor : Color,
+    val screenAgendaChipTextSelectedBackgroundColor : Color,
+    val screenAgendaChipTextUnselectedBackgroundColor : Color,
+    val screenAgendaContentTintColor : Color,
+    val screenAgendaItemBackgroundColor : Color,
+    val screenAgendaItemTimeBackgroundColor : Color,
+    val screenAgendaItemTimeTextColor : Color,
+    val screenMainBottomNavSelectedIndicationColor : Color,
+    val screenMainBottomNavSelectedIconColor : Color,
+    val screenMainBottomNavSelectedTextColor : Color,
+    val screenMainBottomNavUnselectedIconColor : Color,
+    val screenMainBottomNavUnselectedTextColor : Color,
+    val screenMainOverlayGradientBottomColor : Color,
+    val screenSearchClickableTextColor : Color,
+    val screenSearchHistoryItemTextColor : Color,
+) {
+    class DarkColorScheme : DynamicColorScheme(
+        mainScreenBackgroundColor = Color(0xff141218),
+        mainSplashScreenBackgroundColor = Color(0xff482505),
+        mainSplashScreenForegroundColor = Color.White,
+        mainSplashScreenSubTextColor = Color.White,
+        mainZoomableBoxBackgroundColor = Color(0xff141218),
+        screenAgendaChipSelectedBackgroundColor = Color(0xfffdb308),
+        screenAgendaChipUnselectedBackgroundColor = Color.White,
+        screenAgendaChipTextSelectedBackgroundColor = Color.Black,
+        screenAgendaChipTextUnselectedBackgroundColor = Color.Black,
+        screenAgendaContentTintColor = Color.White,
+        screenAgendaItemBackgroundColor = Color(0xff482505),
+        screenAgendaItemTimeBackgroundColor = Color(0xffFFE8BB),
+        screenAgendaItemTimeTextColor = Color.Black,
+        screenMainBottomNavSelectedIndicationColor = Color(0xff715446),
+        screenMainBottomNavSelectedIconColor = Color.White,
+        screenMainBottomNavSelectedTextColor = Color.White,
+        screenMainBottomNavUnselectedIconColor = Color.White,
+        screenMainBottomNavUnselectedTextColor = Color.White,
+        screenMainOverlayGradientBottomColor = Color.Black,
+        screenSearchClickableTextColor = Color.White,
+        screenSearchHistoryItemTextColor = Color.White,
+    )
+    class LightColorScheme : DynamicColorScheme(
+        mainScreenBackgroundColor = Color.White,
+        mainSplashScreenBackgroundColor = Color.White,
+        mainSplashScreenForegroundColor = Color(0xff482505),
+        mainSplashScreenSubTextColor = Color(0xff482505),
+        mainZoomableBoxBackgroundColor = Color.White,
+        screenAgendaChipSelectedBackgroundColor = Color(0xff482505),
+        screenAgendaChipUnselectedBackgroundColor = Color.White,
+        screenAgendaChipTextSelectedBackgroundColor = Color.White,
+        screenAgendaChipTextUnselectedBackgroundColor = Color.Black,
+        screenAgendaContentTintColor = Color.Black,
+        screenAgendaItemBackgroundColor = Color(0xffFFE8BB),
+        screenAgendaItemTimeBackgroundColor = Color(0xff482505),
+        screenAgendaItemTimeTextColor = Color.White,
+        screenMainBottomNavSelectedIndicationColor = Color(0xffe6ad84),
+        screenMainBottomNavSelectedIconColor = Color.Black,
+        screenMainBottomNavSelectedTextColor = Color.Black,
+        screenMainBottomNavUnselectedIconColor = Color.Black,
+        screenMainBottomNavUnselectedTextColor = Color.Black,
+        screenMainOverlayGradientBottomColor = Color.White,
+        screenSearchClickableTextColor = Color.Black,
+        screenSearchHistoryItemTextColor = Color(0xff715446)
+    )
 }

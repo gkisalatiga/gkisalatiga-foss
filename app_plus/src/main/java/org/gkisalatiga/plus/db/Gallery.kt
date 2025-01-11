@@ -14,8 +14,8 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.services.InternalFileManager
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
@@ -53,7 +53,8 @@ class Gallery(private val ctx: Context) {
      * This is useful especially when the app has not yet loaded the refreshed JSON metadata
      * from the internet yet.
      */
-    fun getFallbackGalleryData(): JSONObject {
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun getFallbackGalleryData(): JSONArray {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
@@ -62,7 +63,7 @@ class Gallery(private val ctx: Context) {
 
         // Write the raw-resource-shipped file buffer as an actual file.
         // Creating the private file.
-        val privateFile = File(InternalFileManager(ctx).DOWNLOAD_FILE_CREATOR, GalleryCompanion.savedFilename)
+        val privateFile = File(InternalFileManager(ctx).DATA_DIR_FILE_CREATOR, GalleryCompanion.savedFilename)
 
         // Writing the fallback file into an actual file in the app's internal storage.
         val out = FileOutputStream(privateFile)
@@ -71,9 +72,10 @@ class Gallery(private val ctx: Context) {
         out.close()
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONObject("gallery")
+        return JSONObject(inputAsString).getJSONArray("gallery")
     }
 
+    @Suppress("MemberVisibilityCanBePrivate", "unused")
     fun getFallbackGalleryMetadata(): JSONObject {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
@@ -106,48 +108,32 @@ class Gallery(private val ctx: Context) {
      * Assumes the JSON metadata has been initialized by the Downloader class.
      * Please run Downloader().initMetaData() before executing this function.
      */
-    fun getGalleryData(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GalleryCompanion.absolutePathToJSONFile).exists()
-
+    fun getGalleryData(): JSONArray {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GalleryCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONObject("gallery")
-        } else {
-            return getFallbackGalleryData()
-        }
-
+        this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONArray("gallery")
     }
 
     fun getGalleryMetadata(): JSONObject {
-        // Determines if we have already downloaded the JSON file.
-        val JSONExists = File(GalleryCompanion.absolutePathToJSONFile).exists()
-
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
-        if (GalleryCompanion.mutableIsDataInitialized.value || JSONExists) {
-            this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
-            return JSONObject(_parsedJSONString).getJSONObject("meta")
-        } else {
-            return getFallbackGalleryMetadata()
-        }
-
+        this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
+        return JSONObject(_parsedJSONString).getJSONObject("meta")
     }
 }
 
-// TODO: Update to gallery JSON data v2
+@Suppress("MayBeConstant", "RedundantSuppression", "SpellCheckingInspection")
 class GalleryCompanion : Application() {
     companion object {
-        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/gkisplus-gallery.json"
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/data/gkisplus-gallery.min.json"
 
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-gallery.json"
+        val savedFilename = "gkisplus-gallery-v2.json"
 
         /* The JSON object that will be accessed by screens. */
-        var jsonRoot: JSONObject? = null
+        var jsonRoot: JSONArray? = null
     }
 }

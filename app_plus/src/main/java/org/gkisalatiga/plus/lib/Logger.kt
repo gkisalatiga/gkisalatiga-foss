@@ -24,6 +24,22 @@ class Logger {
         private const val BASE_LOGGING_TAG = "Groaker"
 
         /**
+         * Actually do the back-end logging.
+         * @param tag The tag of the log.
+         * @param msgString The message to be logged.
+         * @param type The type of the logging.
+         */
+        private fun doLog (tag: String, msgString: String, type: LoggerType = LoggerType.DEBUG) {
+            when (type) {
+                LoggerType.DEBUG -> Log.d(tag, msgString)
+                LoggerType.ERROR -> Log.e(tag, msgString)
+                LoggerType.INFO -> Log.i(tag, msgString)
+                LoggerType.VERBOSE -> Log.v(tag, msgString)
+                LoggerType.WARNING -> Log.w(tag, msgString)
+            }
+        }
+
+        /**
          * General terminal logging.
          * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
          * @param msg The message to be logged to the terminal.
@@ -33,13 +49,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT) doLog(tag, msgString, type)
         }
 
         /**
@@ -52,13 +62,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Boot"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT) doLog(tag, msgString, type)
         }
 
         /**
@@ -71,13 +75,33 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-CT"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST) doLog(tag, msgString, type)
+        }
+
+        /**
+         * Logging for the app's deep-linking handling.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logDeepLink (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-DeepLink"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DEEP_LINK) doLog(tag, msgString, type)
+        }
+
+        /**
+         * Logging for the app's downloader process.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logDownloader (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-DL"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER) doLog(tag, msgString, type)
         }
 
         /**
@@ -90,13 +114,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Dump"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: DUMPING LOG MESSAGE:\n$msg\n::: END OF DUMP"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DUMP) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DUMP) doLog(tag, msgString, type)
         }
 
         /**
@@ -109,13 +127,20 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Init"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT) doLog(tag, msgString, type)
+        }
+
+        /**
+         * Logging of operations during local storage accessions.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logLocalStorage (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-LS"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE) doLog(tag, msgString, type)
         }
 
         /**
@@ -128,13 +153,33 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-PDF"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF) doLog(tag, msgString, type)
+        }
+
+        /**
+         * Log messages as inferred by the persistent logger class.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logPersistentLogger (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-Persist"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PERSISTENT_LOGGER) doLog(tag, msgString, type)
+        }
+
+        /**
+         * Log messages sent for the purpose of debugging app preferences.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logPrefs (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-Preferences"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PREFERENCES) doLog(tag, msgString, type)
         }
 
         /**
@@ -147,13 +192,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-RT"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_RAPID_TEST) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_RAPID_TEST) doLog(tag, msgString, type)
         }
 
         /**
@@ -166,13 +205,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Test"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_TEST) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_TEST) doLog(tag, msgString, type)
         }
 
         /**
@@ -185,13 +218,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Update"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_UPDATER) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_UPDATER) doLog(tag, msgString, type)
         }
 
         /**
@@ -204,13 +231,7 @@ class Logger {
             val tag = "$BASE_LOGGING_TAG-Worker"
             val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
 
-            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_WORKER) when (type) {
-                LoggerType.DEBUG -> Log.d(tag, msgString)
-                LoggerType.ERROR -> Log.e(tag, msgString)
-                LoggerType.INFO -> Log.i(tag, msgString)
-                LoggerType.VERBOSE -> Log.v(tag, msgString)
-                LoggerType.WARNING -> Log.w(tag, msgString)
-            }
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_WORKER) doLog(tag, msgString, type)
         }
     }
 }

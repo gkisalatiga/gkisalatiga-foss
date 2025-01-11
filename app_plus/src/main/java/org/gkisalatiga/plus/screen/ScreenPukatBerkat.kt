@@ -46,24 +46,19 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -75,15 +70,17 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONObject
 
-class ScreenPukatBerkat : ComponentActivity() {
+class ScreenPukatBerkat (private val current : ActivityData) : ComponentActivity() {
 
     // The pager state.
     private val horizontalPagerState = ScreenPukatBerkatCompanion.pukatBerkatPagerState!!
@@ -158,8 +155,6 @@ class ScreenPukatBerkat : ComponentActivity() {
 
     @Composable
     private fun getSectionUI(dictIndex: String, intIndex: Int) {
-        val ctx = LocalContext.current
-        val uriHandler = LocalUriHandler.current
 
         /* Converting JSONArray to regular list. */
         val pukatBerkatListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("pukat-berkat")
@@ -201,7 +196,6 @@ class ScreenPukatBerkat : ComponentActivity() {
             /* Iterating through every Pukat Berkat item. */
             for (i in 0 until enumeratedPukatBerkatList.size) {
                 val curList = enumeratedPukatBerkatList[i]
-                val curListSize = enumeratedPukatBerkatList.size
 
                 // Debug test.
                 // Logger.logTest({}, "Testing of enumeratedPukatBerkatList -> [curListSize] $curListSize ::  [curList] $curList")
@@ -228,7 +222,7 @@ class ScreenPukatBerkat : ComponentActivity() {
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                         // Set the PosterViewer parameters.
                         ScreenPosterViewerCompanion.posterViewerTitle = title
@@ -247,7 +241,8 @@ class ScreenPukatBerkat : ComponentActivity() {
                                 AsyncImage(
                                     thumbnailImage,
                                     contentDescription = "Pukat Berkat: $title",
-                                    error = painterResource(R.drawable.thumbnail_loading_stretched),
+                                    error = painterResource(R.drawable.thumbnail_error_stretched),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                     modifier = Modifier.aspectRatio(1f).width(12.5.dp),
                                     contentScale = ContentScale.Crop
                                 )
@@ -265,14 +260,11 @@ class ScreenPukatBerkat : ComponentActivity() {
                         TextButton(
                             modifier = Modifier.padding(top = 8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(Colors.YKB_ARCHIVE_BUTTON_COLOR)
+                                containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
                             ),
                             onClick = {
-                                if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
-
-                                // Opens in an external browser.
-                                // SOURCE: https://stackoverflow.com/a/69103918
-                                uriHandler.openUri(contactURL)
+                                if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $contactURL!", Toast.LENGTH_SHORT).show()
+                                current.uriHandler.openUri(contactURL)
                             }
                         ) {
                             Row (verticalAlignment = Alignment.CenterVertically) {
@@ -294,10 +286,7 @@ class ScreenPukatBerkat : ComponentActivity() {
         Column(modifier = Modifier.fillMaxWidth()) {
             /* The navigational topBar. */
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
+                colors = TopAppBarColorScheme.default(),
                 title = {
                     Text(
                         stringResource(R.string.screenpukatberkat_title),

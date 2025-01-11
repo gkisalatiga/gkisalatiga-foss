@@ -30,7 +30,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -56,10 +56,10 @@ import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ScreenGaleriYear : ComponentActivity() {
+class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
         Scaffold (
             topBar = { this.getTopBar() }
@@ -78,14 +78,15 @@ class ScreenGaleriYear : ComponentActivity() {
     }
 
     @Composable
+    @Suppress("RemoveCurlyBracesFromTemplate")
+    @SuppressLint("ComposableNaming")
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
         // The agenda node.
         val galleryNode = GalleryCompanion.jsonRoot!!
 
         // Enlist the list of albums in the currently selected year.
-        val galleryYearList = galleryNode.getJSONArray(ScreenGaleriCompanion.targetGalleryYear)
+        val galleryYearList = ScreenGaleriCompanion.targetGalleryAlbumData
 
         // DEBUG. Always comment out.
         Logger.logTest({}, "Current object (1): ${galleryYearList}")
@@ -128,7 +129,7 @@ class ScreenGaleriYear : ComponentActivity() {
                     // Displaying the individual card.
                     Card(
                         onClick = {
-                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "Opening gallery album year: $title", Toast.LENGTH_SHORT).show()
+                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "Opening gallery album year: $title", Toast.LENGTH_SHORT).show()
 
                             // Navigate to the WebView viewer.
                             ScreenGaleriListCompanion.putArguments(
@@ -145,7 +146,8 @@ class ScreenGaleriYear : ComponentActivity() {
                             AsyncImage(
                                 model = StringFormatter.getGoogleDriveThumbnail(featuredImageID, 160),
                                 contentDescription = title,
-                                error = painterResource(R.drawable.thumbnail_loading),
+                                error = painterResource(R.drawable.thumbnail_error),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                                 modifier = Modifier.fillMaxSize().weight(2f),
                                 contentScale = ContentScale.Crop
                             )
@@ -161,14 +163,13 @@ class ScreenGaleriYear : ComponentActivity() {
 
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
+    @Suppress("SpellCheckingInspection", "RedundantSuppression")
+    @SuppressLint("ComposableNaming")
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        val topBarTitle = "Kilas Balik Tahun " + ScreenGaleriCompanion.targetGalleryYear
+        val topBarTitle = ScreenGaleriCompanion.targetGalleryTitle
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     topBarTitle,

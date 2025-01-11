@@ -46,7 +46,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -66,12 +65,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.StringFormatter
 
-class ScreenAgenda : ComponentActivity() {
+class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -137,8 +137,8 @@ class ScreenAgenda : ComponentActivity() {
                     val startPadding = if (isFirst) 0.dp else 5.dp; isFirst = false
                     Button(
                         onClick = { ScreenAgendaCompanion.mutableCurrentDay.value = key },
-                        modifier = Modifier.weight(1.0f).aspectRatio(1.0f).padding(start = startPadding).width(intrinsicSize = IntrinsicSize.Max),
-                        colors = ButtonDefaults.buttonColors(containerColor = if (key == selected.value) Color(Colors.AGENDA_ITEM_CHIP_SELECTED_BACKGROUND) else Color.White),
+                        modifier = Modifier.weight(1.0f).padding(start = startPadding).width(intrinsicSize = IntrinsicSize.Max),
+                        colors = ButtonDefaults.buttonColors(containerColor = if (key == selected.value) current.colors.screenAgendaChipSelectedBackgroundColor else current.colors.screenAgendaChipUnselectedBackgroundColor),
                         border =  if (key == selected.value) null else BorderStroke(1.dp, Color.Black),
                         shape = RoundedCornerShape(10.dp),
                         contentPadding = PaddingValues(0.dp),
@@ -146,7 +146,7 @@ class ScreenAgenda : ComponentActivity() {
                         Text(
                             dayInLocale.uppercase(),
                             fontSize = 12.sp,
-                            color = if (key == selected.value) Color.White else Color.Black,
+                            color = if (key == selected.value) current.colors.screenAgendaChipTextSelectedBackgroundColor else current.colors.screenAgendaChipTextUnselectedBackgroundColor,
                             modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center).padding(2.dp),
                             textAlign = TextAlign.Center
                         )  // --- end of Text.
@@ -171,38 +171,38 @@ class ScreenAgenda : ComponentActivity() {
 
                 // Draw the list item for the current event.
                 Surface(shape = RoundedCornerShape(15.dp), modifier = Modifier.padding(top = 10.dp)) {
-                    Column (Modifier.fillMaxSize().background(Color(Colors.AGENDA_ITEM_BACKGROUND))) {
+                    Column (Modifier.fillMaxSize().background(current.colors.screenAgendaItemBackgroundColor)) {
                         Column (modifier = Modifier.fillMaxSize().padding(15.dp)) {
                             // The item title.
-                            Text( todayNode.getJSONObject(index).getString("name"), fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                            Text(todayNode.getJSONObject(index).getString("name"), fontWeight = FontWeight.Bold, fontSize = 20.sp)
                             Spacer(Modifier.height(5.dp))
 
                             Row (verticalAlignment = Alignment.Top) {
-                                Icon(Icons.Default.Place, "")
+                                Icon(Icons.Default.Place, "", tint = current.colors.screenAgendaContentTintColor)
                                 Spacer(Modifier.width(10.dp))
-                                Text( todayNode.getJSONObject(index).getString("place"), fontSize = 14.sp)
+                                Text( todayNode.getJSONObject(index).getString("place"), fontSize = 14.sp, color = current.colors.screenAgendaContentTintColor)
                             }
                             Row (verticalAlignment = Alignment.Top) {
-                                Icon(Icons.Default.Groups, "")
+                                Icon(Icons.Default.Groups, "", tint = current.colors.screenAgendaContentTintColor)
                                 Spacer(Modifier.width(10.dp))
-                                Text( todayNode.getJSONObject(index).getString("representative"), fontSize = 14.sp)
+                                Text( todayNode.getJSONObject(index).getString("representative"), fontSize = 14.sp, color = current.colors.screenAgendaContentTintColor)
                             }
 
                             // Display additional note.
                             val note = todayNode.getJSONObject(index).getString("note")
                             if (note.isNotEmpty())
                                 Row (verticalAlignment = Alignment.Top) {
-                                    Icon(Icons.AutoMirrored.Default.Article, "")
+                                    Icon(Icons.AutoMirrored.Default.Article, "", tint = current.colors.screenAgendaContentTintColor)
                                     Spacer(Modifier.width(10.dp))
-                                    Text( note, fontSize = 14.sp )
+                                    Text( note, fontSize = 14.sp, color = current.colors.screenAgendaContentTintColor )
                                 }
                         }
 
                         // Display time info.
                         Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxSize()) {
                             Surface(shape = RoundedCornerShape(topStart = 15.dp, topEnd = 0.dp, bottomEnd = 0.dp, bottomStart = 0.dp)) {
-                                Column(modifier = Modifier.background(Color(Colors.AGENDA_ITEM_TIME_BACKGROUND))) {
-                                    Text( todayNode.getJSONObject(index).getString("time"), modifier = Modifier.padding(horizontal = 10.dp).padding(vertical = 5.dp), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color(Colors.LIGHT_THEME_WHITE))
+                                Column(modifier = Modifier.background(current.colors.screenAgendaItemTimeBackgroundColor)) {
+                                    Text( todayNode.getJSONObject(index).getString("time"), modifier = Modifier.padding(horizontal = 10.dp).padding(vertical = 5.dp), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = current.colors.screenAgendaItemTimeTextColor)
                                 }
                             }
                         }
@@ -219,10 +219,7 @@ class ScreenAgenda : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenagenda_title),

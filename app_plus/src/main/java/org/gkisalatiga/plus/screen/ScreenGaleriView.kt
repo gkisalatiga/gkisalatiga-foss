@@ -45,7 +45,6 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -58,7 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -68,12 +67,14 @@ import net.engawapg.lib.zoomable.ScrollGesturePropagation
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.toggleScale
 import net.engawapg.lib.zoomable.zoomable
-import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
+import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.GallerySaver
 import org.gkisalatiga.plus.lib.StringFormatter
 
-class ScreenGaleriView : ComponentActivity() {
+class ScreenGaleriView (private val current : ActivityData) : ComponentActivity() {
 
     // The pager state.
     private lateinit var horizontalPagerState: PagerState
@@ -148,7 +149,7 @@ class ScreenGaleriView : ComponentActivity() {
             if (!ScreenGaleriViewCompanion.showScreenGaleriViewDownloadProgress.value) {
                 AppNavigation.popBack()
                 scope.launch {
-                    FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
+                    ScreenGaleriListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
                 }
             }
         }
@@ -192,18 +193,16 @@ class ScreenGaleriView : ComponentActivity() {
 
     @Composable
     private fun getFloatingActionButton() {
-        val ctx = LocalContext.current
         FloatingActionButton (
             onClick = {
                 val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage)
                 val name = currentPhotoObject.getString("name")
-                val date = currentPhotoObject.getString("date")
                 val id = currentPhotoObject.getString("id")
 
                 // Obtain the download URL.
                 val downloadURL = StringFormatter.getGoogleDriveDownloadURL(id)
 
-                GallerySaver().saveImageFromURL(ctx, downloadURL, name)
+                GallerySaver().saveImageFromURL(current.ctx, downloadURL, name)
             },
             shape = CircleShape,
             modifier = Modifier.scale(1.5f).offset(0.dp, 30.dp)
@@ -226,7 +225,6 @@ class ScreenGaleriView : ComponentActivity() {
             // The photo's specific metadata.
             val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(page)
             val name = currentPhotoObject.getString("name")
-            val date = currentPhotoObject.getString("date")
             val id = currentPhotoObject.getString("id")
 
             // The image URL.
@@ -243,7 +241,9 @@ class ScreenGaleriView : ComponentActivity() {
                     zoomState,
                     onDoubleTap = { position -> zoomState.toggleScale(ScreenGaleriViewCompanion.PAGE_ZOOM_TARGET_SCALE, position) },
                     scrollGesturePropagation = ScrollGesturePropagation.ContentEdge
-                ).fillMaxSize().background(Color.White),
+                ).fillMaxSize().background(current.colors.mainZoomableBoxBackgroundColor),
+                error = painterResource(R.drawable.thumbnail_error_stretched),
+                placeholder = painterResource(R.drawable.thumbnail_placeholder),
                 contentDescription = "Gallery display view.",
                 contentScale = ContentScale.Fit
             )
@@ -264,10 +264,7 @@ class ScreenGaleriView : ComponentActivity() {
         ) {
             /* The navigation top bar. */
             CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary
-                ),
+                colors = TopAppBarColorScheme.default(),
                 title = {
                     Text(
                         topBarTitle,
@@ -279,7 +276,7 @@ class ScreenGaleriView : ComponentActivity() {
                     IconButton(onClick = {
                         AppNavigation.popBack()
                         scope.launch {
-                            FragmentGalleryListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
+                            ScreenGaleriListCompanion.rememberedLazyGridState!!.scrollToItem(horizontalPagerState.currentPage)
                         }
                     }) {
                         Icon(

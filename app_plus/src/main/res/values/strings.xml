@@ -11,12 +11,19 @@
     <string name="bottomnav_menu_services">Siaran</string>
     <string name="bottomnav_menu_info">Gereja</string>
     <string name="bottomnav_menu_events">Acara</string>
+    <string name="subtext_notification_denied">Nyalakan untuk memperoleh pengingat renungan harian, ibadah, dan pengumuman seputar gereja.</string>
+    <string name="subtext_notification_granted">Mantap! Izin notifikasi aplikasi sudah diberikan.</string>
+    <string name="subtext_update_available">Versi GKI Salatiga+ terbaru (%%%VERSION%%%) telah tersedia di Google Play Store. Ketuk untuk mengunduh sekarang.</string>
+    <string name="subtext_update_latest">Anda telah menginstal aplikasi GKI Salatiga+ versi terbaru.</string>
+    <string name="titlecard_notification">Notifikasi GKI Salatiga+</string>
+    <string name="titlecard_update">Pembaruan Aplikasi</string>
 
     <!-- Constant strings for screen titles. -->
     <string name="screenabout_title">Tentang</string>
     <string name="screenattrib_title">Atribusi</string>
     <string name="screenprivacy_title">Kebijakan Privasi</string>
     <string name="screenbible_title">Alkitab</string>
+    <string name="screenblank_title">Layar Sampel</string>
     <string name="screenlibrary_title">E-Perpus</string>
     <string name="screensearch_title">Pencarian</string>
     <string name="screensettings_title">Pengaturan</string>
@@ -133,16 +140,16 @@
 
     <!-- Constant string used in the new top bar layout. -->
     <string name="new_topbar_greetings">Syalom!</string>
-    <string name="new_topbar_person_name">Sobat GKIS terkasih</string>
+    <string name="new_topbar_person_name">Jemaat &amp; simpatisan GKIS terkasih</string>
 
     <!-- Confirmation string for "press again to exit". -->
     <string name="exit_confirmation_toast_string">Tekan sekali lagi untuk keluar dari aplikasi.</string>
 
     <!-- The app copyright notice. -->
-    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGKI Salatiga 2024</string>
+    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGereja Kristen Indonesia Salatiga 2024</string>
 
     <!-- Email chooser intent. -->
-    <string name="email_chooser_title">Kirim surel dengan ...</string>
+    <string name="email_chooser_title">Kirim surel dengan &#8230;</string>
 
     <!-- Applicable in ScreenAbout. -->
     <string name="screen_about_tentang_aplikasi">Tentang Aplikasi</string>
@@ -160,6 +167,11 @@
     <string name="screen_persembahan_ok">OK</string>
 
     <!-- Applicable in ScreenPDFViewer. -->
+    <string name="screen_pdfviewer_loading_dialog_title">Mengunduh PDF</string>
+    <string name="screen_pdfviewer_loading_dialog_subtitle">Sedang mengunduh berkas %%% ke ponsel Anda. Tunggu sebentar.</string>
+    <string name="screen_pdfviewer_loading_dialog_btn_string">Batalkan</string>
+    <string name="screen_pdfviewer_error_dialog_title">Gagal Memuat PDF!</string>
+    <string name="screen_pdfviewer_error_dialog_btn_string">OK</string>
     <string name="screen_pdfviewer_info_dialog_title">Detil PDF</string>
     <string name="screen_pdfviewer_info_dialog_content_name_doc_title">Judul</string>
     <string name="screen_pdfviewer_info_dialog_content_name_doc_author">Penulis</string>
@@ -172,31 +184,71 @@
     <string name="screen_pdfviewer_nav_title">Navigasi Halaman</string>
     <string name="screen_pdfviewer_nav_page_string">Halaman</string>
 
-    <!-- Applicable in ScreenPDFViewer. -->
+    <!-- Applicable in ScreenSearch. -->
+    <string name="screen_search_filter_and_sort_button">Filter &amp; Urutan</string>
+    <string name="screen_search_filter_dialog_apply_button">Terapkan</string>
+    <string name="screen_search_filter_dialog_subtitle_filter">Cari dalam menu</string>
+    <string name="screen_search_filter_dialog_subtitle_sort">Urutkan berdasarkan</string>
+    <string name="screen_search_filter_dialog_title">Filter dan Urutan</string>
+    <string name="screen_search_field_label">Cari di GKI Salatiga+</string>
+    <string name="screen_search_field_placeholder">Masukkan kata kunci pencarian</string>
+    <string name="screen_search_history_button">Riwayat</string>
+    <string name="screen_search_history_dialog_title">Riwayat Pencarian</string>
+    <string name="screen_search_history_dialog_close_button">Tutup</string>
+    <string name="screen_search_message_filter_empty">Anda belum memilih kriteria filter pencarian apa pun.</string>
+    <string name="screen_search_message_loading">Sedang mencari. Harap tunggu.</string>
+    <string name="screen_search_message_no_history_record_found">Tidak ada riwayat pencarian yang tersimpan!</string>
+    <string name="screen_search_message_not_found">Kata kunci pencarian tidak cocok dengan data apa pun!</string>
+    <string name="screen_search_message_ok">Menemukan %%%NUM%%% data dalam aplikasi.</string>
+    <string name="screen_search_qualifier_filter_liturgi">Tata Ibadah</string>
+    <string name="screen_search_qualifier_filter_wj">Warta Jemaat</string>
+    <string name="screen_search_qualifier_filter_ykb">Renungan YKB</string>
+    <string name="screen_search_qualifier_filter_yt">Siaran YouTube</string>
+    <string name="screen_search_qualifier_sort_date_asc">Tanggal (dari paling lama)</string>
+    <string name="screen_search_qualifier_sort_date_dsc">Tanggal (dari paling baru)</string>
+    <string name="screen_search_qualifier_sort_name_asc">Nama (A-Z)</string>
+    <string name="screen_search_qualifier_sort_name_dsc">Nama (Z-A)</string>
+
+    <!-- Applicable in ScreenSettings. -->
+    <string name="screen_settings_pref_app_theme">Tema Aplikasi</string>
+    <string name="screen_settings_pref_app_theme_documentation">Menentukan apakah aplikasi akan ditampilkan dalam tema gelap, terang, atau fleksibel mengikuti pengaturan sistem.</string>
+    <string name="screen_settings_pref_app_theme_item_dark">Gelap</string>
+    <string name="screen_settings_pref_app_theme_item_light">Terang</string>
+    <string name="screen_settings_pref_app_theme_item_system">Mengikuti Sistem</string>
     <string name="screen_settings_pref_youtube_ui">Antarmuka Pemutar Video</string>
+    <string name="screen_settings_pref_youtube_ui_documentation">Menentukan antarmuka pemutar YouTube pada saat Anda membuka video ibadah, SaRen, dsb. Tampilan antarmuka baru lebih minimalis dan elegan, sedangkan tampilan antarmuka lama lebih kaya fitur.</string>
     <string name="screen_settings_pref_youtube_ui_item_new">Tampilan Baru</string>
     <string name="screen_settings_pref_youtube_ui_item_old">Tampilan Lama (Bawaan YouTube Embed)</string>
     <string name="screen_settings_pref_pdf_quality">Kualitas Render Halaman PDF</string>
+    <string name="screen_settings_pref_pdf_quality_documentation">Mengatur seberapa jernih laman pada pembaca berkas PDF. Semakin tinggi kualitas, semakin jelas tulisan dan gambar pada berkas PDF terbaca, namun performa ponsel menjadi semakin tidak stabil.</string>
     <string name="screen_settings_pref_pdf_quality_item_best">Paling Jernih</string>
     <string name="screen_settings_pref_pdf_quality_item_high">Tinggi</string>
     <string name="screen_settings_pref_pdf_quality_item_medium">Sedang</string>
     <string name="screen_settings_pref_pdf_quality_item_low">Rendah</string>
     <string name="screen_settings_pref_pdf_remove">Hapus Otomatis Berkas PDF yang Tidak Dibaca Setelah</string>
+    <string name="screen_settings_pref_pdf_remove_documentation">Mengatur kapan berkas PDF terunduh yang sudah tidak pernah dibaca harus dihapus. Hal ini mencegah penumpukan berkas PDF yang menyebabkan penuhnya penyimpanan ponsel.</string>
     <string name="screen_settings_pref_pdf_remove_item_always">1 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_7_days">7 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_14_days">14 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_30_days">30 Hari</string>
     <string name="screen_settings_pref_pdf_remove_item_never">Jangan Pernah Hapus</string>
+    <string name="screen_settings_help_dialog_title">Bantuan Pengaturan</string>
 
     <!-- Applicable in most screens. -->
-    <string name="pdf_already_downloaded_localized">Tersimpan</string>
+    <string name="pdf_already_downloaded_localized">Terunduh</string>
 
     <!-- Developer strings. -->
     <string name="not_connected_to_internet">Anda tidak terhubung ke internet!</string>
-    <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>
     <string name="screen_dev_quick_action_title">Aksi Cepat</string>
+    <string name="screen_dev_local_storage_title">LocalStorage</string>
+    <string name="screen_dev_app_preferences_title">AppPreferences</string>
+    <string name="screen_dev_persistent_logger_title">PersistentLogger</string>
+    <string name="screen_dev_debug_flags_title">Debugging Flags</string>
+    <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>
     <string name="screen_dev_trigger_minutely_work_manager">Picu WorkManager Menitan</string>
+    <string name="screen_dev_trigger_orientation_change">Ganti Orientasi Ponsel</string>
+    <string name="screen_dev_lock_dev_menu_change">Kunci Menu Pengembang</string>
     <string name="screen_dev_welcome_developer">Selamat datang di menu pengembang!</string>
     <string name="screen_dev_title">Menu Pengembang</string>
-    <string name="screen_dev_desc">Selamat datang, Trio Developer!\nSam, Jeffrey, dan Joa \uD83D\uDDFF</string>
+    <string name="screen_dev_desc">Anda tidak seharusnya berada di sini.</string>
 </resources>

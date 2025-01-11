@@ -29,6 +29,8 @@
  * SOURCE: https://stackoverflow.com/a/60126585
  */
 
+@file:SuppressLint("ComposableNaming")
+
 package org.gkisalatiga.plus
 
 import android.annotation.SuppressLint
@@ -36,6 +38,8 @@ import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -43,77 +47,70 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import kotlinx.coroutines.delay
+import org.gkisalatiga.plus.composable.GKISalatigaAppTheme
 import org.gkisalatiga.plus.composable.MainPTRCompanion
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
-import org.gkisalatiga.plus.global.GlobalCompanion
-import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.Gallery
 import org.gkisalatiga.plus.db.GalleryCompanion
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
-import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.GallerySaver
-
 import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.db.StaticCompanion
-import org.gkisalatiga.plus.fragment.FragmentGalleryListCompanion
 import org.gkisalatiga.plus.fragment.FragmentHomeCompanion
 import org.gkisalatiga.plus.fragment.FragmentInfoCompanion
 import org.gkisalatiga.plus.fragment.FragmentServicesCompanion
+import org.gkisalatiga.plus.global.GlobalCompanion
+import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.DynamicColorScheme
+import org.gkisalatiga.plus.lib.GallerySaver
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.PersistentLogger
+import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.screen.ScreenAbout
 import org.gkisalatiga.plus.screen.ScreenAboutCompanion
 import org.gkisalatiga.plus.screen.ScreenAgenda
@@ -121,6 +118,7 @@ import org.gkisalatiga.plus.screen.ScreenAgendaCompanion
 import org.gkisalatiga.plus.screen.ScreenAttribution
 import org.gkisalatiga.plus.screen.ScreenAttributionCompanion
 import org.gkisalatiga.plus.screen.ScreenBible
+import org.gkisalatiga.plus.screen.ScreenBlank
 import org.gkisalatiga.plus.screen.ScreenContrib
 import org.gkisalatiga.plus.screen.ScreenContribCompanion
 import org.gkisalatiga.plus.screen.ScreenDev
@@ -130,6 +128,7 @@ import org.gkisalatiga.plus.screen.ScreenFormsCompanion
 import org.gkisalatiga.plus.screen.ScreenGaleri
 import org.gkisalatiga.plus.screen.ScreenGaleriCompanion
 import org.gkisalatiga.plus.screen.ScreenGaleriList
+import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 import org.gkisalatiga.plus.screen.ScreenGaleriView
 import org.gkisalatiga.plus.screen.ScreenGaleriYear
 import org.gkisalatiga.plus.screen.ScreenInternalHTML
@@ -140,6 +139,7 @@ import org.gkisalatiga.plus.screen.ScreenLicenseCompanion
 import org.gkisalatiga.plus.screen.ScreenLiturgi
 import org.gkisalatiga.plus.screen.ScreenLiturgiCompanion
 import org.gkisalatiga.plus.screen.ScreenMain
+import org.gkisalatiga.plus.screen.ScreenMainCompanion
 import org.gkisalatiga.plus.screen.ScreenMedia
 import org.gkisalatiga.plus.screen.ScreenMediaCompanion
 import org.gkisalatiga.plus.screen.ScreenPDFViewer
@@ -152,6 +152,7 @@ import org.gkisalatiga.plus.screen.ScreenPrivacyCompanion
 import org.gkisalatiga.plus.screen.ScreenPukatBerkat
 import org.gkisalatiga.plus.screen.ScreenPukatBerkatCompanion
 import org.gkisalatiga.plus.screen.ScreenSearch
+import org.gkisalatiga.plus.screen.ScreenSearchCompanion
 import org.gkisalatiga.plus.screen.ScreenSettings
 import org.gkisalatiga.plus.screen.ScreenSettingsCompanion
 import org.gkisalatiga.plus.screen.ScreenStaticContentList
@@ -169,10 +170,11 @@ import org.gkisalatiga.plus.services.ClipManager
 import org.gkisalatiga.plus.services.ConnectionChecker
 import org.gkisalatiga.plus.services.DataUpdater
 import org.gkisalatiga.plus.services.DeepLinkHandler
+import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.gkisalatiga.plus.services.NotificationService
+import org.gkisalatiga.plus.services.PermissionChecker
 import org.gkisalatiga.plus.services.WorkScheduler
-import org.gkisalatiga.plus.ui.theme.GKISalatigaPlusTheme
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -188,23 +190,16 @@ class ActivityLauncher : ComponentActivity() {
         super.onResume()
         GlobalCompanion.isRunningInBackground.value = false
         Logger.log({}, "App has been restored to foreground.")
+
+        PermissionChecker(this@ActivityLauncher).checkNotificationPermission()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        /* Handles deep-linking. */
-        intent?.data?.let {
-            Logger.logTest({}, "Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
-            if (it.host == "gkisalatiga.org" || it.host == "www.gkisalatiga.org") {
-                when (it.encodedPath) {
-                    "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
-                    "/app/deeplink/ykb" -> DeepLinkHandler.handleYKB()
-                    else -> if (it.encodedPath != null) DeepLinkHandler.openDomainURL("https://${it.host}${it.encodedPath}")
-                }
-            }
-        }  // --- end of intent?.data?.let {}
-    }  // --- end of onNewIntent.
+        handleDeepLink(intent, consumeAfterHandling = false)
+    }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     @SuppressLint("MissingSuperCall", "Recycle")
     override fun onActivityResult(
         requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -230,8 +225,19 @@ class ActivityLauncher : ComponentActivity() {
         // Preamble logging to the terminal.
         Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
 
+        // Handle the splash screen transition.
+        // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
+        // val splashScreen = installSplashScreen()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) installSplashScreen()
+
+        // Handle notification permission.
+        PermissionChecker(this@ActivityLauncher).checkNotificationPermission()
+
         // Call the superclass. (The default behavior. DO NOT CHANGE!)
         super.onCreate(savedInstanceState)
+
+        // Keep the splash screen visible for this Activity.
+        // splashScreen.setKeepOnScreenCondition { true }
 
         // Initializes the app's internally saved preferences.
         initPreferencesAndLocalStorage()
@@ -243,15 +249,6 @@ class ActivityLauncher : ComponentActivity() {
         // SOURCE: https://developer.android.com/develop/ui/views/layout/immersive
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
-        // Enable transparent status bar.
-        // SOURCE: https://youtu.be/Ruu44ZUhkBM?si=KTtR2GjZdqMa-rBs
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.light(
-                android.graphics.Color.TRANSPARENT,
-                android.graphics.Color.TRANSPARENT
-            )
-        )
 
         // Lock the screen's orientation to portrait mode only.
         val targetOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -279,26 +276,30 @@ class ActivityLauncher : ComponentActivity() {
         // Initializing the scheduled alarms.
         initWorkManager()
 
-        // TODO: Remove this code block after v0.6.0 launch. This code block causes screen blank during launch.
-        /*// Block the app until all data is initialized.
-        // Prevents "null pointer exception" when the JSON data in the multi-thread has not been prepared.
-        while (true) {
-            if (MainCompanion.jsonRoot != null && ModulesCompanion.jsonRoot != null && GalleryCompanion.jsonRoot != null && StaticCompanion.jsonRoot != null) {
-                break
-            } else {
-                Logger.logRapidTest({}, "Still initializing data ...", LoggerType.WARNING)
-            }
-        }*/
+        // Cleaning up stuffs.
+        initCleanUp()
 
         // Initiate the Jetpack Compose composition.
         // This is the entry point of every composable, similar to "main()" function in Java.
         setContent {
 
+            // Check for dark mode UI state.
+            val prefDarkMode = AppPreferences(this@ActivityLauncher).getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String
+            val isDarkMode = (isSystemInDarkTheme() && prefDarkMode == "system") || prefDarkMode == "dark"
+            GlobalCompanion.isDarkModeUi.value = isDarkMode
+
+            // Enable transparent status bar.
+            enableEdgeToEdge(
+                statusBarStyle = if (isDarkMode)
+                    SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+                else
+                    SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+            )
+
             // Try to remember the state of the carousel.
             initCarouselState()
 
             // Initializes the scroll states and lazy scroll states.
-            FragmentGalleryListCompanion.rememberedLazyGridState = rememberLazyGridState()
             FragmentHomeCompanion.rememberedScrollState = rememberScrollState()
             FragmentInfoCompanion.rememberedScrollState = rememberScrollState()
             FragmentServicesCompanion.rememberedScrollState = rememberScrollState()
@@ -309,6 +310,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenDevCompanion.rememberedScrollState = rememberScrollState()
             ScreenFormsCompanion.rememberedScrollState = rememberScrollState()
             ScreenGaleriCompanion.rememberedScrollState = rememberScrollState()
+            ScreenGaleriListCompanion.rememberedLazyGridState = rememberLazyGridState()
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
             ScreenLiturgiCompanion.rememberedScrollState = rememberScrollState()
@@ -319,11 +321,20 @@ class ActivityLauncher : ComponentActivity() {
             ScreenPukatBerkatCompanion.rememberedScrollStateFood = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
+            ScreenSearchCompanion.rememberedLazyListState = rememberLazyListState()
             ScreenSettingsCompanion.rememberedScrollState = rememberScrollState()
             ScreenStaticContentListCompanion.rememberedScrollState = rememberScrollState()
             ScreenWartaCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()
+
+            // Pre-assign the overlay gradient.
+            val gradientColorSet = if (isDarkMode) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme()
+            ScreenMainCompanion.renderedOverlayGradient = Brush.verticalGradient(colorStops = arrayOf (
+                0.0f to Colors.SCREEN_MAIN_OVERLAY_GRADIENT_TOP_COLOR,
+                0.5f to Colors.SCREEN_MAIN_OVERLAY_GRADIENT_MIDDLE_COLOR,
+                1.0f to gradientColorSet.screenMainOverlayGradientBottomColor
+            ))
 
             // Pre-assign pager states of non-main menus.
             ScreenPukatBerkatCompanion.pukatBerkatPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
@@ -341,55 +352,71 @@ class ActivityLauncher : ComponentActivity() {
                 }
             }
 
-            GKISalatigaPlusTheme {
-                if (!GlobalCompanion.DEBUG_DISABLE_SPLASH_SCREEN) {
-                    // Splash screen.
-                    // SOURCE: https://medium.com/@fahadhabib01/animated-splash-screens-in-jetpack-compose-navigation-component-4e28f69ad559
-                    Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-                        val splashNavController = rememberNavController()
-                        NavHost(navController = splashNavController, startDestination = "init_screen") {
-                            composable(
-                                "init_screen",
-                                deepLinks = listOf(
-                                    navDeepLink { uriPattern = "https://gkisalatiga.org" },
-                                    navDeepLink { uriPattern = "https://www.gkisalatiga.org" }
-                                )
-                            ) {
-                                /* Handles deep-linking. */
-                                if (intent?.data != null) {
-                                    intent?.data?.let {
-                                        Logger.logTest({}, "Received data: host: ${it.host}, path: ${it.path}, encodedPath: ${it.encodedPath}, pathSegments: ${it.pathSegments}")
-                                        if (it.host == "gkisalatiga.org" || it.host == "www.gkisalatiga.org") {
-                                            when (it.encodedPath) {
-                                                "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
-                                                "/app/deeplink/ykb" -> DeepLinkHandler.handleYKB()
-                                                else -> if (it.encodedPath != null) DeepLinkHandler.openDomainURL("https://${it.host}${it.encodedPath}")
-                                            }
-                                            // This activity was called from a URI call. Skip the splash screen.
-                                            initMainGraphic()
-                                        }
-                                    }  // --- end of intent?.data?.let {}
+            GKISalatigaAppTheme (darkTheme = isDarkMode) {
+                // Display splash screen.
+                Surface(color = if (isDarkMode) Color.Black else Color.White, modifier = Modifier.fillMaxSize()) {
+                    val splashNavController = rememberNavController()
+                    NavHost(navController = splashNavController, startDestination = "init_screen") {
+                        composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
+                            if (intent?.data == null) {
+                                /* Display the splash screen because no intent is passed for this session. */
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) initSplashScreen()
+                                else initMainGraphic()
+                                // splashScreen.setKeepOnScreenCondition { false }
+                            }
+                            else {
+                                handleDeepLink(intent, consumeAfterHandling = true); initMainGraphic()
+                            }
+                        }
 
-                                /* Nothing matches, start the app from the beginning.*/
-                                } else {
-                                    // This isn't a URI action call. Open the app regularly.
-                                    initSplashScreen(splashNavController)
-                                }
-                            }  // --- end of navigation composable.
-
-                            composable ("main_screen") {
-                                // Just display the main graphic directly.
-                                initMainGraphic()
-                            }  // --- end of navigation composable.
-                        }  // --- end of NavHost.
-                    }
-                } else {
-                    // Just display the main graphic directly.
-                    initMainGraphic()
+                        composable ("main_screen") { initMainGraphic() }
+                    }  // --- end of NavHost.
                 }
             }  // --- end of GKISalatigaPlusTheme.
         }  // --- end of setContent().
     }  // --- end of onCreate().
+
+    /**
+     * This function handles how new deep links (e.g., upon clicking a notification)
+     * are treated in the app. This function also alters the intent data to prevent bugs
+     * similar to issue #72.
+     * @param intent the intent that manages the deep link information and carries information about the deep link routings.
+     * @param consumeAfterHandling whether the intent data should be consumed after deep link handling. Defaults to "true".
+     */
+    private fun handleDeepLink(intent: Intent?, consumeAfterHandling: Boolean = true) {
+        Logger.logDeepLink({}, "Handling deep link -> intent: $intent, consumeAfterHandling: $consumeAfterHandling")
+        if (intent?.data != null) {
+            val uri = intent.data!!
+            Logger.logDeepLink({}, "Received data: host: ${uri.host}, path: ${uri.path}, encodedPath: ${uri.encodedPath}, pathSegments: ${uri.pathSegments}")
+
+            if (uri.host == "gkisalatiga.org" || uri.host == "www.gkisalatiga.org") {
+                when (uri.encodedPath) {
+                    "/app/deeplink/consumption" -> Unit
+                    "/app/deeplink/contributors" -> DeepLinkHandler.handleContributors()
+                    "/app/deeplink/main_graphics" -> DeepLinkHandler.handleMainGraphics()
+                    "/app/deeplink/saren" -> DeepLinkHandler.handleSaRen()
+                    "/app/deeplink/ykb" -> DeepLinkHandler.handleYKB()
+                    else -> if (uri.encodedPath != null) DeepLinkHandler.openDomainURL("https://${uri.host}${uri.encodedPath}")
+                }
+
+                // After deeplink handling, we must consume the intent data and replace it with other values.
+                // This solves issue: https://github.com/gkisalatiga/gkisalatiga-foss/issues/72.
+                if (consumeAfterHandling) intent.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/consumption"))
+            }
+
+        }  // --- end if.
+    }  // --- end of handleDeepLink().
+
+    /**
+     * This function carries out the cleaning up of stuffs.
+     */
+    private fun initCleanUp() {
+        Logger.logInit({}, "Cleaning up old PDF files ...")
+        InternalFileManager(this@ActivityLauncher).doPdfCleanUp()
+
+        Logger.logInit({}, "Cleaning up old persistent logger entries ...")
+        PersistentLogger(this@ActivityLauncher).cleanOldEntries()
+    }
 
     /**
      * This method reads the current saved preference associated with the app
@@ -401,60 +428,53 @@ class ActivityLauncher : ComponentActivity() {
         val appPreferences = AppPreferences(this)
 
         // Initializes the default/fallback preferences and launch value if this is a first launch.
-        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) < 0) {
+        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) <= 0) {
             appPreferences.initDefaultPreferences()
-            appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, -1, LocalStorageDataTypes.INT)
+            appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, 0, LocalStorageDataTypes.INT)
+            PersistentLogger(this@ActivityLauncher).write({}, "This is first app launch.")
         }
 
         // Increment the number of launch counts.
         val now = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
         appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1, LocalStorageDataTypes.INT)
         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
+
+        // Developer mode.
+        val isDevMode = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
+        if (isDevMode) EnableDevMode.activateDebugToggles() else EnableDevMode.disableDebugToggles()
     }
 
     /**
      * This method determines what is shown during splash screen.
-     * @param splashNavController the nav. controller that will redirect the app to the main screen.
      */
     @Composable
-    @SuppressLint("ComposableNaming")
-    private fun initSplashScreen(splashNavController: NavHostController) {
-        val scale = remember { androidx.compose.animation.core.Animatable(1.6f) }
-        val currentProgress = remember { androidx.compose.animation.core.Animatable(0.0f) }
+    private fun initSplashScreen() {
+        Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
+            val splashNavController = rememberNavController()
+            NavHost(navController = splashNavController, startDestination = "init_screen") {
+                composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
+                    Logger.logInit({}, "Loading splash screen (legacy Android API) of the app ...")
+                    LaunchedEffect(key1 = true) {
+                        // Determines the duration of the splash screen.
+                        delay(500)
+                        splashNavController.navigate("main_screen")
+                    }
 
-        LaunchedEffect(Unit) { Logger.logInit({}, "Loading splash screen of the app ...") }
+                    // Displays the splash screen content.
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize().background(DynamicColorScheme.DarkColorScheme().mainSplashScreenBackgroundColor)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.splash_screen_icon),
+                            contentDescription = "Splash screen logo",
+                            colorFilter = ColorFilter.tint(DynamicColorScheme.DarkColorScheme().mainSplashScreenForegroundColor)
+                        )
+                    }
+                }
 
-        LaunchedEffect(key1 = true) {
-            // Animate the progress bar.
-            currentProgress.animateTo(targetValue = 1.0f, animationSpec = tween(durationMillis = 750, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
-        }
-
-        LaunchedEffect(key1 = true) {
-            // Animate the logo.
-            scale.animateTo(targetValue = 0.5f, animationSpec = tween(durationMillis = 1250, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
-
-            // Determines the duration of the splash screen.
-            delay(100)
-            splashNavController.navigate("main_screen")
-        }
-
-        // Displays the splash screen content.
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().background(Color(0xff071450))) {
-            Image(painter = painterResource(id = R.drawable.splash_screen_foreground), contentDescription = "Splash screen logo", modifier = Modifier.scale(scale.value))
-        }
-
-        Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom, modifier = Modifier.padding(bottom = 100.dp)) {
-            /* They said adding progress bar to the old splash screen (Android version below 12)
-             * prevents the "Double Splash Screen" warning in the Google Play Console pre-launch report.
-             * The first screen should contain not just one view in order to prevent the warning.
-             * SOURCE: https://stackoverflow.com/a/77220306
-             */
-            LinearProgressIndicator(
-                progress = { currentProgress.value },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp),
-            )
-            val versionName = this@ActivityLauncher.packageManager.getPackageInfo(this@ActivityLauncher.packageName, 0).versionName
-            Text("${stringResource(R.string.app_name)} v$versionName", textAlign = TextAlign.Center, color = Color(Colors.SPLASHSCREEN_SUB_TEXT_COLOR), fontWeight = FontWeight.Bold, fontSize = 14.sp, modifier = Modifier.padding(top = 20.dp))
+                composable ("main_screen") { initMainGraphic() }
+            }
         }
     }
 
@@ -463,16 +483,18 @@ class ActivityLauncher : ComponentActivity() {
      * It also becomes the graphical base of all screens.
      */
     @Composable
-    @SuppressLint("ComposableNaming")
     private fun initMainGraphic() {
         Logger.logInit({}, "Initializing main graphic with the current screen route: ${AppNavigation.mutableCurrentNavigationRoute.value.name} ...")
 
         // Prepare the activity-wide context variables.
-        val currentActivityData = ActivityData(
+        val current = ActivityData(
             ctx = this@ActivityLauncher,
             scope = rememberCoroutineScope(),
-            lifecycleOwner = this@ActivityLauncher,
+            lifecycleOwner = LocalLifecycleOwner.current,
             lifecycleScope = this@ActivityLauncher.lifecycleScope,
+            keyboardController = LocalSoftwareKeyboardController.current,
+            colors = if (GlobalCompanion.isDarkModeUi.value) DynamicColorScheme.DarkColorScheme() else DynamicColorScheme.LightColorScheme(),
+            uriHandler = LocalUriHandler.current,
         )
 
         // We use nav. host because it has built-in support for transition effect/animation.
@@ -480,38 +502,38 @@ class ActivityLauncher : ComponentActivity() {
         // SOURCE: https://composables.com/tutorials/deeplinks
         val mainNavController = rememberNavController()
         NavHost(navController = mainNavController, startDestination = AppNavigation.startingScreenRoute.name) {
-            // TODO: Provide all screens with "ctx", "scope", and "lifecycleOwner"?
-            composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout().getComposable() }
-            composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda().getComposable() }
-            composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution().getComposable() }
-            composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible().getComposable()}
-            composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib().getComposable() }
-            composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev().getComposable() }
-            composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI.name) { ScreenGaleri().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView().getComposable() }
-            composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear().getComposable() }
-            composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML().getComposable() }
-            composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary().getComposable()}
-            composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense().getComposable() }
-            composable(NavigationRoutes.SCREEN_LITURGI.name) { ScreenLiturgi().getComposable() }
-            composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive().getComposable() }
-            composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain().getComposable() }
-            composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia().getComposable() }
-            composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(currentActivityData).getComposable() }
-            composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan().getComposable() }
-            composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer().getComposable() }
-            composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy().getComposable() }
-            composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat().getComposable()}
-            composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch().getComposable()}
-            composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings().getComposable()}
-            composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList().getComposable() }
-            composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList().getComposable() }
-            composable(NavigationRoutes.SCREEN_WARTA.name) { ScreenWarta().getComposable() }
-            composable(NavigationRoutes.SCREEN_WEBVIEW.name) { ScreenWebView().getComposable() }
-            composable(NavigationRoutes.SCREEN_YKB.name) {ScreenYKB().getComposable()}
-            composable(NavigationRoutes.SCREEN_YKB_LIST.name) {ScreenYKBList().getComposable()}
+            composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_BLANK.name) {ScreenBlank(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI.name) { ScreenGaleri(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_LITURGI.name) { ScreenLiturgi(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_LIVE.name) { ScreenVideoLive(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_MAIN.name) { ScreenMain(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_MEDIA.name) { ScreenMedia(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_WARTA.name) { ScreenWarta(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_WEBVIEW.name) { ScreenWebView(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_YKB.name) {ScreenYKB(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_YKB_LIST.name) {ScreenYKBList(current).getComposable()}
         }
 
         // Watch for the state change in the parameter "currentNavigationRoute".
@@ -527,8 +549,7 @@ class ActivityLauncher : ComponentActivity() {
      * This is only need on Android API 26+.
      */
     private fun initNotificationChannel() {
-        NotificationService.initDebugDataUpdateChannel(this@ActivityLauncher)
-        NotificationService.initDebugFallbackChannel(this@ActivityLauncher)
+        NotificationService.initDebuggerChannel(this@ActivityLauncher)
         NotificationService.initSarenNotificationChannel(this@ActivityLauncher)
         NotificationService.initYKBHarianNotificationChannel(this@ActivityLauncher)
     }
@@ -554,7 +575,7 @@ class ActivityLauncher : ComponentActivity() {
     private fun initData() {
 
         // The file creator to create the private file.
-        val fileCreator = InternalFileManager(this).DOWNLOAD_FILE_CREATOR
+        val fileCreator = InternalFileManager(this).DATA_DIR_FILE_CREATOR
 
         // Setting up the downloaded JSON's absolute paths.
         Logger.logInit({}, "Initializing the downloaded JSON paths ...")

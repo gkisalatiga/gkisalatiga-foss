@@ -38,11 +38,9 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,8 +55,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,14 +64,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.view.allViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.OfflineSnackbarHost
 import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.composable.YouTubeView
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
@@ -85,7 +82,7 @@ import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.services.ClipManager
 
 
-class ScreenVideoLive : ComponentActivity() {
+class ScreenVideoLive (private val current : ActivityData) : ComponentActivity() {
 
     // The trigger to open an URL in an external browser.
     private val doTriggerBrowserOpen = mutableStateOf(false)
@@ -105,13 +102,12 @@ class ScreenVideoLive : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
         scope = rememberCoroutineScope()
 
         Logger.logTest({}, "Are we full screen?: ${YouTubeViewCompanion.isFullscreen.value}. Duration: ${YouTubeViewCompanion.currentSecond.floatValue}", LoggerType.VERBOSE)
 
         // Whether or not we should use the custom UI.
-        val useCustomUi = AppPreferences(ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME) as Boolean
+        val useCustomUi = AppPreferences(current.ctx).getPreferenceValue(PreferenceKeys.PREF_KEY_YOUTUBE_UI_THEME) as Boolean
 
         // Ensures that we only initialize the ytView once.
         YouTubeViewCompanion.composable!!.initYouTubeView()
@@ -122,7 +118,7 @@ class ScreenVideoLive : ComponentActivity() {
 
             // Exits the fullscreen mode.
             BackHandler {
-                if (useCustomUi) YouTubeView.handleFullscreenStateChange(ctx)
+                if (useCustomUi) YouTubeView.handleFullscreenStateChange(current.ctx)
                 else YouTubeViewCompanion.player!!.toggleFullscreen()
             }
 
@@ -165,9 +161,7 @@ class ScreenVideoLive : ComponentActivity() {
         // Handles opening URLs in external browser.
         key(doTriggerBrowserOpen.value) {
             if (doTriggerBrowserOpen.value) {
-                // Opens in an external browser.
-                // SOURCE: https://stackoverflow.com/a/69103918
-                LocalUriHandler.current.openUri(YouTubeViewCompanion.videoUrl)
+                current.uriHandler.openUri(YouTubeViewCompanion.videoUrl)
                 doTriggerBrowserOpen.value = false
             }
         }
@@ -178,10 +172,7 @@ class ScreenVideoLive : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenlive_title),
@@ -219,7 +210,6 @@ class ScreenVideoLive : ComponentActivity() {
      */
     @Composable
     private fun getLinkConfirmationDialog() {
-        val ctx = LocalContext.current
         val notificationText = stringResource(R.string.yt_visit_link_link_copied)
         if (showLinkConfirmationDialog.value) {
             AlertDialog(
@@ -234,7 +224,7 @@ class ScreenVideoLive : ComponentActivity() {
                             val clipData = ClipData.newPlainText("text", YouTubeViewCompanion.videoUrl)
                             ClipManager.clipManager!!.setPrimaryClip(clipData)
 
-                            Toast.makeText(ctx, notificationText, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(current.ctx, notificationText, Toast.LENGTH_SHORT).show()
                         }) {
                             OutlinedTextField(
                                 modifier = Modifier.fillMaxWidth(),
@@ -268,7 +258,6 @@ class ScreenVideoLive : ComponentActivity() {
      */
     @Composable
     private fun getNormalPlayer() {
-        val ctx = LocalContext.current
         Scaffold (
             topBar = { if (!YouTubeViewCompanion.isFullscreen.value) this.getTopBar() },
             snackbarHost = { OfflineSnackbarHost() },

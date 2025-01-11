@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -39,7 +38,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,12 +59,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.services.ClipManager
 import org.json.JSONObject
 
-class ScreenPersembahan : ComponentActivity() {
+class ScreenPersembahan (private val current : ActivityData) : ComponentActivity() {
     private var isFirstElement = false
     private val showOffertoryCodeTextDialog = mutableStateOf(false)
 
@@ -95,7 +94,6 @@ class ScreenPersembahan : ComponentActivity() {
 
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
         // The column's saved scroll state.
         val scrollState = ScreenPersembahanCompanion.rememberedScrollState!!
@@ -127,7 +125,8 @@ class ScreenPersembahan : ComponentActivity() {
                     AsyncImage(
                         ScreenPersembahanCompanion.OFFERTORY_QRIS_SOURCE,
                         contentDescription = "The QRIS code image to GKI Salatiga offertory account",
-                        error = painterResource(R.drawable.thumbnail_loading),
+                        error = painterResource(R.drawable.thumbnail_error),
+                        placeholder = painterResource(R.drawable.thumbnail_placeholder),
                         modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.FillWidth
                     )
@@ -176,7 +175,7 @@ class ScreenPersembahan : ComponentActivity() {
                         val clipData = ClipData.newPlainText("text", currentNode.getString("bank-number").replace(".", ""))
                         ClipManager.clipManager!!.setPrimaryClip(clipData)
 
-                        Toast.makeText(ctx, notificationString, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(current.ctx, notificationString, Toast.LENGTH_SHORT).show()
                     })
                 )
                 HorizontalDivider()
@@ -190,14 +189,7 @@ class ScreenPersembahan : ComponentActivity() {
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Surface(
-                    shape = CircleShape,
-                    onClick = {
-                        showOffertoryCodeTextDialog.value = true
-                    }
-                ) {
-                    Icon(Icons.AutoMirrored.Default.Help, "")
-                }
+                IconButton( onClick = { showOffertoryCodeTextDialog.value = true } ) { Icon(Icons.AutoMirrored.Default.Help, "") }
             }
 
             // The JSON node for offertory code.
@@ -229,7 +221,7 @@ class ScreenPersembahan : ComponentActivity() {
                         val clipData = ClipData.newPlainText("text", currentNode.getString("unique-code"))
                         ClipManager.clipManager!!.setPrimaryClip(clipData)
 
-                        Toast.makeText(ctx, notificationString, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(current.ctx, notificationString, Toast.LENGTH_SHORT).show()
                     })
                 )
                 HorizontalDivider()
@@ -243,10 +235,7 @@ class ScreenPersembahan : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenoffertory_title),
@@ -269,7 +258,6 @@ class ScreenPersembahan : ComponentActivity() {
 
     @Composable
     private fun getOffertoryCodeText() {
-        val ctx = LocalContext.current
 
         if (showOffertoryCodeTextDialog.value) {
             AlertDialog(
@@ -301,7 +289,7 @@ class ScreenPersembahan : ComponentActivity() {
 class ScreenPersembahanCompanion : Application() {
     companion object {
         /* The QRIS image for offertories. */
-        const val OFFERTORY_QRIS_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/main/images/qris_gkis.png"
+        const val OFFERTORY_QRIS_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/res/qris_gkis.png"
 
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null

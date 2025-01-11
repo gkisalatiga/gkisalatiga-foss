@@ -27,7 +27,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -36,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -45,11 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.lib.AppNavigation
 import java.io.InputStream
 
 
-class ScreenContrib : ComponentActivity() {
+class ScreenContrib (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -79,11 +79,10 @@ class ScreenContrib : ComponentActivity() {
 
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
         /* Displaying the markdown content. */
         Box(Modifier.background(Color.Transparent)) {
-            val input: InputStream = ctx.resources.openRawResource(R.raw.app_contribution)
+            val input: InputStream = current.ctx.resources.openRawResource(R.raw.app_contribution)
             val inputAsString: String = input.bufferedReader().use { it.readText() }
 
             // Display the markdown text.
@@ -105,10 +104,7 @@ class ScreenContrib : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screencontrib_title),

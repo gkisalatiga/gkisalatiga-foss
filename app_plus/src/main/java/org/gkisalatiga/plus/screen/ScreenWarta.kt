@@ -37,7 +37,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Surface
@@ -52,9 +51,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +65,8 @@ import org.gkisalatiga.plus.composable.MainPTR
 import org.gkisalatiga.plus.composable.MainPTRCompanion
 import org.gkisalatiga.plus.composable.OfflineSnackbarHost
 import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
+import org.gkisalatiga.plus.composable.TopAppBarColorScheme
+import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -79,7 +78,7 @@ import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONObject
 
-class ScreenWarta : ComponentActivity() {
+class ScreenWarta (private val current : ActivityData) : ComponentActivity() {
 
     // The snackbar host state.
     private val snackbarHostState = OfflineSnackbarHostCompanion.snackbarHostState
@@ -88,7 +87,6 @@ class ScreenWarta : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val ctx = LocalContext.current
         val scope = rememberCoroutineScope()
 
         // The pull-to-refresh indicator states.
@@ -99,7 +97,7 @@ class ScreenWarta : ComponentActivity() {
             topBar = { getTopBar() },
             snackbarHost = { OfflineSnackbarHost() },
             modifier = Modifier.pullToRefresh(isRefreshing.value, pullToRefreshState!!, onRefresh = {
-                MainPTRCompanion.launchOnRefresh(ctx)
+                MainPTRCompanion.launchOnRefresh(current.ctx)
             })) {
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
                 getMainContent()
@@ -131,7 +129,6 @@ class ScreenWarta : ComponentActivity() {
     
     @Composable
     private fun getMainContent() {
-        val ctx = LocalContext.current
 
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
@@ -204,12 +201,12 @@ class ScreenWarta : ComponentActivity() {
                 val size = it["size"]!!
 
                 // Whether this PDF has been downloaded.
-                val isDownloaded = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+                val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
 
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the PDF viewer.
                         ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
@@ -228,6 +225,7 @@ class ScreenWarta : ComponentActivity() {
                                     thumbnail,
                                     contentDescription = "Church News Book: $title",
                                     error = painterResource(R.drawable.menu_cover_wj),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder_vert_notext),
                                     modifier = Modifier.width(14.dp),
                                     contentScale = ContentScale.FillWidth
                                 )
@@ -244,20 +242,10 @@ class ScreenWarta : ComponentActivity() {
                                     maxLines = 3,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                                // The file size.
-                                Row {
-                                    Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
-                                    Text(
-                                        size,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
+
                                 // The downloaded PDF badge.
                                 val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
-                                val badgeColor = Color(Colors.APP_PDF_DOWNLOADED_BADGE_COLOR)
+                                val badgeColor = Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR
                                 if (isDownloaded) {
                                     Row {
                                         Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp), tint = badgeColor)
@@ -268,6 +256,18 @@ class ScreenWarta : ComponentActivity() {
                                             maxLines = 1,
                                             overflow = TextOverflow.Ellipsis,
                                             color = badgeColor
+                                        )
+                                    }
+                                } else {
+                                    // The file size.
+                                    Row {
+                                        Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
+                                        Text(
+                                            size,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 }
@@ -285,10 +285,7 @@ class ScreenWarta : ComponentActivity() {
     private fun getTopBar() {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
         CenterAlignedTopAppBar(
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary
-            ),
+            colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
                     stringResource(R.string.screenwarta_title),
