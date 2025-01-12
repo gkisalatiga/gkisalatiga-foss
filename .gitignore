@@ -44,3 +44,6 @@ replay_pid*
 # Well only upload the uncompiled source codes in the main branch of GitHub.
 *.apk
 *.aab
+
+# Prevents local override of IDE when the repo is cloned between Windows and Linux.
+.idea
