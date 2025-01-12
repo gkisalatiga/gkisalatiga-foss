@@ -117,7 +117,9 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Fix bottom keyboard padding when typing in forms menu
 - [ ] Pukat Berkat: Remove all dummy contents, substitute instead with CTA to propose a new advertisement
 - [ ] Pukat Berkat: change name to "Lapak Jemaat"
+- [X] Agenda: Add viewer of room borrowing schedules
 - [ ] Agenda: Add form to borrow room & differentiate regular from non-regular items
+- [ ] Migrate the JSON data that includes "agenda-ruangan"
 
 ## C. Privacy Policy
 

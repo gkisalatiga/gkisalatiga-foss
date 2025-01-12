@@ -240,6 +240,24 @@
     <string name="screen_agenda_type_chip_show_all_text">Semua</string>
     <string name="screen_agenda_type_chip_show_only_proposal_text">Hanya Proposal</string>
     <string name="screen_agenda_type_chip_show_only_regular_text">Hanya Rutin</string>
+    <string name="screen_agenda_info_label_place">Tempat</string>
+    <string name="screen_agenda_info_label_representative">Divisi</string>
+    <string name="screen_agenda_info_label_pic">PIC</string>
+    <string name="screen_agenda_info_label_status">Status</string>
+    <string name="screen_agenda_info_label_notes">Catatan</string>
+    <string name="screen_agenda_status_cancelled">Dibatalkan oleh Pemohon</string>
+    <string name="screen_agenda_status_approved">Disetujui</string>
+    <string name="screen_agenda_status_denied">Ditolak</string>
+    <string name="screen_agenda_status_waiting">Menunggu Persetujuan</string>
+    <string name="screen_agenda_status_not_a_proposal">Bukan Proposal</string>
+    <string name="screen_agenda_status_internal_error">Galat Internal</string>
+    <string name="screen_agenda_info_dialog_title">Rincian</string>
+    <string name="screen_agenda_info_dialog_label_name">Nama Kegiatan</string>
+    <string name="screen_agenda_info_dialog_label_place">Tempat Kegiatan</string>
+    <string name="screen_agenda_info_dialog_label_representative">Divisi</string>
+    <string name="screen_agenda_info_dialog_label_pic">PIC (Penanggung Jawab)</string>
+    <string name="screen_agenda_info_dialog_label_notes">Catatan</string>
+    <string name="screen_agenda_info_dialog_label_status">Status Proposal</string>
 
     <!-- Applicable in most screens. -->
     <string name="pdf_already_downloaded_localized">Terunduh</string>

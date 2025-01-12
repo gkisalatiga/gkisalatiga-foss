@@ -1,5 +1,15 @@
 # GKI Salatiga App Changelog
 
+## Next Release
+
+:star2: **NEW**
+
+- Added the feature to view room borrowing schedules and proposals
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- Updated the gallery banner
+
 ## v0.6.2 2024.12.29 (37)
 
 :four_leaf_clover: **IMPROVEMENT**
