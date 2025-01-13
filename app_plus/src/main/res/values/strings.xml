@@ -4,6 +4,7 @@
     <string name="app_name_alias">GKI Salatiga Plus</string>
     <string name="app_description">Media sistem informasi jemaat dan komunikasi internal untuk mendukung pembangunan jemaat di GKI Salatiga</string>
     <string name="app_slogan">Menjadi Mitra Allah di Dunia</string>
+    <string name="app_church_name">GKI Salatiga</string>
     <string name="title_activity_main">GKI Salatiga+</string>
 
     <!-- Constant strings for ScreenMain and FragmentMain. -->
@@ -27,7 +28,7 @@
     <string name="screenlibrary_title">E-Perpus</string>
     <string name="screensearch_title">Pencarian</string>
     <string name="screensettings_title">Pengaturan</string>
-    <string name="screenpukatberkat_title">Pukat Berkat</string>
+    <string name="screenpukatberkat_title">Lapak Jemaat</string>
     <string name="screenlicense_title">Lisensi</string>
     <string name="screencontrib_title">Kontributor</string>
     <string name="screendev_title">Menu Pengembang</string>
@@ -66,7 +67,7 @@
     <string name="btn_mainmenu_media">Media</string>
     <string name="btn_mainmenu_bible">Alkitab</string>
     <string name="btn_mainmenu_library">E-Perpus</string>
-    <string name="btn_mainmenu_pukatberkat">Pukat Berkat</string>
+    <string name="btn_mainmenu_pukatberkat">Lapak Jemaat</string>
 
     <!-- Constant strings for image description of the main menu's action buttons -->
     <string name="btn_desc_mainmenu_wj">Buka menu warta jemaat</string>
@@ -81,7 +82,7 @@
     <string name="btn_desc_mainmenu_media">Buka menu media</string>
     <string name="btn_desc_mainmenu_bible">Buka menu Alkitab</string>
     <string name="btn_desc_mainmenu_library">Buka menu E-Perpus</string>
-    <string name="btn_desc_mainmenu_pukatberkat">Buka menu Pukat Berkat</string>
+    <string name="btn_desc_mainmenu_pukatberkat">Buka menu Lapak Jemaat</string>
 
     <!-- Constant string for describing the banner image in the "Info/About Church" fragment. -->
     <string name="info_church_img_description">Gereja Kristen Indonesia Salatiga</string>
@@ -127,7 +128,7 @@
     <string name="offertory_code_copied">Kode unik berhasil disalin!</string>
     <string name="offertory_code_desc">Tambahkan kode unik pada akhir nominal persembahan yang akan diberikan.\n\nMisalnya, jika Anda ingin memberikan persembahan DKK sebanyak Rp. 50.000, maka Anda perlu mentransfer sebesar Rp. 50.033 ke rekening bank GKI Salatiga.</string>
 
-    <!-- Constant string used in the "Pukat Berkat" section. -->
+    <!-- Constant string used in the "Pukat Berkat/Lapak Jemaat" section. -->
     <string name="pukatberkat_section_food">Pangan</string>
     <string name="pukatberkat_section_goods">Barang</string>
     <string name="pukatberkat_section_service">Jasa</string>
@@ -146,7 +147,7 @@
     <string name="exit_confirmation_toast_string">Tekan sekali lagi untuk keluar dari aplikasi.</string>
 
     <!-- The app copyright notice. -->
-    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGereja Kristen Indonesia Salatiga 2024</string>
+    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGereja Kristen Indonesia Salatiga 2025</string>
 
     <!-- Email chooser intent. -->
     <string name="email_chooser_title">Kirim surel dengan &#8230;</string>

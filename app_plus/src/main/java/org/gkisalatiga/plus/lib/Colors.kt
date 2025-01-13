@@ -37,15 +37,15 @@ class Colors {
         /* Used in app's fragments. */
         val FRAGMENT_HOME_TOP_MENU_TINT_COLOR = Color(0xffFFFFFF)
         val FRAGMENT_HOME_TOP_TWO_MENUS_CONTAINER_COLOR = Color(0xff715446)
-        val FRAGMENT_INFO_COPYRIGHT_TEXT_COLOR = Color(0xffa46443)
-        val FRAGMENT_INFO_ICON_TINT_COLOR = Color(0xffe6ad84)
         val FRAGMENT_SERVICES_SHOW_MORE_BACKGROUND = Color(0xff97705d)
         val FRAGMENT_SERVICES_SHOW_MORE_CONTENT = Color(0xffffffff)
     }
 }
 
 sealed class DynamicColorScheme (
-    val mainScreenBackgroundColor: Color,
+    val fragmentInfoCopyrightTextColor : Color,
+    val fragmentInfoIconTintColor : Color,
+    val mainScreenBackgroundColor : Color,
     val mainSplashScreenBackgroundColor : Color,
     val mainSplashScreenForegroundColor : Color,
     val mainSplashScreenSubTextColor : Color,
@@ -77,6 +77,8 @@ sealed class DynamicColorScheme (
     val screenSearchHistoryItemTextColor : Color,
 ) {
     class DarkColorScheme : DynamicColorScheme(
+        fragmentInfoCopyrightTextColor = Color(0xffa46443),
+        fragmentInfoIconTintColor = Color(0xffe6ad84),
         mainScreenBackgroundColor = Color(0xff141218),
         mainSplashScreenBackgroundColor = Color(0xff482505),
         mainSplashScreenForegroundColor = Color.White,
@@ -109,6 +111,8 @@ sealed class DynamicColorScheme (
         screenSearchHistoryItemTextColor = Color.White,
     )
     class LightColorScheme : DynamicColorScheme(
+        fragmentInfoCopyrightTextColor = Color(0xffe6ad84),
+        fragmentInfoIconTintColor = Color(0xffa46443),
         mainScreenBackgroundColor = Color.White,
         mainSplashScreenBackgroundColor = Color.White,
         mainSplashScreenForegroundColor = Color(0xff482505),

@@ -55,7 +55,6 @@ import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.StaticCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
-import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
@@ -81,6 +80,7 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
         "insta",
         "youtube",
         "whatsapp",
+        "maps",
         "email"
     )
 
@@ -91,6 +91,7 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
         R.drawable.remixicon_instagram_fill_48,
         R.drawable.remixicon_youtube_fill_48,
         R.drawable.remixicon_whatsapp_fill_48,
+        R.drawable.mdi__google_maps,
         R.drawable.remixicon_at_fill_48
     )
 
@@ -198,11 +199,36 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                 }
             }  // --- end of church info card/column.
 
+            /* Display the address information. */
+            val address = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings").getString("address")
+            Spacer(Modifier.height(50.dp))
+            @Suppress("SpellCheckingInspection")
+            Image(
+                painter = painterResource(R.drawable.logo_gki),
+                "Logo Gereja Kristen Indonesia",
+                colorFilter = ColorFilter.tint(current.colors.fragmentInfoIconTintColor),
+                modifier = Modifier.size(75.dp)
+            )
+            Spacer(Modifier.height(25.dp))
+            Text(
+                stringResource(R.string.app_church_name),
+                textAlign = TextAlign.Center,
+                color = current.colors.fragmentInfoIconTintColor,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+            Text(
+                address,
+                textAlign = TextAlign.Center,
+                color = current.colors.fragmentInfoIconTintColor,
+                fontSize = 16.sp
+            )
+
             // The "open with mail" string text.
             val emailChooserTitle = stringResource(R.string.email_chooser_title)
 
             /* Displays the social media CTAs. */
-            Spacer(Modifier.height(50.dp))
+            Spacer(Modifier.height(30.dp))
             Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 // Assumes identical ArrayList size.
                 socialMediaIcons.forEachIndexed { index, drawableIcon ->
@@ -226,7 +252,7 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                         Image(
                             painter = painterResource(drawableIcon),
                             "Social Media CTA No. ${socialMediaNodeTitles[index]}",
-                            colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_COPYRIGHT_TEXT_COLOR)
+                            colorFilter = ColorFilter.tint(current.colors.fragmentInfoIconTintColor)
                         )
                     }
                 }
@@ -234,21 +260,13 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
 
             /* Displays the copyright notice. */
             Column (Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(Modifier.height(25.dp))
+                Spacer(Modifier.height(30.dp))
                 Text(stringResource(R.string.about_copyright_notice),
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
-                    color = Colors.FRAGMENT_INFO_ICON_TINT_COLOR,
+                    color = current.colors.fragmentInfoCopyrightTextColor,
                     style = TextStyle (textAlign = TextAlign.Center),
                     modifier = Modifier.padding(horizontal = 20.dp)
-                )
-                Spacer(Modifier.height(25.dp))
-                @Suppress("SpellCheckingInspection")
-                Image(
-                    painter = painterResource(R.drawable.logo_gki),
-                    "Logo Gereja Kristen Indonesia",
-                    colorFilter = ColorFilter.tint(Colors.FRAGMENT_INFO_ICON_TINT_COLOR),
-                    modifier = Modifier.size(75.dp)
                 )
             }
 

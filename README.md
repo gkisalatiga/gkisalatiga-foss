@@ -110,13 +110,13 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Reduced the amount of visible page dots indication in the main menu's carousel
 - [ ] Split among carousel types: poster, video, article
 - [X] Migrate the JSON data source to `gkisalatiga/gkisplus-data-json` repository
-- [ ] Add street address of GKI Salatiga
+- [X] Add street address of GKI Salatiga
 - [ ] Add QRIS image save button
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Add non-open source, non-hard-coded third party resources attribution
 - [ ] Fix bottom keyboard padding when typing in forms menu
 - [ ] Pukat Berkat: Remove all dummy contents, substitute instead with CTA to propose a new advertisement
-- [ ] Pukat Berkat: change name to "Lapak Jemaat"
+- [X] Pukat Berkat: change name to "Lapak Jemaat"
 - [X] Agenda: Add viewer of room borrowing schedules
 - [ ] Agenda: Add form to borrow room & differentiate regular from non-regular items
 - [ ] Migrate the JSON data that includes "agenda-ruangan"
