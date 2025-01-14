@@ -6,6 +6,7 @@
 
 - Added the feature to view room borrowing schedules and proposals
 - Added prompt when clicking on the social media CTA buttons
+- Added GKI Salatiga's full address and Google Maps link
 - (Back-End) Introduced feature flags to change the greeting message
 - (Back-End) Introduced feature flags to enable/disable main menu items
 
