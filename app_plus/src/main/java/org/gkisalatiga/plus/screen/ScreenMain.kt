@@ -98,6 +98,7 @@ import org.gkisalatiga.plus.composable.MainPTRCompanion
 import org.gkisalatiga.plus.composable.OfflineSnackbarHost
 import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.fragment.FragmentHome
 import org.gkisalatiga.plus.fragment.FragmentInfo
 import org.gkisalatiga.plus.fragment.FragmentServices
@@ -470,8 +471,11 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                     )
 
                     // The overlaying greetings text.
-                    Text(stringResource(R.string.new_topbar_greetings), fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.White, style = shadowTextStyle)
-                    Text(stringResource(R.string.new_topbar_person_name), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color.White, style = shadowTextStyle)
+                    val strings = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings")
+                    val greetingsTop = strings.getString("greetings_top")
+                    Text(greetingsTop, fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.White, style = shadowTextStyle)
+                    val greetingsBottom = strings.getString("greetings_bottom")
+                    Text(greetingsBottom, fontSize = 21.sp, fontWeight = FontWeight.SemiBold, color = Color.White, style = shadowTextStyle)
                 }
             }
 

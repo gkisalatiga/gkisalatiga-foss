@@ -43,6 +43,8 @@ class Colors {
 }
 
 sealed class DynamicColorScheme (
+    val fragmentHomeCarouselPageIndicatorActiveColor : Color,
+    val fragmentHomeCarouselPageIndicatorInactiveColor : Color,
     val fragmentInfoCopyrightTextColor : Color,
     val fragmentInfoIconTintColor : Color,
     val mainScreenBackgroundColor : Color,
@@ -77,6 +79,8 @@ sealed class DynamicColorScheme (
     val screenSearchHistoryItemTextColor : Color,
 ) {
     class DarkColorScheme : DynamicColorScheme(
+        fragmentHomeCarouselPageIndicatorActiveColor = Color.White,
+        fragmentHomeCarouselPageIndicatorInactiveColor = Color.White.copy(alpha = 0.5f),
         fragmentInfoCopyrightTextColor = Color(0xffa46443),
         fragmentInfoIconTintColor = Color(0xffe6ad84),
         mainScreenBackgroundColor = Color(0xff141218),
@@ -111,6 +115,8 @@ sealed class DynamicColorScheme (
         screenSearchHistoryItemTextColor = Color.White,
     )
     class LightColorScheme : DynamicColorScheme(
+        fragmentHomeCarouselPageIndicatorActiveColor = Color.DarkGray,
+        fragmentHomeCarouselPageIndicatorInactiveColor = Color.LightGray.copy(alpha = 0.5f),
         fragmentInfoCopyrightTextColor = Color(0xffe6ad84),
         fragmentInfoIconTintColor = Color(0xffa46443),
         mainScreenBackgroundColor = Color.White,

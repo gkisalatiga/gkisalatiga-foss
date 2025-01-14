@@ -107,7 +107,7 @@ Each UI class file should bear a global companion object, useful in passing data
 
 ### January 2025
 
-- [ ] Reduced the amount of visible page dots indication in the main menu's carousel
+- [X] Reduced the amount of visible page dots indication in the main menu's carousel
 - [ ] Split among carousel types: poster, video, article
 - [X] Migrate the JSON data source to `gkisalatiga/gkisplus-data-json` repository
 - [X] Add street address of GKI Salatiga
@@ -115,11 +115,11 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Add non-open source, non-hard-coded third party resources attribution
 - [ ] Fix bottom keyboard padding when typing in forms menu
-- [ ] Pukat Berkat: Remove all dummy contents, substitute instead with CTA to propose a new advertisement
+- [X] Pukat Berkat: Hide the functionality until it is ready
 - [X] Pukat Berkat: change name to "Lapak Jemaat"
 - [X] Agenda: Add viewer of room borrowing schedules
 - [ ] Agenda: Add form to borrow room & differentiate regular from non-regular items
-- [ ] Migrate the JSON data that includes "agenda-ruangan"
+- [X] Migrate the JSON data that includes "agenda-ruangan"
 - [ ] Add "GKI Salatiga's 82nd Anniversary" logo to the splash screen
 
 ## C. Privacy Policy

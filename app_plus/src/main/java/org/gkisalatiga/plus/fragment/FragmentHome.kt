@@ -11,7 +11,9 @@ import android.content.Intent
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -86,89 +88,98 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
 
     // The following defines the visible menu buttons shown in the main menu,
     // as well as their corresponding navigation targets.
-    private val btnRoutes = listOf(
-        NavigationRoutes.SCREEN_WARTA,
-        NavigationRoutes.SCREEN_LITURGI,
-        NavigationRoutes.SCREEN_AGENDA,
-        NavigationRoutes.SCREEN_PERSEMBAHAN,
-        NavigationRoutes.SCREEN_YKB,
-        NavigationRoutes.SCREEN_FORMS,
-        NavigationRoutes.SCREEN_GALERI,
-        // TODO: Re-enable the bible and library menu once the functionalities are ready.
-        // NavigationRoutes.SCREEN_BIBLE,
-        NavigationRoutes.SCREEN_LIBRARY,
-        NavigationRoutes.SCREEN_PUKAT_BERKAT,
-    )
+    private lateinit var btnRoutes: MutableList<NavigationRoutes>
 
     // The following defines the label of each visible menu button.
-    private lateinit var btnLabels: List<String>
+    private lateinit var btnLabels: MutableList<String>
 
     // The following defines each visible menu button's icon description.
-    private lateinit var btnDescriptions: List<String>
+    private lateinit var btnDescriptions: MutableList<String>
 
     // The following defines the icons used for the visible menu buttons.
-    private val btnIcons = listOf(
-        R.drawable.ph__seal_question_bold,  // --- we don't need icon for this entry.
-        R.drawable.ph__seal_question_bold,  // --- we don't need icon for this entry.
-        R.drawable.ph__calendar_dots_bold,
-        R.drawable.ph__hand_coins_bold,
-        R.drawable.ph__book_open_text_bold,
-        R.drawable.ph__paper_plane_tilt_bold,
-        R.drawable.ph__images_square_bold,
-        // TODO: Re-enable the bible and library menu once the functionalities are ready.
-        // R.drawable.ph__cross_bold,
-        R.drawable.ph__books_bold,
-        R.drawable.ph__shopping_cart_bold,
-    )
+    private lateinit var btnIcons: MutableList<Int>
 
     // Toggle menu button enabled state.
-    private val btnEnabledState = listOf(
-        true,  // --- won't affect actual state.
-        true,  // --- won't affect actual state.
-        true,
-        true,
-        true,
-        true,
-        true,
-        // TODO: Re-enable the bible and library menu once the functionalities are ready.
-        // false,
-        true,
-        true,
-    )
+    private lateinit var btnEnabledState: MutableList<Boolean>
 
     @Composable
     fun getComposable() {
 
-        /* Initialized the "lateinit" variables. */
-        btnLabels = listOf(
-            current.ctx.resources.getString(R.string.btn_mainmenu_wj),
-            current.ctx.resources.getString(R.string.btn_mainmenu_liturgi),
-            current.ctx.resources.getString(R.string.btn_mainmenu_agenda),
-            current.ctx.resources.getString(R.string.btn_mainmenu_offertory),
-            current.ctx.resources.getString(R.string.btn_mainmenu_ykb),
-            current.ctx.resources.getString(R.string.btn_mainmenu_form),
-            current.ctx.resources.getString(R.string.btn_mainmenu_gallery),
-            // TODO: Re-enable the bible and library menu once the functionalities are ready.
-            // current.ctx.resources.getString(R.string.btn_mainmenu_bible),
-            current.ctx.resources.getString(R.string.btn_mainmenu_library),
-            current.ctx.resources.getString(R.string.btn_mainmenu_pukatberkat),
-        )
-        btnDescriptions = listOf(
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_wj),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_liturgi),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_agenda),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_offertory),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_ykb),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_form),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_gallery),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_media),
-            // TODO: Re-enable the bible and library menu once the functionalities are ready.
-            // current.ctx.resources.getString(R.string.btn_desc_mainmenu_bible),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_library),
-            current.ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat),
-        )
+        /* Initialized the "late init" variables for the top two features: Warta Jemaat & Liturgi. */
+        btnRoutes = mutableListOf(NavigationRoutes.SCREEN_WARTA, NavigationRoutes.SCREEN_LITURGI)
+        btnLabels = mutableListOf(current.ctx.resources.getString(R.string.btn_mainmenu_wj), current.ctx.resources.getString(R.string.btn_mainmenu_liturgi))
+        btnDescriptions = mutableListOf(current.ctx.resources.getString(R.string.btn_desc_mainmenu_wj), current.ctx.resources.getString(R.string.btn_desc_mainmenu_liturgi))
+        btnIcons = mutableListOf(R.drawable.ph__seal_question_bold, R.drawable.ph__seal_question_bold)
+        btnEnabledState = mutableListOf(true, true)
 
-        // The following defines each individual featured cover image of the menu.
+        /* Show or hide feature menus based on flag settings. */
+        val appFlags = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("flags")
+
+        if (appFlags.getInt("is_feature_agenda_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_AGENDA)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_agenda))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_agenda))
+            btnIcons.add(R.drawable.ph__calendar_dots_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.getInt("is_feature_persembahan_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_PERSEMBAHAN)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_offertory))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_offertory))
+            btnIcons.add(R.drawable.ph__hand_coins_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.getInt("is_feature_ykb_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_YKB)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_ykb))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_ykb))
+            btnIcons.add(R.drawable.ph__book_open_text_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.getInt("is_feature_formulir_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_FORMS)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_form))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_form))
+            btnIcons.add(R.drawable.ph__paper_plane_tilt_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.getInt("is_feature_galeri_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_GALERI)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_gallery))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_gallery))
+            btnIcons.add(R.drawable.ph__images_square_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.getInt("is_feature_bible_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_BIBLE)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_bible))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_bible))
+            btnIcons.add(R.drawable.ph__cross_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.getInt("is_feature_library_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_LIBRARY)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_library))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_library))
+            btnIcons.add(R.drawable.ph__books_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.getInt("is_feature_lapak_shown") == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_PUKAT_BERKAT)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_pukatberkat))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat))
+            btnIcons.add(R.drawable.ph__shopping_cart_bold)
+            btnEnabledState.add(true)
+        }
+
+        /* The following defines each individual featured cover image of the menu. */
         // (Only the top two menus are considered.)
         val btnFeaturedCover = listOf(
             R.drawable.menu_cover_wj,
@@ -289,27 +300,34 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                         )
                     }
                 }
+            }
 
-                // Create the pager indicator.
-                // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
-                Row(
-                    modifier = Modifier.height(45.dp).fillMaxWidth().align(Alignment.BottomCenter),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    repeat(actualPageCount) { iteration ->
-                        val color = if (carouselPagerState.currentPage % actualPageCount == iteration) Color.White else Color.White.copy(alpha = 0.5f)
-
-                        // The individual dot for indicating carousel page.
-                        Box(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .clip(CircleShape)
-                                .background(color)
-                                .size(10.dp)
-                        )
-                    }
+            // Create the pager indicator.
+            // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
+            Row(
+                modifier = Modifier.height(10.dp).fillMaxWidth().padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(actualPageCount) { iteration ->
+                    val color = if (carouselPagerState.currentPage % actualPageCount == iteration)
+                        current.colors.fragmentHomeCarouselPageIndicatorActiveColor else current.colors.fragmentHomeCarouselPageIndicatorInactiveColor
+                    val lineWeight = animateFloatAsState(
+                        targetValue = if (carouselPagerState.currentPage == iteration) {
+                            1.5f
+                        } else {
+                            if (iteration < carouselPagerState.currentPage) 0.5f else 1f
+                        }, label = "weight", animationSpec = tween(300, easing = EaseInOut)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(color)
+                            .weight(lineWeight.value)
+                            .height(4.dp)
+                    )
                 }
-
             }
 
             Spacer(Modifier.fillMaxWidth().height(10.dp))

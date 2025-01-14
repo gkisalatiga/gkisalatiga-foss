@@ -5,9 +5,13 @@
 :star2: **NEW**
 
 - Added the feature to view room borrowing schedules and proposals
+- Added prompt when clicking on the social media CTA buttons
+- (Back-End) Introduced feature flags to change the greeting message
+- (Back-End) Introduced feature flags to enable/disable main menu items
 
 :four_leaf_clover: **IMPROVEMENT**
 
+- Improved the outlook of the carousel page indicator
 - Updated the gallery banner
 
 ## v0.6.2 2024.12.29 (37)
