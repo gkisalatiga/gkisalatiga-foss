@@ -7,6 +7,7 @@
 package org.gkisalatiga.plus.fragment
 
 import android.app.Application
+import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -26,10 +27,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,7 +65,10 @@ import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.screen.ScreenAgendaCompanion
 import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
+import org.gkisalatiga.plus.screen.ScreenWebViewCompanion
+import org.gkisalatiga.plus.services.ClipManager
 import org.json.JSONObject
 
 class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
@@ -101,11 +112,25 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
     @Composable
     fun getComposable() {
 
+        // Pre-invoke the confirmation dialog.
+        getCTAOpenConfirmationDialog()
+
         // Converting JSONArray to regular lists.
         val staticDataList: MutableList<JSONObject> = mutableListOf()
         for (i in 0 until StaticCompanion.jsonRoot!!.length()) {
             staticDataList.add(StaticCompanion.jsonRoot!![i] as JSONObject)
         }
+
+        // The list of social media CTA titles.
+        val socialCtaTitles = listOf(
+            stringResource(R.string.fragment_info_social_media_web),
+            stringResource(R.string.fragment_info_social_media_fb),
+            stringResource(R.string.fragment_info_social_media_insta),
+            stringResource(R.string.fragment_info_social_media_youtube),
+            stringResource(R.string.fragment_info_social_media_whatsapp),
+            stringResource(R.string.fragment_info_social_media_maps),
+            stringResource(R.string.fragment_info_social_media_email),
+        )
 
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
@@ -224,9 +249,6 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                 fontSize = 16.sp
             )
 
-            // The "open with mail" string text.
-            val emailChooserTitle = stringResource(R.string.email_chooser_title)
-
             /* Displays the social media CTAs. */
             Spacer(Modifier.height(30.dp))
             Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -236,18 +258,11 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                     Surface(Modifier.weight(1.0f).clickable(onClick = {
                         Logger.log({}, "Selected node: ${socialMediaNodeTitles[index]}")
 
-                        if (socialMediaNodeTitles[index] == "email") {
-                            // SOURCE: https://www.geeksforgeeks.org/how-to-send-an-email-from-your-android-app/
-                            // SOURCE: https://www.tutorialspoint.com/android/android_sending_email.htm
-                            // SOURCE: https://stackoverflow.com/a/59365539
-                            val emailIntent = Intent(Intent.ACTION_SENDTO)
-                            emailIntent.setData(Uri.parse("mailto:${socialMediaCTATargets[index]}"))
-                            current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
-                        } else {
-                            doTriggerBrowserOpen.value = true
-                            externalLinkURL.value = socialMediaCTATargets[index]
-                        }
-
+                        FragmentInfoCompanion.mutableShowConfirmationDialog.value = true
+                        FragmentInfoCompanion.confirmationDialogIcon = drawableIcon
+                        FragmentInfoCompanion.confirmationDialogText = socialCtaTitles[index]
+                        FragmentInfoCompanion.confirmationDialogUrl = socialMediaCTATargets[index]
+                        FragmentInfoCompanion.confirmationDialogNodeTitle = socialMediaNodeTitles[index]
                     })) {
                         Image(
                             painter = painterResource(drawableIcon),
@@ -284,11 +299,98 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
         }
     }
 
+    @Composable
+    private fun getCTAOpenConfirmationDialog() {
+        // The "open with mail" string text.
+        val emailChooserTitle = stringResource(R.string.email_chooser_title)
+
+        // The button strings.
+        val cancelBtnLabel = stringResource(R.string.fragment_info_dialog_cancel_btn)
+        val okBtnLabel = stringResource(R.string.fragment_info_dialog_ok_btn)
+
+        // The copy string notification text.
+        val notificationText = stringResource(R.string.webview_visit_link_link_copied)
+
+        if (FragmentInfoCompanion.mutableShowConfirmationDialog.value) {
+            // Rendering the composable element.
+            AlertDialog(
+                onDismissRequest = {
+                    FragmentInfoCompanion.mutableShowConfirmationDialog.value = false
+                },
+                title = {
+                    Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+                        Image(
+                            painter = painterResource(FragmentInfoCompanion.confirmationDialogIcon),
+                            "Social Media CTA Confirmation Dialog Icon",
+                            colorFilter = ColorFilter.tint(current.colors.fragmentInfoIconTintColor),
+                            modifier = Modifier.padding(bottom = 10.dp)
+                        )
+                        Text(FragmentInfoCompanion.confirmationDialogText, color = current.colors.fragmentInfoIconTintColor, fontWeight = FontWeight.Bold)
+                    }
+                },
+                text = {
+                    Column (Modifier.fillMaxWidth()) {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                // Copies the URL.
+                                // Attempt to copy text to clipboard.
+                                // SOURCE: https://www.geeksforgeeks.org/clipboard-in-android/
+                                val clipData = ClipData.newPlainText("text", FragmentInfoCompanion.confirmationDialogUrl)
+                                ClipManager.clipManager!!.setPrimaryClip(clipData)
+
+                                Toast.makeText(current.ctx, notificationText, Toast.LENGTH_SHORT).show()
+                            },
+                            color = Color.Transparent,
+                        ) {
+                            Text(FragmentInfoCompanion.confirmationDialogUrl, color = current.colors.fragmentInfoIconTintColor, textAlign = TextAlign.Center)
+                        }
+                    }
+                },
+                confirmButton = {
+                    Row {
+                        TextButton(onClick = { FragmentInfoCompanion.mutableShowConfirmationDialog.value = false }) {
+                            Text(cancelBtnLabel)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Button(onClick = {
+                            FragmentInfoCompanion.mutableShowConfirmationDialog.value = false
+
+                            // Opens the URL.
+                            val nodeTitle = FragmentInfoCompanion.confirmationDialogNodeTitle
+                            val url = FragmentInfoCompanion.confirmationDialogUrl
+                            if (nodeTitle == "email") {
+                                // SOURCE: https://www.geeksforgeeks.org/how-to-send-an-email-from-your-android-app/
+                                // SOURCE: https://www.tutorialspoint.com/android/android_sending_email.htm
+                                // SOURCE: https://stackoverflow.com/a/59365539
+                                val emailIntent = Intent(Intent.ACTION_SENDTO)
+                                emailIntent.setData(Uri.parse("mailto:${url}"))
+                                current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
+                            } else {
+                                doTriggerBrowserOpen.value = true
+                                externalLinkURL.value = url
+                            }
+                        }) {
+                            Text(okBtnLabel, color = Color.White)
+                        }
+                    }
+                }
+            )
+        }
+    }
+
 }
 
 class FragmentInfoCompanion : Application() {
     companion object {
         /* The fragment's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* Whether to display the confirmation dialog. */
+        val mutableShowConfirmationDialog = mutableStateOf(false)
+        var confirmationDialogIcon: Int = 0
+        var confirmationDialogText: String = String()
+        var confirmationDialogUrl: String = String()
+        var confirmationDialogNodeTitle: String = String()
     }
 }

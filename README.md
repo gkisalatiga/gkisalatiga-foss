@@ -120,6 +120,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Agenda: Add viewer of room borrowing schedules
 - [ ] Agenda: Add form to borrow room & differentiate regular from non-regular items
 - [ ] Migrate the JSON data that includes "agenda-ruangan"
+- [ ] Add "GKI Salatiga's 82nd Anniversary" logo to the splash screen
 
 ## C. Privacy Policy
 
