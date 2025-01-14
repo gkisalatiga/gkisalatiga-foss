@@ -14,6 +14,10 @@
 - Improved the outlook of the carousel page indicator
 - Updated the gallery banner
 
+:hammer_and_wrench: **FIX**
+
+- Fixed virtual keyboard overlapping forms content
+
 ## v0.6.2 2024.12.29 (37)
 
 :four_leaf_clover: **IMPROVEMENT**
