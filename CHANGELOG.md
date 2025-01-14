@@ -1,6 +1,6 @@
 # GKI Salatiga App Changelog
 
-## Next Release
+## v0.6.3 2025.01.15 (38)
 
 :star2: **NEW**
 
@@ -12,6 +12,7 @@
 :four_leaf_clover: **IMPROVEMENT**
 
 - Added non-hard-coded third party resources attribution
+- Added GKI Salatiga's 82th anniversary logo as a splash screen
 - Improved the outlook of the carousel page indicator
 - Updated the gallery banner
 

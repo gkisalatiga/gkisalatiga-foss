@@ -39,7 +39,6 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -65,6 +64,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -228,7 +228,8 @@ class ActivityLauncher : ComponentActivity() {
         // Handle the splash screen transition.
         // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
         // val splashScreen = installSplashScreen()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) installSplashScreen()
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) installSplashScreen()
+        if (false) installSplashScreen()
 
         // Handle notification permission.
         PermissionChecker(this@ActivityLauncher).checkNotificationPermission()
@@ -363,7 +364,8 @@ class ActivityLauncher : ComponentActivity() {
                         composable("init_screen", deepLinks = listOf(navDeepLink { uriPattern = "https://gkisalatiga.org" }, navDeepLink { uriPattern = "https://www.gkisalatiga.org" })) {
                             if (intent?.data == null) {
                                 /* Display the splash screen because no intent is passed for this session. */
-                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) initSplashScreen()
+                                // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) initSplashScreen()
+                                if (true) initSplashScreen()
                                 else initMainGraphic()
                                 // splashScreen.setKeepOnScreenCondition { false }
                             }
@@ -459,7 +461,7 @@ class ActivityLauncher : ComponentActivity() {
                     Logger.logInit({}, "Loading splash screen (legacy Android API) of the app ...")
                     LaunchedEffect(key1 = true) {
                         // Determines the duration of the splash screen.
-                        delay(500)
+                        delay(1500)
                         splashNavController.navigate("main_screen")
                     }
 
@@ -469,9 +471,10 @@ class ActivityLauncher : ComponentActivity() {
                         modifier = Modifier.fillMaxSize().background(DynamicColorScheme.DarkColorScheme().mainSplashScreenBackgroundColor)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.splash_screen_icon),
+                            painter = painterResource(id = R.drawable.splash_screen_icon_82),
                             contentDescription = "Splash screen logo",
-                            colorFilter = ColorFilter.tint(DynamicColorScheme.DarkColorScheme().mainSplashScreenForegroundColor)
+                            colorFilter = ColorFilter.tint(DynamicColorScheme.DarkColorScheme().mainSplashScreenForegroundColor),
+                            modifier = Modifier.scale(0.65f)
                         )
                     }
                 }

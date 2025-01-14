@@ -112,6 +112,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Migrate the JSON data source to `gkisalatiga/gkisplus-data-json` repository
 - [X] Add street address of GKI Salatiga
 - [ ] Add QRIS image save button
+- [ ] Gallery: fix export error on lower Android versions
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [X] Add non-open source, non-hard-coded third party resources attribution
 - [X] Fix bottom keyboard padding when typing in forms menu
@@ -121,7 +122,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Agenda: Add viewer of room borrowing schedules
 - [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items
 - [X] Migrate the JSON data that includes "agenda-ruangan"
-- [ ] Add "GKI Salatiga's 82nd Anniversary" logo to the splash screen
+- [X] Add "GKI Salatiga's 82nd Anniversary" logo to the splash screen
 
 ## C. Privacy Policy
 

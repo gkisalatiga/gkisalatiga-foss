@@ -44,7 +44,7 @@ class AppPreferences(private val ctx: Context) {
      */
     private val DEFAULT_PREFERENCE_KEY_VALUES: Map<PreferenceKeys, Any> = mapOf(
         PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_PERSISTENT_LOG_ENTRIES to 2592000000L.toLong(),  // --- 30 days.
-        PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES to ACTUAL_PREFERENCE_ITEM_VALUES[PreferenceSettingItem.PREF_VAL_PDF_REMOVE_DAY_14]!! as Long,
+        PreferenceKeys.PREF_KEY_KEEP_DAYS_OF_CACHED_PDF_FILES to ACTUAL_PREFERENCE_ITEM_VALUES[PreferenceSettingItem.PREF_VAL_PDF_REMOVE_ALWAYS]!! as Long,
         PreferenceKeys.PREF_KEY_KEEP_NUMBERS_OF_SEARCH_HISTORY to 100.toInt(),
         PreferenceKeys.PREF_KEY_OFFLINE_CHECK_FREQUENCY to 10000L.toLong(),  // --- 10 seconds.
         PreferenceKeys.PREF_KEY_PDF_RENDER_QUALITY_FACTOR to 2.toInt(),
