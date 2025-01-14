@@ -442,7 +442,7 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
             Image (
                 painter = painterResource(newTopBannerBackground),
                 contentDescription = "FragmentHome Top Bar Greetings Banner",
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
 

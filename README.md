@@ -115,10 +115,11 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Add non-open source, non-hard-coded third party resources attribution
 - [ ] Fix bottom keyboard padding when typing in forms menu
+- [X] Fix main image not filling the entire screen on larger screens
 - [X] Pukat Berkat: Hide the functionality until it is ready
 - [X] Pukat Berkat: change name to "Lapak Jemaat"
 - [X] Agenda: Add viewer of room borrowing schedules
-- [ ] Agenda: Add form to borrow room & differentiate regular from non-regular items
+- [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items
 - [X] Migrate the JSON data that includes "agenda-ruangan"
 - [ ] Add "GKI Salatiga's 82nd Anniversary" logo to the splash screen
 
