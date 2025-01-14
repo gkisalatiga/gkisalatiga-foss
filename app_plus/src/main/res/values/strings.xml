@@ -21,7 +21,7 @@
 
     <!-- Constant strings for screen titles. -->
     <string name="screenabout_title">Tentang</string>
-    <string name="screenattrib_title">Atribusi</string>
+    <string name="screenattrib_title">Atribusi Pihak Ketiga</string>
     <string name="screenprivacy_title">Kebijakan Privasi</string>
     <string name="screenbible_title">Alkitab</string>
     <string name="screenblank_title">Layar Sampel</string>
@@ -156,7 +156,7 @@
     <string name="screen_about_tentang_aplikasi">Tentang Aplikasi</string>
     <string name="screen_about_lisensi">Lisensi</string>
     <string name="screen_about_kebijakan_privasi">Kebijakan Privasi</string>
-    <string name="screen_about_atribusi_pihak_ketiga">Atribusi Sumber Terbuka</string>
+    <string name="screen_about_atribusi_pihak_ketiga">Atribusi Pihak Ketiga</string>
     <string name="screen_about_kode_sumber">Kode Sumber</string>
     <string name="screen_about_log_perubahan">Log Perubahan</string>
     <string name="screen_about_tentang_pengembang">Tentang Pengembang</string>
@@ -259,6 +259,11 @@
     <string name="screen_agenda_info_dialog_label_pic">PIC (Penanggung Jawab)</string>
     <string name="screen_agenda_info_dialog_label_notes">Catatan</string>
     <string name="screen_agenda_info_dialog_label_status">Status Proposal</string>
+
+    <!-- Applicable in ScreenAttribution. -->
+    <string name="screen_attrib_section_hardcoded">Kode</string>
+    <string name="screen_attrib_section_webview">WebView</string>
+    <string name="screen_attrib_section_books">Literatur</string>
 
     <!-- Applicable in FragmentInfo. -->
     <string name="fragment_info_social_media_web">Situs Web</string>

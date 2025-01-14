@@ -305,7 +305,9 @@ class ActivityLauncher : ComponentActivity() {
             FragmentServicesCompanion.rememberedScrollState = rememberScrollState()
             ScreenAboutCompanion.rememberedScrollState = rememberScrollState()
             ScreenAgendaCompanion.rememberedScrollState = rememberScrollState()
-            ScreenAttributionCompanion.rememberedScrollState = rememberScrollState()
+            ScreenAttributionCompanion.rememberedHardCodedScrollState = rememberScrollState()
+            ScreenAttributionCompanion.rememberedLiteratureScrollState = rememberScrollState()
+            ScreenAttributionCompanion.rememberedWebViewScrollState = rememberScrollState()
             ScreenContribCompanion.rememberedScrollState = rememberScrollState()
             ScreenDevCompanion.rememberedScrollState = rememberScrollState()
             ScreenFormsCompanion.rememberedScrollState = rememberScrollState()
@@ -337,6 +339,7 @@ class ActivityLauncher : ComponentActivity() {
             ))
 
             // Pre-assign pager states of non-main menus.
+            ScreenAttributionCompanion.attributionPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
             ScreenPukatBerkatCompanion.pukatBerkatPagerState = rememberPagerState ( pageCount = {3}, initialPage = 0 )
 
             // Prepare the pull-to-refresh (PTR) state globally.

@@ -11,6 +11,7 @@
 
 :four_leaf_clover: **IMPROVEMENT**
 
+- Added non-hard-coded third party resources attribution
 - Improved the outlook of the carousel page indicator
 - Updated the gallery banner
 

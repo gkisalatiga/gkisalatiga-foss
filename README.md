@@ -113,7 +113,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [X] Add street address of GKI Salatiga
 - [ ] Add QRIS image save button
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
-- [ ] Add non-open source, non-hard-coded third party resources attribution
+- [X] Add non-open source, non-hard-coded third party resources attribution
 - [X] Fix bottom keyboard padding when typing in forms menu
 - [X] Fix main image not filling the entire screen on larger screens
 - [X] Pukat Berkat: Hide the functionality until it is ready
