@@ -39,6 +39,7 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -229,7 +230,8 @@ class ActivityLauncher : ComponentActivity() {
         // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
         // val splashScreen = installSplashScreen()
         // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) installSplashScreen()
-        if (false) installSplashScreen()
+        val splashScreen = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) installSplashScreen() else null
+        // if (false) installSplashScreen()
 
         // Handle notification permission.
         PermissionChecker(this@ActivityLauncher).checkNotificationPermission()
@@ -365,9 +367,10 @@ class ActivityLauncher : ComponentActivity() {
                             if (intent?.data == null) {
                                 /* Display the splash screen because no intent is passed for this session. */
                                 // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) initSplashScreen()
-                                if (true) initSplashScreen()
-                                else initMainGraphic()
-                                // splashScreen.setKeepOnScreenCondition { false }
+                                // if (true) initSplashScreen()
+                                // else initMainGraphic()
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) splashScreen!!.setKeepOnScreenCondition { false }
+                                initSplashScreen()
                             }
                             else {
                                 handleDeepLink(intent, consumeAfterHandling = true); initMainGraphic()

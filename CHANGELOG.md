@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## v0.6.4 2025.01.15 (39)
+
+:hammer_and_wrench: **FIX**
+
+- Fixed default top bar not hidden on Android 12 and above
+
 ## v0.6.3 2025.01.15 (38)
 
 :star2: **NEW**
