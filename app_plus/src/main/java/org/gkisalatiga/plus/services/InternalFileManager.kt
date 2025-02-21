@@ -22,13 +22,22 @@ import java.io.File
  */
 class InternalFileManager (private val ctx: Context) {
     // The file creator to create the private file (as a downloaded file).
+    @Suppress("PropertyName")
+    val CONTENT_PROVIDER_FILE_CREATOR = File(ctx.filesDir, "provider")
     val DATA_DIR_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DATA_DIR, Context.MODE_PRIVATE)
     val PDF_POOL_PDF_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_POOL_DIR, Context.MODE_PRIVATE)
 
     // The string delimiter for encoding pdfAssociatedKey-pdfAbsolutePath pair as string.
     // (Chosen at random. DO NOT CHANGE IN FUTURE RELEASES!!!)
+    @Suppress("PrivatePropertyName")
     private val PDF_LIST_DELIMITER = "$$#^"
+    @Suppress("PrivatePropertyName")
     private val PDF_CONTENT_TUPLE_DELIMITER = ",,^,"
+
+    // The FileProvider authority name.
+    // (DO NOT CHANGE IN FUTURE RELEASES!!!)
+    @Suppress("PropertyName", "SpellCheckingInspection")
+    val FILE_PROVIDER_AUTHORITY = "org.gkisalatiga.plus.fileprovider"
 
     /**
      * Performs PDF cleaning-up.

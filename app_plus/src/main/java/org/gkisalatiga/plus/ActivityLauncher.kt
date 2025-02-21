@@ -583,6 +583,10 @@ class ActivityLauncher : ComponentActivity() {
      */
     private fun initData() {
 
+        // Preparing the file creator that provides shareable files.
+        val contentProviderFileCreator = InternalFileManager(this).CONTENT_PROVIDER_FILE_CREATOR
+        if (!contentProviderFileCreator.exists()) contentProviderFileCreator.mkdir()
+
         // The file creator to create the private file.
         val fileCreator = InternalFileManager(this).DATA_DIR_FILE_CREATOR
 
@@ -592,6 +596,9 @@ class ActivityLauncher : ComponentActivity() {
         ModulesCompanion.absolutePathToJSONFile = File(fileCreator, ModulesCompanion.savedFilename).absolutePath
         GalleryCompanion.absolutePathToJSONFile = File(fileCreator, GalleryCompanion.savedFilename).absolutePath
         StaticCompanion.absolutePathToJSONFile = File(fileCreator, StaticCompanion.savedFilename).absolutePath
+
+        // The QRIS location.
+        ScreenPersembahanCompanion.absolutePathToQrisFile = File(contentProviderFileCreator, ScreenPersembahanCompanion.savedFilename).absolutePath
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.

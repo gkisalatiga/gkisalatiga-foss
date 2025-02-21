@@ -108,21 +108,28 @@ Each UI class file should bear a global companion object, useful in passing data
 ### January 2025
 
 - [X] Reduced the amount of visible page dots indication in the main menu's carousel
-- [ ] Split among carousel types: poster, video, article
 - [X] Migrate the JSON data source to `gkisalatiga/gkisplus-data-json` repository
 - [X] Add street address of GKI Salatiga
-- [ ] Add QRIS image save button
-- [ ] Gallery: fix export error on lower Android versions
-- [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [X] Add non-open source, non-hard-coded third party resources attribution
 - [X] Fix bottom keyboard padding when typing in forms menu
 - [X] Fix main image not filling the entire screen on larger screens
 - [X] Pukat Berkat: Hide the functionality until it is ready
 - [X] Pukat Berkat: change name to "Lapak Jemaat"
 - [X] Agenda: Add viewer of room borrowing schedules
-- [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items
 - [X] Migrate the JSON data that includes "agenda-ruangan"
 - [X] Add "GKI Salatiga's 82nd Anniversary" logo to the splash screen
+
+### February 2025
+
+- [X] Add QRIS image save button
+- [ ] Add button to manually delete downloaded PDF file in Warta Jemaat & Tata Ibadahmenu
+- [ ] Add button to manually delete downloaded PDF file in E-Book menu
+- [ ] Gallery: fix export error on lower Android versions
+- [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
+- [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items
+- [ ] Main carousel: only display posters
+- [ ] Migrate video "carousel" content somewhere else
+- [ ] Migrate article "carousel" content somewhere else
 
 ## C. Privacy Policy
 

@@ -31,6 +31,18 @@
             </intent-filter>
         </receiver>
 
+        <!-- To save QRIS image. -->
+        <!-- SOURCE: https://developer.android.com/training/secure-file-sharing/setup-sharing -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="org.gkisalatiga.plus.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
         <!-- To save state upon orientation change, use "android:configChanges". -->
         <!-- SOURCE: https://developer.android.com/guide/topics/resources/runtime-changes -->
         <!-- SOURCE: https://stackoverflow.com/a/63746043 -->

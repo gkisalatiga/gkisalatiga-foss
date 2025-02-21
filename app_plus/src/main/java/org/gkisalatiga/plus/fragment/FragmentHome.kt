@@ -313,11 +313,9 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                     val color = if (carouselPagerState.currentPage % actualPageCount == iteration)
                         current.colors.fragmentHomeCarouselPageIndicatorActiveColor else current.colors.fragmentHomeCarouselPageIndicatorInactiveColor
                     val lineWeight = animateFloatAsState(
-                        targetValue = if (carouselPagerState.currentPage == iteration) {
-                            1.5f
-                        } else {
-                            if (iteration < carouselPagerState.currentPage) 0.5f else 1f
-                        }, label = "weight", animationSpec = tween(300, easing = EaseInOut)
+                        targetValue = if (carouselPagerState.currentPage % actualPageCount == iteration) 1.5f else 0.5f,
+                        label = "weight",
+                        animationSpec = tween(300, easing = EaseInOut)
                     )
                     Box(
                         modifier = Modifier

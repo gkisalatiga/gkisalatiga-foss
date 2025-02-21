@@ -1,5 +1,15 @@
 # GKI Salatiga App Changelog
 
+## v0.6.5 (Planned Release)
+
+:star2: **NEW**
+
+- Added button to share QRIS image
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- Improved the appearance of carousel page indicator
+
 ## v0.6.4 2025.01.15 (39)
 
 :hammer_and_wrench: **FIX**
