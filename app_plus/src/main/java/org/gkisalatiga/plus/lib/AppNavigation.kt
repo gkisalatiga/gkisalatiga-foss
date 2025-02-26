@@ -44,6 +44,13 @@ class AppNavigation : Application() {
         }
 
         /**
+         * This function recomposes the entire screen and composables in the app.
+         */
+        fun recomposeUi() {
+            mutableRecomposeCurrentScreen.value = !mutableRecomposeCurrentScreen.value
+        }
+
+        /**
          * Navigate forward to a given screen, removing any previous "forward" history.
          * @param route the screen's route ID to which the app will navigate.
          */

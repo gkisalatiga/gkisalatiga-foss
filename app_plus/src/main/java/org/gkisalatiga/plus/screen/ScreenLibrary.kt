@@ -19,6 +19,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,9 +30,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Update
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,12 +46,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,10 +75,43 @@ import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
 
 
 class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
+
+    @Composable
+    private fun getPdfDeleteDialog() {
+        if (ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value) {
+            AlertDialog(
+                onDismissRequest = { ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = false },
+                title = { Text(stringResource(R.string.pdf_action_delete_pdf_dialog_title)) },
+                text = {
+                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.pdf_action_delete_pdf_dialog_desc).replace("%%%TITLE%%%", ScreenLibraryCompanion.txtPdfTitleToDelete))
+                    }
+                },
+                confirmButton = {
+                    Row {
+                        Button(
+                            onClick = {
+                                InternalFileManager(current.ctx).deletePdf(ScreenLibraryCompanion.txtPdfUrlToDelete)
+                                ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = false
+                                AppNavigation.recomposeUi()
+                            }
+                        ) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_yes), color = Color.White)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Button(onClick = { ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = false }) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_no), color = Color.White)
+                        }
+                    }
+                }
+            )
+        }
+    }
 
     @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -90,6 +131,9 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
             }
 
         }
+
+        // Init. the dialog.
+        getPdfDeleteDialog()
 
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
@@ -253,6 +297,27 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
                                         )
                                     }
                                 }
+
+                                // The remove file button.
+                                if (isDownloaded) {
+                                    TextButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
+                                        ),
+                                        onClick = {
+                                            ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = true
+                                            ScreenLibraryCompanion.txtPdfTitleToDelete = title
+                                            ScreenLibraryCompanion.txtPdfUrlToDelete = url
+                                        }
+                                    ) {
+                                        Row (verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(Icons.Default.DeleteForever, "")
+                                            Spacer(Modifier.width(5.dp))
+                                            Text(stringResource(R.string.pdf_action_delete_pdf_btn).uppercase())
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -295,5 +360,10 @@ class ScreenLibraryCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* Whether to display the PDF delete confirmation dialog. */
+        var txtPdfTitleToDelete = ""
+        var txtPdfUrlToDelete = ""
+        val mutableShowPdfDeleteDialog = mutableStateOf(false)
     }
 }

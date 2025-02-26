@@ -122,8 +122,8 @@ Each UI class file should bear a global companion object, useful in passing data
 ### February 2025
 
 - [X] Add QRIS image save button
-- [ ] Add button to manually delete downloaded PDF file in Warta Jemaat & Tata Ibadahmenu
-- [ ] Add button to manually delete downloaded PDF file in E-Book menu
+- [X] Add button to manually delete downloaded PDF file in Warta Jemaat & Tata Ibadahmenu
+- [X] Add button to manually delete downloaded PDF file in E-Book menu
 - [ ] Gallery: fix export error on lower Android versions
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items

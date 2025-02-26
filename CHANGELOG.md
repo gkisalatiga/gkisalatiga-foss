@@ -5,6 +5,7 @@
 :star2: **NEW**
 
 - Added button to share QRIS image
+- Added the capability to manually remove downloaded PDF files
 
 :four_leaf_clover: **IMPROVEMENT**
 

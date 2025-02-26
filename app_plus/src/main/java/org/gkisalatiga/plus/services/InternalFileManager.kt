@@ -77,6 +77,28 @@ class InternalFileManager (private val ctx: Context) {
     }
 
     /**
+     * This function deletes individual PDF files from the internal PDF pool.
+     * @param url the source URL associated with a given PDF to be deleted.
+     */
+    fun deletePdf(url: String) {
+        val absolutePdfPath = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
+
+        // Actually deleting the PDF file.
+        File(absolutePdfPath).let { f -> if (f.exists()) f.delete() }
+
+        // Remove any reference to the PDF file in the LocalStorage.
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_ACCESS_MILLIS, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_LAST_DOWNLOAD_MILLIS, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_PDF_METADATA, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_MARKED_AS_FAVORITE, url)
+
+        // Log the removal message persistently.
+        PersistentLogger(ctx).write({}, "Manually removed PDF file: $url")
+    }
+
+    /**
      * (Primarily for use in ScreenPDFViewer.)
      * Enlists downloaded files and their local absolute path tuple in incremental manner.
      * The list will later be used to determine which PDF files to remove, to conserve space.

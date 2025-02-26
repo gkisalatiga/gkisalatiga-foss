@@ -73,7 +73,7 @@ class MainPTRCompanion : Application() {
                 isPTRRefreshing.value = false
 
                 // Update/recompose the UI.
-                AppNavigation.mutableRecomposeCurrentScreen.value = !AppNavigation.mutableRecomposeCurrentScreen.value
+                AppNavigation.recomposeUi()
             }
         }  // --- end of launchOnRefresh.
 

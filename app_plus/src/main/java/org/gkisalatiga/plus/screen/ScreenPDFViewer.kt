@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
@@ -41,6 +42,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -121,10 +123,228 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
     private var currentFilePdfRenderer: MutableState<PdfRenderer?> = mutableStateOf(null)
 
     @Composable
+    private fun getAlertErrorDialog() {
+        fun alertDialogDismiss() {
+            ScreenPDFViewerCompanion.mutableShowAlertDialog.value = false
+            AppNavigation.popBack()
+        }
+        val alertDialogTitle = stringResource(R.string.screen_pdfviewer_error_dialog_title)
+        val alertDialogBtnString = stringResource(R.string.screen_pdfviewer_error_dialog_btn_string)
+        if (ScreenPDFViewerCompanion.mutableShowAlertDialog.value) {
+            AlertDialog(
+                onDismissRequest = { alertDialogDismiss() },
+                title = { Text(alertDialogTitle) },
+                text = { Text(ScreenPDFViewerCompanion.txtAlertDialogSubtitle.value) },
+                confirmButton = {
+                    Button(onClick = { alertDialogDismiss() }) {
+                        Text(alertDialogBtnString, color = Color.White)
+                    }
+                }
+            )
+        }
+    }
+
+    @Composable
+    private fun getPdfDeleteDialog() {
+        if (ScreenPDFViewerCompanion.mutableShowPdfDeleteDialog.value) {
+            AlertDialog(
+                onDismissRequest = { ScreenPDFViewerCompanion.mutableShowPdfDeleteDialog.value = false; ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value = true },
+                title = { Text(stringResource(R.string.pdf_action_delete_pdf_dialog_title)) },
+                text = {
+                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.pdf_action_delete_pdf_dialog_desc).replace("%%%TITLE%%%", ScreenPDFViewerCompanion.eBookTitle))
+                    }
+                },
+                confirmButton = {
+                    Row {
+                        Button(
+                            onClick = {
+                                AppNavigation.popBack()
+                                InternalFileManager(current.ctx).deletePdf(ScreenPDFViewerCompanion.eBookUrl)
+                                ScreenPDFViewerCompanion.mutableShowPdfDeleteDialog.value = false
+                            }
+                        ) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_yes), color = Color.White)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Button(onClick = { ScreenPDFViewerCompanion.mutableShowPdfDeleteDialog.value = false; ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value = true }) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_no), color = Color.White)
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    @Composable
+    private fun getPdfDownloadDialog() {
+        fun loadingDialogDismiss() {
+            downloadWithProgressViewModel.cancelDownload()
+            ScreenPDFViewerCompanion.mutableShowLoadingDialog.value = false
+            AppNavigation.popBack()
+        }
+        val loadingDialogTitle = stringResource(R.string.screen_pdfviewer_loading_dialog_title)
+        val loadingDialogSubtitle = stringResource(R.string.screen_pdfviewer_loading_dialog_subtitle)
+            .replace("%%%", ScreenPDFViewerCompanion.eBookTitle)
+        val loadingDialogBtnString = stringResource(R.string.screen_pdfviewer_loading_dialog_btn_string)
+        if (ScreenPDFViewerCompanion.mutableShowLoadingDialog.value) {
+            AlertDialog(
+                onDismissRequest = { loadingDialogDismiss() },
+                title = { Text(loadingDialogTitle) },
+                text = {
+                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(loadingDialogSubtitle)
+                        Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                            LinearProgressIndicator(
+                                progress = { txtLoadingPercentageAnimatable.value },
+                                modifier = Modifier.fillMaxWidth().weight(5.0f),
+                            )
+                            Text("${ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue}%",
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1.0f),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { loadingDialogDismiss() }) {
+                        Text(loadingDialogBtnString, color = Color.White)
+                    }
+                }
+            )
+        }
+
+        // Animating the progress bar during downloads.
+        LaunchedEffect(key1 = ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue) {
+            val floatPercentage = ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue.toFloat() / 100
+            txtLoadingPercentageAnimatable.animateTo(targetValue = floatPercentage, animationSpec = tween(durationMillis = 75, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
+        }
+    }
+
+    @Composable
+    private fun getPdfNavigatorDialog() {
+        val minimumPdfPage = 1
+        val maximumPdfPage = mutablePdfUiTotalPageCount.intValue
+        val pageStringLocalized = stringResource(R.string.screen_pdfviewer_nav_page_string)
+        val navigatorDialogTitle = stringResource(R.string.screen_pdfviewer_nav_title)
+        if (ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value) {
+            AlertDialog(
+                onDismissRequest = {
+                    ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = false
+                },
+                title = { Text(navigatorDialogTitle) },
+                text = {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value,
+                        onValueChange = {
+                            val inputStr = it.replace(".", "").replace(",", "").replace(" ", "").replace("-", "")
+                            if (inputStr.isNotBlank() && inputStr.isNotEmpty() && inputStr != "") {
+                                if (inputStr.toInt() < minimumPdfPage) ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = minimumPdfPage.toString()
+                                else if (inputStr.toInt() > maximumPdfPage) ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = maximumPdfPage.toString()
+                                else ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = inputStr
+                            } else {
+                                ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = inputStr
+                            }
+                        },
+                        label = { Text("$pageStringLocalized 1-$maximumPdfPage") },
+                        enabled = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        val inputStr = ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value
+                        if (inputStr.isNotBlank() && inputStr.isNotEmpty() && inputStr != "") {
+                            current.scope.launch { rememberedViewerPagerState!!.animateScrollToPage(inputStr.toInt() - 1) }
+                            ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = false
+                        }
+                    }) { Text("OK", color = Color.White) }
+                }
+            )
+        }
+    }
+
+    @Composable
+    private fun getInfoDialog() {
+        val infoDialogTitle = stringResource(R.string.screen_pdfviewer_info_dialog_title)
+        val infoDialogContentNameDocTitle = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_title)
+        val infoDialogContentNameDocAuthor = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_author)
+        val infoDialogContentNameDocPublisher = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_publisher)
+        val infoDialogContentNameDocPublisherLoc = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_publisher_loc)
+        val infoDialogContentNameDocYear = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_year)
+        val infoDialogContentNameDocSource = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_source)
+        val infoDialogContentNameDocLocalPath = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_local_path)
+        val infoDialogContentNameDocSize = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_size)
+        if (ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value) {
+            AlertDialog(
+                onDismissRequest = {
+                    ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value = false
+                },
+                title = { Text(infoDialogTitle) },
+                text = {
+                    Column (Modifier.fillMaxWidth().height(400.dp).verticalScroll(rememberScrollState())) {
+                        Text(infoDialogContentNameDocTitle, fontWeight = FontWeight.Bold)
+                        Text(ScreenPDFViewerCompanion.eBookTitle)
+                        Spacer(Modifier.fillMaxWidth().height(5.dp))
+
+                        Text(infoDialogContentNameDocAuthor, fontWeight = FontWeight.Bold)
+                        Text(ScreenPDFViewerCompanion.eBookAuthor)
+                        Spacer(Modifier.fillMaxWidth().height(5.dp))
+
+                        Text(infoDialogContentNameDocPublisher, fontWeight = FontWeight.Bold)
+                        Text(ScreenPDFViewerCompanion.eBookPublisher)
+                        Spacer(Modifier.fillMaxWidth().height(5.dp))
+
+                        Text(infoDialogContentNameDocPublisherLoc, fontWeight = FontWeight.Bold)
+                        Text(ScreenPDFViewerCompanion.eBookPublisherLoc)
+                        Spacer(Modifier.fillMaxWidth().height(5.dp))
+
+                        Text(infoDialogContentNameDocYear, fontWeight = FontWeight.Bold)
+                        Text(ScreenPDFViewerCompanion.eBookYear)
+                        Spacer(Modifier.fillMaxWidth().height(5.dp))
+
+                        Text(infoDialogContentNameDocSource, fontWeight = FontWeight.Bold)
+                        Text(buildAnnotatedString {
+                            withLink(
+                                LinkAnnotation.Url(ScreenPDFViewerCompanion.eBookSource, TextLinkStyles(style = SpanStyle(color = Color.Blue)))
+                            ) { append(ScreenPDFViewerCompanion.eBookSource) }
+                        })
+                        Spacer(Modifier.fillMaxWidth().height(5.dp))
+
+                        if (GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO) {
+                            val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, eBookUrl) as String
+                            Text(infoDialogContentNameDocLocalPath, fontWeight = FontWeight.Bold)
+                            Text(pdfLocalPath)
+                            Spacer(Modifier.fillMaxWidth().height(5.dp))
+                        }
+
+                        Text(infoDialogContentNameDocSize, fontWeight = FontWeight.Bold)
+                        Text(ScreenPDFViewerCompanion.eBookSize)
+                        Spacer(Modifier.fillMaxWidth().height(5.dp))
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { ScreenPDFViewerCompanion.mutableShowPdfDeleteDialog.value = true; ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value = false }) {
+                        Row (verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.DeleteForever, "", tint = Color.White)
+                            Spacer(Modifier.width(5.dp))
+                            Text(stringResource(R.string.screen_pdfviewer_info_dialog_delete_btn).uppercase(), color = Color.White)
+                        }
+                    }
+                    Button(onClick = { ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value = false }) {
+                        Text(stringResource(R.string.screen_pdfviewer_info_dialog_ok_btn).uppercase(), color = Color.White)
+                    }
+                }
+            )
+        }
+    }
+
+    @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val scope = rememberCoroutineScope()
-
         Box (Modifier.fillMaxSize()) {
             // Let the top and bottom bars be below the scrim.
             Scaffold (topBar = { getTopBar() }) {
@@ -138,183 +358,25 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
             }
 
             // Show some error alert dialogs.
-            fun alertDialogDismiss() {
-                ScreenPDFViewerCompanion.mutableShowAlertDialog.value = false
-                AppNavigation.popBack()
-            }
-            val alertDialogTitle = stringResource(R.string.screen_pdfviewer_error_dialog_title)
-            val alertDialogBtnString = stringResource(R.string.screen_pdfviewer_error_dialog_btn_string)
-            if (ScreenPDFViewerCompanion.mutableShowAlertDialog.value) {
-                AlertDialog(
-                    onDismissRequest = { alertDialogDismiss() },
-                    title = { Text(alertDialogTitle) },
-                    text = { Text(ScreenPDFViewerCompanion.txtAlertDialogSubtitle.value) },
-                    confirmButton = {
-                        Button(onClick = { alertDialogDismiss() }) {
-                            Text(alertDialogBtnString, color = Color.White)
-                        }
-                    }
-                )
-            }
+            getAlertErrorDialog()
 
             // Show some dialogs displayed during downloads/loadings.
-            fun loadingDialogDismiss() {
-                downloadWithProgressViewModel.cancelDownload()
-                ScreenPDFViewerCompanion.mutableShowLoadingDialog.value = false
-                AppNavigation.popBack()
-            }
-            val loadingDialogTitle = stringResource(R.string.screen_pdfviewer_loading_dialog_title)
-            val loadingDialogSubtitle = stringResource(R.string.screen_pdfviewer_loading_dialog_subtitle)
-                .replace("%%%", ScreenPDFViewerCompanion.eBookTitle)
-            val loadingDialogBtnString = stringResource(R.string.screen_pdfviewer_loading_dialog_btn_string)
-            if (ScreenPDFViewerCompanion.mutableShowLoadingDialog.value) {
-                AlertDialog(
-                    onDismissRequest = { loadingDialogDismiss() },
-                    title = { Text(loadingDialogTitle) },
-                    text = {
-                        Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(loadingDialogSubtitle)
-                            Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                                LinearProgressIndicator(
-                                    progress = { txtLoadingPercentageAnimatable.value },
-                                    modifier = Modifier.fillMaxWidth().weight(5.0f),
-                                )
-                                Text("${ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue}%",
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(1.0f),
-                                    textAlign = TextAlign.Center,
-                                )
-                            }
-                        }
-                    },
-                    confirmButton = {
-                        Button(onClick = { loadingDialogDismiss() }) {
-                            Text(loadingDialogBtnString, color = Color.White)
-                        }
-                    }
-                )
-            }
-
-            // Animating the progress bar during downloads.
-            LaunchedEffect(key1 = ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue) {
-                val floatPercentage = ScreenPDFViewerCompanion.mutablePdfDownloadPercentage.intValue.toFloat() / 100
-                txtLoadingPercentageAnimatable.animateTo(targetValue = floatPercentage, animationSpec = tween(durationMillis = 75, easing = { FastOutSlowInEasing.transform(it) /*OvershootInterpolator(2f).getInterpolation(it)*/ }))
-            }
+            getPdfDownloadDialog()
 
             // Show the PDF information dialog.
-            val infoDialogTitle = stringResource(R.string.screen_pdfviewer_info_dialog_title)
-            val infoDialogContentNameDocTitle = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_title)
-            val infoDialogContentNameDocAuthor = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_author)
-            val infoDialogContentNameDocPublisher = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_publisher)
-            val infoDialogContentNameDocPublisherLoc = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_publisher_loc)
-            val infoDialogContentNameDocYear = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_year)
-            val infoDialogContentNameDocSource = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_source)
-            val infoDialogContentNameDocLocalPath = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_local_path)
-            val infoDialogContentNameDocSize = stringResource(R.string.screen_pdfviewer_info_dialog_content_name_doc_size)
-            if (ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value) {
-                AlertDialog(
-                    onDismissRequest = {
-                        ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value = false
-                    },
-                    title = { Text(infoDialogTitle) },
-                    text = {
-                        Column (Modifier.fillMaxWidth().height(400.dp).verticalScroll(rememberScrollState())) {
-                            Text(infoDialogContentNameDocTitle, fontWeight = FontWeight.Bold)
-                            Text(ScreenPDFViewerCompanion.eBookTitle)
-                            Spacer(Modifier.fillMaxWidth().height(5.dp))
-
-                            Text(infoDialogContentNameDocAuthor, fontWeight = FontWeight.Bold)
-                            Text(ScreenPDFViewerCompanion.eBookAuthor)
-                            Spacer(Modifier.fillMaxWidth().height(5.dp))
-
-                            Text(infoDialogContentNameDocPublisher, fontWeight = FontWeight.Bold)
-                            Text(ScreenPDFViewerCompanion.eBookPublisher)
-                            Spacer(Modifier.fillMaxWidth().height(5.dp))
-
-                            Text(infoDialogContentNameDocPublisherLoc, fontWeight = FontWeight.Bold)
-                            Text(ScreenPDFViewerCompanion.eBookPublisherLoc)
-                            Spacer(Modifier.fillMaxWidth().height(5.dp))
-
-                            Text(infoDialogContentNameDocYear, fontWeight = FontWeight.Bold)
-                            Text(ScreenPDFViewerCompanion.eBookYear)
-                            Spacer(Modifier.fillMaxWidth().height(5.dp))
-
-                            Text(infoDialogContentNameDocSource, fontWeight = FontWeight.Bold)
-                            Text(buildAnnotatedString {
-                                withLink(
-                                    LinkAnnotation.Url(ScreenPDFViewerCompanion.eBookSource, TextLinkStyles(style = SpanStyle(color = Color.Blue)))
-                                ) { append(ScreenPDFViewerCompanion.eBookSource) }
-                            })
-                            Spacer(Modifier.fillMaxWidth().height(5.dp))
-
-                            if (GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO) {
-                                val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, eBookUrl) as String
-                                Text(infoDialogContentNameDocLocalPath, fontWeight = FontWeight.Bold)
-                                Text(pdfLocalPath)
-                                Spacer(Modifier.fillMaxWidth().height(5.dp))
-                            }
-
-                            Text(infoDialogContentNameDocSize, fontWeight = FontWeight.Bold)
-                            Text(ScreenPDFViewerCompanion.eBookSize)
-                            Spacer(Modifier.fillMaxWidth().height(5.dp))
-                        }
-                    },
-                    confirmButton = {
-                        Button(onClick = { ScreenPDFViewerCompanion.mutableShowPdfInfoDialog.value = false }) {
-                            Text("OK", color = Color.White)
-                        }
-                    }
-                )
-            }
+            getInfoDialog()
 
             // Show the PDF page navigator dialog.
-            val minimumPdfPage = 1
-            val maximumPdfPage = mutablePdfUiTotalPageCount.intValue
-            val pageStringLocalized = stringResource(R.string.screen_pdfviewer_nav_page_string)
-            val navigatorDialogTitle = stringResource(R.string.screen_pdfviewer_nav_title)
-            if (ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value) {
-                AlertDialog(
-                    onDismissRequest = {
-                        ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = false
-                    },
-                    title = { Text(navigatorDialogTitle) },
-                    text = {
-                        OutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value,
-                            onValueChange = {
-                                val inputStr = it.replace(".", "").replace(",", "").replace(" ", "").replace("-", "")
-                                if (inputStr.isNotBlank() && inputStr.isNotEmpty() && inputStr != "") {
-                                    if (inputStr.toInt() < minimumPdfPage) ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = minimumPdfPage.toString()
-                                    else if (inputStr.toInt() > maximumPdfPage) ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = maximumPdfPage.toString()
-                                    else ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = inputStr
-                                } else {
-                                    ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value = inputStr
-                                }
-                            },
-                            label = { Text("$pageStringLocalized 1-$maximumPdfPage") },
-                            enabled = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            singleLine = true
-                        )
-                    },
-                    confirmButton = {
-                        Button(onClick = {
-                            val inputStr = ScreenPDFViewerCompanion.mutableCurrentFieldPageNumberValue.value
-                            if (inputStr.isNotBlank() && inputStr.isNotEmpty() && inputStr != "") {
-                                scope.launch { rememberedViewerPagerState!!.animateScrollToPage(inputStr.toInt() - 1) }
-                                ScreenPDFViewerCompanion.mutableShowPdfNavigatorDialog.value = false
-                            }
-                        }) { Text("OK", color = Color.White) }
-                    }
-                )
-            }
+            getPdfNavigatorDialog()
+
+            // Init. the PDF deletion dialog.
+            getPdfDeleteDialog()
 
         }
 
         // Scroll the horizontal navigator to the respective position when the pager is scrolled against.
         LaunchedEffect(mutablePdfUiCurrentPage.intValue) {
-            scope.launch {
+            current.scope.launch {
                 navigatorLazyListState!!.animateScrollToItem(rememberedViewerPagerState!!.currentPage)
             }
         }
@@ -568,6 +630,7 @@ class ScreenPDFViewerCompanion : Application() {
         /* Displaying alert messages. */
         internal val mutableShowAlertDialog = mutableStateOf(false)
         internal val mutableShowLoadingDialog = mutableStateOf(false)
+        internal val mutableShowPdfDeleteDialog = mutableStateOf(false)
         internal val txtAlertDialogSubtitle = mutableStateOf("")
         internal val txtLoadingPercentageAnimatable = Animatable(0.0f)
 

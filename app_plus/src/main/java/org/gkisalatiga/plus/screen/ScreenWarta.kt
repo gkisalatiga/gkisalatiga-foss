@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +31,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,16 +46,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.pullToRefresh
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -76,12 +84,45 @@ import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
 
 class ScreenWarta (private val current : ActivityData) : ComponentActivity() {
 
     // The snackbar host state.
     private val snackbarHostState = OfflineSnackbarHostCompanion.snackbarHostState
+
+    @Composable
+    private fun getPdfDeleteDialog() {
+        if (ScreenWartaCompanion.mutableShowPdfDeleteDialog.value) {
+            AlertDialog(
+                onDismissRequest = { ScreenWartaCompanion.mutableShowPdfDeleteDialog.value = false },
+                title = { Text(stringResource(R.string.pdf_action_delete_pdf_dialog_title)) },
+                text = {
+                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.pdf_action_delete_pdf_dialog_desc).replace("%%%TITLE%%%", ScreenWartaCompanion.txtPdfTitleToDelete))
+                    }
+                },
+                confirmButton = {
+                    Row {
+                        Button(
+                            onClick = {
+                                InternalFileManager(current.ctx).deletePdf(ScreenWartaCompanion.txtPdfUrlToDelete)
+                                ScreenWartaCompanion.mutableShowPdfDeleteDialog.value = false
+                                AppNavigation.recomposeUi()
+                            }
+                        ) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_yes), color = Color.White)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Button(onClick = { ScreenWartaCompanion.mutableShowPdfDeleteDialog.value = false }) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_no), color = Color.White)
+                        }
+                    }
+                }
+            )
+        }
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -102,6 +143,9 @@ class ScreenWarta (private val current : ActivityData) : ComponentActivity() {
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
                 getMainContent()
             }
+
+            // Init. the dialog.
+            getPdfDeleteDialog()
 
             // Check whether we are connected to the internet.
             // Then notify user about this.
@@ -271,6 +315,27 @@ class ScreenWarta (private val current : ActivityData) : ComponentActivity() {
                                         )
                                     }
                                 }
+
+                                // The remove file button.
+                                if (isDownloaded) {
+                                    TextButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
+                                        ),
+                                        onClick = {
+                                            ScreenWartaCompanion.mutableShowPdfDeleteDialog.value = true
+                                            ScreenWartaCompanion.txtPdfTitleToDelete = title
+                                            ScreenWartaCompanion.txtPdfUrlToDelete = url
+                                        }
+                                    ) {
+                                        Row (verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(Icons.Default.DeleteForever, "")
+                                            Spacer(Modifier.width(5.dp))
+                                            Text(stringResource(R.string.pdf_action_delete_pdf_btn).uppercase())
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -311,5 +376,10 @@ class ScreenWartaCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* Whether to display the PDF delete confirmation dialog. */
+        var txtPdfTitleToDelete = ""
+        var txtPdfUrlToDelete = ""
+        val mutableShowPdfDeleteDialog = mutableStateOf(false)
     }
 }
