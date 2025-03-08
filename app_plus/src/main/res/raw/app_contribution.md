@@ -10,9 +10,11 @@ May the heavenly Father bless all your lives!
 - Budi Santoso
 - Tunggul L. A. Dewanto
 
-### Lead Developer & Programmer
+### Developers
 
-- Samarthya Lykamanuella
+- Nadya M. Angkawijaya (iOS)
+- Samarthya Lykamanuella (Android)
+- William J. Handoko (iOS)
 
 ### Co-Developers
 
@@ -23,7 +25,7 @@ May the heavenly Father bless all your lives!
 
 - Alfina G. Y. Christy
 
-### Pre-Release Testers
+### Pre-Release Testers (Android)
 
 - Bambang Setiadhy
 - Bayu Octariyanto
@@ -42,9 +44,11 @@ May the heavenly Father bless all your lives!
 - Evelina Purnama
 - Gita Hastuti
 - Gita K. Dewi
+- Helen R. Manurung
 - Hendra Aribowo
 - Jack E. Parsaoran
 - Joaquim P. Agung
+- Joe E. M. Sau
 - Johnson U. Radda
 - Joshua A. Gracia
 - Lusiana Nurhayati
@@ -62,10 +66,11 @@ May the heavenly Father bless all your lives!
 - Wurjayanti
 - Yosua C. H. Kuncoro
 
-### Pre-Release Supporters
+### Pre-Release Testers (iPhone)
 
+- Adriel P. Adi
+- Alexandra M. Feodora
 - Amatya K. Paramasatya
 - Desemy C. N. Ballo
-- Helen R. Manurung
-- Joe E. M. Sau
-- William Handoko
+- Nadya M. Angkawijaya
+- William J. Handoko
