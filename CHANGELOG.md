@@ -10,6 +10,7 @@
 :four_leaf_clover: **IMPROVEMENT**
 
 - Improved the appearance of carousel page indicator
+- Improved the carousel poster viewer so that the user can now swipe left/right to display the next poster image
 
 ## v0.6.4 2025.01.15 (39)
 

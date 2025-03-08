@@ -127,9 +127,10 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Gallery: fix export error on lower Android versions
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items
-- [ ] Main carousel: only display posters
+- [X] Main carousel: only display posters
 - [ ] Migrate video "carousel" content somewhere else
 - [ ] Migrate article "carousel" content somewhere else
+- [ ] Add seasonal special menu (e.g. Christmas, Easter, etc.)
 
 ## C. Privacy Policy
 

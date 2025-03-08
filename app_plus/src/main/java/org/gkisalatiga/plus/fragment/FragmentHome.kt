@@ -30,26 +30,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -78,10 +72,9 @@ import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
-import org.gkisalatiga.plus.screen.ScreenInternalHTMLCompanion
-import org.gkisalatiga.plus.screen.ScreenPosterViewerCompanion
+import org.gkisalatiga.plus.screen.ScreenPosterViewerLegacyCompanion
 import org.gkisalatiga.plus.screen.ScreenWebViewCompanion
-import org.gkisalatiga.plus.screen.ScreenYKBListCompanion
+import org.json.JSONObject
 import kotlin.math.ceil
 
 class FragmentHome (private val current : ActivityData) : ComponentActivity() {
@@ -186,8 +179,16 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             R.drawable.menu_cover_liturgi
         )
 
+        /* Enlist the carousels. */
+        val allCarousels = mutableListOf<JSONObject>()
+        MainCompanion.jsonRoot!!.getJSONArray("carousel").let { for (i in 0 until it.length()) allCarousels.add(it.getJSONObject(i)) }
+        FragmentHomeCompanion.filteredCarouselPostersList = allCarousels.filter { jO -> jO.getString("type") == "poster" }
+
+        /* Filter out non-poster carousels. */
+        val filteredCarousels = FragmentHomeCompanion.filteredCarouselPostersList!!
+
         // Get the number of carousel banners.
-        val actualPageCount = MainCompanion.jsonRoot!!.getJSONArray("carousel").length()
+        val actualPageCount = filteredCarousels.size
 
         // Retrieving the global state.
         val carouselPagerState = FragmentHomeCompanion.rememberedCarouselPagerState!!
@@ -233,12 +234,15 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                 /* Create the horizontal pager "carousel" */
                 HorizontalPager(
                     state = carouselPagerState,
-                    beyondViewportPageCount = 5,
+                    beyondViewportPageCount = 7,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     // Navigate to the current iteration's JSON node.
                     // val currentNode = GlobalCompanion.carouselJSONObject[it % actualPageCount]
-                    val currentNode = MainCompanion.jsonRoot!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
+                    // val currentNode = MainCompanion.jsonRoot!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
+                    // ---
+                    // Only show poster carousels.
+                    val currentNode = filteredCarousels[it % actualPageCount]
 
                     /* Display the carousel banner image. */
                     Surface (
@@ -246,7 +250,8 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                         modifier = Modifier.padding(current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
                         onClick = {
                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
-
+                            AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
+                            /* TODO: Remove this deprecated block after a major release.
                             // Get the type of the current carousel banner.
                             val currentType = currentNode.getString("type")
 
@@ -262,9 +267,9 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                                     AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
                                 }
                                 "poster" -> {
-                                    ScreenPosterViewerCompanion.posterViewerTitle = currentNode.getString("title")
-                                    ScreenPosterViewerCompanion.posterViewerCaption = currentNode.getString("poster-caption")
-                                    ScreenPosterViewerCompanion.posterViewerImageSource = currentNode.getString("poster-image")
+                                    ScreenPosterViewerLegacyCompanion.posterViewerTitle = currentNode.getString("title")
+                                    ScreenPosterViewerLegacyCompanion.posterViewerCaption = currentNode.getString("poster-caption")
+                                    ScreenPosterViewerLegacyCompanion.posterViewerImageSource = currentNode.getString("poster-image")
                                     AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
                                 }
                                 "yt" -> {
@@ -287,7 +292,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                                     )
                                     AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
                                 }
-                            }
+                            }*/
                         }
                     ) {
                         AsyncImage(
@@ -506,5 +511,8 @@ class FragmentHomeCompanion : Application() {
 
         /* The carousel's remembered pager state. */
         var rememberedCarouselPagerState: PagerState? = null
+
+        /* The list of filtered carousel images. */
+        var filteredCarouselPostersList: List<JSONObject>? = mutableListOf()
     }
 }

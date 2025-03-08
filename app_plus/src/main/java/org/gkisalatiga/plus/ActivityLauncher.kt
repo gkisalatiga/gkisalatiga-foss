@@ -148,6 +148,7 @@ import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion
 import org.gkisalatiga.plus.screen.ScreenPersembahan
 import org.gkisalatiga.plus.screen.ScreenPersembahanCompanion
 import org.gkisalatiga.plus.screen.ScreenPosterViewer
+import org.gkisalatiga.plus.screen.ScreenPosterViewerLegacy
 import org.gkisalatiga.plus.screen.ScreenPrivacy
 import org.gkisalatiga.plus.screen.ScreenPrivacyCompanion
 import org.gkisalatiga.plus.screen.ScreenPukatBerkat
@@ -533,6 +534,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_PDF_VIEWER.name) { ScreenPDFViewer(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PERSEMBAHAN.name) { ScreenPersembahan(current).getComposable() }
             composable(NavigationRoutes.SCREEN_POSTER_VIEWER.name) { ScreenPosterViewer(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_POSTER_VIEWER_LEGACY.name) { ScreenPosterViewerLegacy(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat(current).getComposable()}
             composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(current).getComposable()}

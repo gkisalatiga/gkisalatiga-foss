@@ -82,9 +82,6 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
     // The coroutine scope.
     private lateinit var scope: CoroutineScope
 
-    // The screen title.
-    private var currentScreenTopBarTitle = mutableStateOf("")
-
     // The calulated top padding.
     private var calculatedTopPadding = 0.dp
     private var calculatedBottomPadding = 0.dp
@@ -230,9 +227,6 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
             // The image URL.
             val imageURL = StringFormatter.getGoogleDriveThumbnail(id, 600)
 
-            // Set the screen's title.
-            currentScreenTopBarTitle.value = name
-
             // Displaying the zoomable image view.
             val zoomState = rememberZoomState()
             AsyncImage(
@@ -257,7 +251,7 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
     private fun getTopBar() {
 
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        val topBarTitle = currentScreenTopBarTitle.value
+        val topBarTitle = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage).getString("name")
 
         Column(
             modifier = Modifier.fillMaxWidth()

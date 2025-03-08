@@ -225,12 +225,12 @@ class ScreenPukatBerkat (private val current : ActivityData) : ComponentActivity
                         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                         // Set the PosterViewer parameters.
-                        ScreenPosterViewerCompanion.posterViewerTitle = title
-                        ScreenPosterViewerCompanion.posterViewerCaption = desc
-                        ScreenPosterViewerCompanion.posterViewerImageSource = thumbnailImage
+                        ScreenPosterViewerLegacyCompanion.posterViewerTitle = title
+                        ScreenPosterViewerLegacyCompanion.posterViewerCaption = desc
+                        ScreenPosterViewerLegacyCompanion.posterViewerImageSource = thumbnailImage
 
                         // Navigate to the screen.
-                        AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER_LEGACY)
                     },
                     modifier = Modifier.padding(bottom = 10.dp)
                 ) {
