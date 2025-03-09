@@ -4,8 +4,7 @@
  * Written by Samarthya Lykamanuella (github.com/groaking)
  *
  * ---
- * Display a composable "web view" and load a custom HTML body.
- * Only those HTML contents stored in the JSON schema's "data/static" node can be displayed.
+ * Display a multiple poster viewer that can be swiped left and right.
  */
 
 package org.gkisalatiga.plus.screen
@@ -73,6 +72,9 @@ import org.gkisalatiga.plus.fragment.FragmentHomeCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.StringFormatter
 
+/**
+ * TODO: Remove all references to "ScreenGaleriView" (use Ctrl+F).
+ */
 class ScreenPosterViewer (private val current : ActivityData) : ComponentActivity() {
 
     // The pager state.

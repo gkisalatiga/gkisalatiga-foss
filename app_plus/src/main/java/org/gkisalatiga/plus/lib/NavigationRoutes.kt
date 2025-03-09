@@ -39,6 +39,7 @@ enum class NavigationRoutes {
     SCREEN_PROFILE,
     SCREEN_PUKAT_BERKAT,
     SCREEN_SEARCH,
+    SCREEN_SEASONAL,
     SCREEN_SETTINGS,
     SCREEN_STATIC_CONTENT_LIST,
     SCREEN_VIDEO,
@@ -65,6 +66,11 @@ enum class NavigationRoutes {
     FRAG_PROFILE_CHURCH,
     FRAG_PROFILE_MINISTRY,
     FRAG_PROFILE_PASTOR,
+    FRAG_SEASONAL_AGENDA,
+    FRAG_SEASONAL_BOOK,
+    FRAG_SEASONAL_GALLERY,
+    FRAG_SEASONAL_MAIN,
+    FRAG_SEASONAL_TWIBBON,
 
     /* The following definitions define "sub-menus" that are part of a given fragment. */
     SUB_BLANK,

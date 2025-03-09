@@ -133,6 +133,8 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Add seasonal special menu (e.g. Christmas, Easter, etc.)
 - [ ] Improve the gallery and QRIS downloader to add the progress bar
 - [ ] Improve the poster viewer to add a share button
+- [ ] Overwrite hardcoded fallback JSON files with the new schema
+- [ ] Establish the built-in twibbon maker in the seasonal menu
 
 ## C. Privacy Policy
 

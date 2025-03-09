@@ -66,6 +66,7 @@ import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.MainCompanion
+import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors
@@ -329,6 +330,29 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                             .background(color)
                             .weight(lineWeight.value)
                             .height(4.dp)
+                    )
+                }
+            }
+
+            Spacer(Modifier.fillMaxWidth().height(10.dp))
+
+            // The seasonal JSON node.
+            val seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+
+            // Displaying the seasonal menu button.
+            if (appFlags.getInt("is_feature_seasonal_shown") == 1) {
+                Surface(
+                    shape = RoundedCornerShape(15.dp),
+                    modifier = Modifier.padding(horizontal = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).padding(top = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(4.0f),
+                    onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SEASONAL) }
+                ) {
+                    AsyncImage(
+                        model = seasonalData.getString("banner-front"),
+                        contentDescription = "Seasonal main/front banner",
+                        error = painterResource(R.drawable.thumbnail_error_notext),
+                        placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
                 }
             }

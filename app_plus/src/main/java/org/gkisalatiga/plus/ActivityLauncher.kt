@@ -155,6 +155,8 @@ import org.gkisalatiga.plus.screen.ScreenPukatBerkat
 import org.gkisalatiga.plus.screen.ScreenPukatBerkatCompanion
 import org.gkisalatiga.plus.screen.ScreenSearch
 import org.gkisalatiga.plus.screen.ScreenSearchCompanion
+import org.gkisalatiga.plus.screen.ScreenSeasonal
+import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 import org.gkisalatiga.plus.screen.ScreenSettings
 import org.gkisalatiga.plus.screen.ScreenSettingsCompanion
 import org.gkisalatiga.plus.screen.ScreenStaticContentList
@@ -328,6 +330,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenPukatBerkatCompanion.rememberedScrollStateGoods = rememberScrollState()
             ScreenPukatBerkatCompanion.rememberedScrollStateService = rememberScrollState()
             ScreenSearchCompanion.rememberedLazyListState = rememberLazyListState()
+            ScreenSeasonalCompanion.rememberedScrollState = rememberScrollState()
             ScreenSettingsCompanion.rememberedScrollState = rememberScrollState()
             ScreenStaticContentListCompanion.rememberedScrollState = rememberScrollState()
             ScreenWartaCompanion.rememberedScrollState = rememberScrollState()
@@ -538,6 +541,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_PRIVACY.name) { ScreenPrivacy(current).getComposable() }
             composable(NavigationRoutes.SCREEN_PUKAT_BERKAT.name) {ScreenPukatBerkat(current).getComposable()}
             composable(NavigationRoutes.SCREEN_SEARCH.name) {ScreenSearch(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_SEASONAL.name) {ScreenSeasonal(current).getComposable()}
             composable(NavigationRoutes.SCREEN_SETTINGS.name) {ScreenSettings(current).getComposable()}
             composable(NavigationRoutes.SCREEN_STATIC_CONTENT_LIST.name) { ScreenStaticContentList(current).getComposable() }
             composable(NavigationRoutes.SCREEN_VIDEO_LIST.name) { ScreenVideoList(current).getComposable() }
