@@ -189,7 +189,7 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
             enumeratedLibraryList.removeAt(0)
 
             /* Composing each entry. */
-            enumeratedLibraryList.forEach {
+            enumeratedLibraryList.filter { (it["is_shown"] as String).toInt() == 1 }.forEach {
 
                 // Preparing the arguments.
                 val title = it["title"] as String

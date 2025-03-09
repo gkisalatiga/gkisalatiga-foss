@@ -1,6 +1,16 @@
 # GKI Salatiga App Changelog
 
-## v0.6.5 (Planned Release)
+## v0.7.0 (Planned Release)
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Added flag mechanism to hide/show e-book entries in the library menu
+
+## v0.6.5 2025.03.09 (40)
+
+:hammer_and_wrench: **FIX**
+
+- This update has no build
 
 :star2: **NEW**
 
