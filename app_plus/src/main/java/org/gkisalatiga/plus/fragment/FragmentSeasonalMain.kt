@@ -37,23 +37,27 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 
 class FragmentSeasonalMain (private val current : ActivityData) : ComponentActivity() {
 
+    // The root seasonal node.
+    private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+
     private val itemTargetTitle = listOf(
-        "extract. AGENDA",
-        "extract. BOOK",
-        "extract. GALERI",
-        "extract. TWIB",
+        seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("title"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("books").getString("title"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getString("title"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("twibbon").getString("title"),
     )
 
     private val itemTargetBannerUrl = listOf(
-        "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/refs/heads/main/images-carousel/carousel_warta_beasiswa_diakonia.webp",
-        "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/refs/heads/main/images-carousel/carousel_warta_beasiswa_diakonia.webp",
-        "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/refs/heads/main/images-carousel/carousel_warta_beasiswa_diakonia.webp",
-        "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data/refs/heads/main/images-carousel/carousel_warta_beasiswa_diakonia.webp",
+        seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("banner"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("books").getString("banner"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getString("banner"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("twibbon").getString("banner"),
     )
 
     private val itemTargetFragments = listOf(
@@ -63,75 +67,83 @@ class FragmentSeasonalMain (private val current : ActivityData) : ComponentActiv
         NavigationRoutes.FRAG_SEASONAL_TWIBBON,
     )
 
+    private val itemTargetIsShown = listOf(
+        seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getInt("is_shown"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("books").getInt("is_shown"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getInt("is_shown"),
+        seasonalNode.getJSONObject("static-menu").getJSONObject("twibbon").getInt("is_shown"),
+    )
+
     @Composable
     fun getComposable() {
 
         /* Display the individual "church info" card. */
-        Column ( modifier = Modifier.padding(top = 10.dp) ) {
+        Column ( modifier = Modifier.fillMaxSize() ) {
             itemTargetTitle.forEachIndexed { idx, _ ->
+                // Respect visibility flag state.
+                if (itemTargetIsShown[idx] == 1) {
+                    // The card title, thumbnail, etc.
+                    var bannerURL = itemTargetBannerUrl[idx]
+                    val title = itemTargetTitle[idx]
 
-                // The card title, thumbnail, etc.
-                var bannerURL = itemTargetBannerUrl[idx]
-                val title = itemTargetTitle[idx]
+                    // For some reason, coil cannot render non-HTTPS images.
+                    if (bannerURL.startsWith("http://")) bannerURL = bannerURL.replaceFirst("http://", "https://")
 
-                // For some reason, coil cannot render non-HTTPS images.
-                if (bannerURL.startsWith("http://")) bannerURL = bannerURL.replaceFirst("http://", "https://")
+                    Card(
+                        onClick = { ScreenSeasonalCompanion.mutableLastPage.value = itemTargetFragments[idx] },
+                        modifier = Modifier.padding(bottom = 10.dp).aspectRatio(2.4f).fillMaxWidth()
+                    ) {
 
-                Card(
-                    onClick = { ScreenSeasonalCompanion.mutableLastPage.value = itemTargetFragments[idx] },
-                    modifier = Modifier.padding(bottom = 10.dp).aspectRatio(2.4f).fillMaxWidth()
-                ) {
-
-                    // Displaying the text-overlaid image.
-                    Box {
-                        /* The background featured image. */
-                        // SOURCE: https://developer.android.com/develop/ui/compose/graphics/images/customize
-                        // ---
-                        val contrast = 1.1f  // --- 0f..10f (1 should be default)
-                        val brightness = 0.0f  // --- -255f..255f (0 should be default)
-                        AsyncImage(
-                            model = bannerURL,
-                            contentDescription = "Profile page: $title",
-                            error = painterResource(R.drawable.thumbnail_error_notext),
-                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
-                            modifier = Modifier.fillMaxWidth(),
-                            contentScale = ContentScale.Crop,
-                            colorFilter = ColorFilter.colorMatrix(ColorMatrix(
-                                floatArrayOf(
-                                    contrast, 0f, 0f, 0f, brightness,
-                                    0f, contrast, 0f, 0f, brightness,
-                                    0f, 0f, contrast, 0f, brightness,
-                                    0f, 0f, 0f, 1f, 0f
-                                )
-                            ))
-                        )
-
-                        /* Add shadow-y overlay background so that the white text becomes more visible. */
-                        // SOURCE: https://developer.android.com/develop/ui/compose/graphics/draw/brush
-                        // SOURCE: https://stackoverflow.com/a/60479489
-                        Box (
-                            modifier = Modifier
-                                // Color pattern: 0xAARRGGBB (where "AA" is the alpha value).
-                                .background(Color(0x40fda308))
-                                .matchParentSize()
-                        )
-
-                        /* The card description label. */
-                        Column (horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxSize()) {
-                            Text(
-                                text = title,
-                                fontSize = 22.sp,
-                                color = Color.White,
-                                modifier = Modifier.padding(start = 20.dp).padding(bottom = 20.dp),
-                                style = TextStyle(
-                                    shadow = Shadow(Color.Black, Offset(3.0f, 3.0f), 8.0f)
-                                )
+                        // Displaying the text-overlaid image.
+                        Box {
+                            /* The background featured image. */
+                            // SOURCE: https://developer.android.com/develop/ui/compose/graphics/images/customize
+                            // ---
+                            val contrast = 1.1f  // --- 0f..10f (1 should be default)
+                            val brightness = 0.0f  // --- -255f..255f (0 should be default)
+                            AsyncImage(
+                                model = bannerURL,
+                                contentDescription = "Profile page: $title",
+                                error = painterResource(R.drawable.thumbnail_error_notext),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                                modifier = Modifier.fillMaxWidth(),
+                                contentScale = ContentScale.Crop,
+                                colorFilter = ColorFilter.colorMatrix(ColorMatrix(
+                                    floatArrayOf(
+                                        contrast, 0f, 0f, 0f, brightness,
+                                        0f, contrast, 0f, 0f, brightness,
+                                        0f, 0f, contrast, 0f, brightness,
+                                        0f, 0f, 0f, 1f, 0f
+                                    )
+                                ))
                             )
-                        }
-                    }  // --- end of box.
 
-                }
-            }
+                            /* Add shadow-y overlay background so that the white text becomes more visible. */
+                            // SOURCE: https://developer.android.com/develop/ui/compose/graphics/draw/brush
+                            // SOURCE: https://stackoverflow.com/a/60479489
+                            Box (
+                                modifier = Modifier
+                                    // Color pattern: 0xAARRGGBB (where "AA" is the alpha value).
+                                    .background(Color(0x40fda308))
+                                    .matchParentSize()
+                            )
+
+                            /* The card description label. */
+                            Column (horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxSize()) {
+                                Text(
+                                    text = title,
+                                    fontSize = 22.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(start = 20.dp).padding(bottom = 20.dp),
+                                    style = TextStyle(
+                                        shadow = Shadow(Color.Black, Offset(3.0f, 3.0f), 8.0f)
+                                    )
+                                )
+                            }
+                        }  // --- end of box.
+                    }  // --- end of card.
+                }  // --- end if.
+            }  // --- end of forEachIndexed {}.
         }  // --- end of church info card/column.
     }
 

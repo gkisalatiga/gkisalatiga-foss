@@ -136,6 +136,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Overwrite hardcoded fallback JSON files with the new schema
 - [ ] Establish the built-in twibbon maker in the seasonal menu
 - [ ] Add bail-out mechanism for when the v0.6.5 (or above) app finds local/offline JSON files that are not yet updated
+- [ ] Add JSON flag support to enable/disable the Easter egg from remote (and to bypass this mechanism on debug)
 
 ## C. Privacy Policy
 

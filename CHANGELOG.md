@@ -4,6 +4,7 @@
 
 :four_leaf_clover: **IMPROVEMENT**
 
+- (Back-End) Added flag mechanism to hide/show seasonal menu entries
 - (Back-End) Added flag mechanism to hide/show e-book entries in the library menu
 
 ## v0.6.5 2025.03.09 (40)
