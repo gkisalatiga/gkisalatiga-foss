@@ -1,6 +1,6 @@
 # GKI Salatiga App Changelog
 
-## v0.7.0 (Planned Release)
+## v0.7.0 (Planned Release) (41)
 
 :four_leaf_clover: **IMPROVEMENT**
 

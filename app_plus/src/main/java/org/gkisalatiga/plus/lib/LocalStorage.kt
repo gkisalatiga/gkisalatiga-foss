@@ -173,6 +173,7 @@ class LocalStorageCompanion : Application () {
  */
 enum class LocalStorageKeys {
     /* Generic key that does not require additional custom key. */
+    LOCAL_KEY_LAST_APP_VERSION_CODE,  // --- this was introduced in v0.7.0 (41).
     LOCAL_KEY_LAST_OPENED_PDF_CACHES,
     LOCAL_KEY_LAST_STATIC_DATA_UPDATE,
     LOCAL_KEY_LAST_CAROUSEL_BANNER_UPDATE,

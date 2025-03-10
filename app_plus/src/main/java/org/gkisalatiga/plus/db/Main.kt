@@ -143,12 +143,12 @@ class Main(private val ctx: Context) {
 
 class MainCompanion : Application() {
     companion object {
-        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/data/gkisplus-main.min.json"
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2.1/data/gkisplus-main.min.json"
 
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-main-v2.json"
+        val savedFilename = "gkisplus-data-main.json"
 
         /* The JSON object that will be accessed by screens. */
         var jsonRoot: JSONObject? = null

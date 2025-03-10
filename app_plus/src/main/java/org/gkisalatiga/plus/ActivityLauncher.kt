@@ -38,6 +38,7 @@ import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -184,6 +185,15 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 class ActivityLauncher : ComponentActivity() {
 
+    // Declaring the classes.
+    private lateinit var appLocalStorage: LocalStorage
+    private lateinit var appPreferences: AppPreferences
+
+    // Declaring the variables.
+    private lateinit var pInfo: PackageInfo
+    private lateinit var vName: String
+    private var vCode: Int = Int.MIN_VALUE
+
     override fun onPause() {
         super.onPause()
         GlobalCompanion.isRunningInBackground.value = true
@@ -245,6 +255,15 @@ class ActivityLauncher : ComponentActivity() {
         // Keep the splash screen visible for this Activity.
         // splashScreen.setKeepOnScreenCondition { true }
 
+        // Instantiating the lateinit variables.
+        appLocalStorage = LocalStorage(this)
+        appPreferences = AppPreferences(this)
+
+        // Instantiating the lateinit variables.
+        pInfo = this.packageManager.getPackageInfo(this.packageName, 0)
+        vName = pInfo.versionName
+        vCode = pInfo.versionCode
+
         // Initializes the app's internally saved preferences.
         initPreferencesAndLocalStorage()
 
@@ -290,7 +309,7 @@ class ActivityLauncher : ComponentActivity() {
         setContent {
 
             // Check for dark mode UI state.
-            val prefDarkMode = AppPreferences(this@ActivityLauncher).getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String
+            val prefDarkMode = appPreferences.getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String
             val isDarkMode = (isSystemInDarkTheme() && prefDarkMode == "system") || prefDarkMode == "dark"
             GlobalCompanion.isDarkModeUi.value = isDarkMode
 
@@ -435,10 +454,6 @@ class ActivityLauncher : ComponentActivity() {
      * and pass it to the GlobalCompanion so that other functions can use them.
      */
     private fun initPreferencesAndLocalStorage() {
-        // Instantiating the classes.
-        val appLocalStorage = LocalStorage(this)
-        val appPreferences = AppPreferences(this)
-
         // Initializes the default/fallback preferences and launch value if this is a first launch.
         if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) <= 0) {
             appPreferences.initDefaultPreferences()
@@ -588,7 +603,6 @@ class ActivityLauncher : ComponentActivity() {
      * This function does not need to become a composable function since it requires no UI.
      */
     private fun initData() {
-
         // Preparing the file creator that provides shareable files.
         val contentProviderFileCreator = InternalFileManager(this).CONTENT_PROVIDER_FILE_CREATOR
         if (!contentProviderFileCreator.exists()) contentProviderFileCreator.mkdir()
@@ -608,7 +622,8 @@ class ActivityLauncher : ComponentActivity() {
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.
-        val launches = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
+        val launches = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
+        val lastAppVersion = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, LocalStorageDataTypes.INT) as Int
 
         // Get fallback data only if first launch.
         if (launches == 1) {
@@ -627,13 +642,26 @@ class ActivityLauncher : ComponentActivity() {
             // Loading the fallback static data.
             Logger.logInit({}, "Loading the fallback modules JSON file ...")
             Modules(this).initFallbackModulesData()
-
         } else {
-            Logger.logInit({}, "This is not first launch. Loading the locally downloaded JSON files ...")
-            Main(this).initLocalMainData()
-            Gallery(this).initLocalGalleryData()
-            Static(this).initLocalStaticData()
-            Modules(this).initLocalModulesData()
+            // Migration to v0.7.0 (41).
+            if (lastAppVersion <= 40) {
+                // The word "Davey" is an Android developer team's internal joke referring to "Dave Burke" (Android vice president?).
+                // It is not intended for general use, but I (github.com/groaking) saw this as a joke.
+                // I'll use the word "Davey" here anyway.
+                // SOURCE: https://stackoverflow.com/a/60675966
+                Logger.logInit({}, "Did not expect to have JSON files lower than v2.1, Davey! Falling back to bundled JSON files ...")
+                appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, vCode, LocalStorageDataTypes.INT)
+                Main(this).initFallbackMainData()
+                Gallery(this).initFallbackGalleryData()
+                Static(this).initFallbackStaticData()
+                Modules(this).initFallbackModulesData()
+            } else {
+                Logger.logInit({}, "This is not first launch. Loading the locally downloaded JSON files ...")
+                Main(this).initLocalMainData()
+                Gallery(this).initLocalGalleryData()
+                Static(this).initLocalStaticData()
+                Modules(this).initLocalModulesData()
+            }
         }
 
         // At last, update the data to the latest whenever possible.
