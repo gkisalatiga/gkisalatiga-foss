@@ -297,6 +297,7 @@
     <string name="screen_dev_local_storage_title">LocalStorage</string>
     <string name="screen_dev_app_preferences_title">AppPreferences</string>
     <string name="screen_dev_persistent_logger_title">PersistentLogger</string>
+    <string name="screen_dev_main_json_backend_title">JSON Backend Read-out</string>
     <string name="screen_dev_debug_flags_title">Debugging Flags</string>
     <string name="screen_dev_trigger_all_notifs">Picu Semua Notifikasi</string>
     <string name="screen_dev_trigger_minutely_work_manager">Picu WorkManager Menitan</string>
@@ -304,5 +305,5 @@
     <string name="screen_dev_lock_dev_menu_change">Kunci Menu Pengembang</string>
     <string name="screen_dev_welcome_developer">Selamat datang di menu pengembang!</string>
     <string name="screen_dev_title">Menu Pengembang</string>
-    <string name="screen_dev_desc">Anda tidak seharusnya berada di sini.</string>
+    <string name="screen_dev_desc">Anda tidak seharusnya berada di sini. \uD83D\uDDFF</string>
 </resources>

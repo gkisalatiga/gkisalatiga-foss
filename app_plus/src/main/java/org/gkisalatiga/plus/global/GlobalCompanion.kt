@@ -23,19 +23,6 @@ class GlobalCompanion : Application() {
     companion object {
 
         /* ------------------------------------------------------------------------------------ */
-        /* App-wide pre-defined values and URLs. */
-        const val ABOUT_CONTACT_MAIL = "dev.gkisalatiga@gmail.com"
-        const val APP_CHANGELOG_URL = "https://github.com/gkisalatiga/gkisalatiga-foss/blob/main/CHANGELOG.md"
-        const val APP_SOURCE_CODE_URL = "https://github.com/gkisalatiga/gkisalatiga-foss"
-        const val APP_GOOGLE_PLAY_LISTING = "https://play.google.com/store/apps/details?id=org.gkisalatiga.plus"
-
-        /* ------------------------------------------------------------------------------------ */
-        /* Debugging toggles that can be set before app builds. */
-
-        // Whether to enable the easter egg feature of the app and display it to the user.
-        const val ENABLE_EASTER_EGG = true
-
-        /* ------------------------------------------------------------------------------------ */
         /* Debugging toggles that must be activated by enabling the developer mode. */
 
         // Whether to display the debugger's toast.

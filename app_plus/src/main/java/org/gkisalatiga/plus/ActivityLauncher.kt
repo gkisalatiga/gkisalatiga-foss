@@ -267,6 +267,15 @@ class ActivityLauncher : ComponentActivity() {
         // Initializes the app's internally saved preferences.
         initPreferencesAndLocalStorage()
 
+        // Unlocks the dev menu if the app is debuggable.
+        val isDevModeUnlocked = LocalStorage(this@ActivityLauncher).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
+        if (this@ActivityLauncher.packageName.endsWith(".debug") && !isDevModeUnlocked) {
+            // Unlocks the dev menu.
+            PersistentLogger(this@ActivityLauncher).write({}, "The developer menu has been unlocked!")
+            LocalStorage(this@ActivityLauncher).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
+            EnableDevMode.activateDebugToggles()
+        }
+
         // Start the connection (online/offline) checker.
         ConnectionChecker(this).execute()
 
@@ -294,6 +303,10 @@ class ActivityLauncher : ComponentActivity() {
 
         // Retrieving the latest JSON metadata.
         initData()
+
+        // Update the last app version code used.
+        // Must be done after data initialization in initData().
+        appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, vCode, LocalStorageDataTypes.INT)
 
         // Creating the notification channels.
         initNotificationChannel()
@@ -650,7 +663,6 @@ class ActivityLauncher : ComponentActivity() {
                 // I'll use the word "Davey" here anyway.
                 // SOURCE: https://stackoverflow.com/a/60675966
                 Logger.logInit({}, "Did not expect to have JSON files lower than v2.1, Davey! Falling back to bundled JSON files ...")
-                appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, vCode, LocalStorageDataTypes.INT)
                 Main(this).initFallbackMainData()
                 Gallery(this).initFallbackGalleryData()
                 Static(this).initFallbackStaticData()

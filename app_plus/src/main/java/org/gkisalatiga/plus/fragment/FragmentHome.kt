@@ -485,7 +485,8 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                     stringResource(R.string.subtext_update_latest)
             Card(
                 onClick = {
-                    current.uriHandler.openUri(GlobalCompanion.APP_GOOGLE_PLAY_LISTING)
+                    val url = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings").getString("about_google_play_listing_url")
+                    current.uriHandler.openUri(url)
                 },
                 enabled = isAppUpdateAvailable,
                 modifier = Modifier.padding(bottom = 10.dp)

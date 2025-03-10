@@ -69,6 +69,7 @@ import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors.Companion.MAIN_DARK_BROWN_COLOR
@@ -94,20 +95,30 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
     // The local context.
     private val ctx = current.ctx
 
+    // The main JSON root -> backend -> strings node.
+    private val mainRoot = MainCompanion.jsonRoot!!
+    private val mainBackendFlags = mainRoot.getJSONObject("backend").getJSONObject("flags")
+    private val mainBackendStrings = mainRoot.getJSONObject("backend").getJSONObject("strings")
+
+    // Obtain the app's essential information.
+    // SOURCE: https://stackoverflow.com/a/6593822
+    private val pInfo: PackageInfo = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
+    private val vName = pInfo.versionName
+
+    // Get app name.
+    // SOURCE: https://stackoverflow.com/a/15114434
+    private val applicationInfo: ApplicationInfo = ctx.applicationInfo
+    private val stringId = applicationInfo.labelRes
+    private val appName = if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else ctx.getString(stringId)
+
+    // Whether to allow trigger of the Easter egg.
+    private val isEasterEggTriggerable = mainBackendFlags.getInt("is_easter_egg_devmode_enabled")
+    private val isDebuggablePackage = current.ctx.packageName.endsWith(".debug")
+    private val isDevModeUnlocked = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
+
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-
-        // Obtain the app's essential information.
-        // SOURCE: https://stackoverflow.com/a/6593822
-        val pInfo: PackageInfo = ctx.packageManager.getPackageInfo(ctx.packageName, 0)
-        val vName = pInfo.versionName
-
-        // Get app name.
-        // SOURCE: https://stackoverflow.com/a/15114434
-        val applicationInfo: ApplicationInfo = ctx.applicationInfo
-        val stringId = applicationInfo.labelRes
-        val appName = if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else ctx.getString(stringId)
 
         // Init the app's main desc.
         if (appMainDescription.value.isBlank()) appMainDescription.value = stringResource(R.string.app_description)
@@ -123,60 +134,29 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
                 modifier = Modifier
                     .padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding())
                     .fillMaxSize()
-                    .verticalScroll(scrollState)) {
-                /* Show app logo, name, and version. */
-                val welcomeDevText = stringResource(R.string.screen_dev_welcome_developer)
+                    .verticalScroll(scrollState)
+            ) {
+                // Show app logo.
+                // Also displays the Easter egg trigger button, if enabled.
                 Box (Modifier.padding(vertical = 15.dp).padding(top = 10.dp)) {
-                    Surface (
-                        shape = CircleShape,
-                        modifier = Modifier.size(100.dp),
-                        onClick = {
-                            /* You know what this is. */
-                            if (GlobalCompanion.ENABLE_EASTER_EGG) {
-
-                                // If we have unlocked the developer menu before, just go in directly.
-                                if (LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean) {
-                                    Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
-                                    AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
-                                } else {
-                                    // Otherwise, ensure that the user (developer) has to click N-times before opening the dev menu.
-                                    // This will unlock the developer menu.
-                                    if (easterEggFirstClick + easterEggTimeout > System.currentTimeMillis()) {
-                                        /* Opens the easter egg. */
-                                        if (easterEggCurrentClicks >= easterEggMinClicks) {
-                                            easterEggCurrentClicks = 0
-
-                                            // Unlocks the dev menu.
-                                            PersistentLogger(ctx).write({}, "The developer menu has been unlocked!")
-                                            LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
-                                            EnableDevMode.activateDebugToggles()
-
-                                            // Navigate to the dev menu.
-                                            Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
-                                            AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
-                                        } else {
-                                            easterEggCurrentClicks += 1
-                                        }
-                                    } else {
-                                        easterEggCurrentClicks = 0
-                                    }
-
-                                    // Detecting the first time this button was clicked.
-                                    if (easterEggCurrentClicks == 0) {
-                                        Toast.makeText(ctx, "\uD83D\uDC23", Toast.LENGTH_SHORT).show()
-                                        easterEggFirstClick = System.currentTimeMillis()
-                                    }
-                                }
-
-                            }
-                        }
-                    ) {
+                    @Composable
+                    fun boxOfEasterEggButton() {
                         Box {
                             Box(Modifier.background(MAIN_DARK_BROWN_COLOR, shape = CircleShape).fillMaxSize())
                             Image(painterResource(R.mipmap.ic_launcher_foreground), "",
                                 modifier = Modifier.fillMaxSize().scale(1.2f),
                                 contentScale = ContentScale.Crop
                             )
+                        }
+                    }
+
+                    if (isEasterEggTriggerable == 1 || isDebuggablePackage) {
+                        Surface (shape = CircleShape, modifier = Modifier.size(100.dp), onClick = handleEasterEggButton()) {
+                            boxOfEasterEggButton()
+                        }
+                    } else {
+                        Surface (shape = CircleShape, modifier = Modifier.size(100.dp)) {
+                            boxOfEasterEggButton()
                         }
                     }
                 }
@@ -260,7 +240,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
             val sourceCodeText = stringResource(R.string.screen_about_kode_sumber)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { current.uriHandler.openUri(GlobalCompanion.APP_SOURCE_CODE_URL) }
+                onClick = { current.uriHandler.openUri(mainBackendStrings.getString("about_source_code_url")) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Code, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -273,7 +253,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
             val changelogText = stringResource(R.string.screen_about_log_perubahan)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { current.uriHandler.openUri(GlobalCompanion.APP_CHANGELOG_URL) }
+                onClick = { current.uriHandler.openUri(mainBackendStrings.getString("about_changelog_url")) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.History, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -317,7 +297,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
                     // SOURCE: https://www.tutorialspoint.com/android/android_sending_email.htm
                     // SOURCE: https://stackoverflow.com/a/59365539
                     val emailIntent = Intent(Intent.ACTION_SENDTO)
-                    emailIntent.setData(Uri.parse("mailto:${GlobalCompanion.ABOUT_CONTACT_MAIL}"))
+                    emailIntent.setData(Uri.parse("mailto:${mainBackendStrings.getString("about_contact_mail")}"))
                     current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
                 }
             ) {
@@ -357,6 +337,47 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
         )
     }
 
+    /**
+     * This function handles when the user clicks on the Easter egg-triggering button.
+     */
+    private fun handleEasterEggButton(): () -> Unit {
+        val welcomeDevText = ctx.getString(R.string.screen_dev_welcome_developer)
+        return {
+            // If we have unlocked the developer menu before, just go in directly.
+            if (isDevModeUnlocked) {
+                Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
+                AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
+            } else {
+                // Otherwise, ensure that the user (developer) has to click N-times before opening the dev menu.
+                // This will unlock the developer menu.
+                if (easterEggFirstClick + easterEggTimeout > System.currentTimeMillis()) {
+                    /* Opens the easter egg. */
+                    if (easterEggCurrentClicks >= easterEggMinClicks) {
+                        easterEggCurrentClicks = 0
+
+                        // Unlocks the dev menu.
+                        PersistentLogger(ctx).write({}, "The developer menu has been unlocked!")
+                        LocalStorage(ctx).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
+                        EnableDevMode.activateDebugToggles()
+
+                        // Navigate to the dev menu.
+                        Toast.makeText(ctx, welcomeDevText, Toast.LENGTH_SHORT).show()
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_DEV)
+                    } else {
+                        easterEggCurrentClicks += 1
+                    }
+                } else {
+                    easterEggCurrentClicks = 0
+                }
+
+                // Detecting the first time this button was clicked.
+                if (easterEggCurrentClicks == 0) {
+                    Toast.makeText(ctx, "\uD83D\uDC23", Toast.LENGTH_SHORT).show()
+                    easterEggFirstClick = System.currentTimeMillis()
+                }
+            }
+        }
+    }
 }
 
 class ScreenAboutCompanion : Application() {

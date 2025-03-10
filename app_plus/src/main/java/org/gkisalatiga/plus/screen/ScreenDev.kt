@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
@@ -81,6 +82,10 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
 
     private val ctx = current.ctx
 
+    // The main JSON root -> backend node.
+    private val mainRoot = MainCompanion.jsonRoot!!
+    private val mainRootBackend = mainRoot.getJSONObject("backend")
+
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
@@ -96,6 +101,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
         val applicationInfo: ApplicationInfo = ctx.applicationInfo
         val stringId = applicationInfo.labelRes
         val appName = if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else ctx.getString(stringId)
+        val appPackageName = current.ctx.packageName
 
         // Init the texts.
         val screenTitle = stringResource(R.string.screen_dev_title)
@@ -130,6 +136,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 // Displaying the text contents.
                 Text(screenTitle, fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Text("$appName $vName $vCode", fontSize = 18.sp)
+                Text(appPackageName, fontSize = 18.sp)
                 Spacer(Modifier.height(20.dp))
                 Text(screenDescription, modifier = Modifier.padding(horizontal = 20.dp), textAlign = TextAlign.Center)
                 Spacer(Modifier.height(20.dp))
@@ -260,7 +267,6 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
 
             // The list of all debug flags.
             val debugFlags : Map<String, Boolean> = mapOf(
-                "DEBUG_ENABLE_EASTER_EGG" to GlobalCompanion.ENABLE_EASTER_EGG,
                 "DEBUG_ENABLE_TOAST" to GlobalCompanion.DEBUG_ENABLE_TOAST,
                 "DEBUG_ENABLE_LOG_CAT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT,
                 "DEBUG_ENABLE_LOG_CAT_BOOT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT,
@@ -284,6 +290,25 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
             debugFlags.entries.sortedBy { it.key }.forEach {
                 Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
                 Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+            }
+
+            val appJsonBackendText = stringResource(R.string.screen_dev_main_json_backend_title)
+            Spacer(Modifier.height(10.dp))
+            Text(appJsonBackendText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(10.dp))
+
+            /* Displaying the read-out of the JSON backend flags, strings, etc. */
+            mainRootBackend.getJSONObject("flags").let {
+                it.keys().forEach { key ->
+                    Text("flags ::: $key", fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
+                    Text(it.getInt(key).toString(), fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                }
+            }
+            mainRootBackend.getJSONObject("strings").let {
+                it.keys().forEach { key ->
+                    Text("strings ::: $key", fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
+                    Text(it.getString(key), fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                }
             }
 
             val appPersistText = stringResource(R.string.screen_dev_persistent_logger_title)
