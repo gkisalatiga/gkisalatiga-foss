@@ -151,7 +151,7 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
                                 modifier = Modifier.fillMaxSize().weight(2f),
                                 contentScale = ContentScale.Crop
                             )
-                            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(horizontal = 10.dp).weight(7.5f))
+                            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(horizontal = 10.dp).weight(7.5f), maxLines = 2, overflow = TextOverflow.Ellipsis)
                         }
                     }  // --- end of card.
                 }  // --- end of forEach.

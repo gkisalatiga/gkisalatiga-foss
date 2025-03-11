@@ -2,6 +2,11 @@
 
 ## v0.7.0 (Planned Release) (41)
 
+:star2: **NEW**
+
+- Added the seasonal menu feature: guide book
+- Added the seasonal menu feature: gallery album
+
 :four_leaf_clover: **IMPROVEMENT**
 
 - (Back-End) Added flag mechanism to hide/show seasonal menu entries

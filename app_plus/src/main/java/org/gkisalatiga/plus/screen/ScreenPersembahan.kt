@@ -317,7 +317,8 @@ class ScreenPersembahanCompanion : Application() {
 
         /* The QRIS location of the image in the phone's storage. */
         var absolutePathToQrisFile: String = String()
-        val savedFilename = "QRIS GKI Salatiga.png"  // --- allows space and uppercase letters in the file name because it is the most user-friendly file export naming.
+        @Suppress("ConstPropertyName")
+        const val savedFilename = "QRIS_GKI_Salatiga.png"  // --- allows space and uppercase letters in the file name because it is the most user-friendly file export naming.
 
         /* Downloading the QRIS image and save/share it outside the app. */
         fun shareQrisImage(ctx: Context) {

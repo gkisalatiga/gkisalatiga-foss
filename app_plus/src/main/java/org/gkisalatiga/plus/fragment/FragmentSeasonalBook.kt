@@ -10,16 +10,270 @@
 
 package org.gkisalatiga.plus.fragment
 
+import android.app.Application
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Update
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.db.ModulesCompanion
+import org.gkisalatiga.plus.global.GlobalCompanion
+import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
+import org.gkisalatiga.plus.lib.NavigationRoutes
+import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion
+import org.gkisalatiga.plus.services.InternalFileManager
+import org.json.JSONObject
 
 class FragmentSeasonalBook (private val current : ActivityData) : ComponentActivity() {
 
+    // The root seasonal node.
+    private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+
     @Composable
     fun getComposable() {
-        Text("Testing Buku Panduan")
+        getPdfDeleteDialog()
+
+        // Enumerate the list of e-books that correspond to the seasonal tag.
+        val seasonalBookTag = ModulesCompanion.jsonRoot!!
+            .getJSONObject("seasonal")
+            .getJSONObject("static-menu")
+            .getJSONObject("books")
+            .getString("selection-tag")
+        val filteredBookList = mutableListOf<JSONObject>()
+        ModulesCompanion.jsonRoot!!.getJSONArray("library").let {
+            for (i in 0 until it.length()) {
+                it.getJSONObject(i).let { o -> if (o.getJSONArray("tags").join(",").contains(seasonalBookTag)) filteredBookList.add(o) }
+            }
+        }
+
+        Column {
+            // Display the main title.
+            val mainTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("books").getString("title")
+            Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                Text(mainTitle, modifier = Modifier, fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+            }
+
+            Spacer(Modifier.height(20.dp))
+
+            filteredBookList.filter { it.getInt("is_shown") == 1 }.forEach {
+                // Preparing the arguments.
+                val title = it.getString("title")
+                val author = it.getString("author")
+                val publisher = it.getString("publisher")
+                val publisherLoc = it.getString("publisher-loc")
+                val year = it.getString("year")
+                val thumbnail = it.getString("thumbnail")
+                val url = it.getString("download-url")
+                val source = it.getString("source")
+                val size = it.getString("size")
+
+                // Whether this PDF has been downloaded.
+                val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
+
+                // Displaying the individual card.
+                Card(
+                    onClick = {
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+
+                        // Navigate to the PDF viewer.
+                        ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)
+                    },
+                    modifier = Modifier.padding(bottom = 10.dp)
+                ) {
+                    Column ( modifier = Modifier.fillMaxWidth().padding(8.dp), verticalArrangement = Arrangement.Center ) {
+                        Row {
+                            // The first post thumbnail.
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.weight(1.0f).fillMaxWidth()
+                            ) {
+                                AsyncImage(
+                                    thumbnail,
+                                    contentDescription = "Library Book: $title",
+                                    error = painterResource(R.drawable.thumbnail_error_vert_notext),
+                                    placeholder = painterResource(R.drawable.thumbnail_placeholder_vert_notext),
+                                    modifier = Modifier.width(14.dp),
+                                    contentScale = ContentScale.FillWidth
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(5.0f).padding(start = 10.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                // The publication title.
+                                Text(
+                                    title,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 3,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                // The publication author.
+                                Row {
+                                    Icon(Icons.Default.Group, "Publication author icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
+                                    Text(
+                                        author,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        fontStyle = FontStyle.Italic,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                // The publication date.
+                                val publishedDateLabel = stringResource(R.string.library_published_year_label)
+                                Row {
+                                    Icon(Icons.Default.Update, "Publication year icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
+                                    Text(
+                                        "$publishedDateLabel $year",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+
+                                // The downloaded PDF badge.
+                                val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
+                                val badgeColor = Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR
+                                if (isDownloaded) {
+                                    Row {
+                                        Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp), tint = badgeColor)
+                                        Text(
+                                            isDownloadedTitle,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            color = badgeColor
+                                        )
+                                    }
+                                } else {
+                                    // The file size.
+                                    Row {
+                                        Icon(Icons.Default.Download, "File download size icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp))
+                                        Text(
+                                            size,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Normal,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
+
+                                // The remove file button.
+                                if (isDownloaded) {
+                                    TextButton(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
+                                        ),
+                                        onClick = {
+                                            FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = true
+                                            FragmentSeasonalBookCompanion.txtPdfTitleToDelete = title
+                                            FragmentSeasonalBookCompanion.txtPdfUrlToDelete = url
+                                        }
+                                    ) {
+                                        Row (verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(Icons.Default.DeleteForever, "")
+                                            Spacer(Modifier.width(5.dp))
+                                            Text(stringResource(R.string.pdf_action_delete_pdf_btn).uppercase())
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }  // --- end of Card.
+            }
+        }
     }
 
+    @Composable
+    private fun getPdfDeleteDialog() {
+        if (FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value) {
+            AlertDialog(
+                onDismissRequest = { FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = false },
+                title = { Text(stringResource(R.string.pdf_action_delete_pdf_dialog_title)) },
+                text = {
+                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.pdf_action_delete_pdf_dialog_desc).replace("%%%TITLE%%%", FragmentSeasonalBookCompanion.txtPdfTitleToDelete))
+                    }
+                },
+                confirmButton = {
+                    Row {
+                        Button(
+                            onClick = {
+                                InternalFileManager(current.ctx).deletePdf(FragmentSeasonalBookCompanion.txtPdfUrlToDelete)
+                                FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = false
+                                AppNavigation.recomposeUi()
+                            }
+                        ) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_yes), color = Color.White)
+                        }
+                        Spacer(Modifier.width(10.dp))
+                        Button(onClick = { FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = false }) {
+                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_no), color = Color.White)
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+}
+
+class FragmentSeasonalBookCompanion : Application() {
+    companion object {
+        /* Whether to display the PDF delete confirmation dialog. */
+        var txtPdfTitleToDelete = ""
+        var txtPdfUrlToDelete = ""
+        val mutableShowPdfDeleteDialog = mutableStateOf(false)
+    }
 }
