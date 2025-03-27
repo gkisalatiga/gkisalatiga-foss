@@ -185,15 +185,6 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 class ActivityLauncher : ComponentActivity() {
 
-    // Declaring the classes.
-    private lateinit var appLocalStorage: LocalStorage
-    private lateinit var appPreferences: AppPreferences
-
-    // Declaring the variables.
-    private lateinit var pInfo: PackageInfo
-    private lateinit var vName: String
-    private var vCode: Int = Int.MIN_VALUE
-
     override fun onPause() {
         super.onPause()
         GlobalCompanion.isRunningInBackground.value = true
@@ -255,15 +246,6 @@ class ActivityLauncher : ComponentActivity() {
         // Keep the splash screen visible for this Activity.
         // splashScreen.setKeepOnScreenCondition { true }
 
-        // Instantiating the lateinit variables.
-        appLocalStorage = LocalStorage(this)
-        appPreferences = AppPreferences(this)
-
-        // Instantiating the lateinit variables.
-        pInfo = this.packageManager.getPackageInfo(this.packageName, 0)
-        vName = pInfo.versionName
-        vCode = pInfo.versionCode
-
         // Initializes the app's internally saved preferences.
         initPreferencesAndLocalStorage()
 
@@ -304,9 +286,14 @@ class ActivityLauncher : ComponentActivity() {
         // Retrieving the latest JSON metadata.
         initData()
 
+        // Retrieving app info.
+        val pInfo = this.packageManager.getPackageInfo(this.packageName, 0)
+        val vName = pInfo.versionName
+        val vCode = pInfo.versionCode
+
         // Update the last app version code used.
         // Must be done after data initialization in initData().
-        appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, vCode, LocalStorageDataTypes.INT)
+        LocalStorage(this).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, vCode, LocalStorageDataTypes.INT)
 
         // Creating the notification channels.
         initNotificationChannel()
@@ -322,7 +309,7 @@ class ActivityLauncher : ComponentActivity() {
         setContent {
 
             // Check for dark mode UI state.
-            val prefDarkMode = appPreferences.getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String
+            val prefDarkMode = AppPreferences(this).getPreferenceValue(PreferenceKeys.PREF_KEY_THEME_UI) as String
             val isDarkMode = (isSystemInDarkTheme() && prefDarkMode == "system") || prefDarkMode == "dark"
             GlobalCompanion.isDarkModeUi.value = isDarkMode
 
@@ -468,19 +455,19 @@ class ActivityLauncher : ComponentActivity() {
      */
     private fun initPreferencesAndLocalStorage() {
         // Initializes the default/fallback preferences and launch value if this is a first launch.
-        if ((appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) <= 0) {
-            appPreferences.initDefaultPreferences()
-            appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, 0, LocalStorageDataTypes.INT)
-            PersistentLogger(this@ActivityLauncher).write({}, "This is first app launch.")
+        if ((LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int) <= 0) {
+            AppPreferences(this).initDefaultPreferences()
+            LocalStorage(this).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, 0, LocalStorageDataTypes.INT)
+            PersistentLogger(this).write({}, "This is first app launch.")
         }
 
         // Increment the number of launch counts.
-        val now = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
-        appLocalStorage.setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1, LocalStorageDataTypes.INT)
+        val now = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
+        LocalStorage(this).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1, LocalStorageDataTypes.INT)
         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
 
         // Developer mode.
-        val isDevMode = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
+        val isDevMode = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
         if (isDevMode) EnableDevMode.activateDebugToggles() else EnableDevMode.disableDebugToggles()
     }
 
@@ -635,8 +622,8 @@ class ActivityLauncher : ComponentActivity() {
 
         // Get the number of launches since install so that we can determine
         // whether to use the fallback data.
-        val launches = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
-        val lastAppVersion = appLocalStorage.getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, LocalStorageDataTypes.INT) as Int
+        val launches = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, LocalStorageDataTypes.INT) as Int
+        val lastAppVersion = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAST_APP_VERSION_CODE, LocalStorageDataTypes.INT) as Int
 
         // Get fallback data only if first launch.
         if (launches == 1) {
