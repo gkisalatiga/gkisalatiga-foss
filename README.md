@@ -143,6 +143,7 @@ Each UI class file should bear a global companion object, useful in passing data
 - [ ] Migrate article "carousel" content somewhere else
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items
+- [ ] Fix OOM in low-end devices by implementing Glint resizing
 
 ## C. Privacy Policy
 

@@ -70,6 +70,7 @@ import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
+import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.services.ClipManager
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
@@ -126,9 +127,17 @@ class ScreenPersembahan (private val current : ActivityData) : ComponentActivity
             )
 
             /* Display the banner image. */
+            val posterViewerTitle = stringResource(R.string.offertory_qris_image_viewer_title)
+            val posterViewerCaption = stringResource(R.string.offertory_qris_image_viewer_caption)
             Surface (
                 shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.padding(bottom = 10.dp)
+                modifier = Modifier.padding(bottom = 10.dp),
+                onClick = {
+                    ScreenPosterViewerLegacyCompanion.posterViewerImageSource = ScreenPersembahanCompanion.OFFERTORY_QRIS_SOURCE
+                    ScreenPosterViewerLegacyCompanion.posterViewerTitle = posterViewerTitle
+                    ScreenPosterViewerLegacyCompanion.posterViewerCaption = posterViewerCaption
+                    AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER_LEGACY)
+                }
             ) {
                 Box {
                     /* The base background for the transparent PNG. */
