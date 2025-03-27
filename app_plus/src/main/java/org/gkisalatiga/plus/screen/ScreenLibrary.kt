@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.FileDeleteDialog
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.ModulesCompanion
@@ -80,38 +81,6 @@ import org.json.JSONObject
 
 
 class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
-
-    @Composable
-    private fun getPdfDeleteDialog() {
-        if (ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value) {
-            AlertDialog(
-                onDismissRequest = { ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = false },
-                title = { Text(stringResource(R.string.pdf_action_delete_pdf_dialog_title)) },
-                text = {
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(R.string.pdf_action_delete_pdf_dialog_desc).replace("%%%TITLE%%%", ScreenLibraryCompanion.txtPdfTitleToDelete))
-                    }
-                },
-                confirmButton = {
-                    Row {
-                        Button(
-                            onClick = {
-                                InternalFileManager(current.ctx).deletePdf(ScreenLibraryCompanion.txtPdfUrlToDelete)
-                                ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = false
-                                AppNavigation.recomposeUi()
-                            }
-                        ) {
-                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_yes), color = Color.White)
-                        }
-                        Spacer(Modifier.width(10.dp))
-                        Button(onClick = { ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = false }) {
-                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_no), color = Color.White)
-                        }
-                    }
-                }
-            )
-        }
-    }
 
     @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
@@ -133,7 +102,15 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
         }
 
         // Init. the dialog.
-        getPdfDeleteDialog()
+        FileDeleteDialog().let { fdg ->
+            fdg.draw(
+                onConfirmRequest = {
+                    InternalFileManager(current.ctx).deletePdf(fdg.getFileUrlToDelete())
+                    AppNavigation.recomposeUi()
+                },
+                onDismissRequest = null
+            )
+        }
 
         // Ensure that when we are at the first screen upon clicking "back",
         // the app is exited instead of continuing to navigate back to the previous screens.
@@ -306,9 +283,7 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
                                             containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
                                         ),
                                         onClick = {
-                                            ScreenLibraryCompanion.mutableShowPdfDeleteDialog.value = true
-                                            ScreenLibraryCompanion.txtPdfTitleToDelete = title
-                                            ScreenLibraryCompanion.txtPdfUrlToDelete = url
+                                            FileDeleteDialog().show(title, url)
                                         }
                                     ) {
                                         Row (verticalAlignment = Alignment.CenterVertically) {
@@ -360,10 +335,5 @@ class ScreenLibraryCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
-
-        /* Whether to display the PDF delete confirmation dialog. */
-        var txtPdfTitleToDelete = ""
-        var txtPdfUrlToDelete = ""
-        val mutableShowPdfDeleteDialog = mutableStateOf(false)
     }
 }

@@ -173,11 +173,7 @@
     <string name="screen_persembahan_ok">OK</string>
 
     <!-- Applicable in ScreenPDFViewer. -->
-    <string name="screen_pdfviewer_loading_dialog_title">Mengunduh PDF</string>
-    <string name="screen_pdfviewer_loading_dialog_subtitle">Sedang mengunduh berkas %%% ke ponsel Anda. Tunggu sebentar.</string>
     <string name="screen_pdfviewer_loading_dialog_btn_string">Batalkan</string>
-    <string name="screen_pdfviewer_error_dialog_title">Gagal Memuat PDF!</string>
-    <string name="screen_pdfviewer_error_dialog_btn_string">OK</string>
     <string name="screen_pdfviewer_info_dialog_title">Detil PDF</string>
     <string name="screen_pdfviewer_info_dialog_content_name_doc_title">Judul</string>
     <string name="screen_pdfviewer_info_dialog_content_name_doc_author">Penulis</string>
@@ -219,10 +215,6 @@
 
     <!-- Pertaining to the deletion dialog of PDF files. -->
     <string name="pdf_action_delete_pdf_btn">Hapus</string>
-    <string name="pdf_action_delete_pdf_dialog_title">Hapus PDF</string>
-    <string name="pdf_action_delete_pdf_dialog_desc">Apakah Anda yakin akan menghapus %%%TITLE%%%?</string>
-    <string name="pdf_action_delete_pdf_dialog_yes">Ya</string>
-    <string name="pdf_action_delete_pdf_dialog_no">Batalkan</string>
 
     <!-- Applicable in ScreenSettings. -->
     <string name="screen_settings_pref_app_theme">Tema Aplikasi</string>
@@ -292,6 +284,16 @@
 
     <!-- Applicable in most screens. -->
     <string name="pdf_already_downloaded_localized">Terunduh</string>
+
+    <!-- Applicable for use as individual composables. -->
+    <string name="composable_filedownloaddialog_loading_dialog_title">Mengunduh &#8230;</string>
+    <string name="composable_filedownloaddialog_loading_dialog_subtitle">Sedang mengunduh %%% ke ponsel Anda. Tunggu sebentar.</string>
+    <string name="composable_alerterrordialog_error_dialog_title">Gagal Memuat Berkas!</string>
+    <string name="composable_alerterrordialog_error_dialog_btn_string">OK</string>
+    <string name="composable_filedeletedialog_dialog_title">Hapus Berkas &#8230;</string>
+    <string name="composable_filedeletedialog_dialog_desc">Apakah Anda yakin akan menghapus %%%TITLE%%%?</string>
+    <string name="composable_filedeletedialog_dialog_yes">Ya</string>
+    <string name="composable_filedeletedialog_dialog_no">Batalkan</string>
 
     <!-- Developer strings. -->
     <string name="not_connected_to_internet">Anda tidak terhubung ke internet!</string>

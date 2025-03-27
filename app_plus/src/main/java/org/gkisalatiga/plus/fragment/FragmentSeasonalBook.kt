@@ -13,7 +13,6 @@ package org.gkisalatiga.plus.fragment
 import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.composable.FileDeleteDialog
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
@@ -63,7 +63,6 @@ import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
-import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
@@ -75,7 +74,16 @@ class FragmentSeasonalBook (private val current : ActivityData) : ComponentActiv
 
     @Composable
     fun getComposable() {
-        getPdfDeleteDialog()
+        // Init. the delete dialog.
+        FileDeleteDialog().let { fdg ->
+            fdg.draw(
+                onConfirmRequest = {
+                    InternalFileManager(current.ctx).deletePdf(fdg.getFileUrlToDelete())
+                    AppNavigation.recomposeUi()
+                },
+                onDismissRequest = null
+            )
+        }
 
         // Enumerate the list of e-books that correspond to the seasonal tag.
         val seasonalBookTag = ModulesCompanion.jsonRoot!!
@@ -215,9 +223,7 @@ class FragmentSeasonalBook (private val current : ActivityData) : ComponentActiv
                                             containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
                                         ),
                                         onClick = {
-                                            FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = true
-                                            FragmentSeasonalBookCompanion.txtPdfTitleToDelete = title
-                                            FragmentSeasonalBookCompanion.txtPdfUrlToDelete = url
+                                            FileDeleteDialog().show(title, url)
                                         }
                                     ) {
                                         Row (verticalAlignment = Alignment.CenterVertically) {
@@ -235,45 +241,4 @@ class FragmentSeasonalBook (private val current : ActivityData) : ComponentActiv
         }
     }
 
-    @Composable
-    private fun getPdfDeleteDialog() {
-        if (FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value) {
-            AlertDialog(
-                onDismissRequest = { FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = false },
-                title = { Text(stringResource(R.string.pdf_action_delete_pdf_dialog_title)) },
-                text = {
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(R.string.pdf_action_delete_pdf_dialog_desc).replace("%%%TITLE%%%", FragmentSeasonalBookCompanion.txtPdfTitleToDelete))
-                    }
-                },
-                confirmButton = {
-                    Row {
-                        Button(
-                            onClick = {
-                                InternalFileManager(current.ctx).deletePdf(FragmentSeasonalBookCompanion.txtPdfUrlToDelete)
-                                FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = false
-                                AppNavigation.recomposeUi()
-                            }
-                        ) {
-                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_yes), color = Color.White)
-                        }
-                        Spacer(Modifier.width(10.dp))
-                        Button(onClick = { FragmentSeasonalBookCompanion.mutableShowPdfDeleteDialog.value = false }) {
-                            Text(stringResource(R.string.pdf_action_delete_pdf_dialog_no), color = Color.White)
-                        }
-                    }
-                }
-            )
-        }
-    }
-
-}
-
-class FragmentSeasonalBookCompanion : Application() {
-    companion object {
-        /* Whether to display the PDF delete confirmation dialog. */
-        var txtPdfTitleToDelete = ""
-        var txtPdfUrlToDelete = ""
-        val mutableShowPdfDeleteDialog = mutableStateOf(false)
-    }
 }
