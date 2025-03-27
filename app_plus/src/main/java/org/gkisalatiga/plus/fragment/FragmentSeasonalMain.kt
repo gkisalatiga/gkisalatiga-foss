@@ -118,16 +118,6 @@ class FragmentSeasonalMain (private val current : ActivityData) : ComponentActiv
                                 ))
                             )
 
-                            /* Add shadow-y overlay background so that the white text becomes more visible. */
-                            // SOURCE: https://developer.android.com/develop/ui/compose/graphics/draw/brush
-                            // SOURCE: https://stackoverflow.com/a/60479489
-                            Box (
-                                modifier = Modifier
-                                    // Color pattern: 0xAARRGGBB (where "AA" is the alpha value).
-                                    .background(Color(0x40fda308))
-                                    .matchParentSize()
-                            )
-
                             /* The card description label. */
                             Column (horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxSize()) {
                                 Text(

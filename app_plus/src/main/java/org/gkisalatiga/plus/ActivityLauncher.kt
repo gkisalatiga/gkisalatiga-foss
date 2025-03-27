@@ -163,6 +163,7 @@ import org.gkisalatiga.plus.screen.ScreenSettingsCompanion
 import org.gkisalatiga.plus.screen.ScreenStaticContentList
 import org.gkisalatiga.plus.screen.ScreenStaticContentListCompanion
 import org.gkisalatiga.plus.screen.ScreenVideoList
+import org.gkisalatiga.plus.screen.ScreenVideoListCompanion
 import org.gkisalatiga.plus.screen.ScreenVideoLive
 import org.gkisalatiga.plus.screen.ScreenWarta
 import org.gkisalatiga.plus.screen.ScreenWartaCompanion
@@ -352,6 +353,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenSeasonalCompanion.rememberedScrollState = rememberScrollState()
             ScreenSettingsCompanion.rememberedScrollState = rememberScrollState()
             ScreenStaticContentListCompanion.rememberedScrollState = rememberScrollState()
+            ScreenVideoListCompanion.rememberedScrollState = rememberScrollState()
             ScreenWartaCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBCompanion.rememberedScrollState = rememberScrollState()
             ScreenYKBListCompanion.rememberedScrollState = rememberScrollState()

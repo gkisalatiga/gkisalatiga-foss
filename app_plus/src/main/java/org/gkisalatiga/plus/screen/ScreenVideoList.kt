@@ -14,6 +14,7 @@ import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -127,7 +128,7 @@ class ScreenVideoList (private val current : ActivityData) : ComponentActivity()
         // Setting the layout to center both vertically and horizontally,
         // and then make it scrollable vertically.
         // SOURCE: https://codingwithrashid.com/how-to-center-align-ui-elements-in-android-jetpack-compose/
-        val scrollState = rememberScrollState()
+        val scrollState = ScreenVideoListCompanion.rememberedScrollState!!
         Column(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -290,5 +291,8 @@ class ScreenVideoListCompanion : Application() {
             videoListContentArray = contentArray
             videoListTitle = title
         }
+
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
     }
 }
