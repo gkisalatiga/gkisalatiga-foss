@@ -127,23 +127,26 @@ Each UI class file should bear a global companion object, useful in passing data
 
 ### March 2025
 
-- [ ] Gallery: fix export error on lower Android versions
 - [X] Main carousel: only display posters
-- [ ] Add seasonal special menu (e.g. Christmas, Easter, etc.)
-- [ ] Improve the gallery and QRIS downloader to add the progress bar
-- [ ] Improve the poster viewer to add a share button
-- [ ] Overwrite hardcoded fallback JSON files with the new schema
-- [ ] Establish the built-in twibbon maker in the seasonal menu
+- [X] Add seasonal special menu (e.g. Christmas, Easter, etc.)
+- [X] Overwrite hardcoded fallback JSON files with the new schema
 - [X] Add bail-out mechanism for when the v0.6.5 (or above) app finds local/offline JSON files that are not yet updated
 - [X] Add JSON flag support to enable/disable the Easter egg from remote (and to bypass this mechanism on debug)
 
 ### April 2025
 
+- [ ] Improve the gallery downloader to add the progress bar
+- [ ] Improve the poster viewer to add a share button
 - [ ] Migrate video "carousel" content somewhere else
 - [ ] Migrate article "carousel" content somewhere else
+
+### May 2025
+
 - [ ] Add "max width" for screens when opened on tablet devices (or when the orientation is landscape)
 - [ ] Agenda: Add hard-coded form to borrow room & differentiate regular from non-regular items
+- [ ] Gallery: fix export error on lower Android versions
 - [ ] Fix OOM in low-end devices by implementing Glint resizing
+- [ ] Establish the built-in twibbon maker in the seasonal menu
 
 ## C. Privacy Policy
 

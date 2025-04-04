@@ -168,7 +168,7 @@ class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() 
             colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
-                    stringResource(R.string.screenforms_title),
+                    seasonalData.getString("title"),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

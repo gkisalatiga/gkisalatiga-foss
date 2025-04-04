@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,9 +34,14 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.ModulesCompanion
@@ -90,47 +97,59 @@ class FragmentSeasonalMain (private val current : ActivityData) : ComponentActiv
                     if (bannerURL.startsWith("http://")) bannerURL = bannerURL.replaceFirst("http://", "https://")
 
                     Card(
-                        onClick = { ScreenSeasonalCompanion.mutableLastPage.value = itemTargetFragments[idx] },
-                        modifier = Modifier.padding(bottom = 10.dp).aspectRatio(2.4f).fillMaxWidth()
+                        onClick = {
+                            current.scope.launch {
+                                ScreenSeasonalCompanion.rememberedScrollState!!.animateScrollTo(0)
+                            }
+                            current.scope.launch {
+                                delay(100L)
+                                ScreenSeasonalCompanion.mutableLastPage.value = itemTargetFragments[idx]
+                            }
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth()
                     ) {
 
-                        // Displaying the text-overlaid image.
-                        Box {
-                            /* The background featured image. */
-                            // SOURCE: https://developer.android.com/develop/ui/compose/graphics/images/customize
-                            // ---
-                            val contrast = 1.1f  // --- 0f..10f (1 should be default)
-                            val brightness = 0.0f  // --- -255f..255f (0 should be default)
-                            AsyncImage(
-                                model = bannerURL,
-                                contentDescription = "Profile page: $title",
-                                error = painterResource(R.drawable.thumbnail_error_notext),
-                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
-                                modifier = Modifier.fillMaxWidth(),
-                                contentScale = ContentScale.Crop,
-                                colorFilter = ColorFilter.colorMatrix(ColorMatrix(
-                                    floatArrayOf(
-                                        contrast, 0f, 0f, 0f, brightness,
-                                        0f, contrast, 0f, 0f, brightness,
-                                        0f, 0f, contrast, 0f, brightness,
-                                        0f, 0f, 0f, 1f, 0f
+                        Column (modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.Start) {
+                            // Displaying the text-overlaid image.
+                            Surface(shape = RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp), modifier = Modifier.fillMaxWidth().aspectRatio(2.4f)) {
+                                Box {
+                                    /* The background featured image. */
+                                    // SOURCE: https://developer.android.com/develop/ui/compose/graphics/images/customize
+                                    // ---
+                                    val contrast = 1.1f  // --- 0f..10f (1 should be default)
+                                    val brightness = 0.0f  // --- -255f..255f (0 should be default)
+                                    AsyncImage(
+                                        model = bannerURL,
+                                        contentDescription = "Profile page: $title",
+                                        error = painterResource(R.drawable.thumbnail_error_notext),
+                                        placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentScale = ContentScale.Crop,
+                                        colorFilter = ColorFilter.colorMatrix(ColorMatrix(
+                                            floatArrayOf(
+                                                contrast, 0f, 0f, 0f, brightness,
+                                                0f, contrast, 0f, 0f, brightness,
+                                                0f, 0f, contrast, 0f, brightness,
+                                                0f, 0f, 0f, 1f, 0f
+                                            )
+                                        ))
                                     )
-                                ))
+                                }  // --- end of box.
+                            }
+
+                            // The card description text.
+                            Text(
+                                text = title,
+                                fontSize = 18.sp,
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = 8.5.dp).padding(horizontal = 15.dp),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Start
                             )
 
-                            /* The card description label. */
-                            Column (horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.Bottom, modifier = Modifier.fillMaxSize()) {
-                                Text(
-                                    text = title,
-                                    fontSize = 22.sp,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(start = 20.dp).padding(bottom = 20.dp),
-                                    style = TextStyle(
-                                        shadow = Shadow(Color.Black, Offset(3.0f, 3.0f), 8.0f)
-                                    )
-                                )
-                            }
-                        }  // --- end of box.
+                        }
+
                     }  // --- end of card.
                 }  // --- end if.
             }  // --- end of forEachIndexed {}.

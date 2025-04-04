@@ -125,7 +125,7 @@ class Static(private val ctx: Context) {
 
 class StaticCompanion : Application() {
     companion object {
-        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2.1/data/gkisplus-static.min.json"
+        const val REMOTE_JSON_SOURCE = "https://raw.githubusercontent.com/gkisalatiga/gkisplus-data-json/main/v2/data/gkisplus-static.min.json"
 
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()

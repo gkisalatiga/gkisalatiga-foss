@@ -651,7 +651,7 @@ class ActivityLauncher : ComponentActivity() {
                 // It is not intended for general use, but I (github.com/groaking) saw this as a joke.
                 // I'll use the word "Davey" here anyway.
                 // SOURCE: https://stackoverflow.com/a/60675966
-                Logger.logInit({}, "Did not expect to have JSON files lower than v2.1, Davey! Falling back to bundled JSON files ...")
+                Logger.logInit({}, "Did not expect to have JSON files v2.1 to be handled by app version 0.6.4 or lower, Davey! Falling back to bundled JSON files ...")
                 Main(this).initFallbackMainData()
                 Gallery(this).initFallbackGalleryData()
                 Static(this).initFallbackStaticData()

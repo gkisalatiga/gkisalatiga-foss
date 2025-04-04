@@ -357,7 +357,8 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                 }
             }
 
-            Spacer(Modifier.fillMaxWidth().height(10.dp))
+            Spacer(Modifier.fillMaxWidth().height(5.dp))
+            HorizontalDivider(Modifier.padding(vertical = 20.dp).padding(horizontal = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp))
 
             /* Displaying the top two menus. */
             Row {

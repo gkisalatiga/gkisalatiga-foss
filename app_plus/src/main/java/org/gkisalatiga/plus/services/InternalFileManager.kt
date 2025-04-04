@@ -6,15 +6,24 @@
 
 package org.gkisalatiga.plus.services
 
+import android.content.ClipData
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.PersistentLogger
 import org.gkisalatiga.plus.lib.PreferenceKeys
 import java.io.File
+import java.io.FileOutputStream
+import java.net.URL
+import java.util.concurrent.Executors
 
 /**
  * Manages the app's internal file management.
@@ -72,6 +81,73 @@ class InternalFileManager (private val ctx: Context) {
                     // Log the removal message persistently.
                     PersistentLogger(ctx).write({}, "Removed PDF file due to clean-up of $prefKeepDaysOfCachedPdf millis: $url")
                 }
+            }
+        }
+    }
+
+    /**
+     * This function downloads a given file from URL and then share it using the share sheet mechanism.
+     * @param url the source URL to be downloaded.
+     * @param savedFilename the local filename to be saved as.
+     * @param shareSheetTitle the title of the share sheet.
+     * @param shareSheetText the text body of the share sheet.
+     * @param clipboardLabel for image files, the label of the clipboard graphic.
+     */
+    fun downloadAndShare(url: String, savedFilename: String, shareSheetTitle: String, shareSheetText: String, clipboardLabel: String = "") {
+        val executor = Executors.newSingleThreadExecutor()
+        executor.execute {
+            try {
+                // Downloading the data.
+                val streamIn = URL(url).openStream()
+                val decodedData: ByteArray = streamIn.readBytes()
+
+                // Determining the output file location.
+                val contentProviderFileCreator = InternalFileManager(ctx).CONTENT_PROVIDER_FILE_CREATOR
+                val absoluteFileLocation = File(contentProviderFileCreator, savedFilename).absolutePath
+
+                // Writing into the file.
+                val outFile = File(absoluteFileLocation)
+                FileOutputStream(outFile).let {
+                    it.flush()
+                    it.write(decodedData)
+                    it.close()
+                    it
+                }
+
+                // Get the file's mime type.
+                // SOURCE: https://stackoverflow.com/a/8591230
+                val mimetype: String = MimeTypeMap.getSingleton().getMimeTypeFromExtension(outFile.extension).let { it ?: "" }
+                Logger.logTest({}, "The mimetype is $mimetype for the content provider file path: absoluteFileLocation", LoggerType.VERBOSE)
+
+                // The URI to the QRIS image provided by FileProvider.
+                val authority = InternalFileManager(ctx).FILE_PROVIDER_AUTHORITY
+                val secureUri = FileProvider.getUriForFile(ctx, authority, outFile)
+
+                // Creating the intent.
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_STREAM, secureUri)
+                    putExtra(Intent.EXTRA_TEXT, shareSheetText)
+                    putExtra(Intent.EXTRA_TITLE, shareSheetTitle)  // --- this is not currently successful at setting the chooser title.
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    type = mimetype
+
+                    // Attach clipboard.
+                    // This prevents "Writing exception to parcel" (java.lang.SecurityException) when attempting to load thumbnails.
+                    // The error in itself is not harmful; the images can still be shared or saved to the destination file.
+                    // SOURCE: https://stackoverflow.com/a/64541741
+                    clipData = ClipData(
+                        clipboardLabel,
+                        listOf(mimetype).toTypedArray(),
+                        ClipData.Item(secureUri)
+                    )
+                }
+
+                // Sharing the data.
+                ctx.startActivity(Intent.createChooser(shareIntent, null))
+            } catch (e: Exception) {
+                Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
+                e.printStackTrace()
             }
         }
     }

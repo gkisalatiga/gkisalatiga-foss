@@ -127,6 +127,7 @@
     <string name="offertory_number_copied">Nomor rekening berhasil disalin!</string>
     <string name="offertory_code_copied">Kode unik berhasil disalin!</string>
     <string name="offertory_code_desc">Tambahkan kode unik pada akhir nominal persembahan yang akan diberikan.\n\nMisalnya, jika Anda ingin memberikan persembahan DKK sebanyak Rp. 50.000, maka Anda perlu mentransfer sebesar Rp. 50.033 ke rekening bank GKI Salatiga.</string>
+    <string name="offertory_qris_image_caption_zoom">Ketuk pada QRIS untuk memperbesar gambar.</string>
     <string name="offertory_qris_image_viewer_title">QRIS GKI Salatiga</string>
     <string name="offertory_qris_image_viewer_caption">QRIS Persembahan GKI Salatiga untuk persembahan digital.</string>
     <string name="offertory_qris_sharesheet_title">Bagikan QRIS ke &#8230;</string>
@@ -281,6 +282,11 @@
     <string name="fragment_info_social_media_email">E-Surat</string>
     <string name="fragment_info_dialog_ok_btn">Buka</string>
     <string name="fragment_info_dialog_cancel_btn">Tutup</string>
+
+    <!-- Applicable in FragmentSeasonalAgenda -->
+    <string name="fragment_seasonal_agenda_image_share_btn_text">Bagikan Agenda</string>
+    <string name="fragment_seasonal_agenda_image_caption_zoom">Ketuk pada agenda untuk memperbesar gambar.</string>
+    <string name="fragment_seasonal_agenda_share_sheet_text">%%%TITLE%%%.\n\nDibagikan dari GKI Salatiga+ (https://plus.gkisalatiga.org)</string>
 
     <!-- Applicable in most screens. -->
     <string name="pdf_already_downloaded_localized">Terunduh</string>

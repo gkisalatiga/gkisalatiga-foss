@@ -4,6 +4,7 @@
 
 :star2: **NEW**
 
+- Added the seasonal menu feature: agenda
 - Added the seasonal menu feature: guide book
 - Added the seasonal menu feature: gallery album
 
@@ -11,10 +12,11 @@
 
 - (Back-End) Added flag mechanism to hide/show seasonal menu entries
 - (Back-End) Added flag mechanism to hide/show e-book entries in the library menu
+- (Back-End) Complete upgrade and migration to v2.1 JSON schema
 
 ## v0.6.5 2025.03.09 (40)
 
-:hammer_and_wrench: **FIX**
+:information_source: **INFO**
 
 - This update has no build
 

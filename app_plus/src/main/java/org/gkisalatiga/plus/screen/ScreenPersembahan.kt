@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -155,8 +156,19 @@ class ScreenPersembahan (private val current : ActivityData) : ComponentActivity
                 }
             }
 
+            // Display the helper text.
+            Text(stringResource(R.string.offertory_qris_image_caption_zoom), fontStyle = FontStyle.Italic, fontSize = 11.sp)
+
             // Display the QRIS share button.
-            Button(onClick = { ScreenPersembahanCompanion.shareQrisImage(current.ctx) }) {
+            Button(onClick = {
+                InternalFileManager(current.ctx).downloadAndShare(
+                    url = ScreenPersembahanCompanion.OFFERTORY_QRIS_SOURCE,
+                    savedFilename = ScreenPersembahanCompanion.savedFilename,
+                    shareSheetText = current.ctx.getString(R.string.offertory_qris_sharesheet_text),
+                    shareSheetTitle = current.ctx.getString(R.string.offertory_qris_sharesheet_title),
+                    clipboardLabel = "QRIS Image of GKI Salatiga"
+                )
+            }) {
                 Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
                     Icon(Icons.Default.Share, "Share icon", tint = Color.White, modifier = Modifier.padding(end = 10.dp))
                     Text(stringResource(R.string.offertory_qris_share_btn_text), color = Color.White)
@@ -328,60 +340,5 @@ class ScreenPersembahanCompanion : Application() {
         var absolutePathToQrisFile: String = String()
         @Suppress("ConstPropertyName")
         const val savedFilename = "QRIS_GKI_Salatiga.png"  // --- allows space and uppercase letters in the file name because it is the most user-friendly file export naming.
-
-        /* Downloading the QRIS image and save/share it outside the app. */
-        fun shareQrisImage(ctx: Context) {
-            val executor = Executors.newSingleThreadExecutor()
-            executor.execute {
-                try {
-                    // Downloading the data.
-                    val streamIn = URL(OFFERTORY_QRIS_SOURCE).openStream()
-                    val decodedData: ByteArray = streamIn.readBytes()
-
-                    // Writing into the file.
-                    val outFile = File(absolutePathToQrisFile)
-                    FileOutputStream(outFile).let {
-                        it.flush()
-                        it.write(decodedData)
-                        it.close()
-                        it
-                    }
-
-                    // The URI to the QRIS image provided by FileProvider.
-                    val authority = InternalFileManager(ctx).FILE_PROVIDER_AUTHORITY
-                    val secureUri = FileProvider.getUriForFile(ctx, authority, outFile)
-
-                    // The strings to be attached to the intent.
-                    val qrisShareSheetTitle = ctx.getString(R.string.offertory_qris_sharesheet_title)
-                    val qrisShareSheetText = ctx.getString(R.string.offertory_qris_sharesheet_text)
-
-                    // Creating the intent.
-                    val shareIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_STREAM, secureUri)
-                        putExtra(Intent.EXTRA_TEXT, qrisShareSheetText)
-                        putExtra(Intent.EXTRA_TITLE, qrisShareSheetTitle)  // --- this is not currently successful at setting the chooser title.
-                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        type = "image/png"
-
-                        // Attach clipboard.
-                        // This prevents "Writing exception to parcel" (java.lang.SecurityException) when attempting to load thumbnails.
-                        // The error in itself is not harmful; the images can still be shared or saved to the destination file.
-                        // SOURCE: https://stackoverflow.com/a/64541741
-                        clipData = ClipData(
-                            "QRIS Image of GKI Salatiga",
-                            listOf("image/png").toTypedArray(),
-                            ClipData.Item(secureUri)
-                        )
-                    }
-
-                    // Sharing the data.
-                    ctx.startActivity(Intent.createChooser(shareIntent, null))
-                } catch (e: Exception) {
-                    Logger.logTest({}, "Exception: ${e.message}", LoggerType.ERROR)
-                    e.printStackTrace()
-                }
-            }
-        }
     }
 }
