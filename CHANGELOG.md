@@ -1,6 +1,6 @@
 # GKI Salatiga App Changelog
 
-## v0.7.0 (Planned Release) (41)
+## v0.7.0 2025.04.04 (41)
 
 :star2: **NEW**
 
