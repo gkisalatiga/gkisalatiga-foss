@@ -10,6 +10,10 @@ plugins {
     //noinspection AndroidGradlePluginVersion
     id "com.android.library" version "8.1.1" apply false
 
+    // Enabling Firebase support.
+    // SOURCE: https://firebase.google.com/docs/android/setup?authuser=0
+    id "com.google.gms.google-services" version "4.4.3" apply false
+
     // This version should fix "The binary version of its metadata is 1.9.9999, expected version is 1.7.1" error
     // during compilation of released-and-signed packages.
     // id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
