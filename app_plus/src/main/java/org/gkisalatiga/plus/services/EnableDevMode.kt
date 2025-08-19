@@ -21,6 +21,7 @@ class EnableDevMode {
         fun activateDebugToggles() {
             GlobalCompanion.DEBUG_ENABLE_TOAST = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT = true
+            GlobalCompanion.DEBUG_ENABLE_LOG_CAT_ANALYTICS = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER = true
@@ -42,6 +43,7 @@ class EnableDevMode {
         fun disableDebugToggles() {
             GlobalCompanion.DEBUG_ENABLE_TOAST = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT = false
+            GlobalCompanion.DEBUG_ENABLE_LOG_CAT_ANALYTICS = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER = false

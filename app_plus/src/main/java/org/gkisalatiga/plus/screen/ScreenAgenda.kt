@@ -64,6 +64,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,6 +94,8 @@ import org.gkisalatiga.plus.data.TenseStatus
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.AgendaCalculator
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Beacon
+import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
 import org.json.JSONObject
 import kotlin.math.ceil
@@ -102,6 +105,8 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
     @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+        LaunchedEffect(Unit) { Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_AGENDA) }
+
         Scaffold (
             topBar = { this.getTopBar() }
                 ) {

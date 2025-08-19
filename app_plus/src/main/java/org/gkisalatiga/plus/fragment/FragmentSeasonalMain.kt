@@ -141,7 +141,7 @@ class FragmentSeasonalMain (private val current : ActivityData) : ComponentActiv
                             Text(
                                 text = title,
                                 fontSize = 18.sp,
-                                color = Color.White,
+                                color = current.colors.fragmentSeasonalMainTextColor,
                                 modifier = Modifier.padding(vertical = 8.5.dp).padding(horizontal = 15.dp),
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,

@@ -33,12 +33,13 @@
 
 package org.gkisalatiga.plus
 
+import android.R.attr.name
+import android.R.attr.text
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -83,6 +84,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import kotlinx.coroutines.delay
 import org.gkisalatiga.plus.composable.GKISalatigaAppTheme
 import org.gkisalatiga.plus.composable.MainPTRCompanion
@@ -103,6 +107,7 @@ import org.gkisalatiga.plus.fragment.FragmentServicesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
+import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.DynamicColorScheme
 import org.gkisalatiga.plus.lib.GallerySaver
@@ -183,8 +188,13 @@ import org.gkisalatiga.plus.services.PermissionChecker
 import org.gkisalatiga.plus.services.WorkScheduler
 import java.io.File
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 class ActivityLauncher : ComponentActivity() {
+
+    // Declaring the Firebase analytics service.
+    // SOURCE: https://firebase.google.com/docs/analytics/get-started?platform=android
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onPause() {
         super.onPause()
@@ -243,6 +253,9 @@ class ActivityLauncher : ComponentActivity() {
 
         // Call the superclass. (The default behavior. DO NOT CHANGE!)
         super.onCreate(savedInstanceState)
+
+        // Initializing the Firebase analytics object.
+        firebaseAnalytics = Firebase.analytics
 
         // Keep the splash screen visible for this Activity.
         // splashScreen.setKeepOnScreenCondition { true }
@@ -468,6 +481,9 @@ class ActivityLauncher : ComponentActivity() {
         LocalStorage(this).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_LAUNCH_COUNTS, now + 1, LocalStorageDataTypes.INT)
         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(this, "Launches since install: ${now + 1}", Toast.LENGTH_SHORT).show()
 
+        // Reporting the launch to Firebase.
+        Beacon(firebaseAnalytics).logAppLaunch()
+
         // Developer mode.
         val isDevMode = LocalStorage(this).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
         if (isDevMode) EnableDevMode.activateDebugToggles() else EnableDevMode.disableDebugToggles()
@@ -519,6 +535,7 @@ class ActivityLauncher : ComponentActivity() {
         // Prepare the activity-wide context variables.
         val current = ActivityData(
             ctx = this@ActivityLauncher,
+            firebaseAnalytics = this@ActivityLauncher.firebaseAnalytics,
             scope = rememberCoroutineScope(),
             lifecycleOwner = LocalLifecycleOwner.current,
             lifecycleScope = this@ActivityLauncher.lifecycleScope,

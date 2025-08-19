@@ -106,6 +106,7 @@ import org.gkisalatiga.plus.data.SearchItemData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
+import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.Colors
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
@@ -162,6 +163,7 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+        LaunchedEffect(Unit) { Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_SEARCH) }
 
         listFilterLabel = listOf(
             stringResource(R.string.screen_search_qualifier_filter_wj),

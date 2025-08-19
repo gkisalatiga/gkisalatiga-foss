@@ -1,5 +1,27 @@
 # GKI Salatiga App Changelog
 
+## v0.7.2 2025.08.20 (43)
+
+:information_source: **INFO**
+
+- In this release, the "Beacon" library is introduced
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Added preliminary screen and app launch tracking using Google Firebase Analytics
+- (Back-End) Updated Compile SDK to API 35
+
+## v0.7.1 2025.08.19 (42)
+
+:information_source: **INFO**
+
+- This update is not in sync with Google Play production release. We must inform user in the next roll-out that we introduced Google Analytics in the newer versions of GKI Salatiga+
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Added initial support for Firebase SDK and Google Analytics
+- (Back-End) Updated Target SDK to API 35 as per Google Play's August 31, 2025 requirement
+
 ## v0.7.0 2025.04.04 (41)
 
 :star2: **NEW**

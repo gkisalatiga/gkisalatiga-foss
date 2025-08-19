@@ -48,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -66,9 +67,11 @@ import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
+import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
+import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PersistentLogger
 import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.NotificationService
@@ -89,6 +92,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+        LaunchedEffect(Unit) { Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_DEV) }
 
         // Obtain the app's essential information.
         // SOURCE: https://stackoverflow.com/a/6593822
@@ -269,6 +273,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
             val debugFlags : Map<String, Boolean> = mapOf(
                 "DEBUG_ENABLE_TOAST" to GlobalCompanion.DEBUG_ENABLE_TOAST,
                 "DEBUG_ENABLE_LOG_CAT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT,
+                "DEBUG_ENABLE_LOG_CAT_ANALYTICS" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_ANALYTICS,
                 "DEBUG_ENABLE_LOG_CAT_BOOT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT,
                 "DEBUG_ENABLE_LOG_CAT_CONN_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST,
                 "DEBUG_ENABLE_LOG_CAT_DOWNLOADER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER,

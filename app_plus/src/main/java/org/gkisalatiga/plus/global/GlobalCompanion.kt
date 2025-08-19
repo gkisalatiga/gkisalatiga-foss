@@ -30,6 +30,7 @@ class GlobalCompanion : Application() {
 
         // Whether to display the debugger's logcat logging.
         var DEBUG_ENABLE_LOG_CAT = false
+        var DEBUG_ENABLE_LOG_CAT_ANALYTICS = false
         var DEBUG_ENABLE_LOG_CAT_BOOT = false
         var DEBUG_ENABLE_LOG_CAT_CONN_TEST = false
         var DEBUG_ENABLE_LOG_CAT_DOWNLOADER = false

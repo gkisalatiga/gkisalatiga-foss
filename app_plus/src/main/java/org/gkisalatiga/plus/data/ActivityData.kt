@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CoroutineScope
 import org.gkisalatiga.plus.lib.DynamicColorScheme
 
@@ -30,6 +31,7 @@ import org.gkisalatiga.plus.lib.DynamicColorScheme
  */
 data class ActivityData (
     val ctx: Context,
+    val firebaseAnalytics: FirebaseAnalytics,
     val scope: CoroutineScope,
     val lifecycleOwner: LifecycleOwner,
     val lifecycleScope: LifecycleCoroutineScope,

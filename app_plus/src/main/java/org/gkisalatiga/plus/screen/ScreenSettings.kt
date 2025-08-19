@@ -54,6 +54,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,6 +71,8 @@ import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.PrefItemData
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
+import org.gkisalatiga.plus.lib.Beacon
+import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.lib.PreferenceSettingItem
 
@@ -91,6 +94,8 @@ class ScreenSettings(private val current: ActivityData) : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+        LaunchedEffect(Unit) { Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_SETTINGS) }
+
         // Init the data objects.
         initPrefItemData()
         initCurrentPrefValues()

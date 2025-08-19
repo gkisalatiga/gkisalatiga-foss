@@ -47,3 +47,7 @@ replay_pid*
 
 # Prevents local override of IDE when the repo is cloned between Windows and Linux.
 .idea
+
+# USER-DETERMINED
+app_plus/build/intermediates/stripped_native_libs/release/out/lib/native_debug_symbol.zip
+app_plus/google-services.json
