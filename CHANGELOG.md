@@ -2,6 +2,8 @@
 
 ## v0.7.3 2025.08.20 (44)
 
+:four_leaf_clover: **IMPROVEMENT**
+
 - (Back-End) Added `com.google.android.gms.permission.AD_ID` permission so that the app's analytics ID won't be zeroed out
 
 ## v0.7.2 2025.08.20 (43)
