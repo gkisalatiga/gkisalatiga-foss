@@ -13,6 +13,10 @@
     <!-- SOURCE: https://stackoverflow.com/a/57237708 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- To be able to use analytics and crashlytics functionalities. -->
+    <!-- SOURCE: https://stackoverflow.com/q/72685902 -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+
     <!-- Attempts to prevent OOM by setting android:largeHeap="true". -->
     <!-- SOURCE: https://stackoverflow.com/a/32245016 -->
     <!-- android:largeHeap should not be enabled because it makes the app more killable in the background. -->
