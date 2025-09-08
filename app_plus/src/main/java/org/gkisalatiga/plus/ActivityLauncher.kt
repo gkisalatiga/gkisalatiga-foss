@@ -43,6 +43,7 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -265,12 +266,30 @@ class ActivityLauncher : ComponentActivity() {
 
         // Unlocks the dev menu if the app is debuggable.
         val isDevModeUnlocked = LocalStorage(this@ActivityLauncher).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
+        fun x(y: () -> Unit): String { return "${y.javaClass.enclosingClass?.name}".strip() }
         if (this@ActivityLauncher.packageName.endsWith(".debug") && !isDevModeUnlocked) {
             // Unlocks the dev menu.
-            PersistentLogger(this@ActivityLauncher).write({}, "The developer menu has been unlocked!")
+            PersistentLogger(this@ActivityLauncher).write({}, "The developer menu automatically unlocks by debug package suffix!")
+            LocalStorage(this@ActivityLauncher).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
+            EnableDevMode.activateDebugToggles()
+        } else if (x {} == "org.gkisalatiga.plus.ActivityLauncher" && !isDevModeUnlocked) {
+            PersistentLogger(this@ActivityLauncher).write({}, "The developer menu automatically unlocks by unobfuscated R8 app build detection!")
             LocalStorage(this@ActivityLauncher).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
             EnableDevMode.activateDebugToggles()
         }
+
+        // TODO: Remove this junk.
+        // Log.d("GGG", x {})
+        /*fun functionNameThatWillBeObfuscatedByR8(x: () -> Unit) {
+            val msgString = "[${x.javaClass.enclosingClass?.name}.${x.javaClass.enclosingMethod?.name}]"
+            Log.d("GGG", "functionNameThatWillBeObfuscatedByR8: ${msgString}")
+        }
+        functionNameThatWillBeObfuscatedByR8({})
+        this.javaClass.enclosingClass?.name
+
+        val variableNameThatWillBeObfuscatedByR8 = ""
+        Log.d("GGG", "variableNameThatWillBeObfuscatedByR8.javaClass.name: ${variableNameThatWillBeObfuscatedByR8.javaClass.name}")
+         */
 
         // Start the connection (online/offline) checker.
         ConnectionChecker(this).execute()
