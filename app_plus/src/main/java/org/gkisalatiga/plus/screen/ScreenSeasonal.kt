@@ -47,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,6 +72,7 @@ import org.gkisalatiga.plus.fragment.FragmentSeasonalMain
 import org.gkisalatiga.plus.fragment.FragmentSeasonalTwibbon
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.json.JSONObject
 
@@ -85,6 +87,7 @@ class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+        LaunchedEffect(Unit) { Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_SEASONAL) }
 
         // Declaring toggles (flags) and seasonal data.
         /* Show or hide feature menus based on flag settings. */

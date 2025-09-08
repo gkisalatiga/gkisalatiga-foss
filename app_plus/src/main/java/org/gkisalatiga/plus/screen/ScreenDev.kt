@@ -93,7 +93,8 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        LaunchedEffect(Unit) { Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_DEV) }
+        // It is already done for in ActivityLauncer.
+        // LaunchedEffect(Unit) { Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_DEV) }
 
         // Obtain the app's essential information.
         // SOURCE: https://stackoverflow.com/a/6593822

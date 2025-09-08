@@ -37,8 +37,21 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
     }
 
     /**
+     * Track which PDF files are being opened.
+     */
+    fun logPDFOpen(title: String, sourceUrl: String) {
+        Logger.logAnalytics({}, "Reporting PDF open event: $title from $sourceUrl ...")
+        firebaseAnalytics.logEvent(BeaconLogEvents.PDF_OPEN.name,
+            Bundle().let {
+                it.putString(FirebaseAnalytics.Param.VALUE, title)
+                it.putString(FirebaseAnalytics.Param.ORIGIN, sourceUrl)
+                it
+            }
+        )
+    }
+
+    /**
      * Track which menus (screens) are being opened.
-     * TODO: Implement this method in all screens in the app.
      */
     fun logScreenOpen(routes: NavigationRoutes) {
         Logger.logAnalytics({}, "Reporting menu/screen open event: ${routes.name} ...")
@@ -49,9 +62,39 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
             }
         )
     }
+
+    /**
+     * Use this function overload only in [org.gkisalatiga.plus.ActivityLauncher]
+     */
+    fun logScreenOpen(routeString: String?) {
+        val route = routeString ?: ""
+        Logger.logAnalytics({}, "Reporting menu/screen open event: $route ...")
+        firebaseAnalytics.logEvent(BeaconLogEvents.SCREEN_OPEN.name,
+            Bundle().let {
+                it.putString(FirebaseAnalytics.Param.VALUE, route)
+                it
+            }
+        )
+    }
+
+    /**
+     * Track which YouTube videos are being played.
+     */
+    fun logVideoPlay(title: String, url: String) {
+        Logger.logAnalytics({}, "Reporting YouTube video play event: $title from $url ...")
+        firebaseAnalytics.logEvent(BeaconLogEvents.VIDEO_PLAY.name,
+            Bundle().let {
+                it.putString(FirebaseAnalytics.Param.VALUE, title)
+                it.putString(FirebaseAnalytics.Param.SOURCE, url)
+                it
+            }
+        )
+    }
 }
 
 private enum class BeaconLogEvents {
     APP_LAUNCH,
-    SCREEN_OPEN
+    PDF_OPEN,
+    SCREEN_OPEN,
+    VIDEO_PLAY,
 }

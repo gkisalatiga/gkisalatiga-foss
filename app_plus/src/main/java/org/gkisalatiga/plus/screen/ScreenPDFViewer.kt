@@ -87,6 +87,7 @@ import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.CoroutineFileDownload
 import org.gkisalatiga.plus.lib.FileDownloadEvent
 import org.gkisalatiga.plus.lib.LocalStorage
@@ -94,8 +95,10 @@ import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
+import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.model.PdfPageUiEvent
 import org.gkisalatiga.plus.model.PdfViewModel
+import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookTitle
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookUrl
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutableBitmapMap
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.mutablePdfUiCurrentPage
@@ -243,6 +246,15 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
     @Composable
     @SuppressLint("ComposableNaming", "UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+        LaunchedEffect(Unit) {
+            // Screen open is inferred from PDF open. DO NOT LOG SCREEN EVENT.
+            // Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_PDF_VIEWER)
+            Beacon(current).logPDFOpen(
+                title = eBookTitle,
+                sourceUrl = eBookUrl,
+            )
+        }
+
         Box (Modifier.fillMaxSize()) {
             // Let the top and bottom bars be below the scrim.
             Scaffold (topBar = { getTopBar() }) {

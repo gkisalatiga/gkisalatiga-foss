@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.Navigation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
@@ -76,8 +77,10 @@ import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
+import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
+import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PreferenceKeys
 import org.gkisalatiga.plus.services.ClipManager
 
@@ -102,6 +105,15 @@ class ScreenVideoLive (private val current : ActivityData) : ComponentActivity()
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
+        LaunchedEffect(Unit) {
+            // Screen open is inferred from YouTube video play. DO NOT LOG SCREEN EVENT.
+            // Beacon(current).logScreenOpen(NavigationRoutes.SCREEN_LIVE)
+            Beacon(current).logVideoPlay(
+                title = YouTubeViewCompanion.videoTitle,
+                url = YouTubeViewCompanion.videoUrl,
+            )
+        }
+
         scope = rememberCoroutineScope()
 
         Logger.logTest({}, "Are we full screen?: ${YouTubeViewCompanion.isFullscreen.value}. Duration: ${YouTubeViewCompanion.currentSecond.floatValue}", LoggerType.VERBOSE)

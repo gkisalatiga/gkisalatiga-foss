@@ -555,7 +555,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible(current).getComposable()}
             composable(NavigationRoutes.SCREEN_BLANK.name) {ScreenBlank(current).getComposable()}
             composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib(current).getComposable() }
-            composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev(current).getComposable(); /* You got no Easter egg, just some Christmas gift. */ LaunchedEffect(Unit) { Beacon(current).logScreenOpen(it.destination.route) } }
             composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms(current).getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI.name) { ScreenGaleri(current).getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList(current).getComposable() }

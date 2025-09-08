@@ -184,7 +184,7 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
 
             val selected = ScreenAgendaCompanion.mutableCurrentDay
 
-            val dateArray = AgendaCalculator.getDaysUpAhead(3)
+            val dateArray = AgendaCalculator.getDaysUpAhead(4)
             val columns = 7
             val rows = ceil((dateArray.size / columns).toDouble()).toInt()
 
@@ -557,6 +557,8 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
             if (ScreenAgendaCompanion.currentInfoDialogData != null) {
                 val infoDialogTitle = stringResource(R.string.screen_agenda_info_dialog_title)
                 val infoDialogContentLabelName = stringResource(R.string.screen_agenda_info_dialog_label_name)
+                val infoDialogContentLabelDate = stringResource(R.string.screen_agenda_info_dialog_label_date)
+                val infoDialogContentLabelTime = stringResource(R.string.screen_agenda_info_dialog_label_time)
                 val infoDialogContentLabelPlace = stringResource(R.string.screen_agenda_info_dialog_label_place)
                 val infoDialogContentLabelRepresentative = stringResource(R.string.screen_agenda_info_dialog_label_representative)
                 val infoDialogContentLabelPic = stringResource(R.string.screen_agenda_info_dialog_label_pic)
@@ -573,9 +575,17 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
                     },
                     title = { Text(infoDialogTitle) },
                     text = {
-                        Column (Modifier.fillMaxWidth().height(325.dp).verticalScroll(rememberScrollState())) {
+                        Column (Modifier.fillMaxWidth().height(360.dp).verticalScroll(rememberScrollState())) {
                             Text(infoDialogContentLabelName, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                             Text(data.name)
+                            Spacer(Modifier.fillMaxWidth().height(10.dp))
+
+                            Text(infoDialogContentLabelDate, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text(StringFormatter.convertDateFromJSON(data.date))
+                            Spacer(Modifier.fillMaxWidth().height(10.dp))
+
+                            Text(infoDialogContentLabelTime, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text("${data.time}-${data.timeTo} (${data.timezone})")
                             Spacer(Modifier.fillMaxWidth().height(10.dp))
 
                             Text(infoDialogContentLabelPlace, fontWeight = FontWeight.Bold, fontSize = 16.sp)
@@ -592,19 +602,19 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
                                 Spacer(Modifier.fillMaxWidth().height(10.dp))
                             }
 
-                            if (data.note.isNotBlank() && data.note.strip() != "-") {
-                                Text(infoDialogContentLabelNotes, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                                Text(data.note)
-                                Spacer(Modifier.fillMaxWidth().height(10.dp))
-                            }
-
                             Text(infoDialogContentLabelStatus, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Row (verticalAlignment = Alignment.Top, modifier = Modifier.padding(top = 4.dp)) {
+                            Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
                                 Icon(ScreenAgendaCompanion.currentInfoDialogProposalStatusIcon!!, "", tint = ScreenAgendaCompanion.currentInfoDialogProposalStatusColor)
                                 Spacer(Modifier.width(10.dp))
                                 Text(ScreenAgendaCompanion.currentInfoDialogProposalStatusLocalizedString, fontSize = 14.sp, color = ScreenAgendaCompanion.currentInfoDialogProposalStatusColor)
                             }
                             Spacer(Modifier.fillMaxWidth().height(10.dp))
+
+                            if (data.note.isNotBlank() && data.note.strip() != "-") {
+                                Text(infoDialogContentLabelNotes, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text(data.note)
+                                Spacer(Modifier.fillMaxWidth().height(10.dp))
+                            }
                         }
                     },
                     confirmButton = {
