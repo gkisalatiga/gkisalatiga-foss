@@ -1,5 +1,20 @@
 # GKI Salatiga App Changelog
 
+## v0.8.0 2025.09.09 (45)
+
+:star2: **NEW**
+
+- Added beacon/analytics in several important screens as well as PDF viewer and video player
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- (Back-End) Replaced JSON data parsing implementation with object-oriented data model for better robustness and reliability
+- (Back-End) Upgraded NDK version to r28 for better compatibility with API 35+ Android versions
+
+:hammer_and_wrench: **FIX**
+
+- Fixed app crashes when parsing a corrupt JSON file from the API source
+
 ## v0.7.3 2025.08.20 (44)
 
 :four_leaf_clover: **IMPROVEMENT**

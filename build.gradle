@@ -5,10 +5,12 @@ plugins {
     // ---
     // Version 8.1.1 seems to support SDK 34. We try to hide the AGP version incompatibility warning.
     // SOURCE: https://stackoverflow.com/a/77059278
+    // Upgraded to version 8.5.1 on 2025-09-09 so that this app may support 16K memory paging size.
+    // SOURCE: https://developer.android.com/guide/practices/page-sizes#agp_version_851_or_higher
     //noinspection AndroidGradlePluginVersion
-    id "com.android.application" version "8.1.1" apply false
+    id "com.android.application" version '8.5.1' apply false
     //noinspection AndroidGradlePluginVersion
-    id "com.android.library" version "8.1.1" apply false
+    id "com.android.library" version '8.5.1' apply false
 
     // Enabling Firebase support.
     // SOURCE: https://firebase.google.com/docs/android/setup?authuser=0
