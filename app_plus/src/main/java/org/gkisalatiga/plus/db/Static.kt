@@ -14,6 +14,13 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.data.GalleryAlbumObject
+import org.gkisalatiga.plus.data.GalleryItemObject
+import org.gkisalatiga.plus.data.GalleryYearObject
+import org.gkisalatiga.plus.data.StaticContentItemObject
+import org.gkisalatiga.plus.data.StaticFolderObject
+import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -111,6 +118,18 @@ class Static(private val ctx: Context) {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(StaticCompanion.absolutePathToJSONFile)
+
+        // DEBUG: New feature.
+        // TODO: Remove this block after v0.8.0 release.
+        Logger.logTest({}, "Testing new features...")
+        val x1 = StaticJSONParser.parseData(_parsedJSONString)
+        x1.forEachIndexed { idx, it ->
+            it.content.forEach { it2 ->
+                Logger.logRapidTest({}, "${it.title}: ${it2.title}", LoggerType.DEBUG)
+            }
+        }
+        Meta.parseData(_parsedJSONString)
+
         return JSONObject(_parsedJSONString).getJSONArray("static")
     }
 
@@ -134,5 +153,60 @@ class StaticCompanion : Application() {
 
         /* The JSON object that will be accessed by screens. */
         var jsonRoot: JSONArray? = null
+    }
+}
+
+class StaticJSONParser {
+    companion object {
+        private fun getEmptyAPIData(): MutableList<StaticFolderObject> {
+            return mutableListOf()
+        }
+
+        fun parseData(jsonString: String): MutableList<StaticFolderObject> {
+            try {
+                // First, we read the JSON object.
+                val obj = JSONObject(jsonString)
+
+                // Then we initialized the API object.
+                val api = getEmptyAPIData()
+
+                /* From this point on, we then populate the API data. */
+
+                obj.getJSONArray("static").let { it0 ->
+                    for (i in 0 until it0.length()) {
+                        (it0[i] as JSONObject).let { it1 ->
+                            api.add(
+                                StaticFolderObject(
+                                    banner = it1.getString("banner"),
+                                    title = it1.getString("title"),
+                                    content = mutableListOf<StaticContentItemObject>().let { it2 ->
+                                        it1.getJSONArray("content").let { it3 ->
+                                            for (j in 0 until it3.length()) {
+                                                val curNode = it3[j] as JSONObject
+                                                it2.add(
+                                                    StaticContentItemObject(
+                                                        featuredImage = curNode.getString("featured-image"),
+                                                        html = curNode.getString("html"),
+                                                        subtitle = curNode.getString("subtitle"),
+                                                        title = curNode.getString("title"),
+                                                    )
+                                                )
+                                            }
+                                        }
+                                        it2
+                                    }
+                                )
+                            )
+                        }
+                    }
+                }
+                return api
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Logger.logTest({}, "Detected anomalies when parsing the JSON data: ${e.message}", LoggerType.ERROR)
+                return getEmptyAPIData()
+            }
+        }
     }
 }

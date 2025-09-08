@@ -14,6 +14,30 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.data.APIMainData
+import org.gkisalatiga.plus.data.GalleryAlbumObject
+import org.gkisalatiga.plus.data.GalleryItemObject
+import org.gkisalatiga.plus.data.GalleryYearObject
+import org.gkisalatiga.plus.data.MainAgendaItemObject
+import org.gkisalatiga.plus.data.MainAgendaRootObject
+import org.gkisalatiga.plus.data.MainAgendaRuanganItemObject
+import org.gkisalatiga.plus.data.MainBackendFlagsItemObject
+import org.gkisalatiga.plus.data.MainBackendRootObject
+import org.gkisalatiga.plus.data.MainBackendStringsItemObject
+import org.gkisalatiga.plus.data.MainCarouselItemObject
+import org.gkisalatiga.plus.data.MainFormsItemObject
+import org.gkisalatiga.plus.data.MainOffertoryCodeObject
+import org.gkisalatiga.plus.data.MainOffertoryObject
+import org.gkisalatiga.plus.data.MainPdfItemObject
+import org.gkisalatiga.plus.data.MainPdfRootObject
+import org.gkisalatiga.plus.data.MainPukatBerkatItemObject
+import org.gkisalatiga.plus.data.MainUrlProfileObject
+import org.gkisalatiga.plus.data.MainYKBItemObject
+import org.gkisalatiga.plus.data.MainYKBListObject
+import org.gkisalatiga.plus.data.MainYouTubePlaylistObject
+import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
+import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -112,6 +136,20 @@ class Gallery(private val ctx: Context) {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
+
+        // DEBUG: New feature.
+        // TODO: Remove this block after v0.8.0 release.
+        Logger.logTest({}, "Testing new features...")
+        val x1 = GalleryJSONParser.parseData(_parsedJSONString)
+        x1.forEachIndexed { idx, it ->
+            it.albumData.forEach { it2 ->
+                it2.photos.forEach { it3 ->
+                    // Logger.logRapidTest({}, "${idx}: ${it.title}, ${it2.folderId}, ${it3.id}", LoggerType.DEBUG)
+                }
+            }
+        }
+        Meta.parseData(_parsedJSONString)
+
         return JSONObject(_parsedJSONString).getJSONArray("gallery")
     }
 
@@ -135,5 +173,76 @@ class GalleryCompanion : Application() {
 
         /* The JSON object that will be accessed by screens. */
         var jsonRoot: JSONArray? = null
+    }
+}
+
+class GalleryJSONParser {
+    companion object {
+        private fun getEmptyAPIData(): MutableList<GalleryYearObject> {
+            return mutableListOf()
+        }
+
+        fun parseData(jsonString: String): MutableList<GalleryYearObject> {
+            try {
+                // First, we read the JSON object.
+                val obj = JSONObject(jsonString)
+
+                // Then we initialized the API object.
+                val api = getEmptyAPIData()
+
+                /* From this point on, we then populate the API data. */
+
+                obj.getJSONArray("gallery").let { it0 ->
+                    for (i in 0 until it0.length()) {
+                        (it0[i] as JSONObject).let { it1 ->
+                            api.add(
+                                GalleryYearObject(
+                                    title = it1.getString("title"),
+                                    albumData = mutableListOf<GalleryAlbumObject>().let { it2 ->
+                                        it1.getJSONArray("album-data").let { it3 ->
+                                            for (j in 0 until it3.length()) {
+                                                val curAlbum = it3[j] as JSONObject
+                                                it2.add(
+                                                    GalleryAlbumObject(
+                                                        folderId = curAlbum.getString("folder_id"),
+                                                        lastUpdate = curAlbum.getString("last_update"),
+                                                        featuredPhotoId = curAlbum.getString("featured_photo_id"),
+                                                        story = curAlbum.getString("story"),
+                                                        title = curAlbum.getString("title"),
+                                                        eventDate = curAlbum.getString("event_date"),
+                                                        photos = mutableListOf<GalleryItemObject>().let { it4 ->
+                                                            curAlbum.getJSONArray("photos").let { it5 ->
+                                                                for (k in 0 until it5.length()) {
+                                                                    val curItem = it5[k] as JSONObject
+                                                                    it4.add(
+                                                                        GalleryItemObject(
+                                                                            id = curItem.getString("id"),
+                                                                            name = curItem.getString("name"),
+                                                                            date = curItem.getString("date"),
+                                                                        )
+                                                                    )
+                                                                }
+                                                            }
+                                                            it4
+                                                        },
+                                                    )
+                                                )
+                                            }
+                                        }
+                                        it2
+                                    }
+                                )
+                            )
+                        }
+                    }
+                }
+                return api
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Logger.logTest({}, "Detected anomalies when parsing the JSON data: ${e.message}", LoggerType.ERROR)
+                return getEmptyAPIData()
+            }
+        }
     }
 }
