@@ -700,7 +700,7 @@ class ActivityLauncher : ComponentActivity() {
 
             // Necessary variables for the infinite-page carousel.
             // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
-            val actualPageCount = MainCompanion.jsonRoot!!.getJSONArray("carousel").length()
+            val actualPageCount = MainCompanion.api!!.carousel.size
             val carouselPageCount = actualPageCount * baseInfiniteScrollingPages
             FragmentHomeCompanion.rememberedCarouselPagerState = rememberPagerState(
                 initialPage = carouselPageCount / 2,

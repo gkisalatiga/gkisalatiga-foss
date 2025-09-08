@@ -54,6 +54,7 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.MainYKBItemObject
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Beacon
@@ -123,19 +124,19 @@ class ScreenYKBList (private val current : ActivityData) : ComponentActivity() {
             val ykbListAsJSONArray = ScreenYKBListCompanion.targetYKBArchiveList!!
 
             /* Enumerate and enlist the individual card. */
-            val enumeratedYKBList: MutableList<JSONObject> =  mutableListOf()
+            /*val enumeratedYKBList: MutableList<JSONObject> =  mutableListOf()
             for (i in 0 until ykbListAsJSONArray.length()) {
                 enumeratedYKBList.add(ykbListAsJSONArray[i] as JSONObject)
-            }
+            }*/
 
             /* Draw the devotional selection elements. */
-            enumeratedYKBList.forEach {
+            ykbListAsJSONArray.forEach {
 
                 // Preparing the arguments.
-                val title = it.getString("title")
-                val thumbnail = it.getString("featured-image")
-                val date = StringFormatter.convertDateFromJSON(it.getString("date"))
-                val html = it.getString("html")
+                val title = it.title
+                val thumbnail = it.featuredImage
+                val date = StringFormatter.convertDateFromJSON(it.date)
+                val html = it.html
 
                 // Displaying the individual card.
                 Card(
@@ -215,7 +216,7 @@ class ScreenYKBListCompanion : Application() {
         var screenYKBListTitle: String = String()
 
         /* The JSONArray which enlists the devotional posts to display in this screen. */
-        var targetYKBArchiveList: JSONArray? = null
+        var targetYKBArchiveList:  MutableList<MainYKBItemObject>? = null
         var targetYKBArchiveBannerUrl: String = String()
     }
 }

@@ -15,6 +15,7 @@ import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.data.APIMainData
+import org.gkisalatiga.plus.data.APIMetaData
 import org.gkisalatiga.plus.data.GalleryAlbumObject
 import org.gkisalatiga.plus.data.GalleryItemObject
 import org.gkisalatiga.plus.data.GalleryYearObject
@@ -78,7 +79,7 @@ class Gallery(private val ctx: Context) {
      * from the internet yet.
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun getFallbackGalleryData(): JSONArray {
+    fun getFallbackGalleryData(): MutableList<GalleryYearObject> {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
@@ -96,24 +97,24 @@ class Gallery(private val ctx: Context) {
         out.close()
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONArray("gallery")
+        return GalleryJSONParser.parseData(inputAsString)
     }
 
     @Suppress("MemberVisibilityCanBePrivate", "unused")
-    fun getFallbackGalleryMetadata(): JSONObject {
+    fun getFallbackGalleryMetadata(): APIMetaData {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_gallery)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONObject("meta")
+        return Meta.parseData(inputAsString)
     }
 
     /**
      * Initializes the gallery data and assign the global variable that handles it.
      */
     fun initFallbackGalleryData() {
-        GalleryCompanion.jsonRoot = getFallbackGalleryData()
+        GalleryCompanion.api = getFallbackGalleryData()
     }
 
     /**
@@ -121,7 +122,7 @@ class Gallery(private val ctx: Context) {
      * Then assign the global variable that handles it.
      */
     fun initLocalGalleryData() {
-        GalleryCompanion.jsonRoot = getGalleryData()
+        GalleryCompanion.api = getGalleryData()
     }
 
     /**
@@ -132,14 +133,14 @@ class Gallery(private val ctx: Context) {
      * Assumes the JSON metadata has been initialized by the Downloader class.
      * Please run Downloader().initMetaData() before executing this function.
      */
-    fun getGalleryData(): JSONArray {
+    fun getGalleryData(): MutableList<GalleryYearObject> {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
 
         // DEBUG: New feature.
         // TODO: Remove this block after v0.8.0 release.
-        Logger.logTest({}, "Testing new features...")
+        /*Logger.logTest({}, "Testing new features...")
         val x1 = GalleryJSONParser.parseData(_parsedJSONString)
         x1.forEachIndexed { idx, it ->
             it.albumData.forEach { it2 ->
@@ -148,16 +149,16 @@ class Gallery(private val ctx: Context) {
                 }
             }
         }
-        Meta.parseData(_parsedJSONString)
+        Meta.parseData(_parsedJSONString)*/
 
-        return JSONObject(_parsedJSONString).getJSONArray("gallery")
+        return GalleryJSONParser.parseData(_parsedJSONString)
     }
 
-    fun getGalleryMetadata(): JSONObject {
+    fun getGalleryMetadata(): APIMetaData {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(GalleryCompanion.absolutePathToJSONFile)
-        return JSONObject(_parsedJSONString).getJSONObject("meta")
+        return Meta.parseData(_parsedJSONString)
     }
 }
 
@@ -172,7 +173,8 @@ class GalleryCompanion : Application() {
         val savedFilename = "gkisplus-data-gallery.json"
 
         /* The JSON object that will be accessed by screens. */
-        var jsonRoot: JSONArray? = null
+        // var jsonRoot: JSONArray? = null
+        var api: MutableList<GalleryYearObject>? = null
     }
 }
 

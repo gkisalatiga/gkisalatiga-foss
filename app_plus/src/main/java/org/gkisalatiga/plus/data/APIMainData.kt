@@ -75,6 +75,15 @@ data class MainAgendaRootObject(
     var thu: MutableList<MainAgendaItemObject>,
     var fri: MutableList<MainAgendaItemObject>,
     var sat: MutableList<MainAgendaItemObject>,
+    val mapping: MutableMap<String, MutableList<MainAgendaItemObject>> = mutableMapOf(
+        "sun" to sun,
+        "mon" to mon,
+        "tue" to tue,
+        "wed" to wed,
+        "thu" to thu,
+        "fri" to fri,
+        "sat" to sat,
+    )
 )
 
 data class MainAgendaItemObject(

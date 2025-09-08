@@ -50,6 +50,8 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.MainYouTubePlaylistObject
+import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -67,13 +69,14 @@ class FragmentServices (private val current : ActivityData) : ComponentActivity(
     fun getComposable() {
 
         // The "all video playlists" JSON array.
-        val allVideoPlaylistArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
+        // val allVideoPlaylistArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
+        val allVideoPlaylistArray = MainCompanion.api!!.yt
 
         // Get the pinned video playlists.
-        val pinnedPlaylistDictionary: MutableList<JSONObject> = mutableListOf()
-        for (i in 0 until allVideoPlaylistArray.length()) {
-            if (allVideoPlaylistArray.getJSONObject(i).getInt("pinned") == 1) {
-                pinnedPlaylistDictionary.add(allVideoPlaylistArray[i] as JSONObject)
+        val pinnedPlaylistDictionary: MutableList<MainYouTubePlaylistObject> = mutableListOf()
+        for (i in 0 until allVideoPlaylistArray.size) {
+            if (allVideoPlaylistArray[i].pinned == 1) {
+                pinnedPlaylistDictionary.add(allVideoPlaylistArray[i])
             }
         }
 
@@ -92,7 +95,7 @@ class FragmentServices (private val current : ActivityData) : ComponentActivity(
             // Assumes both "pinnedPlaylistTitle" and "pinnedPlaylistContent" have the same list size.
             pinnedPlaylistDictionary.forEach { obj ->
                 // Displaying the relevant YouTube-based church services.
-                getServicesUI(obj.getString("title"), obj.getJSONArray("content"))
+                getServicesUI(obj.title, obj.content)
             }
 
             // Opens the non-pinned video playlist.
@@ -127,22 +130,15 @@ class FragmentServices (private val current : ActivityData) : ComponentActivity(
      * @param sectionTitle the title string that will be displayed on top of the section.
      */
     @Composable
-    private fun getServicesUI(sectionTitle: String, sectionContent: JSONArray) {
-
-        // The current playlist's video list.
-        val playlistContentList: MutableList<JSONObject> = mutableListOf()
-        for (i in 0 until sectionContent.length()) {
-            playlistContentList.add(sectionContent[i] as JSONObject)
-        }
-        // playlistContentList.removeAt(0)
+    private fun getServicesUI(sectionTitle: String, sectionContent: MutableList<MainYouTubeVideoContentObject>) {
 
         // Only show the "N" most recent videos.
-        val recentVideoList: MutableList<JSONObject> = mutableListOf()
+        val recentVideoList: MutableList<MainYouTubeVideoContentObject> = mutableListOf()
         val videoCount = 3
-        if (playlistContentList.size > videoCount) {
-            recentVideoList.addAll(playlistContentList.subList(0, videoCount))
+        if (sectionContent.size > videoCount) {
+            recentVideoList.addAll(sectionContent.subList(0, videoCount))
         } else {
-            recentVideoList.addAll(playlistContentList)
+            recentVideoList.addAll(sectionContent)
         }
 
         /* Displaying the section title. */
@@ -150,7 +146,7 @@ class FragmentServices (private val current : ActivityData) : ComponentActivity(
             Text(sectionTitle, modifier = Modifier.fillMaxWidth().weight(4f), fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis)
             Button(onClick = {
                 // Display the list of videos in this playlist.
-                ScreenVideoListCompanion.putArguments(playlistContentList, sectionTitle)
+                ScreenVideoListCompanion.putArguments(sectionContent, sectionTitle)
                 AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
                 Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Some desc", modifier = Modifier.fillMaxSize().aspectRatio(1.0f).padding(0.dp))
@@ -166,15 +162,15 @@ class FragmentServices (private val current : ActivityData) : ComponentActivity(
             items(recentVideoList.size) {
 
                 // Preparing the arguments.
-                val title = recentVideoList[it].getString("title")
-                val url = recentVideoList[it].getString("link")
-                val desc = recentVideoList[it].getString("desc")
+                val title = recentVideoList[it].title
+                val url = recentVideoList[it].link
+                val desc = recentVideoList[it].desc
 
                 // Format the date.
-                val date = StringFormatter.convertDateFromJSON(recentVideoList[it].getString("date"))
+                val date = StringFormatter.convertDateFromJSON(recentVideoList[it].date)
 
                 // Retrieving the video thumbnail.
-                val thumbnail = recentVideoList[it].getString("thumbnail")
+                val thumbnail = recentVideoList[it].thumbnail
 
                 Card (
                     onClick = {

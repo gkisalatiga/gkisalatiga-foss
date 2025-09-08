@@ -66,6 +66,7 @@ import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -148,11 +149,11 @@ class ScreenVideoList (private val current : ActivityData) : ComponentActivity()
                     modifier = Modifier.aspectRatio(1.77778f),
                     onClick = {
                         // Preparing the arguments.
-                        val title = listOfVideoContent[0].getString("title")
-                        val date = StringFormatter.convertDateFromJSON(listOfVideoContent[0].getString("date"))
-                        val url = listOfVideoContent[0].getString("link")
-                        val desc = listOfVideoContent[0].getString("desc")
-                        val thumbnail = listOfVideoContent[0].getString("thumbnail")
+                        val title = listOfVideoContent[0].title
+                        val date = StringFormatter.convertDateFromJSON(listOfVideoContent[0].date)
+                        val url = listOfVideoContent[0].link
+                        val desc = listOfVideoContent[0].desc
+                        val thumbnail = listOfVideoContent[0].thumbnail
 
                         // Debug logging.
                         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
@@ -176,7 +177,7 @@ class ScreenVideoList (private val current : ActivityData) : ComponentActivity()
                     }
                 ) {
                     AsyncImage(
-                        listOfVideoContent[0].getString("thumbnail"),
+                        listOfVideoContent[0].thumbnail,
                         contentDescription = "",
                         error = painterResource(R.drawable.thumbnail_error_stretched),
                         placeholder = painterResource(R.drawable.thumbnail_placeholder),
@@ -193,11 +194,11 @@ class ScreenVideoList (private val current : ActivityData) : ComponentActivity()
             listOfVideoContent.forEach {
 
                 // Preparing the arguments.
-                val title = it.getString("title")
-                val date = StringFormatter.convertDateFromJSON(it.getString("date"))
-                val url = it.getString("link")
-                val desc = it.getString("desc")
-                val thumbnail = it.getString("thumbnail")
+                val title = it.title
+                val date = StringFormatter.convertDateFromJSON(it.date)
+                val url = it.link
+                val desc = it.desc
+                val thumbnail = it.thumbnail
 
                 // Displaying the individual card.
                 Card(
@@ -279,7 +280,7 @@ class ScreenVideoList (private val current : ActivityData) : ComponentActivity()
 
 class ScreenVideoListCompanion : Application() {
     companion object {
-        internal var videoListContentArray: MutableList<JSONObject> = mutableListOf()
+        internal var videoListContentArray: MutableList<MainYouTubeVideoContentObject> = mutableListOf()
         internal var videoListTitle: String = ""
 
         /**
@@ -287,7 +288,7 @@ class ScreenVideoListCompanion : Application() {
          * @param contentArray the list of videos in this playlist.
          * @param title the title of the video playlist.
          */
-        fun putArguments(contentArray: MutableList<JSONObject>, title: String) {
+        fun putArguments(contentArray: MutableList<MainYouTubeVideoContentObject>, title: String) {
             videoListContentArray = contentArray
             videoListTitle = title
         }

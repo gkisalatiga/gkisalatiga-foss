@@ -185,32 +185,15 @@ class ScreenLiturgi (private val current : ActivityData) : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Retrieve the list of liturgies. */
-            val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONObject("pdf").getJSONArray("liturgi")
-
-            /* Enumerate and enlist the individual card. */
-            val enumeratedContentList: MutableList<Map<String, String>> =  mutableListOf(emptyMap<String, String>())
-            for (i in 0 until formListAsJSONArray.length()) {
-                val curNode = formListAsJSONArray[i] as JSONObject
-                enumeratedContentList.add(mapOf(
-                    "title" to curNode.getString("title"),
-                    "date" to curNode.getString("date"),
-                    "link" to curNode.getString("link"),
-                    "thumbnail" to curNode.getString("thumbnail"),
-                    "post-page" to curNode.getString("post-page"),
-                    "size" to curNode.getString("size")
-                ))
-            }
-
-            // For some reason, we must pop the 0-th item in cardsList
-            // because JSONArray iterates from 1, not 0.
-            enumeratedContentList.removeAt(0)
+            // val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONObject("pdf").getJSONArray("liturgi")
+            val formListAsJSONArray = MainCompanion.api!!.pdf.liturgi
 
             /* Draw the news selection elements. */
-            enumeratedContentList.forEach {
+            formListAsJSONArray.forEach {
 
                 // Preparing the arguments.
-                val title = it["title"]!!
-                val urlId = StringFormatter.getGoogleDriveId( it["link"]!! )
+                val title = it.title
+                val urlId = StringFormatter.getGoogleDriveId( it.link )
 
                 // Let's obtain the download URL.
                 val url = StringFormatter.getGoogleDriveDownloadURL(urlId)
@@ -219,10 +202,10 @@ class ScreenLiturgi (private val current : ActivityData) : ComponentActivity() {
                 val author = "Gereja Kristen Indonesia Salatiga"
                 val publisher = "Gereja Kristen Indonesia Salatiga"
                 val publisherLoc = "Kota Salatiga, Jawa Tengah 50742"
-                val year = it["date"]!!.split('-')[0]
-                val thumbnail = it["thumbnail"]!!
-                val source = it["post-page"]!!
-                val size = it["size"]!!
+                val year = it.date.split('-')[0]
+                val thumbnail = it.thumbnail
+                val source = it.postPage
+                val size = it.size
 
                 // Whether this PDF has been downloaded.
                 val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean

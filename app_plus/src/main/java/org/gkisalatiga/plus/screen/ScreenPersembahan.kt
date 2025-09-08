@@ -187,34 +187,35 @@ class ScreenPersembahan (private val current : ActivityData) : ComponentActivity
             )
 
             // The JSON node for bank account.
-            val persembahanJSONArray = MainCompanion.jsonRoot!!.getJSONArray("offertory")
+            // val persembahanJSONArray = MainCompanion.jsonRoot!!.getJSONArray("offertory")
+            val persembahanJSONArray = MainCompanion.api!!.offertory
 
             // Iterate through every offertory option.
             isFirstElement = true
-            for (index in 0 until persembahanJSONArray.length()) {
+            for (index in 0 until persembahanJSONArray.size) {
                 if (isFirstElement) {
                     HorizontalDivider()
                     isFirstElement = false
                 }
 
-                val currentNode = persembahanJSONArray[index] as JSONObject
+                val currentNode = persembahanJSONArray[index]
                 val notificationString = stringResource(R.string.offertory_number_copied)
                 ListItem(
                     leadingContent = {
-                        val bankLogoURL = currentNode.getString("bank-logo-url")
-                        val bankName = currentNode.getString("bank-name")
+                        val bankLogoURL = currentNode.bankLogoUrl
+                        val bankName = currentNode.bankName
                         AsyncImage(bankLogoURL, bankName, modifier = Modifier.size(60.dp))
                     },
-                    overlineContent = { Text( currentNode.getString("bank-name") ) },
+                    overlineContent = { Text( currentNode.bankName ) },
                     headlineContent = {
-                        val headlineText = "${currentNode.getString("bank-abbr")} ${currentNode.getString("bank-number")}"
+                        val headlineText = "${currentNode.bankAbbr} ${currentNode.bankNumber}"
                         Text(headlineText, fontWeight = FontWeight.Bold)
                     },
-                    supportingContent = { Text("a.n. ${currentNode.getString("account-holder")}") },
+                    supportingContent = { Text("a.n. ${currentNode.accountHolder}") },
                     modifier = Modifier.clickable(onClick = {
                         // Attempt to copy text to clipboard.
                         // SOURCE: https://www.geeksforgeeks.org/clipboard-in-android/
-                        val clipData = ClipData.newPlainText("text", currentNode.getString("bank-number").replace(".", ""))
+                        val clipData = ClipData.newPlainText("text", currentNode.bankNumber.replace(".", ""))
                         ClipManager.clipManager!!.setPrimaryClip(clipData)
 
                         Toast.makeText(current.ctx, notificationString, Toast.LENGTH_SHORT).show()
@@ -235,32 +236,33 @@ class ScreenPersembahan (private val current : ActivityData) : ComponentActivity
             }
 
             // The JSON node for offertory code.
-            val kodeUnikJSONArray = MainCompanion.jsonRoot!!.getJSONArray("offertory-code")
+            // val kodeUnikJSONArray = MainCompanion.jsonRoot!!.getJSONArray("offertory-code")
+            val kodeUnikJSONArray = MainCompanion.api!!.offertoryCode
 
             // Iterate through every offertory option.
             isFirstElement = true
-            for (index in 0 until kodeUnikJSONArray.length()) {
+            for (index in 0 until kodeUnikJSONArray.size) {
                 if (isFirstElement) {
                     HorizontalDivider()
                     isFirstElement = false
                 }
 
-                val currentNode = kodeUnikJSONArray[index] as JSONObject
+                val currentNode = kodeUnikJSONArray[index]
                 val notificationString = stringResource(R.string.offertory_code_copied)
                 ListItem(
                     leadingContent = {
-                        val leadingText = currentNode.getString("unique-code")
+                        val leadingText = currentNode.uniqueCode
                         Text(leadingText, fontWeight = FontWeight.Black, fontSize = 32.sp, textAlign = TextAlign.Center)
                     },
                     headlineContent = {
-                        val headlineText = currentNode.getString("title")
+                        val headlineText = currentNode.title
                         Text(headlineText, fontWeight = FontWeight.Bold)
                     },
-                    supportingContent = { Text(currentNode.getString("desc")) },
+                    supportingContent = { Text(currentNode.desc) },
                     modifier = Modifier.clickable(onClick = {
                         // Attempt to copy text to clipboard.
                         // SOURCE: https://www.geeksforgeeks.org/clipboard-in-android/
-                        val clipData = ClipData.newPlainText("text", currentNode.getString("unique-code"))
+                        val clipData = ClipData.newPlainText("text", currentNode.uniqueCode)
                         ClipManager.clipManager!!.setPrimaryClip(clipData)
 
                         Toast.makeText(current.ctx, notificationString, Toast.LENGTH_SHORT).show()

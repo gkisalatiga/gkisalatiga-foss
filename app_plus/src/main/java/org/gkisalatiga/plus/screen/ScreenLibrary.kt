@@ -122,7 +122,7 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
     @Composable
     @SuppressLint("ComposableNaming")
     private fun getMainContent() {
-        val libraryAsJSONArray = ModulesCompanion.jsonRoot!!.getJSONArray("library")
+        val libraryAsJSONArray = ModulesCompanion.api!!.library
 
         Column(
             horizontalAlignment = Alignment.Start,
@@ -149,7 +149,7 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Enumerate and enlist the individual card. */
-            val enumeratedLibraryList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
+            /*val enumeratedLibraryList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
             for (i in 0 until libraryAsJSONArray.length()) {
                 val curNode = libraryAsJSONArray[i] as JSONObject
 
@@ -163,21 +163,22 @@ class ScreenLibrary (private val current : ActivityData) : ComponentActivity() {
 
             // For some reason, we must pop the 0-th item in cardsList
             // because JSONArray iterates from 1, not 0.
-            enumeratedLibraryList.removeAt(0)
+            enumeratedLibraryList.removeAt(0)*/
 
             /* Composing each entry. */
-            enumeratedLibraryList.filter { (it["is_shown"] as String).toInt() == 1 }.forEach {
+            // enumeratedLibraryList.filter { (it["is_shown"] as String).toInt() == 1 }.forEach {
+            libraryAsJSONArray.filter { (it.isShown.toString()).toInt() == 1 }.forEach {
 
                 // Preparing the arguments.
-                val title = it["title"] as String
-                val author = it["author"] as String
-                val publisher = it["publisher"] as String
-                val publisherLoc = it["publisher-loc"] as String
-                val year = it["year"] as String
-                val thumbnail = it["thumbnail"] as String
-                val url = it["download-url"] as String
-                val source = it["source"] as String
-                val size = it["size"] as String
+                val title = it.title
+                val author = it.author
+                val publisher = it.publisher
+                val publisherLoc = it.publisherLoc
+                val year = it.year
+                val thumbnail = it.thumbnail
+                val url = it.downloadUrl
+                val source = it.source
+                val size = it.size
 
                 // Whether this PDF has been downloaded.
                 val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean

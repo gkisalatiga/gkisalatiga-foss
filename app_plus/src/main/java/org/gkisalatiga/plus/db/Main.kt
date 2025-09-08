@@ -65,6 +65,7 @@ class Main(private val ctx: Context) {
      * This function returns the parsed JSON's entire string content.
      * Could be dangerous.
      */
+    @Suppress("unused")
     fun getRawDumped(): String {
         return this._parsedJSONString
     }
@@ -89,7 +90,8 @@ class Main(private val ctx: Context) {
      * This is useful especially when the app has not yet loaded the refreshed JSON metadata
      * from the internet yet.
      */
-    fun getFallbackMainData(): JSONObject {
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun getFallbackMainData(): APIMainData {
         // Loading the local JSON file.
         // SOURCE: https://stackoverflow.com/a/2856501
         // SOURCE: https://stackoverflow.com/a/39500046
@@ -109,11 +111,11 @@ class Main(private val ctx: Context) {
         out.close()
 
         // Return the fallback JSONObject, and then navigate to the "data" node.
-        return JSONObject(inputAsString).getJSONObject("data")
+        return MainJSONParser.parseData(inputAsString)
     }
 
     @Suppress("unused")
-    fun getFallbackMainMetadata(): JSONObject {
+    fun getFallbackMainMetadata(): APIMetaData {
         // Loading the local JSON file.
         // SOURCE: https://stackoverflow.com/a/2856501
         // SOURCE: https://stackoverflow.com/a/39500046
@@ -121,14 +123,14 @@ class Main(private val ctx: Context) {
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "data" node.
-        return JSONObject(inputAsString).getJSONObject("meta")
+        return Meta.parseData(inputAsString)
     }
 
     /**
      * Initializes the main data and assign the global variable that handles it.
      */
     fun initFallbackMainData() {
-        MainCompanion.jsonRoot = getFallbackMainData()
+        MainCompanion.api = getFallbackMainData()
     }
 
     /**
@@ -136,7 +138,7 @@ class Main(private val ctx: Context) {
      * Then assign the global variable that handles it.
      */
     fun initLocalMainData() {
-        MainCompanion.jsonRoot = getMainData()
+        MainCompanion.api = getMainData()
     }
 
     /**
@@ -147,33 +149,18 @@ class Main(private val ctx: Context) {
      * Assumes the JSON metadata has been initialized by the Downloader class.
      * Please run Downloader().initMetaData() before executing this function.
      */
-    fun getMainData(): JSONObject {
+    fun getMainData(): APIMainData {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(MainCompanion.absolutePathToJSONFile)
-
-        // DEBUG: New feature.
-        // TODO: Remove this block after v0.8.0 release.
-        Logger.logTest({}, "Testing new features...")
-        val x1 = MainJSONParser.parseData(_parsedJSONString)
-        x1.agendaRuangan.forEachIndexed { idx, it ->
-            Logger.logTest({}, "${idx}: ${it.name}, ${it.weekday}", LoggerType.DEBUG)
-        }
-        x1.yt.forEachIndexed { idx1, it1 ->
-            it1.content.forEach { it2 ->
-                Logger.logRapidTest({}, "${idx1}: ${it1.title}: ${it2.title}", LoggerType.VERBOSE)
-            }
-        }
-        Meta.parseData(_parsedJSONString)
-
-        return JSONObject(this._parsedJSONString).getJSONObject("data")
+        return MainJSONParser.parseData(this._parsedJSONString)
     }
 
-    fun getMainMetadata(): JSONObject {
+    fun getMainMetadata(): APIMetaData {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(MainCompanion.absolutePathToJSONFile)
-        return JSONObject(this._parsedJSONString).getJSONObject("meta")
+        return Meta.parseData(this._parsedJSONString)
     }
 
 }
@@ -185,10 +172,10 @@ class MainCompanion : Application() {
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-data-main.json"
+        const val savedFilename = "gkisplus-data-main.json"
 
         /* The JSON object that will be accessed by screens. */
-        var jsonRoot: JSONObject? = null
+        // var jsonRoot: JSONObject? = null
         var api: APIMainData? = null
     }
 }

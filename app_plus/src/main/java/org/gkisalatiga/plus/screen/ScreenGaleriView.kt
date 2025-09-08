@@ -89,7 +89,7 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     fun getComposable() {
-        val horizontalPageCount = ScreenGaleriListCompanion.targetAlbumContent!!.length()
+        val horizontalPageCount = ScreenGaleriListCompanion.targetAlbumContent!!.size
         horizontalPagerState = rememberPagerState ( pageCount = {horizontalPageCount}, initialPage = ScreenGaleriViewCompanion.galleryViewerStartPage )
         scope = rememberCoroutineScope()
 
@@ -192,9 +192,9 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
     private fun getFloatingActionButton() {
         FloatingActionButton (
             onClick = {
-                val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage)
-                val name = currentPhotoObject.getString("name")
-                val id = currentPhotoObject.getString("id")
+                val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!![horizontalPagerState.currentPage]
+                val name = currentPhotoObject.name
+                val id = currentPhotoObject.id
 
                 // Obtain the download URL.
                 val downloadURL = StringFormatter.getGoogleDriveDownloadURL(id)
@@ -220,9 +220,9 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
             beyondViewportPageCount = 2
         ) { page ->
             // The photo's specific metadata.
-            val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(page)
-            val name = currentPhotoObject.getString("name")
-            val id = currentPhotoObject.getString("id")
+            val currentPhotoObject = ScreenGaleriListCompanion.targetAlbumContent!![page]
+            val name = currentPhotoObject.name
+            val id = currentPhotoObject.id
 
             // The image URL.
             val imageURL = StringFormatter.getGoogleDriveThumbnail(id, 600)
@@ -251,7 +251,7 @@ class ScreenGaleriView (private val current : ActivityData) : ComponentActivity(
     private fun getTopBar() {
 
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-        val topBarTitle = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(horizontalPagerState.currentPage).getString("name")
+        val topBarTitle = ScreenGaleriListCompanion.targetAlbumContent!![horizontalPagerState.currentPage].name
 
         Column(
             modifier = Modifier.fillMaxWidth()

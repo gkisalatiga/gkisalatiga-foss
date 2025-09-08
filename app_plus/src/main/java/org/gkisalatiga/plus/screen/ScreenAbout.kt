@@ -96,9 +96,10 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
     private val ctx = current.ctx
 
     // The main JSON root -> backend -> strings node.
-    private val mainRoot = MainCompanion.jsonRoot!!
-    private val mainBackendFlags = mainRoot.getJSONObject("backend").getJSONObject("flags")
-    private val mainBackendStrings = mainRoot.getJSONObject("backend").getJSONObject("strings")
+    // private val mainRoot = MainCompanion.jsonRoot!!
+    private val mainRoot = MainCompanion.api!!
+    private val mainBackendFlags = mainRoot.backend.flags
+    private val mainBackendStrings = mainRoot.backend.strings
 
     // Obtain the app's essential information.
     // SOURCE: https://stackoverflow.com/a/6593822
@@ -112,7 +113,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
     private val appName = if (stringId == 0) applicationInfo.nonLocalizedLabel.toString() else ctx.getString(stringId)
 
     // Whether to allow trigger of the Easter egg.
-    private val isEasterEggTriggerable = mainBackendFlags.getInt("is_easter_egg_devmode_enabled")
+    private val isEasterEggTriggerable = mainBackendFlags.isEasterEggDevmodeEnabled
     private val isDebuggablePackage = current.ctx.packageName.endsWith(".debug")
     private val isDevModeUnlocked = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
 
@@ -240,7 +241,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
             val sourceCodeText = stringResource(R.string.screen_about_kode_sumber)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { current.uriHandler.openUri(mainBackendStrings.getString("about_source_code_url")) }
+                onClick = { current.uriHandler.openUri(mainBackendStrings.aboutSourceCodeUrl) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Code, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -253,7 +254,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
             val changelogText = stringResource(R.string.screen_about_log_perubahan)
             Surface(
                 modifier = Modifier.fillMaxWidth().padding(0.dp).height(50.dp),
-                onClick = { current.uriHandler.openUri(mainBackendStrings.getString("about_changelog_url")) }
+                onClick = { current.uriHandler.openUri(mainBackendStrings.aboutChangelogUrl) }
             ) {
                 Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.History, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
@@ -297,7 +298,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
                     // SOURCE: https://www.tutorialspoint.com/android/android_sending_email.htm
                     // SOURCE: https://stackoverflow.com/a/59365539
                     val emailIntent = Intent(Intent.ACTION_SENDTO)
-                    emailIntent.setData(Uri.parse("mailto:${mainBackendStrings.getString("about_contact_mail")}"))
+                    emailIntent.setData(Uri.parse("mailto:${mainBackendStrings.aboutContactMail}"))
                     current.ctx.startActivity(Intent.createChooser(emailIntent, emailChooserTitle))
                 }
             ) {

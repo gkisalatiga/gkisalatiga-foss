@@ -26,7 +26,7 @@ data class SearchItemData (
     val title: String,
     val date: String,
     val dataType: SearchDataType,
-    val content: JSONObject,
+    val content: Any,
     val tag1: String = String(),
     val tag2: String = String(),
 )

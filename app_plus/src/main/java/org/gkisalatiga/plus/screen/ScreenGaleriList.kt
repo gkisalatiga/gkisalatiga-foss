@@ -59,6 +59,7 @@ import kotlinx.coroutines.CoroutineScope
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.GalleryItemObject
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
@@ -111,7 +112,7 @@ class ScreenGaleriList (private val current : ActivityData) : ComponentActivity(
         val featuredImageID = ScreenGaleriListCompanion.displayedFeaturedImageID
 
         /* Extract JSONArray to regular list. As always, JSONArray starts at 1. */
-        val extractedAlbumContent = mutableListOf(mapOf<String, String>())
+        /*val extractedAlbumContent = mutableListOf(mapOf<String, String>())
         for (i in 0 until ScreenGaleriListCompanion.targetAlbumContent!!.length()) {
             val curItem = ScreenGaleriListCompanion.targetAlbumContent!!.getJSONObject(i)
             extractedAlbumContent.add(
@@ -122,7 +123,7 @@ class ScreenGaleriList (private val current : ActivityData) : ComponentActivity(
                 )
             )
         }
-        extractedAlbumContent.removeAt(0)
+        extractedAlbumContent.removeAt(0)*/
 
         /* Displaying the thumbnails. */
         Box (Modifier.fillMaxSize()) {
@@ -159,8 +160,8 @@ class ScreenGaleriList (private val current : ActivityData) : ComponentActivity(
                     }
                 }
 
-                extractedAlbumContent.forEachIndexed { index, map ->
-                    val photoThumbnail = StringFormatter.getGoogleDriveThumbnail(map["id"]!!)
+                ScreenGaleriListCompanion.targetAlbumContent!!.forEachIndexed { index, map ->
+                    val photoThumbnail = StringFormatter.getGoogleDriveThumbnail(map.id)
                     item {
                         Surface(
                             onClick = {
@@ -232,7 +233,7 @@ class ScreenGaleriListCompanion : Application() {
         internal var displayedAlbumTitle: String = ""
         internal var displayedAlbumStory: String = ""
         internal var displayedFeaturedImageID: String = ""
-        internal var targetAlbumContent: JSONArray? = null
+        internal var targetAlbumContent: MutableList<GalleryItemObject>? = null
 
         /* The screen's remembered lazy grid state. */
         var rememberedLazyGridState: LazyGridState? = null
@@ -244,7 +245,7 @@ class ScreenGaleriListCompanion : Application() {
          * @param featuredImageId the featured image that will visually describe the album.
          * @param albumContent the target album contents (photographs) that will be enlisted.
          */
-        fun putArguments(albumTitle: String, albumStory: String, featuredImageId: String, albumContent: JSONArray?) {
+        fun putArguments(albumTitle: String, albumStory: String, featuredImageId: String, albumContent: MutableList<GalleryItemObject>?) {
             displayedAlbumTitle = albumTitle
             displayedAlbumStory = albumStory
             displayedFeaturedImageID = featuredImageId

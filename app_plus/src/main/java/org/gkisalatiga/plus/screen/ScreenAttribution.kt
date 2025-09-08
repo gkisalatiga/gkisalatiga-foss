@@ -183,31 +183,32 @@ class ScreenAttribution (private val current : ActivityData) : ComponentActivity
             // Display the main "attribution" contents.
             // Load the JSON file containing attributions of all open source programs
             // and code which are used by this app.
-            val attribJSON: JSONObject = Modules(current.ctx).getModulesData().getJSONObject("attributions")
-            val attribArray: JSONArray = attribJSON.getJSONArray("books")
+            // val attribJSON: JSONObject = Modules(current.ctx).getModulesData().getJSONObject("attributions")
+            val attribJSON = Modules(current.ctx).getModulesData().attributions
+            val attribArray = attribJSON.books
 
             // Convert JSONArray to regular list.
-            val attribList: MutableList<JSONObject> = mutableListOf()
+            /*val attribList: MutableList<JSONObject> = mutableListOf()
             for (i in 0 until attribArray.length()) {
                 attribList.add(attribArray[i] as JSONObject)
-            }
+            }*/
 
             /* Displaying the attribution cards. */
             var isFirstCard = true
-            attribList.forEach {
+            attribArray.forEach {
 
                 if (!isFirstCard) HorizontalDivider(Modifier.padding(horizontal = 20.dp)); isFirstCard = false
 
                 /* The attribution card. */
                 Surface (
-                    onClick = { current.uriHandler.openUri(it.getString("link")) },
+                    onClick = { current.uriHandler.openUri(it.link) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 10.dp).padding(top = 5.dp), verticalArrangement = Arrangement.Center) {
-                        Text(it.getString("title"), fontWeight = FontWeight.Bold)
-                        Text("Copyright (C) ${it.getString("year")} ${it.getString("author")}")
-                        TextButton(onClick = { current.uriHandler.openUri(it.getString("license-url")) }) {
-                            Text(it.getString("license"))
+                        Text(it.title, fontWeight = FontWeight.Bold)
+                        Text("Copyright (C) ${it.year} ${it.author}")
+                        TextButton(onClick = { current.uriHandler.openUri(it.licenseUrl) }) {
+                            Text(it.license)
                         }
                     }
                 }
@@ -226,31 +227,31 @@ class ScreenAttribution (private val current : ActivityData) : ComponentActivity
             // Display the main "attribution" contents.
             // Load the JSON file containing attributions of all open source programs
             // and code which are used by this app.
-            val attribJSON: JSONObject = Modules(current.ctx).getModulesData().getJSONObject("attributions")
-            val attribArray: JSONArray = attribJSON.getJSONArray("webview")
+            val attribJSON = Modules(current.ctx).getModulesData().attributions
+            val attribArray = attribJSON.webview
 
             // Convert JSONArray to regular list.
-            val attribList: MutableList<JSONObject> = mutableListOf()
+            /*val attribList: MutableList<JSONObject> = mutableListOf()
             for (i in 0 until attribArray.length()) {
                 attribList.add(attribArray[i] as JSONObject)
-            }
+            }*/
 
             /* Displaying the attribution cards. */
             var isFirstCard = true
-            attribList.forEach {
+            attribArray.forEach {
 
                 if (!isFirstCard) HorizontalDivider(Modifier.padding(horizontal = 20.dp)); isFirstCard = false
 
                 /* The attribution card. */
                 Surface (
-                    onClick = { current.uriHandler.openUri(it.getString("link")) },
+                    onClick = { current.uriHandler.openUri(it.link) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column (modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 10.dp).padding(top = 5.dp), verticalArrangement = Arrangement.Center) {
-                        Text(it.getString("title"), fontWeight = FontWeight.Bold)
-                        Text("Copyright (C) ${it.getString("year")} ${it.getString("author")}")
-                        TextButton(onClick = { current.uriHandler.openUri(it.getString("license-url")) }) {
-                            Text(it.getString("license"))
+                        Text(it.title, fontWeight = FontWeight.Bold)
+                        Text("Copyright (C) ${it.year} ${it.author}")
+                        TextButton(onClick = { current.uriHandler.openUri(it.licenseUrl) }) {
+                            Text(it.license)
                         }
                     }
                 }

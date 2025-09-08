@@ -86,8 +86,9 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
     private val ctx = current.ctx
 
     // The main JSON root -> backend node.
-    private val mainRoot = MainCompanion.jsonRoot!!
-    private val mainRootBackend = mainRoot.getJSONObject("backend")
+    // private val mainRoot = MainCompanion.jsonRoot!!
+    private val mainRoot = MainCompanion.api!!
+    private val mainRootBackend = mainRoot.backend
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -303,16 +304,36 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
             Spacer(Modifier.height(10.dp))
 
             /* Displaying the read-out of the JSON backend flags, strings, etc. */
-            mainRootBackend.getJSONObject("flags").let {
-                it.keys().forEach { key ->
+            mapOf(
+                "isFeatureSeasonalShown" to mainRootBackend.flags.isFeatureSeasonalShown,
+                "isFeatureLapakShown" to mainRootBackend.flags.isFeatureLapakShown,
+                "isFeatureLibraryShown" to mainRootBackend.flags.isFeatureLibraryShown,
+                "isFeatureBibleShown" to mainRootBackend.flags.isFeatureBibleShown,
+                "isFeatureFormulirShown" to mainRootBackend.flags.isFeatureFormulirShown,
+                "isFeatureYKBShown" to mainRootBackend.flags.isFeatureYKBShown,
+                "isFeaturePersembahanShown" to mainRootBackend.flags.isFeaturePersembahanShown,
+                "isFeatureAgendaShown" to mainRootBackend.flags.isFeatureAgendaShown,
+                "isEasterEggDevmodeEnabled" to mainRootBackend.flags.isEasterEggDevmodeEnabled,
+                "isFeatureGaleriShown" to mainRootBackend.flags.isFeatureGaleriShown,
+            ).let {
+                it.keys.forEach { key ->
                     Text("flags ::: $key", fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                    Text(it.getInt(key).toString(), fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                    Text(it[key].toString(), fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
                 }
             }
-            mainRootBackend.getJSONObject("strings").let {
-                it.keys().forEach { key ->
+
+            mapOf(
+                "aboutContactMail" to mainRootBackend.strings.aboutContactMail,
+                "greetingsBottom" to mainRootBackend.strings.greetingsBottom,
+                "greetingsTop" to mainRootBackend.strings.greetingsTop,
+                "aboutSourceCodeUrl" to mainRootBackend.strings.aboutSourceCodeUrl,
+                "aboutGooglePlayListingUrl" to mainRootBackend.strings.aboutGooglePlayListingUrl,
+                "aboutChangelogUrl" to mainRootBackend.strings.aboutChangelogUrl,
+                "address" to mainRootBackend.strings.address,
+            ).let {
+                it.keys.forEach { key ->
                     Text("strings ::: $key", fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                    Text(it.getString(key), fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                    Text("${it[key]}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
                 }
             }
 

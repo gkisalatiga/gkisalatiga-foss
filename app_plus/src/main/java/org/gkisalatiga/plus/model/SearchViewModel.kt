@@ -10,6 +10,11 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.gkisalatiga.plus.data.MainPdfItemObject
+import org.gkisalatiga.plus.data.MainYKBItemObject
+import org.gkisalatiga.plus.data.MainYKBListObject
+import org.gkisalatiga.plus.data.MainYouTubePlaylistObject
+import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
 import org.gkisalatiga.plus.data.SearchItemData
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.EmptySearchQueryException
@@ -39,7 +44,7 @@ class SearchViewModel(ctx: Context) : CoroutineViewModel() {
         launch(Dispatchers.IO) {
             try {
 
-                val root = MainCompanion.jsonRoot!!
+                val root = MainCompanion.api!!
 
                 if (searchTerm.isBlank()) throw EmptySearchQueryException()
 
@@ -48,75 +53,75 @@ class SearchViewModel(ctx: Context) : CoroutineViewModel() {
 
                 /* Tata Ibadah. */
                 if (SearchDataType.PDF_TATA_IBADAH in searchFilter) {
-                    val parent = root.getJSONObject("pdf").getJSONArray("liturgi")
+                    val parent = root.pdf.liturgi
 
                     // Converting JSONArray to an iterable.
-                    val iterableParent = mutableListOf<JSONObject>()
-                    for (i in 0 until parent.length()) iterableParent.add(i, parent[i] as JSONObject)
+                    val iterableParent = mutableListOf<MainPdfItemObject>()
+                    for (i in 0 until parent.size) iterableParent.add(i, parent[i])
 
                     iterableParent.forEach {
-                        if (it != JSONObject() && it.getString("title").lowercase().contains(sanitizedSearchTerm))
-                            SearchItemData(sanitizedSearchTerm, it.getString("title"), it.getString("date"), SearchDataType.PDF_TATA_IBADAH, it).let { obj -> allSearchResults.add(obj) }
+                        if (it.title.lowercase().contains(sanitizedSearchTerm))
+                            SearchItemData(sanitizedSearchTerm, it.title, it.date, SearchDataType.PDF_TATA_IBADAH, it).let { obj -> allSearchResults.add(obj) }
                     }
                 }
 
                 /* Warta Jemaat. */
                 if (SearchDataType.PDF_WARTA_JEMAAT in searchFilter) {
-                    val parent = root.getJSONObject("pdf").getJSONArray("wj")
+                    val parent = root.pdf.wj
 
                     // Converting JSONArray to an iterable.
-                    val iterableParent = mutableListOf<JSONObject>()
-                    for (i in 0 until parent.length()) iterableParent.add(i, parent[i] as JSONObject)
+                    val iterableParent = mutableListOf<MainPdfItemObject>()
+                    for (i in 0 until parent.size) iterableParent.add(i, parent[i])
 
                     iterableParent.forEach {
-                        if (it != JSONObject() && it.getString("title").lowercase().contains(sanitizedSearchTerm))
-                            SearchItemData(sanitizedSearchTerm, it.getString("title"), it.getString("date"), SearchDataType.PDF_WARTA_JEMAAT, it).let { obj -> allSearchResults.add(obj) }
+                        if (it.title.lowercase().contains(sanitizedSearchTerm))
+                            SearchItemData(sanitizedSearchTerm, it.title, it.date, SearchDataType.PDF_WARTA_JEMAAT, it).let { obj -> allSearchResults.add(obj) }
                     }
                 }
 
                 /* Renungan YKB. */
                 if (SearchDataType.RENUNGAN_YKB in searchFilter) {
-                    val parent = root.getJSONArray("ykb")
+                    val parent = root.ykb
 
                     // Converting JSONArray to an iterable.
-                    val iterableParent = mutableListOf<JSONObject>()
-                    for (i in 0 until parent.length()) iterableParent.add(i, parent[i] as JSONObject)
+                    val iterableParent = mutableListOf<MainYKBListObject>()
+                    for (i in 0 until parent.size) iterableParent.add(i, parent[i])
 
                     iterableParent.forEach {
 
                         // Opening the content of each YKB category.
-                        val contentRoot = it.getJSONArray("posts")
-                        val contentRootTag1 = it.getString("title")
-                        val contentRootTag2 = it.getString("banner")
-                        val iterableContentRoot = mutableListOf<JSONObject>().let { root -> for (i in 0 until contentRoot.length()) root.add(i, contentRoot[i] as JSONObject); root }
+                        val contentRoot = it.posts
+                        val contentRootTag1 = it.title
+                        val contentRootTag2 = it.banner
+                        val iterableContentRoot = mutableListOf<MainYKBItemObject>().let { root -> for (i in 0 until contentRoot.size) root.add(i, contentRoot[i]); root }
 
                         // Iterating through every YKB post and finding matches.
                         iterableContentRoot.forEach { node ->
-                            if (node != JSONObject() && node.getString("title").lowercase().contains(sanitizedSearchTerm))
-                                SearchItemData(sanitizedSearchTerm, node.getString("title"), node.getString("date"), SearchDataType.RENUNGAN_YKB, node, tag1 = contentRootTag1, tag2 = contentRootTag2).let { obj -> allSearchResults.add(obj) }
+                            if (node.title.lowercase().contains(sanitizedSearchTerm))
+                                SearchItemData(sanitizedSearchTerm, node.title, node.date, SearchDataType.RENUNGAN_YKB, node, tag1 = contentRootTag1, tag2 = contentRootTag2).let { obj -> allSearchResults.add(obj) }
                         }
                     }
                 }
 
                 /* YouTube video. */
                 if (SearchDataType.YOUTUBE_VIDEO in searchFilter) {
-                    val parent = root.getJSONArray("yt")
+                    val parent = root.yt
 
                     // Converting JSONArray to an iterable.
-                    val iterableParent = mutableListOf<JSONObject>()
-                    for (i in 0 until parent.length()) iterableParent.add(i, parent[i] as JSONObject)
+                    val iterableParent = mutableListOf<MainYouTubePlaylistObject>()
+                    for (i in 0 until parent.size) iterableParent.add(i, parent[i])
 
                     iterableParent.forEach {
 
                         // Opening the content of each YKB category.
-                        val contentRoot = it.getJSONArray("content")
-                        val contentRootTag = it.getString("title")
-                        val iterableContentRoot = mutableListOf<JSONObject>().let { root -> for (i in 0 until contentRoot.length()) root.add(i, contentRoot[i] as JSONObject); root }
+                        val contentRoot = it.content
+                        val contentRootTag = it.title
+                        val iterableContentRoot = mutableListOf<MainYouTubeVideoContentObject>().let { root -> for (i in 0 until contentRoot.size) root.add(i, contentRoot[i]); root }
 
                         // Iterating through every YKB post and finding matches.
                         iterableContentRoot.forEach { node ->
-                            if (node != JSONObject() && node.getString("title").lowercase().contains(sanitizedSearchTerm))
-                                SearchItemData(sanitizedSearchTerm, node.getString("title"), node.getString("date"), SearchDataType.YOUTUBE_VIDEO, node, tag1 = contentRootTag).let { obj -> allSearchResults.add(obj) }
+                            if (node.title.lowercase().contains(sanitizedSearchTerm))
+                                SearchItemData(sanitizedSearchTerm, node.title, node.date, SearchDataType.YOUTUBE_VIDEO, node, tag1 = contentRootTag).let { obj -> allSearchResults.add(obj) }
                         }
                     }
                 }

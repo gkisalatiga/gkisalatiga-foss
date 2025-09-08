@@ -55,13 +55,15 @@ import org.gkisalatiga.plus.services.InternalFileManager
 class FragmentSeasonalAgenda (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
-    private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    // private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    private val seasonalNode = ModulesCompanion.api!!.seasonal
 
     @Composable
     fun getComposable() {
         Column (modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             // Display the main title.
-            val mainTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("title")
+            // val mainTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("title")
+            val mainTitle = seasonalNode.staticMenu.agenda.title
             Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 Text(mainTitle, modifier = Modifier, fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
             }
@@ -69,9 +71,9 @@ class FragmentSeasonalAgenda (private val current : ActivityData) : ComponentAct
             Spacer(Modifier.height(20.dp))
 
             /* Preparing the strings. */
-            val posterViewerUrl = seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("url")
-            val posterViewerTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("title")
-            val posterViewerCaption = seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("title")
+            val posterViewerUrl = seasonalNode.staticMenu.agenda.url
+            val posterViewerTitle = seasonalNode.staticMenu.agenda.title
+            val posterViewerCaption = seasonalNode.staticMenu.agenda.title
             val posterSavedFilename = posterViewerTitle.replace(" ", "_") + "." + MimeTypeMap.getFileExtensionFromUrl(posterViewerUrl)
 
             /* Display the image. */
@@ -79,7 +81,7 @@ class FragmentSeasonalAgenda (private val current : ActivityData) : ComponentAct
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.padding(bottom = 10.dp),
                 onClick = {
-                    ScreenPosterViewerLegacyCompanion.posterViewerImageSource = posterViewerUrl
+                    ScreenPosterViewerLegacyCompanion.posterViewerImageSource = if (posterViewerUrl.isNullOrBlank()) "" else posterViewerUrl
                     ScreenPosterViewerLegacyCompanion.posterViewerTitle = posterViewerTitle
                     ScreenPosterViewerLegacyCompanion.posterViewerCaption = posterViewerCaption
                     AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER_LEGACY)
@@ -107,7 +109,7 @@ class FragmentSeasonalAgenda (private val current : ActivityData) : ComponentAct
             // Display the share button.
             Button(onClick = {
                 InternalFileManager(current.ctx).downloadAndShare(
-                    url = posterViewerUrl,
+                    url = if (posterViewerUrl.isNullOrBlank()) "" else posterViewerUrl,
                     savedFilename = posterSavedFilename,
                     shareSheetText = current.ctx.getString(R.string.fragment_seasonal_agenda_share_sheet_text).replace("%%%TITLE%%%", posterViewerTitle),
                     shareSheetTitle = posterViewerTitle,

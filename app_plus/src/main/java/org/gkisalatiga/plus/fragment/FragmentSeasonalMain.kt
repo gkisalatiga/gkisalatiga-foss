@@ -51,21 +51,34 @@ import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 class FragmentSeasonalMain (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
-    private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    // private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    private val seasonalNode = ModulesCompanion.api!!.seasonal
 
     private val itemTargetTitle = listOf(
+        seasonalNode.staticMenu.agenda.title,
+        seasonalNode.staticMenu.books.title,
+        seasonalNode.staticMenu.gallery.title,
+        seasonalNode.staticMenu.twibbon.title,
+    )
+    /*private val itemTargetTitle = listOf(
         seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("title"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("books").getString("title"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getString("title"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("twibbon").getString("title"),
-    )
+    )*/
 
     private val itemTargetBannerUrl = listOf(
+        seasonalNode.staticMenu.agenda.banner,
+        seasonalNode.staticMenu.books.banner,
+        seasonalNode.staticMenu.gallery.banner,
+        seasonalNode.staticMenu.twibbon.banner,
+    )
+    /*private val itemTargetBannerUrl = listOf(
         seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getString("banner"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("books").getString("banner"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getString("banner"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("twibbon").getString("banner"),
-    )
+    )*/
 
     private val itemTargetFragments = listOf(
         NavigationRoutes.FRAG_SEASONAL_AGENDA,
@@ -75,11 +88,17 @@ class FragmentSeasonalMain (private val current : ActivityData) : ComponentActiv
     )
 
     private val itemTargetIsShown = listOf(
+        seasonalNode.staticMenu.agenda.isShown,
+        seasonalNode.staticMenu.books.isShown,
+        seasonalNode.staticMenu.gallery.isShown,
+        seasonalNode.staticMenu.twibbon.isShown,
+    )
+    /*private val itemTargetIsShown = listOf(
         seasonalNode.getJSONObject("static-menu").getJSONObject("agenda").getInt("is_shown"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("books").getInt("is_shown"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getInt("is_shown"),
         seasonalNode.getJSONObject("static-menu").getJSONObject("twibbon").getInt("is_shown"),
-    )
+    )*/
 
     @Composable
     fun getComposable() {

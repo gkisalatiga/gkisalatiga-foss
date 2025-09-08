@@ -223,10 +223,10 @@ class ScreenPosterViewer (private val current : ActivityData) : ComponentActivit
         ) { page ->
             // The photo's specific metadata.
             val currentPhotoObject = FragmentHomeCompanion.filteredCarouselPostersList!!.let { it[page % it.size] }
-            val title = currentPhotoObject.getString("title")
-            val caption = currentPhotoObject.getString("poster-caption")
-            val imageURL = currentPhotoObject.getString("poster-image")
-            val date = currentPhotoObject.getString("date-created")
+            val title = currentPhotoObject.title
+            val caption = currentPhotoObject.posterCaption
+            val imageURL = currentPhotoObject.posterImage
+            val date = currentPhotoObject.dateCreated
 
             // Displaying the zoomable image view.
             val zoomState = rememberZoomState()
@@ -255,7 +255,7 @@ class ScreenPosterViewer (private val current : ActivityData) : ComponentActivit
 
         // Calculate the top bar title.
         val currentPage = FragmentHomeCompanion.rememberedCarouselPagerState!!.currentPage
-        val topBarTitle = FragmentHomeCompanion.filteredCarouselPostersList!!.let { it[currentPage % it.size].getString("title") }
+        val topBarTitle = FragmentHomeCompanion.filteredCarouselPostersList!!.let { it[currentPage % it.size].title }
 
         Column(
             modifier = Modifier.fillMaxWidth()

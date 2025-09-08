@@ -102,6 +102,9 @@ import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.MainPdfItemObject
+import org.gkisalatiga.plus.data.MainYKBItemObject
+import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
 import org.gkisalatiga.plus.data.SearchItemData
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -427,10 +430,11 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                             when (it.dataType) {
 
                                 SearchDataType.PDF_TATA_IBADAH -> {
+                                    val x = it.content as MainPdfItemObject
 
                                     // Preparing the arguments.
-                                    val title = it.content.getString("title")
-                                    val urlId = StringFormatter.getGoogleDriveId( it.content.getString("link") )
+                                    val title = x.title
+                                    val urlId = StringFormatter.getGoogleDriveId( x.link )
 
                                     // Let's obtain the download URL.
                                     val url = StringFormatter.getGoogleDriveDownloadURL(urlId)
@@ -439,10 +443,10 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     val author = "Gereja Kristen Indonesia Salatiga"
                                     val publisher = "Gereja Kristen Indonesia Salatiga"
                                     val publisherLoc = "Kota Salatiga, Jawa Tengah 50742"
-                                    val year = it.content.getString("date").split('-')[0]
-                                    val thumbnail = it.content.getString("thumbnail")
-                                    val source = it.content.getString("post-page")
-                                    val size = it.content.getString("size")
+                                    val year = x.date.split('-')[0]
+                                    val thumbnail = x.thumbnail
+                                    val source = x.postPage
+                                    val size = x.size
 
                                     Surface (
                                         onClick = {
@@ -495,10 +499,11 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                 }
 
                                 SearchDataType.PDF_WARTA_JEMAAT -> {
+                                    val x = it.content as MainPdfItemObject
 
                                     // Preparing the arguments.
-                                    val title = it.content.getString("title")
-                                    val urlId = StringFormatter.getGoogleDriveId( it.content.getString("link") )
+                                    val title = x.title
+                                    val urlId = StringFormatter.getGoogleDriveId( x.link )
 
                                     // Let's obtain the download URL.
                                     val url = StringFormatter.getGoogleDriveDownloadURL(urlId)
@@ -507,10 +512,10 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                     val author = "Gereja Kristen Indonesia Salatiga"
                                     val publisher = "Gereja Kristen Indonesia Salatiga"
                                     val publisherLoc = "Kota Salatiga, Jawa Tengah 50742"
-                                    val year = it.content.getString("date").split('-')[0]
-                                    val thumbnail = it.content.getString("thumbnail")
-                                    val source = it.content.getString("post-page")
-                                    val size = it.content.getString("size")
+                                    val year = x.date.split('-')[0]
+                                    val thumbnail = x.thumbnail
+                                    val source = x.postPage
+                                    val size = x.size
 
                                     Surface (
                                         onClick = {
@@ -563,12 +568,13 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                 }
 
                                 SearchDataType.RENUNGAN_YKB -> {
+                                    it.content as MainYKBItemObject
 
                                     // Preparing the arguments.
-                                    val title = it.content.getString("title")
-                                    val thumbnail = it.content.getString("featured-image")
-                                    val date = StringFormatter.convertDateFromJSON(it.content.getString("date"))
-                                    val html = it.content.getString("html")
+                                    val title = it.content.title
+                                    val thumbnail = it.content.featuredImage
+                                    val date = StringFormatter.convertDateFromJSON(it.content.date)
+                                    val html = it.content.html
 
                                     Surface (
                                         onClick = {
@@ -624,13 +630,14 @@ class ScreenSearch(private val current: ActivityData) : ComponentActivity() {
                                 }
 
                                 SearchDataType.YOUTUBE_VIDEO -> {
+                                    it.content as MainYouTubeVideoContentObject
 
                                     // Preparing the arguments.
-                                    val title = it.content.getString("title")
-                                    val date = StringFormatter.convertDateFromJSON(it.content.getString("date"))
-                                    val url = it.content.getString("link")
-                                    val desc = it.content.getString("desc")
-                                    val thumbnail = it.content.getString("thumbnail")
+                                    val title = it.content.title
+                                    val date = StringFormatter.convertDateFromJSON(it.content.date)
+                                    val url = it.content.link
+                                    val desc = it.content.desc
+                                    val thumbnail = it.content.thumbnail
 
                                     Surface (
                                         onClick = {

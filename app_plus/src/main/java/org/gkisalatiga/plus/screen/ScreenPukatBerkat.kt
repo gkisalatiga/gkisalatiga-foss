@@ -157,24 +157,8 @@ class ScreenPukatBerkat (private val current : ActivityData) : ComponentActivity
     private fun getSectionUI(dictIndex: String, intIndex: Int) {
 
         /* Converting JSONArray to regular list. */
-        val pukatBerkatListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("pukat-berkat")
-        val enumeratedPukatBerkatList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
-        for (i in 0 until pukatBerkatListAsJSONArray.length()) {
-            val curNode = pukatBerkatListAsJSONArray[i] as JSONObject
-            enumeratedPukatBerkatList.add(mapOf(
-                "title" to curNode.getString("title"),
-                "desc" to curNode.getString("desc"),
-                "price" to curNode.getString("price"),
-                "contact" to curNode.getString("contact"),
-                "vendor" to curNode.getString("vendor"),
-                "type" to curNode.getString("type"),
-                "image" to curNode.getString("image"),
-            ))
-        }
-
-        // For some reason, we must pop the 0-th item in cardsList
-        // because JSONArray iterates from 1, not 0.
-        enumeratedPukatBerkatList.removeAt(0)
+        // val pukatBerkatListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("pukat-berkat")
+        val pukatBerkatList = MainCompanion.api!!.pukatBerkat
 
         /* Save the scroll state */
         val sectionScrollState = when (dictIndex) {
@@ -194,25 +178,25 @@ class ScreenPukatBerkat (private val current : ActivityData) : ComponentActivity
             horizontalAlignment = Alignment.Start
         ) {
             /* Iterating through every Pukat Berkat item. */
-            for (i in 0 until enumeratedPukatBerkatList.size) {
-                val curList = enumeratedPukatBerkatList[i]
+            for (i in 0 until pukatBerkatList.size) {
+                val curList = pukatBerkatList[i]
 
                 // Debug test.
                 // Logger.logTest({}, "Testing of enumeratedPukatBerkatList -> [curListSize] $curListSize ::  [curList] $curList")
 
                 // Preparing the arguments.
-                val title = curList["title"] as String
-                val desc = curList["desc"] as String
-                val price = curList["price"] as String
-                val type = curList["type"] as String
-                val thumbnailImage = curList["image"] as String
-                val vendor = curList["vendor"] as String
+                val title = curList.title
+                val desc = curList.desc
+                val price = curList.price
+                val type = curList.type
+                val thumbnailImage = curList.image
+                val vendor = curList.vendor
                 val contactMessage = stringResource(R.string.pukatberkat_whatsapp_text_template)
                     .replace("%%%TYPE%%%", stringResource(sectionTabName[intIndex]).lowercase())
                     .replace("%%%NAME%%%", title)
                     .replace("%%%VENDOR%%%", vendor)
                 val contactURL = StringFormatter.getWhatsAppPrivateChatLink(
-                    curList["contact"] as String,
+                    curList.contact,
                     contactMessage
                 )
 

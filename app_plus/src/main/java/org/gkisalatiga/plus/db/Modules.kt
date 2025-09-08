@@ -14,19 +14,8 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.data.APIMetaData
 import org.gkisalatiga.plus.data.APIModulesData
-import org.gkisalatiga.plus.data.MainAgendaItemObject
-import org.gkisalatiga.plus.data.MainAgendaRuanganItemObject
-import org.gkisalatiga.plus.data.MainCarouselItemObject
-import org.gkisalatiga.plus.data.MainFormsItemObject
-import org.gkisalatiga.plus.data.MainOffertoryCodeObject
-import org.gkisalatiga.plus.data.MainOffertoryObject
-import org.gkisalatiga.plus.data.MainPdfItemObject
-import org.gkisalatiga.plus.data.MainPukatBerkatItemObject
-import org.gkisalatiga.plus.data.MainYKBItemObject
-import org.gkisalatiga.plus.data.MainYKBListObject
-import org.gkisalatiga.plus.data.MainYouTubePlaylistObject
-import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
 import org.gkisalatiga.plus.data.ModulesAttributionsItemObject
 import org.gkisalatiga.plus.data.ModulesAttributionsRootObject
 import org.gkisalatiga.plus.data.ModulesBibleItemObject
@@ -75,7 +64,7 @@ class Modules(private val ctx: Context) {
      * This is useful especially when the app has not yet loaded the refreshed JSON metadata
      * from the internet yet.
      */
-    fun getFallbackModulesData(): JSONObject {
+    fun getFallbackModulesData(): APIModulesData {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_modules)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
@@ -93,24 +82,26 @@ class Modules(private val ctx: Context) {
         out.close()
 
         // Return the fallback JSONObject, and then navigate to the "modules" node.
-        return JSONObject(inputAsString).getJSONObject("modules")
+        // return JSONObject(inputAsString).getJSONObject("modules")
+        return ModulesJSONParser.parseData(inputAsString)
     }
 
     @Suppress("unused")
-    fun getFallbackModulesMetadata(): JSONObject {
+    fun getFallbackModulesMetadata(): APIMetaData {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_modules)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "modules" node.
-        return JSONObject(inputAsString).getJSONObject("meta")
+        // return JSONObject(inputAsString).getJSONObject("meta")
+        return Meta.parseData(inputAsString)
     }
 
     /**
      * Initializes the modules data and assign the global variable that handles it.
      */
     fun initFallbackModulesData() {
-        ModulesCompanion.jsonRoot = getFallbackModulesData()
+        ModulesCompanion.api = getFallbackModulesData()
     }
 
     /**
@@ -118,7 +109,7 @@ class Modules(private val ctx: Context) {
      * Then assign the global variable that handles it.
      */
     fun initLocalModulesData() {
-        ModulesCompanion.jsonRoot = getModulesData()
+        ModulesCompanion.api = getModulesData()
     }
 
     /**
@@ -129,14 +120,14 @@ class Modules(private val ctx: Context) {
      * Assumes the JSON metadata has been initialized by the Downloader class.
      * Please run Downloader().initMetaData() before executing this function.
      */
-    fun getModulesData(): JSONObject {
+    fun getModulesData(): APIModulesData {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
 
         // DEBUG: New feature.
         // TODO: Remove this block after v0.8.0 release.
-        Logger.logTest({}, "Testing new features...")
+        /*Logger.logTest({}, "Testing new features...")
         val x1 = ModulesJSONParser.parseData(_parsedJSONString)
         x1.seasonal.staticMenu.twibbon.twibs?.forEach {
             Logger.logTest({}, "Twibbons: ${it.title}")
@@ -147,16 +138,17 @@ class Modules(private val ctx: Context) {
         x1.attributions.webview.forEach {
             Logger.logTest({}, "Attrib: ${it.title}")
         }
-        Meta.parseData(_parsedJSONString)
+        Meta.parseData(_parsedJSONString)*/
 
-        return JSONObject(_parsedJSONString).getJSONObject("modules")
+        return ModulesJSONParser.parseData(_parsedJSONString)
     }
 
-    fun getModulesMetadata(): JSONObject {
+    fun getModulesMetadata(): APIMetaData {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(ModulesCompanion.absolutePathToJSONFile)
-        return JSONObject(_parsedJSONString).getJSONObject("meta")
+        // return JSONObject(_parsedJSONString).getJSONObject("meta")
+        return Meta.parseData(_parsedJSONString)
     }
 }
 
@@ -170,7 +162,8 @@ class ModulesCompanion : Application() {
         val savedFilename = "gkisplus-data-modules.json"
 
         /* The JSON object that will be accessed by screens. */
-        var jsonRoot: JSONObject? = null
+        // var jsonRoot: JSONObject? = null
+        var api: APIModulesData? = null
     }
 }
 

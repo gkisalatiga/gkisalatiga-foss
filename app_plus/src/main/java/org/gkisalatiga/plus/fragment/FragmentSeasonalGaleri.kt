@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.GalleryAlbumObject
 import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.ModulesCompanion
@@ -50,29 +51,32 @@ import org.json.JSONObject
 class FragmentSeasonalGaleri (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
-    private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    // private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    private val seasonalNode = ModulesCompanion.api!!.seasonal
 
     @Composable
     fun getComposable() {
 
         // Enumerate the list of gallery albums that correspond to the seasonal keyword.
-        val seasonalGalleryKeyword = ModulesCompanion.jsonRoot!!
+        val seasonalGalleryKeyword = ModulesCompanion.api!!.seasonal.staticMenu.gallery.albumKeyword.let { if (it.isNullOrBlank()) "" else it }
+        /*val seasonalGalleryKeyword = ModulesCompanion.jsonRoot!!
             .getJSONObject("seasonal")
             .getJSONObject("static-menu")
             .getJSONObject("gallery")
-            .getString("album-keyword")
-        val filteredGalleryList = mutableListOf<JSONObject>()
-        for (i in 0 until GalleryCompanion.jsonRoot!!.length() ) {
-            GalleryCompanion.jsonRoot!!.getJSONObject(i).getJSONArray("album-data").let {
-                for (j in 0 until it.length()) {
-                    it.getJSONObject(j).let { o -> if (o.getString("title").contains(seasonalGalleryKeyword)) filteredGalleryList.add(o) }
+            .getString("album-keyword")*/
+        val filteredGalleryList = mutableListOf<GalleryAlbumObject>()
+        for (i in 0 until GalleryCompanion.api!!.size ) {
+            GalleryCompanion.api!![i].albumData.let {
+                for (j in 0 until it.size) {
+                    it[j].let { o -> if (o.title.contains(seasonalGalleryKeyword)) filteredGalleryList.add(o) }
                 }
             }
         }
 
         Column {
             // Display the main title.
-            val mainTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getString("title")
+            // val mainTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("gallery").getString("title")
+            val mainTitle = seasonalNode.staticMenu.gallery.title
             Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 Text(mainTitle, modifier = Modifier, fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
             }
@@ -81,10 +85,10 @@ class FragmentSeasonalGaleri (private val current : ActivityData) : ComponentAct
             Logger.logDump({}, filteredGalleryList.toString())
             filteredGalleryList.forEach {
                 // Determining the text title.
-                val title = it.getString("title")
+                val title = it.title
 
                 // Determining the featured image ID.
-                val featuredImageID = it.getJSONArray("photos").getJSONObject(0).getString("id")
+                val featuredImageID = it.photos[0].id
 
                 // Displaying the individual card.
                 Card(
@@ -94,9 +98,9 @@ class FragmentSeasonalGaleri (private val current : ActivityData) : ComponentAct
                         // Navigate to the WebView viewer.
                         ScreenGaleriListCompanion.putArguments(
                             albumTitle = title,
-                            albumStory = it.getString("story"),
+                            albumStory = it.story,
                             featuredImageId = featuredImageID,
-                            albumContent = it.getJSONArray("photos")
+                            albumContent = it.photos
                         )
                         AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_LIST)
                     },

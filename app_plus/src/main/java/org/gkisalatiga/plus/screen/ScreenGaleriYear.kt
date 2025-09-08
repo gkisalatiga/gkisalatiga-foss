@@ -83,7 +83,7 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
     private fun getMainContent() {
 
         // The agenda node.
-        val galleryNode = GalleryCompanion.jsonRoot!!
+        val galleryNode = GalleryCompanion.api!!
 
         // Enlist the list of albums in the currently selected year.
         val galleryYearList = ScreenGaleriCompanion.targetGalleryAlbumData
@@ -92,7 +92,7 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
         Logger.logTest({}, "Current object (1): ${galleryYearList}")
 
         // Convert JSONArray to regular list. (JSONArray iterates from 1, not 0.)
-        val enumeratedGalleryList: MutableList<JSONObject> =  mutableListOf(JSONObject())
+        /*val enumeratedGalleryList: MutableList<JSONObject> =  mutableListOf(JSONObject())
         for (i in 0 until galleryYearList.length()) {
             val curNode = galleryYearList[i] as JSONObject
             enumeratedGalleryList.add(curNode)
@@ -102,7 +102,7 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
         }
 
         // Remove the first item; JSONArrays start at 1.
-        enumeratedGalleryList.removeAt(0)
+        enumeratedGalleryList.removeAt(0)*/
 
         // The column's saved scroll state.
         val scrollState = rememberScrollState()
@@ -114,17 +114,17 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
             // Display the main content.
             Column (Modifier.fillMaxSize().padding(20.dp)) {
 
-                Logger.logTest({}, "Current object (3): ${enumeratedGalleryList}")
+                Logger.logTest({}, "Current object (3): ${galleryYearList}")
 
                 /* Draw the form selection elements. */
-                enumeratedGalleryList.forEach {
+                galleryYearList.forEach {
                     Logger.logTest({}, "Current object (4): ${it}")
 
                     // Determining the text title.
-                    val title = it["title"].toString()
+                    val title = it.title.toString()
 
                     // Determining the featured image ID.
-                    val featuredImageID = (it["photos"] as JSONArray).getJSONObject(0).getString("id")
+                    val featuredImageID = it.photos[0].id
 
                     // Displaying the individual card.
                     Card(
@@ -134,9 +134,9 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
                             // Navigate to the WebView viewer.
                             ScreenGaleriListCompanion.putArguments(
                                 albumTitle = title,
-                                albumStory = it["story"].toString(),
+                                albumStory = it.story.toString(),
                                 featuredImageId = featuredImageID,
-                                albumContent = it["photos"] as JSONArray
+                                albumContent = it.photos
                             )
                             AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_LIST)
                         },

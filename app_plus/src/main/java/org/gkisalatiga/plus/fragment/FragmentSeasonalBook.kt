@@ -55,6 +55,7 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.FileDeleteDialog
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.ModulesLibraryItemObject
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -70,7 +71,8 @@ import org.json.JSONObject
 class FragmentSeasonalBook (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
-    private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    // private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+    private val seasonalNode = ModulesCompanion.api!!.seasonal
 
     @Composable
     fun getComposable() {
@@ -86,38 +88,42 @@ class FragmentSeasonalBook (private val current : ActivityData) : ComponentActiv
         }
 
         // Enumerate the list of e-books that correspond to the seasonal tag.
-        val seasonalBookTag = ModulesCompanion.jsonRoot!!
-            .getJSONObject("seasonal")
-            .getJSONObject("static-menu")
-            .getJSONObject("books")
-            .getString("selection-tag")
-        val filteredBookList = mutableListOf<JSONObject>()
-        ModulesCompanion.jsonRoot!!.getJSONArray("library").let {
-            for (i in 0 until it.length()) {
-                it.getJSONObject(i).let { o -> if (o.getJSONArray("tags").join(",").contains(seasonalBookTag)) filteredBookList.add(o) }
+        val seasonalBookTag = ModulesCompanion.api!!.seasonal.staticMenu.books.selectionTag.let { if (it.isNullOrBlank()) "" else it }
+        // val seasonalBookTag = ModulesCompanion.jsonRoot!!
+        //     .getJSONObject("seasonal")
+        //     .getJSONObject("static-menu")
+        //     .getJSONObject("books")
+        //     .getString("selection-tag")
+        val filteredBookList = mutableListOf<ModulesLibraryItemObject>()
+        // ModulesCompanion.jsonRoot!!.getJSONArray("library").let {
+        ModulesCompanion.api!!.library.let {
+            for (i in 0 until it.size) {
+                // it.getJSONObject(i).let { o -> if (o.getJSONArray("tags").join(",").contains(seasonalBookTag)) filteredBookList.add(o) }
+                it[i].let { o -> if (o.tags.toString().contains(seasonalBookTag)) filteredBookList.add(o) }
             }
         }
 
         Column {
             // Display the main title.
-            val mainTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("books").getString("title")
+            // val mainTitle = seasonalNode.getJSONObject("static-menu").getJSONObject("books").getString("title")
+            val mainTitle = seasonalNode.staticMenu.books.title
             Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 Text(mainTitle, modifier = Modifier, fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
             }
 
             Spacer(Modifier.height(20.dp))
 
-            filteredBookList.filter { it.getInt("is_shown") == 1 }.forEach {
+            filteredBookList.filter { it.isShown == 1 }.forEach {
                 // Preparing the arguments.
-                val title = it.getString("title")
-                val author = it.getString("author")
-                val publisher = it.getString("publisher")
-                val publisherLoc = it.getString("publisher-loc")
-                val year = it.getString("year")
-                val thumbnail = it.getString("thumbnail")
-                val url = it.getString("download-url")
-                val source = it.getString("source")
-                val size = it.getString("size")
+                val title = it.title
+                val author = it.author
+                val publisher = it.publisher
+                val publisherLoc = it.publisherLoc
+                val year = it.year
+                val thumbnail = it.thumbnail
+                val url = it.downloadUrl
+                val source = it.source
+                val size = it.size
 
                 // Whether this PDF has been downloaded.
                 val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_PDF_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean

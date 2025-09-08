@@ -74,7 +74,7 @@ class Downloader(private val ctx: Context) {
 
                 // Notify all the other functions about the JSON file path.
                 MainCompanion.mutableIsDataInitialized.value = true
-                if (autoReloadGlobalData) MainCompanion.jsonRoot = Main(ctx).getMainData()
+                if (autoReloadGlobalData) MainCompanion.api = Main(ctx).getMainData()
 
                 GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "JSON metadata was successfully downloaded into: ${privateFile.absolutePath}")
@@ -134,7 +134,7 @@ class Downloader(private val ctx: Context) {
 
                 // Notify all the other functions about the JSON file path.
                 GalleryCompanion.mutableIsDataInitialized.value = true
-                if (autoReloadGlobalData) GalleryCompanion.jsonRoot = Gallery(ctx).getGalleryData()
+                if (autoReloadGlobalData) GalleryCompanion.api = Gallery(ctx).getGalleryData()
 
                 GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "Gallery was successfully downloaded into: ${privateFile.absolutePath}")
@@ -194,7 +194,7 @@ class Downloader(private val ctx: Context) {
 
                 // Notify all the other functions about the JSON file path.
                 ModulesCompanion.mutableIsDataInitialized.value = true
-                if (autoReloadGlobalData) ModulesCompanion.jsonRoot = Modules(ctx).getModulesData()
+                if (autoReloadGlobalData) ModulesCompanion.api = Modules(ctx).getModulesData()
 
                 GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "Modules was successfully downloaded into: ${privateFile.absolutePath}")
@@ -254,7 +254,7 @@ class Downloader(private val ctx: Context) {
 
                 // Notify all the other functions about the JSON file path.
                 StaticCompanion.mutableIsDataInitialized.value = true
-                if (autoReloadGlobalData) StaticCompanion.jsonRoot = Static(ctx).getStaticData()
+                if (autoReloadGlobalData) StaticCompanion.api = Static(ctx).getStaticData()
 
                 GlobalCompanion.isConnectedToInternet.value = true
                 Logger.log({}, "Static data was successfully downloaded into: ${privateFile.absolutePath}")

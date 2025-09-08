@@ -132,10 +132,12 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
     private fun getMainContent() {
 
         // The agenda node.
-        val agendaJSONNode = MainCompanion.jsonRoot!!.getJSONObject("agenda")
+        // val agendaJSONNode = MainCompanion.jsonRoot!!.getJSONObject("agenda")
+        val agendaJSONNode = MainCompanion.api!!.agenda
 
         // Enlist the list of title, corresponding to name of days.
-        val dayTitleList = agendaJSONNode.keys()
+        // val dayTitleList = agendaJSONNode.keys()
+        val dayTitleList = agendaJSONNode.mapping.keys
 
         // The column's saved scroll state.
         val scrollState = ScreenAgendaCompanion.rememberedScrollState!!
@@ -307,51 +309,52 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
             Spacer(Modifier.height(10.dp))
 
             /* Enumerate and enlist non-regular (proposal) schedules. */
-            val proposalJSONArray = MainCompanion.jsonRoot!!.getJSONArray("agenda-ruangan")
+            // val proposalJSONArray = MainCompanion.jsonRoot!!.getJSONArray("agenda-ruangan")
+            val proposalJSONArray = MainCompanion.api!!.agendaRuangan
             val enumeratedProposalList: MutableList<AgendaData> = mutableListOf()
-            for (i in 0 until proposalJSONArray.length()) {
-                val curNode = proposalJSONArray[i] as JSONObject
+            for (i in 0 until proposalJSONArray.size) {
+                val curNode = proposalJSONArray[i]
                 enumeratedProposalList.add(
                     AgendaData(
-                        name = curNode.getString("name"),
-                        time = curNode.getString("time"),
-                        timeTo = curNode.getString("time-to"),
-                        timezone = curNode.getString("timezone"),
-                        date = curNode.getString("date"),
-                        weekday = curNode.getString("weekday"),
+                        name = curNode.name,
+                        time = curNode.time,
+                        timeTo = curNode.timeTo,
+                        timezone = curNode.timezone,
+                        date = curNode.date,
+                        weekday = curNode.weekday,
                         type = AgendaDataType.AGENDA_PROPOSAL,
-                        place = curNode.getString("place"),
-                        representative = curNode.getString("representative"),
-                        pic = curNode.getString("pic"),
-                        status = when (curNode.getString("status")) {
+                        place = curNode.place,
+                        representative = curNode.representative,
+                        pic = curNode.pic,
+                        status = when (curNode.status) {
                             "c" -> AgendaProposalStatus.PROPOSAL_CANCELLED_BY_SUBMITTER
                             "n" -> AgendaProposalStatus.PROPOSAL_REJECTED
                             "y" -> AgendaProposalStatus.PROPOSAL_APPROVED
                             "w" -> AgendaProposalStatus.PROPOSAL_WAITING_FOR_APPROVAL
                             else -> AgendaProposalStatus.INTERNAL_ERROR
                         },
-                        note = curNode.getString("note"),
+                        note = curNode.note,
                     )
                 )
             }
 
             /* Enumerate and enlist regular schedules. */
-            val regularJSONArray = agendaJSONNode.getJSONArray(selected.value!!.weekday)
+            val regularJSONArray = agendaJSONNode.mapping[selected.value!!.weekday]
             val enumeratedRegularList: MutableList<AgendaData> = mutableListOf()
-            for (i in 0 until regularJSONArray.length()) {
-                val curNode = regularJSONArray[i] as JSONObject
+            for (i in 0 until regularJSONArray!!.size) {
+                val curNode = regularJSONArray[i]
                 enumeratedRegularList.add(
                     AgendaData(
-                        name = curNode.getString("name"),
-                        time = curNode.getString("time"),
-                        timeTo = curNode.getString("time-to"),
-                        timezone = curNode.getString("timezone"),
+                        name = curNode.name,
+                        time = curNode.time,
+                        timeTo = curNode.timeTo,
+                        timezone = curNode.timezone,
                         weekday = selected.value!!.weekday,
                         type = AgendaDataType.AGENDA_REGULAR,
-                        place = curNode.getString("place"),
-                        representative = curNode.getString("representative"),
+                        place = curNode.place,
+                        representative = curNode.representative,
                         status = AgendaProposalStatus.NOT_A_PROPOSAL,
-                        note = curNode.getString("note"),
+                        note = curNode.note,
                     )
                 )
             }

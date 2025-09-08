@@ -471,10 +471,11 @@ class ScreenMain (private val current : ActivityData) : ComponentActivity() {
                     )
 
                     // The overlaying greetings text.
-                    val strings = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings")
-                    val greetingsTop = strings.getString("greetings_top")
+                    // val strings = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings")
+                    val strings = MainCompanion.api!!.backend.strings
+                    val greetingsTop = strings.greetingsTop
                     Text(greetingsTop, fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.White, style = shadowTextStyle)
-                    val greetingsBottom = strings.getString("greetings_bottom")
+                    val greetingsBottom = strings.greetingsBottom
                     Text(greetingsBottom, fontSize = 21.sp, fontWeight = FontWeight.SemiBold, color = Color.White, style = shadowTextStyle)
                 }
             }

@@ -65,6 +65,7 @@ import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.MainCarouselItemObject
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
@@ -107,9 +108,9 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
         btnEnabledState = mutableListOf(true, true)
 
         /* Show or hide feature menus based on flag settings. */
-        val appFlags = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("flags")
+        val appFlags = MainCompanion.api!!.backend.flags
 
-        if (appFlags.getInt("is_feature_agenda_shown") == 1) {
+        if (appFlags.isFeatureAgendaShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_AGENDA)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_agenda))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_agenda))
@@ -117,7 +118,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.getInt("is_feature_persembahan_shown") == 1) {
+        if (appFlags.isFeaturePersembahanShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_PERSEMBAHAN)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_offertory))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_offertory))
@@ -125,7 +126,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.getInt("is_feature_ykb_shown") == 1) {
+        if (appFlags.isFeatureYKBShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_YKB)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_ykb))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_ykb))
@@ -133,7 +134,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.getInt("is_feature_formulir_shown") == 1) {
+        if (appFlags.isFeatureFormulirShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_FORMS)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_form))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_form))
@@ -141,7 +142,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.getInt("is_feature_galeri_shown") == 1) {
+        if (appFlags.isFeatureGaleriShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_GALERI)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_gallery))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_gallery))
@@ -149,7 +150,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.getInt("is_feature_bible_shown") == 1) {
+        if (appFlags.isFeatureBibleShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_BIBLE)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_bible))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_bible))
@@ -157,7 +158,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.getInt("is_feature_library_shown") == 1) {
+        if (appFlags.isFeatureLibraryShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_LIBRARY)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_library))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_library))
@@ -165,7 +166,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.getInt("is_feature_lapak_shown") == 1) {
+        if (appFlags.isFeatureLapakShown == 1) {
             btnRoutes.add(NavigationRoutes.SCREEN_PUKAT_BERKAT)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_pukatberkat))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_pukatberkat))
@@ -181,9 +182,10 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
         )
 
         /* Enlist the carousels. */
-        val allCarousels = mutableListOf<JSONObject>()
-        MainCompanion.jsonRoot!!.getJSONArray("carousel").let { for (i in 0 until it.length()) allCarousels.add(it.getJSONObject(i)) }
-        FragmentHomeCompanion.filteredCarouselPostersList = allCarousels.filter { jO -> jO.getString("type") == "poster" }
+        val allCarousels = mutableListOf<MainCarouselItemObject>()
+        // MainCompanion.jsonRoot!!.getJSONArray("carousel").let { for (i in 0 until it.length()) allCarousels.add(it.getJSONObject(i)) }
+        MainCompanion.api!!.carousel.let { for (i in 0 until it.size) allCarousels.add(it[i]) }
+        FragmentHomeCompanion.filteredCarouselPostersList = allCarousels.filter { jO -> jO.type == "poster" }
 
         /* Filter out non-poster carousels. */
         val filteredCarousels = FragmentHomeCompanion.filteredCarouselPostersList!!
@@ -297,7 +299,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                         }
                     ) {
                         AsyncImage(
-                            model = currentNode.getString("banner"),
+                            model = currentNode.banner,
                             contentDescription = "Carousel Image ${it % actualPageCount}",
                             error = painterResource(R.drawable.thumbnail_error_notext),
                             placeholder = painterResource(R.drawable.thumbnail_placeholder),
@@ -337,17 +339,18 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             Spacer(Modifier.fillMaxWidth().height(10.dp))
 
             // The seasonal JSON node.
-            val seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+            // val seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+            val seasonalData = ModulesCompanion.api!!.seasonal
 
             // Displaying the seasonal menu button.
-            if (appFlags.getInt("is_feature_seasonal_shown") == 1) {
+            if (appFlags.isFeatureSeasonalShown == 1) {
                 Surface(
                     shape = RoundedCornerShape(15.dp),
                     modifier = Modifier.padding(horizontal = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).padding(top = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(4.0f),
                     onClick = { AppNavigation.navigate(NavigationRoutes.SCREEN_SEASONAL) }
                 ) {
                     AsyncImage(
-                        model = seasonalData.getString("banner-front"),
+                        model = seasonalData.bannerFront,
                         contentDescription = "Seasonal main/front banner",
                         error = painterResource(R.drawable.thumbnail_error_notext),
                         placeholder = painterResource(R.drawable.thumbnail_placeholder),
@@ -486,7 +489,8 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                     stringResource(R.string.subtext_update_latest)
             Card(
                 onClick = {
-                    val url = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings").getString("about_google_play_listing_url")
+                    // val url = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings").getString("about_google_play_listing_url")
+                    val url = MainCompanion.api!!.backend.strings.aboutGooglePlayListingUrl
                     current.uriHandler.openUri(url)
                 },
                 enabled = isAppUpdateAvailable,
@@ -539,6 +543,6 @@ class FragmentHomeCompanion : Application() {
         var rememberedCarouselPagerState: PagerState? = null
 
         /* The list of filtered carousel images. */
-        var filteredCarouselPostersList: List<JSONObject>? = mutableListOf()
+        var filteredCarouselPostersList: List<MainCarouselItemObject>? = mutableListOf()
     }
 }

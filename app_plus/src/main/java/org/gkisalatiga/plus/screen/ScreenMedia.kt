@@ -54,6 +54,8 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.MainYouTubePlaylistObject
+import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
@@ -86,13 +88,14 @@ class ScreenMedia (private val current : ActivityData) : ComponentActivity() {
     private fun getMainContent() {
 
         // The "all video playlists" JSON array.
-        val allVideoPlaylistArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
+        // val allVideoPlaylistArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
+        val allVideoPlaylistArray = MainCompanion.api!!.yt
 
         // Get the non-pinned video playlists.
-        val ordinaryPlaylistDictionary: MutableList<JSONObject> = mutableListOf()
-        for (i in 0 until allVideoPlaylistArray.length()) {
-            if (allVideoPlaylistArray.getJSONObject(i).getInt("pinned") == 0) {
-                ordinaryPlaylistDictionary.add(allVideoPlaylistArray[i] as JSONObject)
+        val ordinaryPlaylistDictionary: MutableList<MainYouTubePlaylistObject> = mutableListOf()
+        for (i in 0 until allVideoPlaylistArray.size) {
+            if (allVideoPlaylistArray[i].pinned == 0) {
+                ordinaryPlaylistDictionary.add(allVideoPlaylistArray[i])
             }
         }
 
@@ -111,7 +114,7 @@ class ScreenMedia (private val current : ActivityData) : ComponentActivity() {
             // Assumes both "pinnedPlaylistTitle" and "pinnedPlaylistContent" have the same list size.
             ordinaryPlaylistDictionary.forEach { obj ->
                 // Displaying the relevant YouTube-based church services.
-                getMediaUI(obj.getString("title"), obj.getJSONArray("content"))
+                getMediaUI(obj.title, obj.content)
             }
         }
 
@@ -124,24 +127,17 @@ class ScreenMedia (private val current : ActivityData) : ComponentActivity() {
      * @param sectionTitle the title string that will be displayed on top of the section.
      */
     @Composable
-    private fun getMediaUI(sectionTitle: String, sectionContent: JSONArray) {
-
-        // The current playlist's video list.
-        val playlistContentList: MutableList<JSONObject> = mutableListOf()
-        for (i in 0 until sectionContent.length()) {
-            playlistContentList.add(sectionContent[i] as JSONObject)
-        }
-        // playlistContentList.removeAt(0)
+    private fun getMediaUI(sectionTitle: String, sectionContent: MutableList<MainYouTubeVideoContentObject>) {
 
         // Testing and debugging.
-        Logger.logTest({}, "Size of the JSONObject's parsed list is: ${playlistContentList.size}")
+        Logger.logTest({}, "Size of the JSONObject's parsed list is: ${sectionContent.size}")
 
         /* Displaying the section title. */
         Row (modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp).padding(horizontal = 10.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
             Text(sectionTitle, modifier = Modifier.fillMaxWidth().weight(4f), fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis)
             Button(onClick = {
                 // Display the list of videos in this playlist.
-                ScreenVideoListCompanion.putArguments(playlistContentList, sectionTitle)
+                ScreenVideoListCompanion.putArguments(sectionContent, sectionTitle)
                 // Navigate to the video playlist viewer.
                 AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
             }, modifier = Modifier.fillMaxWidth().weight(1f).padding(0.dp).wrapContentSize(Alignment.Center, true)) {
@@ -150,19 +146,19 @@ class ScreenMedia (private val current : ActivityData) : ComponentActivity() {
         }
 
         /* Display the video banner image (first video in the list). */
-        if (sectionContent.length() >= 1) {
+        if (sectionContent.size >= 1) {
             Surface (
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.padding(bottom = 10.dp).aspectRatio(1.77778f),
                 onClick = {
                     // Display the list of videos in this playlist.
-                    ScreenVideoListCompanion.putArguments(playlistContentList, sectionTitle)
+                    ScreenVideoListCompanion.putArguments(sectionContent, sectionTitle)
                     // Navigate to the playlist view.
                     AppNavigation.navigate(NavigationRoutes.SCREEN_VIDEO_LIST)
                 }
             ) {
                 AsyncImage(
-                    (sectionContent[0] as JSONObject).getString("thumbnail"),
+                    sectionContent[0].thumbnail,
                     contentDescription = "",
                     error = painterResource(R.drawable.thumbnail_error_stretched),
                     placeholder = painterResource(R.drawable.thumbnail_placeholder),

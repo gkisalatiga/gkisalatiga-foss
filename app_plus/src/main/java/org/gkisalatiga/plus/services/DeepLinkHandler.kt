@@ -6,6 +6,7 @@
 
 package org.gkisalatiga.plus.services
 
+import org.gkisalatiga.plus.data.MainYouTubeVideoContentObject
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -26,26 +27,27 @@ class DeepLinkHandler {
 
         fun handleSaRen() {
             // The "all playlist" section.
-            val allVideoPlaylists: JSONArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
+            // val allVideoPlaylists: JSONArray = MainCompanion.jsonRoot!!.getJSONArray("yt")
+            val allVideoPlaylists = MainCompanion.api!!.yt
 
             // Enlist the SaRen video lists to be shown in the video list.
-            var sarenPlaylistTitle = ""
-            var sarenPlaylistContent = JSONArray()
+            var sarenPlaylistTitle: String = ""
+            var sarenPlaylistContent: MutableList<MainYouTubeVideoContentObject> = mutableListOf()
 
             // Find the SaRen playlist.
-            for (i in 0 until allVideoPlaylists.length()) {
+            for (i in 0 until allVideoPlaylists.size) {
                 // Do it specifically for SaRen.
-                if ((allVideoPlaylists[i] as JSONObject).getString("title") == "Sapaan dan Renungan Pagi") {
-                    sarenPlaylistTitle = (allVideoPlaylists[i] as JSONObject).getString("title")
-                    sarenPlaylistContent = (allVideoPlaylists[i] as JSONObject).getJSONArray("content")
+                if (allVideoPlaylists[i].title == "Sapaan dan Renungan Pagi") {
+                    sarenPlaylistTitle = allVideoPlaylists[i].title
+                    sarenPlaylistContent = allVideoPlaylists[i].content
                     break
                 }
             }
 
             // Enlist the SaRen content.
-            val playlistContentList: MutableList<JSONObject> = mutableListOf()
-            for (i in 0 until sarenPlaylistContent.length()) {
-                playlistContentList.add(sarenPlaylistContent[i] as JSONObject)
+            val playlistContentList: MutableList<MainYouTubeVideoContentObject> = mutableListOf()
+            for (i in 0 until sarenPlaylistContent.size) {
+                playlistContentList.add(sarenPlaylistContent[i])
             }
 
             // Display the list of SaRen videos.

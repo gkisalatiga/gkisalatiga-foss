@@ -121,10 +121,11 @@ class ScreenYKB (private val current : ActivityData) : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Retrieve the list of devotionals. */
-            val ykbListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("ykb")
+            // val ykbListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("ykb")
+            val ykbListAsJSONArray = MainCompanion.api!!.ykb
 
             /* Enumerate and enlist the individual card. */
-            val enumeratedYKBList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
+            /* val enumeratedYKBList: MutableList<Map<String, Any>> =  mutableListOf(emptyMap<String, Any>())
             for (i in 0 until ykbListAsJSONArray.length()) {
                 val curNode = ykbListAsJSONArray[i] as JSONObject
                 enumeratedYKBList.add(mapOf(
@@ -137,23 +138,23 @@ class ScreenYKB (private val current : ActivityData) : ComponentActivity() {
 
             // For some reason, we must pop the 0-th item in cardsList
             // because JSONArray iterates from 1, not 0.
-            enumeratedYKBList.removeAt(0)
+            enumeratedYKBList.removeAt(0) */
 
             /* Draw the devotional selection elements. */
-            enumeratedYKBList.forEach {
+            ykbListAsJSONArray.forEach {
 
                 // The first post of this devotion's list.
-                val postsList = it["posts"] as JSONArray
-                val firstPostObject = postsList.get(0) as JSONObject
+                val postsList = it.posts
+                val firstPostObject = postsList[0]
 
                 // Preparing the arguments.
-                val title = it["title"] as String
-                val url = it["url"] as String
-                val banner = it["banner"] as String
-                val firstPostThumbnail = firstPostObject.getString("featured-image")
-                val firstPostTitle = firstPostObject.getString("title")
-                val firstPostDate = StringFormatter.convertDateFromJSON(firstPostObject.getString("date"))
-                val firstPostHTML = firstPostObject.getString("html")
+                val title = it.title
+                val url = it.url
+                val banner = it.banner
+                val firstPostThumbnail = firstPostObject.featuredImage
+                val firstPostTitle = firstPostObject.title
+                val firstPostDate = StringFormatter.convertDateFromJSON(firstPostObject.date)
+                val firstPostHTML = firstPostObject.html
 
                 // Displaying the individual card.
                 Card(

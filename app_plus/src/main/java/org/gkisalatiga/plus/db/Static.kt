@@ -14,6 +14,7 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import org.gkisalatiga.plus.R
+import org.gkisalatiga.plus.data.APIMetaData
 import org.gkisalatiga.plus.data.GalleryAlbumObject
 import org.gkisalatiga.plus.data.GalleryItemObject
 import org.gkisalatiga.plus.data.GalleryYearObject
@@ -60,7 +61,7 @@ class Static(private val ctx: Context) {
      * This is useful especially when the app has not yet loaded the refreshed JSON metadata
      * from the internet yet.
      */
-    fun getFallbackStaticData(): JSONArray {
+    fun getFallbackStaticData(): MutableList<StaticFolderObject> {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
@@ -78,24 +79,25 @@ class Static(private val ctx: Context) {
         out.close()
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONArray("static")
+        return StaticJSONParser.parseData(inputAsString)
+        // return JSONObject(inputAsString).getJSONArray("static")
     }
 
     @Suppress("unused")
-    fun getFallbackStaticMetadata(): JSONObject {
+    fun getFallbackStaticMetadata(): APIMetaData {
         // Loading the local JSON file.
         val input: InputStream = ctx.resources.openRawResource(R.raw.fallback_static)
         val inputAsString: String = input.bufferedReader().use { it.readText() }
 
         // Return the fallback JSONObject, and then navigate to the "gallery" node.
-        return JSONObject(inputAsString).getJSONObject("meta")
+        return Meta.parseData(inputAsString)
     }
 
     /**
      * Initializes the gallery data and assign the global variable that handles it.
      */
     fun initFallbackStaticData() {
-        StaticCompanion.jsonRoot = getFallbackStaticData()
+        StaticCompanion.api = getFallbackStaticData()
     }
 
     /**
@@ -103,7 +105,7 @@ class Static(private val ctx: Context) {
      * Then assign the global variable that handles it.
      */
     fun initLocalStaticData() {
-        StaticCompanion.jsonRoot = getStaticData()
+        StaticCompanion.api = getStaticData()
     }
 
     /**
@@ -114,30 +116,30 @@ class Static(private val ctx: Context) {
      * Assumes the JSON metadata has been initialized by the Downloader class.
      * Please run Downloader().initMetaData() before executing this function.
      */
-    fun getStaticData(): JSONArray {
+    fun getStaticData(): MutableList<StaticFolderObject> {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(StaticCompanion.absolutePathToJSONFile)
 
         // DEBUG: New feature.
         // TODO: Remove this block after v0.8.0 release.
-        Logger.logTest({}, "Testing new features...")
+        /*Logger.logTest({}, "Testing new features...")
         val x1 = StaticJSONParser.parseData(_parsedJSONString)
         x1.forEachIndexed { idx, it ->
             it.content.forEach { it2 ->
                 Logger.logRapidTest({}, "${it.title}: ${it2.title}", LoggerType.DEBUG)
             }
         }
-        Meta.parseData(_parsedJSONString)
+        Meta.parseData(_parsedJSONString)*/
 
-        return JSONObject(_parsedJSONString).getJSONArray("static")
+        return StaticJSONParser.parseData(_parsedJSONString)
     }
 
-    fun getStaticMetadata(): JSONObject {
+    fun getStaticMetadata(): APIMetaData {
         // Load the downloaded JSON.
         // Prevents error-returning when this function is called upon offline.
         this.loadJSON(StaticCompanion.absolutePathToJSONFile)
-        return JSONObject(_parsedJSONString).getJSONObject("meta")
+        return Meta.parseData(_parsedJSONString)
     }
 
 }
@@ -149,10 +151,11 @@ class StaticCompanion : Application() {
         /* Back-end mechanisms. */
         var absolutePathToJSONFile: String = String()
         val mutableIsDataInitialized = mutableStateOf(false)
-        val savedFilename = "gkisplus-data-static.json"
+        const val savedFilename = "gkisplus-data-static.json"
 
         /* The JSON object that will be accessed by screens. */
-        var jsonRoot: JSONArray? = null
+        // var jsonRoot: JSONArray? = null
+        var api: MutableList<StaticFolderObject>? = null
     }
 }
 

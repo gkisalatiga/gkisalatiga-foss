@@ -39,19 +39,19 @@ class DataUpdater(private val ctx: Context) {
     }
 
     private fun getLastGalleryUpdate() : Int {
-        return Gallery(ctx).getGalleryMetadata().getInt("last-update")
+        return Gallery(ctx).getGalleryMetadata().lastUpdate
     }
 
     private fun getLastMainDataUpdate() : Int {
-        return Main(ctx).getMainMetadata().getInt("last-update")
+        return Main(ctx).getMainMetadata().lastUpdate
     }
 
     private fun getLastModulesDataUpdate() : Int {
-        return Modules(ctx).getModulesMetadata().getInt("last-update")
+        return Modules(ctx).getModulesMetadata().lastUpdate
     }
 
     private fun getLastStaticUpdate() : Int {
-        return Static(ctx).getStaticMetadata().getInt("last-update")
+        return Static(ctx).getStaticMetadata().lastUpdate
     }
 
     /**
@@ -159,10 +159,10 @@ class DataUpdater(private val ctx: Context) {
             }
 
             // Assign the JSON data globally.
-            MainCompanion.jsonRoot = Main(ctx).getMainData()
-            ModulesCompanion.jsonRoot = Modules(ctx).getModulesData()
-            GalleryCompanion.jsonRoot = Gallery(ctx).getGalleryData()
-            StaticCompanion.jsonRoot = Static(ctx).getStaticData()
+            MainCompanion.api = Main(ctx).getMainData()
+            ModulesCompanion.api = Modules(ctx).getModulesData()
+            GalleryCompanion.api = Gallery(ctx).getGalleryData()
+            StaticCompanion.api = Static(ctx).getStaticData()
 
             // End the thread.
             executor.shutdown()

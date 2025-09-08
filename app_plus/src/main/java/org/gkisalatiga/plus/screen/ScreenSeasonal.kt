@@ -60,6 +60,8 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.MainBackendFlagsItemObject
+import org.gkisalatiga.plus.data.ModulesSeasonalObject
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.fragment.FragmentSeasonalAgenda
@@ -77,8 +79,8 @@ import org.json.JSONObject
  */
 class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() {
 
-    private lateinit var appFlags: JSONObject
-    private lateinit var seasonalData: JSONObject
+    private lateinit var appFlags: MainBackendFlagsItemObject
+    private lateinit var seasonalData: ModulesSeasonalObject
 
     @Composable
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -86,8 +88,10 @@ class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() 
 
         // Declaring toggles (flags) and seasonal data.
         /* Show or hide feature menus based on flag settings. */
-        appFlags = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("flags")
-        seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+        // appFlags = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("flags")
+        appFlags = MainCompanion.api!!.backend.flags
+        // seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+        seasonalData = ModulesCompanion.api!!.seasonal
 
         Scaffold (
             topBar = { getTopBar() }
@@ -119,7 +123,7 @@ class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() 
                 .padding(20.dp)
         ) {
             /* Display the church's building image. */
-            val imgSource = seasonalData.getString("banner-inside")
+            val imgSource = seasonalData.bannerInside
             val imgDescription = "Menu banner"
             Surface (
                 shape = RoundedCornerShape(20.dp),
@@ -168,7 +172,7 @@ class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() 
             colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
-                    seasonalData.getString("title"),
+                    seasonalData.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

@@ -75,19 +75,20 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
     private var externalLinkURL = mutableStateOf("https://www.example.com")
 
     // The JSON node of the social media CTA.
-    private val socialMediaJSONNode = MainCompanion.jsonRoot!!.getJSONObject("url-profile")
+    // private val socialMediaJSONNode = MainCompanion.jsonRoot!!.getJSONObject("url-profile")
+    private val socialMediaJSONNode = MainCompanion.api!!.urlProfile
 
     // The list of node title.
     // This must be manually specified in the app.
     // private val socialMediaNodeTitles: MutableList<String> = mutableListOf()
-    private val socialMediaNodeTitles = listOf(
-        "web",
-        "fb",
-        "insta",
-        "youtube",
-        "whatsapp",
-        "maps",
-        "email"
+    private val socialMediaNodeObjects = listOf(
+        socialMediaJSONNode.web,
+        socialMediaJSONNode.fb,
+        socialMediaJSONNode.insta,
+        socialMediaJSONNode.youtube,
+        socialMediaJSONNode.whatsapp,
+        socialMediaJSONNode.maps,
+        socialMediaJSONNode.email
     )
 
     // The list of social media icons.
@@ -101,9 +102,6 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
         R.drawable.remixicon_at_fill_48
     )
 
-    // The list of social media CTA targets.
-    private val socialMediaCTATargets: MutableList<String> = mutableListOf()
-
     @Composable
     fun getComposable() {
 
@@ -111,10 +109,10 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
         getCTAOpenConfirmationDialog()
 
         // Converting JSONArray to regular lists.
-        val staticDataList: MutableList<JSONObject> = mutableListOf()
+        /*val staticDataList: MutableList<JSONObject> = mutableListOf()
         for (i in 0 until StaticCompanion.jsonRoot!!.length()) {
             staticDataList.add(StaticCompanion.jsonRoot!![i] as JSONObject)
-        }
+        }*/
 
         // The list of social media CTA titles.
         val socialCtaTitles = listOf(
@@ -140,17 +138,13 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                 .padding(20.dp)
         ) {
 
-            socialMediaNodeTitles.forEach {
-                socialMediaCTATargets.add(socialMediaJSONNode.getString(it))
-            }
-
             /* Display the individual "church info" card. */
             Column ( modifier = Modifier.padding(top = 10.dp) ) {
-                staticDataList.forEachIndexed { _, itemObject ->
+                StaticCompanion.api!!.forEachIndexed { _, itemObject ->
 
                     // The card title, thumbnail, etc.
-                    var bannerURL = itemObject.getString("banner")
-                    val title = itemObject.getString("title")
+                    var bannerURL = itemObject.banner
+                    val title = itemObject.title
 
                     // For some reason, coil cannot render non-HTTPS images.
                     if (bannerURL.startsWith("http://")) bannerURL = bannerURL.replaceFirst("http://", "https://")
@@ -220,7 +214,8 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
             }  // --- end of church info card/column.
 
             /* Display the address information. */
-            val address = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings").getString("address")
+            // val address = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("strings").getString("address")
+            val address = MainCompanion.api!!.backend.strings.address
             Spacer(Modifier.height(50.dp))
             @Suppress("SpellCheckingInspection")
             Image(
@@ -251,17 +246,17 @@ class FragmentInfo (private val current: ActivityData) : ComponentActivity() {
                 socialMediaIcons.forEachIndexed { index, drawableIcon ->
 
                     Surface(Modifier.weight(1.0f).clickable(onClick = {
-                        Logger.log({}, "Selected node: ${socialMediaNodeTitles[index]}")
+                        Logger.log({}, "Selected node: ${socialMediaNodeObjects[index]}")
 
                         FragmentInfoCompanion.mutableShowConfirmationDialog.value = true
                         FragmentInfoCompanion.confirmationDialogIcon = drawableIcon
                         FragmentInfoCompanion.confirmationDialogText = socialCtaTitles[index]
-                        FragmentInfoCompanion.confirmationDialogUrl = socialMediaCTATargets[index]
-                        FragmentInfoCompanion.confirmationDialogNodeTitle = socialMediaNodeTitles[index]
+                        FragmentInfoCompanion.confirmationDialogUrl = socialMediaNodeObjects[index]
+                        FragmentInfoCompanion.confirmationDialogNodeTitle = "$index"
                     })) {
                         Image(
                             painter = painterResource(drawableIcon),
-                            "Social Media CTA No. ${socialMediaNodeTitles[index]}",
+                            "Social Media CTA No. $index",
                             colorFilter = ColorFilter.tint(current.colors.fragmentInfoIconTintColor)
                         )
                     }

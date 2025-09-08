@@ -54,6 +54,7 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.StaticFolderObject
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
@@ -89,10 +90,10 @@ class ScreenStaticContentList (private val current : ActivityData) : ComponentAc
         val folderContent = ScreenStaticContentListCompanion.targetStaticFolder!!
 
         // Enlist the list of contents under this folder.
-        val contentList: MutableList<JSONObject> = mutableListOf()
+        /*val contentList: MutableList<JSONObject> = mutableListOf()
         for (i in 0 until folderContent.getJSONArray("content").length()) {
             contentList.add(folderContent.getJSONArray("content")[i] as JSONObject)
-        }
+        }*/
 
         // The column's saved scroll state.
         val scrollState = ScreenStaticContentListCompanion.rememberedScrollState!!
@@ -105,11 +106,11 @@ class ScreenStaticContentList (private val current : ActivityData) : ComponentAc
             Column (Modifier.fillMaxSize().padding(20.dp)) {
 
                 /* Draw the form selection elements. */
-                contentList.forEach {
+                folderContent.content.forEach {
                     // Determining the text title, among other things.
-                    val title = it.getString("title")
-                    val subtitle = it.getString("subtitle")
-                    var featuredImageURL = it.getString("featured-image")
+                    val title = it.title
+                    val subtitle = it.subtitle
+                    var featuredImageURL = it.featuredImage
 
                     // For some reason, coil cannot render non-HTTPS images.
                     if (featuredImageURL.startsWith("http://")) featuredImageURL = featuredImageURL.replaceFirst("http://", "https://")
@@ -120,8 +121,8 @@ class ScreenStaticContentList (private val current : ActivityData) : ComponentAc
                             if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title!", Toast.LENGTH_SHORT).show()
 
                             // Display the church profile content folder list.
-                            ScreenInternalHTMLCompanion.targetHTMLContent = it.getString("html")
-                            ScreenInternalHTMLCompanion.internalWebViewTitle = it.getString("title")
+                            ScreenInternalHTMLCompanion.targetHTMLContent = it.html
+                            ScreenInternalHTMLCompanion.internalWebViewTitle = it.title
 
                             // Switching screens.
                             AppNavigation.navigate(NavigationRoutes.SCREEN_INTERNAL_HTML)
@@ -209,7 +210,7 @@ class ScreenStaticContentList (private val current : ActivityData) : ComponentAc
             colors = TopAppBarColorScheme.default(),
             title = {
                 Text(
-                    ScreenStaticContentListCompanion.targetStaticFolder!!.getString("title"),
+                    ScreenStaticContentListCompanion.targetStaticFolder!!.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -235,6 +236,6 @@ class ScreenStaticContentListCompanion : Application() {
         var rememberedScrollState: ScrollState? = null
 
         /* The target static data "folder" to display in the static content list. */
-        var targetStaticFolder: JSONObject? = null
+        var targetStaticFolder: StaticFolderObject? = null
     }
 }

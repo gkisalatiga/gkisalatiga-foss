@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.GalleryAlbumObject
+import org.gkisalatiga.plus.data.GalleryYearObject
 import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -90,12 +92,12 @@ class ScreenGaleri (private val current : ActivityData) : ComponentActivity() {
     private fun getMainContent() {
 
         // The gallery node.
-        val galleryNode = GalleryCompanion.jsonRoot!!
+        val galleryNode = GalleryCompanion.api!!
 
         // Enlist the list galleries, the top parent (root) album.
-        val galleryAlbumRoots = mutableListOf(JSONObject())
-        for (i in 0 until galleryNode.length() ) galleryAlbumRoots.add(i, galleryNode.getJSONObject(i))
-        galleryAlbumRoots.sortBy { if (it.toString() != "{}") it.getString("title") else "" }
+        val galleryAlbumRoots = mutableListOf<GalleryYearObject>()
+        for (i in 0 until galleryNode.size ) galleryAlbumRoots.add(i, galleryNode[i])
+        galleryAlbumRoots.sortBy { it.title }
 
         // The column's saved scroll state.
         val scrollState = ScreenGaleriCompanion.rememberedScrollState!!
@@ -125,9 +127,10 @@ class ScreenGaleri (private val current : ActivityData) : ComponentActivity() {
             /* Draw the form selection elements. */
             galleryAlbumRoots.forEach {
                 // Ensures we only select non-empty JSON objects.
-                if (it.toString() != "{}") {
+                // if (it.toString() != "{}") {
+                if (true) {
                     // Determining the text title.
-                    val title = it.getString("title")
+                    val title = it.title
 
                     // Displaying the individual card.
                     Card(
@@ -136,7 +139,7 @@ class ScreenGaleri (private val current : ActivityData) : ComponentActivity() {
 
                             // Navigate to the WebView viewer.
                             ScreenGaleriCompanion.targetGalleryTitle = title
-                            ScreenGaleriCompanion.targetGalleryAlbumData = it.getJSONArray("album-data")
+                            ScreenGaleriCompanion.targetGalleryAlbumData = it.albumData
                             AppNavigation.navigate(NavigationRoutes.SCREEN_GALERI_YEAR)
                         },
                         modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
@@ -187,7 +190,7 @@ class ScreenGaleri (private val current : ActivityData) : ComponentActivity() {
 class ScreenGaleriCompanion : Application() {
     companion object {
         internal var targetGalleryTitle: String = ""
-        internal var targetGalleryAlbumData: JSONArray = JSONArray()
+        internal var targetGalleryAlbumData: MutableList<GalleryAlbumObject> = mutableListOf()
 
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null

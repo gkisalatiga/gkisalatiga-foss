@@ -115,28 +115,15 @@ class ScreenForms (private val current : ActivityData) : ComponentActivity() {
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
             /* Retrieve the list of forms. */
-            val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("forms")
-
-            /* Enumerate and enlist the individual form. */
-            val enumeratedFormList: MutableList<Map<String, String>> =  mutableListOf(emptyMap<String, String>())
-            for (i in 0 until formListAsJSONArray.length()) {
-                val curNode = formListAsJSONArray[i] as JSONObject
-                enumeratedFormList.add(mapOf(
-                    "title" to curNode.getString("title"),
-                    "url" to curNode.getString("url")
-                ))
-            }
-
-            // For some reason, we must pop the 0-th item in cardsList
-            // because JSONArray iterates from 1, not 0.
-            enumeratedFormList.removeAt(0)
+            // val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONArray("forms")
+            val formListAsJSONArray = MainCompanion.api!!.forms
 
             /* Draw the form selection elements. */
-            enumeratedFormList.forEach {
+            formListAsJSONArray.forEach {
 
                 // Preparing the arguments.
-                val title = it["title"]
-                val url = it["url"]
+                val title = it.title
+                val url = it.url
 
                 // Displaying the individual card.
                 Card(
@@ -144,13 +131,13 @@ class ScreenForms (private val current : ActivityData) : ComponentActivity() {
                         if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
                         // Navigate to the WebView viewer.
-                        ScreenWebViewCompanion.putArguments(url!!, title!!)
+                        ScreenWebViewCompanion.putArguments(url, title)
                         AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
                     },
                     modifier = Modifier.padding(bottom = 10.dp).height(65.dp)
                 ) {
                     Row ( modifier = Modifier.padding(5.dp).fillMaxSize().padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically ) {
-                        Text(title!!, fontSize = 18.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(start = 5.dp).weight(5f), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(title, fontSize = 18.sp, fontWeight = FontWeight.Normal, modifier = Modifier.padding(start = 5.dp).weight(5f), maxLines = 2, overflow = TextOverflow.Ellipsis)
                         // The "arrow forward" icon.
                         Icon(Icons.AutoMirrored.Default.ArrowForward, "", modifier = Modifier.padding(vertical = 5.dp).padding(end = 5.dp).padding(start = 10.dp).fillMaxHeight())
                     }
