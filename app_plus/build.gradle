@@ -13,7 +13,9 @@ android {
 
     // For generating native debug symbols.
     // SOURCE: https://stackoverflow.com/a/63436935
-    ndkVersion "25.1.8937393"
+    // Upgraded from v25.1.8937393 to v28.2.13676358 on 2025-09-09 as to comply with Android's
+    // new 16K RAM paging size policy.
+    ndkVersion "28.2.13676358"
 
     defaultConfig {
         applicationId "org.gkisalatiga.plus"
@@ -106,6 +108,7 @@ dependencies {
     implementation "androidx.core:core-ktx:1.8.0"
     //noinspection GradleDependency
     implementation "androidx.appcompat:appcompat:1.7.0"
+    //noinspection GradleDependency
     implementation "com.google.android.material:material:1.12.0"
     //noinspection GradleDependency
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
@@ -127,6 +130,10 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
     debugImplementation "androidx.compose.ui:ui-tooling"
     debugImplementation "androidx.compose.ui:ui-test-manifest"
+
+    // Reflection, used for debugging.
+    // SOURCE: https://stackoverflow.com/a/53783441
+    // implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // Enable screen navigation in Jetpack Compose
     // SOURCE: https://medium.com/@KaushalVasava/navigation-in-jetpack-compose-full-guide-beginner-to-advanced-950c1133740
