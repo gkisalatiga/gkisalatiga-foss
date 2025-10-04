@@ -1,5 +1,15 @@
 # GKI Salatiga App Changelog
 
+## v0.8.1 2025.10.04 (46)
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- Changed the splash screen logo to the "Bulan Keluarga 2025" icon theme
+
+:hammer_and_wrench: **FIX**
+
+- Fixed crash when opening the detail dialog of regular agenda
+
 ## v0.8.0 2025.09.09 (45)
 
 :star2: **NEW**

@@ -581,7 +581,9 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
                             Spacer(Modifier.fillMaxWidth().height(10.dp))
 
                             Text(infoDialogContentLabelDate, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text(StringFormatter.convertDateFromJSON(data.date))
+                            Text(StringFormatter.convertDateFromJSON(
+                                if (data.date.length > 5) data.date else ScreenAgendaCompanion.mutableCurrentDay.value!!.dateString
+                            ))
                             Spacer(Modifier.fillMaxWidth().height(10.dp))
 
                             Text(infoDialogContentLabelTime, fontWeight = FontWeight.Bold, fontSize = 16.sp)
