@@ -242,6 +242,9 @@ class ActivityLauncher : ComponentActivity() {
         // Preamble logging to the terminal.
         Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
 
+        // Enable edge-to-edge.
+        enableEdgeToEdge()
+
         // Handle the splash screen transition.
         // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
         // val splashScreen = installSplashScreen()
@@ -277,19 +280,6 @@ class ActivityLauncher : ComponentActivity() {
             LocalStorage(this@ActivityLauncher).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
             EnableDevMode.activateDebugToggles()
         }
-
-        // TODO: Remove this junk.
-        // Log.d("GGG", x {})
-        /*fun functionNameThatWillBeObfuscatedByR8(x: () -> Unit) {
-            val msgString = "[${x.javaClass.enclosingClass?.name}.${x.javaClass.enclosingMethod?.name}]"
-            Log.d("GGG", "functionNameThatWillBeObfuscatedByR8: ${msgString}")
-        }
-        functionNameThatWillBeObfuscatedByR8({})
-        this.javaClass.enclosingClass?.name
-
-        val variableNameThatWillBeObfuscatedByR8 = ""
-        Log.d("GGG", "variableNameThatWillBeObfuscatedByR8.javaClass.name: ${variableNameThatWillBeObfuscatedByR8.javaClass.name}")
-         */
 
         // Start the connection (online/offline) checker.
         ConnectionChecker(this).execute()

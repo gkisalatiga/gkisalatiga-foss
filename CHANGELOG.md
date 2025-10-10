@@ -1,11 +1,15 @@
 # GKI Salatiga App Changelog
 
-## Next Imminent Release
+## v0.8.2 2025.10.11 (47)
 
 :star2: **NEW**
 
 - Added the English Service Liturgy menu
 - Added push notification support via Firebase Cloud Messaging (FCM)
+
+:hammer_and_wrench: **FIX**
+
+- Attempted to fix edge-to-edge issue warning on Google Play Console
 
 ## v0.8.1 2025.10.04 (46)
 
