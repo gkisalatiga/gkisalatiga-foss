@@ -36,6 +36,7 @@ class GlobalCompanion : Application() {
         var DEBUG_ENABLE_LOG_CAT_DOWNLOADER = false
         var DEBUG_ENABLE_LOG_CAT_DEEP_LINK = false
         var DEBUG_ENABLE_LOG_CAT_DUMP = false
+        var DEBUG_ENABLE_LOG_CAT_FCM = false
         var DEBUG_ENABLE_LOG_CAT_INIT = false
         var DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE = false
         var DEBUG_ENABLE_LOG_CAT_PDF = false

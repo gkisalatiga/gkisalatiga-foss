@@ -131,6 +131,19 @@ class Logger {
         }
 
         /**
+         * Log messages for testing a new feature or novel operation.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logFCM (func: () -> Unit, msg: String, type: LoggerType = LoggerType.WARNING) {
+            val tag = "$BASE_LOGGING_TAG-FCM"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_FCM) doLog(tag, msgString, type)
+        }
+
+        /**
          * Logging of operations during application start/initialization.
          * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
          * @param msg The message to be logged to the terminal.

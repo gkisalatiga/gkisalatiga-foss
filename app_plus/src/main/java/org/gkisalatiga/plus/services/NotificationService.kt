@@ -19,6 +19,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.messaging.RemoteMessage
 import org.gkisalatiga.plus.ActivityLauncher
 import org.gkisalatiga.plus.R
 
@@ -35,6 +36,23 @@ class NotificationService {
                 val desc = "Notifikasi yang muncul saat mode pengembang dinyalakan."
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
                 val channel = NotificationChannel(NotificationServiceEnum.DEBUGGER_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
+
+                // Do not use "ContextCompat.getSystemService".
+                // SOURCE: https://stackoverflow.com/a/61709171
+                val notificationManager: NotificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(channel)
+            }
+        }
+
+        /**
+         * The notification channel for FCM.
+         */
+        fun initFCMChannel(ctx: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val name = "Push Notification"
+                val desc = "Notifikasi yang diberikan oleh admin secara berkala sebagai pengingat."
+                val importance = NotificationManager.IMPORTANCE_HIGH
+                val channel = NotificationChannel(NotificationServiceEnum.PUSH_NOTIFICATION_CHANNEL.name, name, importance).apply { description = desc }
 
                 // Do not use "ContextCompat.getSystemService".
                 // SOURCE: https://stackoverflow.com/a/61709171
@@ -140,6 +158,34 @@ class NotificationService {
         }
 
         /**
+         * Showing the FCM notification.
+         */
+        fun showFCMBasicNotification(ctx: Context, message: RemoteMessage.Notification) {
+            // val title = "Notification FCM-Basic"
+            val title = message.title
+            val content = message.body
+
+            // Prepares the post-user click action handler (i.e., opening an activity).
+            val intent = Intent(ctx, ActivityLauncher::class.java)
+            intent.setData(Uri.parse("https://gkisalatiga.org/app/deeplink/main_graphics"))
+            val activity = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_MUTABLE)
+
+            val builder = NotificationCompat.Builder(ctx, NotificationServiceEnum.PUSH_NOTIFICATION_CHANNEL.name)
+                .setSmallIcon(R.drawable.app_notif_icon)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setContentIntent(activity)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(content))  // --- showing multiline content.
+                .setAutoCancel(true)  // --- remove notification on user tap.
+
+            if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                with(NotificationManagerCompat.from(ctx)) {
+                    notify(NotificationServiceEnum.PUSH_NOTIFICATION_CHANNEL.ordinal, builder.build())
+                }
+            }
+        }
+
+        /**
          * Showing the saren notification.
          */
         fun showSarenNotification(ctx: Context) {
@@ -199,6 +245,7 @@ class NotificationService {
 
 enum class NotificationServiceEnum {
     DEBUGGER_NOTIFICATION_CHANNEL,
+    PUSH_NOTIFICATION_CHANNEL,
     SAREN_NOTIFICATION_CHANNEL,
     YKB_NOTIFICATION_CHANNEL
 }

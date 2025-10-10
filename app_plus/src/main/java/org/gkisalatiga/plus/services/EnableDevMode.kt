@@ -27,6 +27,7 @@ class EnableDevMode {
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DEEP_LINK = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DUMP = true
+            GlobalCompanion.DEBUG_ENABLE_LOG_CAT_FCM = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE = true
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF = true
@@ -49,6 +50,7 @@ class EnableDevMode {
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DEEP_LINK = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DUMP = false
+            GlobalCompanion.DEBUG_ENABLE_LOG_CAT_FCM = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE = false
             GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF = false

@@ -20,6 +20,7 @@ android {
     defaultConfig {
         applicationId "org.gkisalatiga.plus"
         minSdk 21
+        //noinspection OldTargetApi
         targetSdk 35
         versionCode 46
         versionName "0.8.1"
@@ -183,6 +184,9 @@ dependencies {
     // SOURCE: https://firebase.google.com/docs/android/setup?authuser=0
     //noinspection GradleDependency
     implementation platform("com.google.firebase:firebase-bom:33.1.0")
-    implementation "com.google.firebase:firebase-analytics"
+    implementation("com.google.firebase:firebase-analytics")
+    // For FCM.
+    // SOURCE: https://firebase.blog/posts/2023/08/adding-fcm-to-jetpack-compose-app
+    implementation("com.google.firebase:firebase-messaging-ktx")
 
 }

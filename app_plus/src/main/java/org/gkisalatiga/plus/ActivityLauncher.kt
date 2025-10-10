@@ -618,6 +618,7 @@ class ActivityLauncher : ComponentActivity() {
      */
     private fun initNotificationChannel() {
         NotificationService.initDebuggerChannel(this@ActivityLauncher)
+        NotificationService.initFCMChannel(this@ActivityLauncher)
         NotificationService.initSarenNotificationChannel(this@ActivityLauncher)
         NotificationService.initYKBHarianNotificationChannel(this@ActivityLauncher)
     }

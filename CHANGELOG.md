@@ -5,6 +5,7 @@
 :star2: **NEW**
 
 - Added the English Service Liturgy menu
+- Added push notification support via Firebase Cloud Messaging (FCM)
 
 ## v0.8.1 2025.10.04 (46)
 
