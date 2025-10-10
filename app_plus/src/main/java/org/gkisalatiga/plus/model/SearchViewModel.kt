@@ -20,7 +20,6 @@ import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.lib.EmptySearchQueryException
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
-import org.json.JSONObject
 
 /**
  * This class does the searching of contents stored in the app's JSON data.
@@ -53,11 +52,13 @@ class SearchViewModel(ctx: Context) : CoroutineViewModel() {
 
                 /* Tata Ibadah. */
                 if (SearchDataType.PDF_TATA_IBADAH in searchFilter) {
-                    val parent = root.pdf.liturgi
+                    val mutableParent: MutableList<MainPdfItemObject> = mutableListOf<MainPdfItemObject>()
+                    mutableParent.addAll(root.pdf.liturgi)
+                    mutableParent.addAll(root.pdf.es)
 
                     // Converting JSONArray to an iterable.
                     val iterableParent = mutableListOf<MainPdfItemObject>()
-                    for (i in 0 until parent.size) iterableParent.add(i, parent[i])
+                    for (i in 0 until mutableParent.size) iterableParent.add(i, mutableParent[i])
 
                     iterableParent.forEach {
                         if (it.title.lowercase().contains(sanitizedSearchTerm))

@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## Next Imminent Release
+
+:star2: **NEW**
+
+- Added the English Service Liturgy menu
+
 ## v0.8.1 2025.10.04 (46)
 
 :four_leaf_clover: **IMPROVEMENT**

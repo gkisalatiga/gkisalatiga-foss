@@ -217,6 +217,11 @@
     <!-- Pertaining to the deletion dialog of PDF files. -->
     <string name="pdf_action_delete_pdf_btn">Hapus</string>
 
+    <!-- Applicable in ScreenLiturgi. -->
+    <string name="screen_liturgi_type_chip_show_all">Semua</string>
+    <string name="screen_liturgi_type_chip_show_only_ibadah_umum">Ibadah Umum</string>
+    <string name="screen_liturgi_type_chip_show_only_english_service">English Service</string>
+
     <!-- Applicable in ScreenSettings. -->
     <string name="screen_settings_pref_app_theme">Tema Aplikasi</string>
     <string name="screen_settings_pref_app_theme_documentation">Menentukan apakah aplikasi akan ditampilkan dalam tema gelap, terang, atau fleksibel mengikuti pengaturan sistem.</string>

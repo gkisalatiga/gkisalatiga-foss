@@ -16,6 +16,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,14 +25,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -39,6 +44,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,6 +70,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -76,6 +84,7 @@ import org.gkisalatiga.plus.composable.OfflineSnackbarHost
 import org.gkisalatiga.plus.composable.OfflineSnackbarHostCompanion
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -184,9 +193,60 @@ class ScreenLiturgi (private val current : ActivityData) : ComponentActivity() {
             /* Add a visually dividing divider :D */
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
+            // Filtering labels.
+            val viewSelectionTextMap : MutableMap<ScreenLiturgiViewSelection, String> = mutableMapOf( ScreenLiturgiViewSelection.VIEW_ONLY_IBADAH_UMUM to stringResource(R.string.screen_liturgi_type_chip_show_only_ibadah_umum) )
+            if (MainCompanion.api!!.backend.flags.isFeatureEnglishServiceLiturgyShown == 1)
+                viewSelectionTextMap[ScreenLiturgiViewSelection.VIEW_ONLY_ENGLISH_SERVICE] = stringResource(R.string.screen_liturgi_type_chip_show_only_english_service)
+
+            // Whether to display only regular agenda.
+            Row (Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
+                ScreenLiturgiViewSelection.entries.forEach {
+                    val isSelected = ScreenLiturgiCompanion.mutableCurrentViewSelection.value == it
+                    fun changeViewSelection() { ScreenLiturgiCompanion.mutableCurrentViewSelection.value = it }
+                    FilterChip(
+                        onClick = { changeViewSelection() },
+                        label = { Text(viewSelectionTextMap[it]!!) },
+                        selected = isSelected,
+                        leadingIcon = if (isSelected) {
+                            {
+                                Icon(
+                                    imageVector = Icons.Filled.Done,
+                                    contentDescription = "Done icon",
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        } else {
+                            null
+                        },
+                        colors = FilterChipDefaults.filterChipColors().copy(
+                            containerColor = current.colors.screenAgendaChipUnselectedBackgroundAlternativeColor,
+                            selectedContainerColor = current.colors.screenAgendaChipSelectedBackgroundColor,
+                            leadingIconColor = current.colors.screenAgendaChipTextUnselectedBackgroundColor,
+                            selectedLeadingIconColor = current.colors.screenAgendaChipTextSelectedBackgroundColor,
+                            labelColor = current.colors.screenAgendaChipTextUnselectedBackgroundColor,
+                            selectedLabelColor = current.colors.screenAgendaChipTextSelectedBackgroundColor,
+                        ),
+                        border = null,
+                        modifier = Modifier.padding(end = 5.dp)
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(25.dp))
+
+            // Get the day's name in current locale; then display the day title.
+            Row (verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                Text(viewSelectionTextMap[ScreenLiturgiCompanion.mutableCurrentViewSelection.value]!!, modifier = Modifier, fontWeight = FontWeight.Bold, fontSize = 28.sp, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+            }
+
+            Spacer(Modifier.height(20.dp))
+
             /* Retrieve the list of liturgies. */
             // val formListAsJSONArray = MainCompanion.jsonRoot!!.getJSONObject("pdf").getJSONArray("liturgi")
-            val formListAsJSONArray = MainCompanion.api!!.pdf.liturgi
+            // val formListAsJSONArray = MainCompanion.api!!.pdf.liturgi
+            val formListAsJSONArray =
+                if (ScreenLiturgiCompanion.mutableCurrentViewSelection.value == ScreenLiturgiViewSelection.VIEW_ONLY_ENGLISH_SERVICE)
+                    MainCompanion.api!!.pdf.es else MainCompanion.api!!.pdf.liturgi
 
             /* Draw the news selection elements. */
             formListAsJSONArray.forEach {
@@ -337,5 +397,15 @@ class ScreenLiturgiCompanion : Application() {
     companion object {
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null
+
+        /* Display which liturgy. */
+        val mutableCurrentViewSelection = mutableStateOf(ScreenLiturgiViewSelection.VIEW_ONLY_IBADAH_UMUM)
     }
+}
+
+enum class ScreenLiturgiViewSelection {
+    // Do not activate yet!
+    // VIEW_ALL,
+    VIEW_ONLY_IBADAH_UMUM,
+    VIEW_ONLY_ENGLISH_SERVICE,
 }

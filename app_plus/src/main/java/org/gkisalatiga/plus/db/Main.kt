@@ -199,6 +199,7 @@ class MainJSONParser {
                         isEasterEggDevmodeEnabled = 0,
                         isFeatureAgendaShown = 0,
                         isFeatureBibleShown = 0,
+                        isFeatureEnglishServiceLiturgyShown = 0,
                         isFeatureFormulirShown = 0,
                         isFeatureGaleriShown = 0,
                         isFeatureLapakShown = 0,
@@ -224,6 +225,7 @@ class MainJSONParser {
                 pdf = MainPdfRootObject(
                     wj = mutableListOf(),
                     liturgi = mutableListOf(),
+                    es = mutableListOf(),
                 ),
                 pukatBerkat = mutableListOf(),
                 urlProfile = MainUrlProfileObject(
@@ -312,6 +314,7 @@ class MainJSONParser {
                         api.backend.flags.isFeatureFormulirShown = it1.getInt("is_feature_formulir_shown")
                         api.backend.flags.isFeatureGaleriShown = it1.getInt("is_feature_galeri_shown")
                         api.backend.flags.isFeatureBibleShown = it1.getInt("is_feature_bible_shown")
+                        api.backend.flags.isFeatureEnglishServiceLiturgyShown = it1.getInt("is_feature_esliturgy_shown")
                         api.backend.flags.isFeatureLibraryShown = it1.getInt("is_feature_library_shown")
                         api.backend.flags.isFeatureLapakShown = it1.getInt("is_feature_lapak_shown")
                         api.backend.flags.isFeatureSeasonalShown = it1.getInt("is_feature_seasonal_shown")
@@ -387,6 +390,7 @@ class MainJSONParser {
                     mapOf(
                         "wj" to api.pdf.wj,
                         "liturgi" to api.pdf.liturgi,
+                        "es" to api.pdf.es,
                     ).forEach { it1 ->
                         it0.getJSONArray(it1.key).let { it2 ->
                             for (i in 0 until it2.length()) {

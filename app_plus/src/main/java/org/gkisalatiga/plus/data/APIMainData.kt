@@ -55,6 +55,7 @@ data class MainYouTubeVideoContentObject(
 data class MainPdfRootObject(
     var wj: MutableList<MainPdfItemObject>,
     var liturgi: MutableList<MainPdfItemObject>,
+    var es: MutableList<MainPdfItemObject>,
 )
 
 data class MainPdfItemObject(
@@ -179,6 +180,7 @@ data class MainBackendFlagsItemObject(
     var isFeatureFormulirShown: Int,
     var isFeatureGaleriShown: Int,
     var isFeatureBibleShown: Int,
+    var isFeatureEnglishServiceLiturgyShown: Int,
     var isFeatureLibraryShown: Int,
     var isFeatureLapakShown: Int,
     var isFeatureSeasonalShown: Int,
