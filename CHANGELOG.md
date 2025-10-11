@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## v0.8.3-rc 2025.10.11 (48)
+
+:hammer_and_wrench: **FIX**
+
+- Attempted to fix Jetpack Compose top bar got replaced by edge-to-edge preferences
+
 ## v0.8.2 2025.10.11 (47)
 
 :star2: **NEW**

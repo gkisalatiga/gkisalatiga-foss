@@ -11,9 +11,11 @@
 package org.gkisalatiga.plus.screen
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +49,7 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.GalleryAlbumObject
 import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -91,21 +94,8 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
         // DEBUG. Always comment out.
         Logger.logTest({}, "Current object (1): ${galleryYearList}")
 
-        // Convert JSONArray to regular list. (JSONArray iterates from 1, not 0.)
-        /*val enumeratedGalleryList: MutableList<JSONObject> =  mutableListOf(JSONObject())
-        for (i in 0 until galleryYearList.length()) {
-            val curNode = galleryYearList[i] as JSONObject
-            enumeratedGalleryList.add(curNode)
-
-            // DEBUG. Always comment out.
-            Logger.logTest({}, "Current object (2): ${curNode}")
-        }
-
-        // Remove the first item; JSONArrays start at 1.
-        enumeratedGalleryList.removeAt(0)*/
-
         // The column's saved scroll state.
-        val scrollState = rememberScrollState()
+        val scrollState = ScreenGaleriYearCompanion.rememberedScrollState!!
         Column (
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top,
@@ -190,4 +180,12 @@ class ScreenGaleriYear (private val current : ActivityData) : ComponentActivity(
         )
     }
 
+}
+
+@Suppress("SpellCheckingInspection")
+class ScreenGaleriYearCompanion : Application() {
+    companion object {
+        /* The screen's remembered scroll state. */
+        var rememberedScrollState: ScrollState? = null
+    }
 }

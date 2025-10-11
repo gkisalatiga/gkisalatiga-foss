@@ -63,7 +63,6 @@ import org.gkisalatiga.plus.data.GalleryItemObject
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
-import org.json.JSONArray
 
 class ScreenGaleriList (private val current : ActivityData) : ComponentActivity() {
 

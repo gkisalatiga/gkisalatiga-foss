@@ -139,6 +139,7 @@ import org.gkisalatiga.plus.screen.ScreenGaleriList
 import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 import org.gkisalatiga.plus.screen.ScreenGaleriView
 import org.gkisalatiga.plus.screen.ScreenGaleriYear
+import org.gkisalatiga.plus.screen.ScreenGaleriYearCompanion
 import org.gkisalatiga.plus.screen.ScreenInternalHTML
 import org.gkisalatiga.plus.screen.ScreenLibrary
 import org.gkisalatiga.plus.screen.ScreenLibraryCompanion
@@ -243,7 +244,14 @@ class ActivityLauncher : ComponentActivity() {
         Logger.log({}, "Starting app: ${this.resources.getString(R.string.app_name_alias)}")
 
         // Enable edge-to-edge.
-        enableEdgeToEdge()
+        // ---
+        // WARNING!
+        // No matter what you think, do not call enableEdgeToEdge() outside the scope
+        // of Jetpack Compose's setContent () -> Unit.
+        // The Google Play Console edge-to-edge warning won't disappear anyway,
+        // and a pesky default top bar would show up on higher Android devices instead.
+        // (github.com/samarlyka, 2025-10-11)
+        // enableEdgeToEdge()
 
         // Handle the splash screen transition.
         // SOURCE: https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
@@ -337,6 +345,10 @@ class ActivityLauncher : ComponentActivity() {
             GlobalCompanion.isDarkModeUi.value = isDarkMode
 
             // Enable transparent status bar.
+            // ---
+            // DO NOT MOVE OUTSIDE setContent () -> Unit.
+            // It will get superseded by Android's default top bar,
+            // overlapping the Jetpack Compose's top bar.
             enableEdgeToEdge(
                 statusBarStyle = if (isDarkMode)
                     SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
@@ -360,6 +372,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenDevCompanion.rememberedScrollState = rememberScrollState()
             ScreenFormsCompanion.rememberedScrollState = rememberScrollState()
             ScreenGaleriCompanion.rememberedScrollState = rememberScrollState()
+            ScreenGaleriYearCompanion.rememberedScrollState = rememberScrollState()
             ScreenGaleriListCompanion.rememberedLazyGridState = rememberLazyGridState()
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
