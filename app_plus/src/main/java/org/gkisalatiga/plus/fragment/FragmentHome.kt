@@ -150,7 +150,8 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnEnabledState.add(true)
         }
 
-        if (appFlags.isFeatureBibleShown == 1) {
+        // TODO: Remove the "GlobalCompanion.isAppDebuggable.value" expression.
+        if (appFlags.isFeatureBibleShown == 1 || GlobalCompanion.isAppDebuggable.value) {
             btnRoutes.add(NavigationRoutes.SCREEN_BIBLE)
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_bible))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_bible))

@@ -142,6 +142,9 @@
         Halo! Saya tertarik dengan %%%TYPE%%% %%%NAME%%% yang diiklankan oleh %%%VENDOR%%% di aplikasi GKI Salatiga.
     </string>
 
+    <!-- Constant strings used in the "ScreenBible" section. -->
+    <string name="bible_license_label">Lisensi</string>
+
     <!-- Constant strings used in the "ScreenLibrary" section. -->
     <string name="library_published_year_label">Diterbitkan Tahun</string>
 

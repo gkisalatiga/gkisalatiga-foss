@@ -15,6 +15,12 @@ import java.net.URLEncoder
 class StringFormatter {
     companion object {
 
+        // List of Bible lang locales in main-modules JSON.
+        private val bibleLangLocaleInIndonesia = mapOf<String, String>(
+            "eng" to "Bahasa Inggris",
+            "idn" to "Bahasa Indonesia",
+        )
+
         // List of local month names in Indonesian.
         private val monthLocaleInIndonesia = mapOf<String, String>(
             "01" to "Januari",
@@ -52,6 +58,14 @@ class StringFormatter {
             "sat" to "Sab",
             "sun" to "Min"
         )
+
+        /**
+         * Self-descriptive.
+         */
+        fun convertBibleLangToLocale(bibleLang: String): String {
+            return if (!bibleLangLocaleInIndonesia.containsKey(bibleLang)) ""
+            else bibleLangLocaleInIndonesia[bibleLang]!!
+        }
 
         /**
          * Convert YYYY-MM-DD date format used in the JSON metadata

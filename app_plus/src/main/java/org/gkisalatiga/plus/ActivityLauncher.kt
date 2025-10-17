@@ -126,6 +126,7 @@ import org.gkisalatiga.plus.screen.ScreenAgendaCompanion
 import org.gkisalatiga.plus.screen.ScreenAttribution
 import org.gkisalatiga.plus.screen.ScreenAttributionCompanion
 import org.gkisalatiga.plus.screen.ScreenBible
+import org.gkisalatiga.plus.screen.ScreenBibleCompanion
 import org.gkisalatiga.plus.screen.ScreenBlank
 import org.gkisalatiga.plus.screen.ScreenContrib
 import org.gkisalatiga.plus.screen.ScreenContribCompanion
@@ -246,7 +247,7 @@ class ActivityLauncher : ComponentActivity() {
         // Enable edge-to-edge.
         // ---
         // WARNING!
-        // No matter what you think, do not call enableEdgeToEdge() outside the scope
+        // No matter wScreenBibleCompanionhat you think, do not call enableEdgeToEdge() outside the scope
         // of Jetpack Compose's setContent () -> Unit.
         // The Google Play Console edge-to-edge warning won't disappear anyway,
         // and a pesky default top bar would show up on higher Android devices instead.
@@ -372,6 +373,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenAttributionCompanion.rememberedHardCodedScrollState = rememberScrollState()
             ScreenAttributionCompanion.rememberedLiteratureScrollState = rememberScrollState()
             ScreenAttributionCompanion.rememberedWebViewScrollState = rememberScrollState()
+            ScreenBibleCompanion.rememberedScrollState = rememberScrollState()
             ScreenContribCompanion.rememberedScrollState = rememberScrollState()
             ScreenDevCompanion.rememberedScrollState = rememberScrollState()
             ScreenFormsCompanion.rememberedScrollState = rememberScrollState()
