@@ -12,8 +12,10 @@ package org.gkisalatiga.plus.screen
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
+import android.content.ClipData
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -31,6 +33,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -42,13 +45,14 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,21 +62,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.db.Gallery
+import org.gkisalatiga.plus.db.Main
 import org.gkisalatiga.plus.db.MainCompanion
+import org.gkisalatiga.plus.db.Modules
+import org.gkisalatiga.plus.db.Static
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.AppPreferences
-import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
-import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.PersistentLogger
+import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.services.ClipManager
 import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.NotificationService
 import org.gkisalatiga.plus.services.WorkScheduler
@@ -164,17 +173,31 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
 
     @Composable
     private fun getMainContent() {
-        getQuickActions()
-        Spacer(Modifier.height(20.dp))
-        // insert more menu group here.
+        // Disable spacings between Surfaces that have onClick component.
+        // SOURCE: https://stackoverflow.com/a/75392447
+        CompositionLocalProvider(
+            // Deprecated starting on Version 1.3.0-alpha04
+            // https://developer.android.com/jetpack/androidx/releases/compose-material3#1.3.0-alpha04
+            // LocalMinimumInteractiveComponentEnforcement provides false
+            LocalMinimumInteractiveComponentSize provides Dp.Unspecified
+        ) {
+            getQuickActions()
+            Spacer(Modifier.height(20.dp))
+            // insert more menu group here.
+        }
     }
 
     @Composable
     @SuppressLint("SimpleDateFormat")
     private fun getQuickActions() {
+        val persistentLoggerToastText = stringResource(R.string.screen_dev_text_toast_value_copy)
 
         /* The quick actions menu. */
-        Column (Modifier.fillMaxWidth()) {
+        Column (
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+        ) {
             val appInfoText = stringResource(R.string.screen_dev_quick_action_title)
             Spacer(Modifier.height(10.dp))
             Text(appInfoText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
@@ -192,7 +215,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                     NotificationService.showYKBHarianNotification(ctx)
                 }
             ) {
-                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row (verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.NotificationsActive, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
                     Text(notifTriggerText, modifier = Modifier, textAlign = TextAlign.Center)
                 }
@@ -206,7 +229,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                     WorkScheduler.scheduleMinutelyDebugReminder(ctx)
                 }
             ) {
-                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row (verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Alarm, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
                     Text(triggerMinutelyWorkManagerText, modifier = Modifier, textAlign = TextAlign.Center)
                 }
@@ -221,7 +244,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                     GlobalCompanion.isPortraitMode.value = ctx.requestedOrientation == 1
                 }
             ) {
-                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row (verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.FlipCameraAndroid, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
                     Text(triggerOrientationChange, modifier = Modifier, textAlign = TextAlign.Center)
                 }
@@ -238,7 +261,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                     AppNavigation.popBack()
                 }
             ) {
-                Row (modifier = Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row (verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Lock, "", modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp))
                     Text(lockDeveloperMenu, modifier = Modifier, textAlign = TextAlign.Center)
                 }
@@ -246,29 +269,59 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
 
             val appLocalText = stringResource(R.string.screen_dev_local_storage_title)
             Spacer(Modifier.height(10.dp))
-            Text(appLocalText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Text(appLocalText, fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(10.dp))
 
             /* Displaying all LocalStorage values. */
             LocalStorage(ctx).getAll().entries.sortedBy { it.key }.forEach {
-                Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                val text1 = it.key
+                val text2 = "${it.value}"
+                Surface (
+                    modifier = Modifier.fillMaxSize().padding(2.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = {
+                        // Copy the persistent logger value.
+                        val clipData = ClipData.newPlainText("text", "$text1 $text2")
+                        ClipManager.clipManager!!.setPrimaryClip(clipData)
+                        Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                    }
+                ) {
+                    Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                        Text(text1, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                        Text(text2, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                    }
+                }
             }
 
             val appPrefText = stringResource(R.string.screen_dev_app_preferences_title)
             Spacer(Modifier.height(10.dp))
-            Text(appPrefText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Text(appPrefText, fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(10.dp))
 
             /* Displaying all AppPreferences values. */
             AppPreferences(ctx).getAll().entries.sortedBy { it.key }.forEach {
-                Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                val text1 = it.key
+                val text2 = "${it.value}"
+                Surface (
+                    modifier = Modifier.fillMaxSize().padding(2.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = {
+                        // Copy the persistent logger value.
+                        val clipData = ClipData.newPlainText("text", "$text1 $text2")
+                        ClipManager.clipManager!!.setPrimaryClip(clipData)
+                        Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                    }
+                ) {
+                    Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                        Text(text1, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                        Text(text2, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                    }
+                }
             }
 
             val appDebugFlagsText = stringResource(R.string.screen_dev_debug_flags_title)
             Spacer(Modifier.height(10.dp))
-            Text(appDebugFlagsText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Text(appDebugFlagsText, fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(10.dp))
 
             // The list of all debug flags.
@@ -281,6 +334,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 "DEBUG_ENABLE_LOG_CAT_DOWNLOADER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER,
                 "DEBUG_ENABLE_LOG_CAT_DEEP_LINK" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DEEP_LINK,
                 "DEBUG_ENABLE_LOG_CAT_DUMP" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DUMP,
+                "DEBUG_ENABLE_LOG_CAT_FCM" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_FCM,
                 "DEBUG_ENABLE_LOG_CAT_INIT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_INIT,
                 "DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_LOCAL_STORAGE,
                 "DEBUG_ENABLE_LOG_CAT_PDF" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_PDF,
@@ -295,13 +349,66 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
 
             /* Displaying all of the app's debug flag values. */
             debugFlags.entries.sortedBy { it.key }.forEach {
-                Text(it.key, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                val text1 = it.key
+                val text2 = "${it.value}"
+                Surface (
+                    modifier = Modifier.fillMaxSize().padding(2.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = {
+                        // Copy the persistent logger value.
+                        val clipData = ClipData.newPlainText("text", "$text1 $text2")
+                        ClipManager.clipManager!!.setPrimaryClip(clipData)
+                        Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                    }
+                ) {
+                    Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                        Text(text1, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                        Text(text2, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                    }
+                }
+            }
+
+            val appGlobalCompBackendText = stringResource(R.string.screen_dev_global_comp_backend_title)
+            Spacer(Modifier.height(10.dp))
+            Text(appGlobalCompBackendText, fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.height(10.dp))
+
+            /* Displaying the read-out of the JSON backend flags, strings, etc. */
+            mapOf(
+                "isAppDebuggable" to GlobalCompanion.isAppDebuggable,
+                "isAppUpdateAvailable" to GlobalCompanion.isAppUpdateAvailable,
+                "isDarkModeUi" to GlobalCompanion.isDarkModeUi,
+                "isConnectedToInternet" to GlobalCompanion.isConnectedToInternet,
+                "isNotificationGranted" to GlobalCompanion.isNotificationGranted,
+                "isPhoneBarsVisible" to GlobalCompanion.isPhoneBarsVisible,
+                "isPortraitMode" to GlobalCompanion.isPortraitMode,
+                "isRunningInBackground" to GlobalCompanion.isRunningInBackground,
+                "lastAppUpdateVersionName" to GlobalCompanion.lastAppUpdateVersionName,
+            ).let {
+                it.keys.forEach { key ->
+                    val text1 = "GlobalCompanion.$key"
+                    val text2 = it[key]!!.value.toString()
+                    Surface (
+                        modifier = Modifier.fillMaxSize().padding(2.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = {
+                            // Copy the persistent logger value.
+                            val clipData = ClipData.newPlainText("text", "$text1 $text2")
+                            ClipManager.clipManager!!.setPrimaryClip(clipData)
+                            Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                        }
+                    ) {
+                        Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                            Text(text1, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                            Text(text2, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                        }
+                    }
+                }
             }
 
             val appJsonBackendText = stringResource(R.string.screen_dev_main_json_backend_title)
             Spacer(Modifier.height(10.dp))
-            Text(appJsonBackendText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Text(appJsonBackendText, fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(10.dp))
 
             /* Displaying the read-out of the JSON backend flags, strings, etc. */
@@ -318,8 +425,66 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 "isFeatureGaleriShown" to mainRootBackend.flags.isFeatureGaleriShown,
             ).let {
                 it.keys.forEach { key ->
-                    Text("flags ::: $key", fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                    Text(it[key].toString(), fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                    val text1 = "flags ::: $key"
+                    val text2 = it[key].toString()
+                    Surface (
+                        modifier = Modifier.fillMaxSize().padding(2.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = {
+                            // Copy the persistent logger value.
+                            val clipData = ClipData.newPlainText("text", "$text1 $text2")
+                            ClipManager.clipManager!!.setPrimaryClip(clipData)
+                            Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                        }
+                    ) {
+                        Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                            Text(text1, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                            Text(text2, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                        }
+                    }
+                }
+            }
+
+            val metaGallery = Gallery(current.ctx).getGalleryMetadata()
+            val metaMain = Main(current.ctx).getMainMetadata()
+            val metaModules = Modules(current.ctx).getModulesMetadata()
+            val metaStatic = Static(current.ctx).getStaticMetadata()
+            mapOf(
+                "gallery-last-actor" to metaGallery.lastActor,
+                "gallery-last-update" to metaGallery.lastUpdate,
+                "gallery-update-count" to metaGallery.updateCount,
+                "gallery-version" to metaGallery.schemaVersion,
+                "main-last-actor" to metaMain.lastActor,
+                "main-last-update" to metaMain.lastUpdate,
+                "main-update-count" to metaMain.updateCount,
+                "main-version" to metaMain.schemaVersion,
+                "modules-last-actor" to metaModules.lastActor,
+                "modules-last-update" to metaModules.lastUpdate,
+                "modules-update-count" to metaModules.updateCount,
+                "modules-version" to metaModules.schemaVersion,
+                "static-last-actor" to metaStatic.lastActor,
+                "static-last-update" to metaStatic.lastUpdate,
+                "static-update-count" to metaStatic.updateCount,
+                "static-version" to metaStatic.schemaVersion,
+            ).let {
+                it.keys.forEach { key ->
+                    val text1 = "meta ::: $key"
+                    val text2 = it[key].toString()
+                    Surface (
+                        modifier = Modifier.fillMaxSize().padding(2.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = {
+                            // Copy the persistent logger value.
+                            val clipData = ClipData.newPlainText("text", "$text1 $text2")
+                            ClipManager.clipManager!!.setPrimaryClip(clipData)
+                            Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                        }
+                    ) {
+                        Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                            Text(text1, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                            Text(text2, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                        }
+                    }
                 }
             }
 
@@ -333,21 +498,49 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 "address" to mainRootBackend.strings.address,
             ).let {
                 it.keys.forEach { key ->
-                    Text("strings ::: $key", fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                    Text("${it[key]}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                    val text1 = "strings ::: $key"
+                    val text2 = "${it[key]}"
+                    Surface (
+                        modifier = Modifier.fillMaxSize().padding(2.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        onClick = {
+                            // Copy the persistent logger value.
+                            val clipData = ClipData.newPlainText("text", "$text1 $text2")
+                            ClipManager.clipManager!!.setPrimaryClip(clipData)
+                            Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                        }
+                    ) {
+                        Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                            Text(text1, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                            Text(text2, fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                        }
+                    }
                 }
             }
 
             val appPersistText = stringResource(R.string.screen_dev_persistent_logger_title)
             Spacer(Modifier.height(10.dp))
-            Text(appPersistText, modifier = Modifier.padding(start = 20.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
+            Text(appPersistText, fontWeight = FontWeight.Bold, fontSize = 20.sp, overflow = TextOverflow.Ellipsis)
             Spacer(Modifier.height(10.dp))
 
             /* Displaying all PersistentLogger entries. */
             PersistentLogger(ctx).getAll().entries.sortedBy { it.key.toLong() }.forEach {
                 val dateString = SimpleDateFormat("yyyy-MM-dd HH:mm").format(Date(it.key.toLong()))
-                Text(dateString, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp, modifier = Modifier.padding(horizontal = 20.dp))
-                Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 10.dp))
+                Surface (
+                    modifier = Modifier.fillMaxSize().padding(2.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    onClick = {
+                        // Copy the persistent logger value.
+                        val clipData = ClipData.newPlainText("text", "$dateString ${it.value}")
+                        ClipManager.clipManager!!.setPrimaryClip(clipData)
+                        Toast.makeText(current.ctx, persistentLoggerToastText, Toast.LENGTH_SHORT).show()
+                    }
+                ) {
+                    Column (Modifier.fillMaxWidth().padding(2.dp)) {
+                        Text(dateString, fontWeight = FontWeight.Bold, textAlign = TextAlign.Start, fontSize = 10.sp, lineHeight = 11.sp)
+                        Text("${it.value}", fontWeight = FontWeight.Normal, textAlign = TextAlign.Start, fontSize = 8.sp, lineHeight = 9.sp)
+                    }
+                }
             }
 
         }  // --- end of column: section app info.

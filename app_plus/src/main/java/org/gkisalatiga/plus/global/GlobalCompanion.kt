@@ -77,6 +77,9 @@ class GlobalCompanion : Application() {
         // Whether new app update is found.
         val isAppUpdateAvailable = mutableStateOf(false)
 
+        // Whether the app is debuggable.
+        val isAppDebuggable = mutableStateOf(false)
+
         // The latest version update as specified in the feeds.
         val lastAppUpdateVersionName = mutableStateOf("")
 

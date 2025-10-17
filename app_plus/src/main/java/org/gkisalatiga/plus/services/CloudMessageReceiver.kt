@@ -22,6 +22,7 @@ class CloudMessageReceiver : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Logger.logFCM({}, "INCOMING_NEW_TOKEN: $token")
+        PersistentLogger(applicationContext).write({}, "fcm-token: $token")
         super.onNewToken(token)
     }
 

@@ -89,7 +89,7 @@ class ScreenAbout (private val current : ActivityData) : ComponentActivity() {
     // Determines the time and number-of-clicks for opening the EasterEgg.
     private var easterEggFirstClick = 0.toLong()
     private var easterEggCurrentClicks = 0
-    private val easterEggMinClicks = 14
+    private val easterEggMinClicks = 10
     private val easterEggTimeout = 2000.toLong()
 
     // The local context.

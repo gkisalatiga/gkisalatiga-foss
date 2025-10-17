@@ -277,17 +277,21 @@ class ActivityLauncher : ComponentActivity() {
 
         // Unlocks the dev menu if the app is debuggable.
         val isDevModeUnlocked = LocalStorage(this@ActivityLauncher).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
+        val currentClassName = "org.gkisalatiga.plus.ActivityLauncher"
         fun x(y: () -> Unit): String { return "${y.javaClass.enclosingClass?.name}".strip() }
         if (this@ActivityLauncher.packageName.endsWith(".debug") && !isDevModeUnlocked) {
             // Unlocks the dev menu.
             PersistentLogger(this@ActivityLauncher).write({}, "The developer menu automatically unlocks by debug package suffix!")
             LocalStorage(this@ActivityLauncher).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
             EnableDevMode.activateDebugToggles()
-        } else if (x {} == "org.gkisalatiga.plus.ActivityLauncher" && !isDevModeUnlocked) {
+        } else if (x {} == currentClassName && !isDevModeUnlocked) {
             PersistentLogger(this@ActivityLauncher).write({}, "The developer menu automatically unlocks by unobfuscated R8 app build detection!")
             LocalStorage(this@ActivityLauncher).setLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, true, LocalStorageDataTypes.BOOLEAN)
             EnableDevMode.activateDebugToggles()
         }
+
+        // Updating the debug status.
+        GlobalCompanion.isAppDebuggable.value = x {} == currentClassName
 
         // Start the connection (online/offline) checker.
         ConnectionChecker(this).execute()
