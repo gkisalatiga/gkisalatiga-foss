@@ -69,6 +69,7 @@ data class ModulesSeasonalStaticObject(
     var agenda: ModulesSeasonalStaticItemObject,
     var books: ModulesSeasonalStaticItemObject,
     var gallery: ModulesSeasonalStaticItemObject,
+    var playlist: ModulesSeasonalStaticItemObject,
     var twibbon: ModulesSeasonalStaticItemObject,
 )
 
@@ -82,6 +83,7 @@ data class ModulesSeasonalStaticItemObject(
     var url: String?,
     var selectionTag: String?,
     var albumKeyword: String?,
+    var ytPlaylist: String?,
     var twibs: MutableList<ModulesSeasonalTwibbonItemObject>?,
 )
 

@@ -69,6 +69,7 @@ import org.gkisalatiga.plus.fragment.FragmentSeasonalAgenda
 import org.gkisalatiga.plus.fragment.FragmentSeasonalBook
 import org.gkisalatiga.plus.fragment.FragmentSeasonalGaleri
 import org.gkisalatiga.plus.fragment.FragmentSeasonalMain
+import org.gkisalatiga.plus.fragment.FragmentSeasonalPlaylist
 import org.gkisalatiga.plus.fragment.FragmentSeasonalTwibbon
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
@@ -157,6 +158,9 @@ class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() 
                     }
                     androidx.compose.animation.AnimatedVisibility(it == NavigationRoutes.FRAG_SEASONAL_MAIN, enter = slideInHorizontally() + fadeIn(), exit = slideOutHorizontally() + fadeOut()) {
                         FragmentSeasonalMain(current).getComposable()
+                    }
+                    androidx.compose.animation.AnimatedVisibility(it == NavigationRoutes.FRAG_SEASONAL_PLAYLIST, enter = slideInHorizontally() + fadeIn(), exit = slideOutHorizontally() + fadeOut()) {
+                        FragmentSeasonalPlaylist(current).getComposable()
                     }
                     androidx.compose.animation.AnimatedVisibility(it == NavigationRoutes.FRAG_SEASONAL_TWIBBON, enter = slideInHorizontally() + fadeIn(), exit = slideOutHorizontally() + fadeOut()) {
                         FragmentSeasonalTwibbon(current).getComposable()

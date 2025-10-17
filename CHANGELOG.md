@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## Next Major Release
+
+:star2: **NEW**
+
+- Added seasonal YouTube playlist menu
+
 ## v0.8.3-rc 2025.10.11 (48)
 
 :hammer_and_wrench: **FIX**

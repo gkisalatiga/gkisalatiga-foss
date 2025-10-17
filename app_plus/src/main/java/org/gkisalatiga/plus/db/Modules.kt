@@ -185,6 +185,7 @@ class ModulesJSONParser {
                         agenda = ModulesSeasonalStaticItemObject(
                             title = "",
                             albumKeyword = null,
+                            ytPlaylist = null,
                             banner = "",
                             isShown = 0,
                             selectionTag = null,
@@ -194,6 +195,7 @@ class ModulesJSONParser {
                         books = ModulesSeasonalStaticItemObject(
                             title = "",
                             albumKeyword = null,
+                            ytPlaylist = null,
                             banner = "",
                             isShown = 0,
                             selectionTag = null,
@@ -203,6 +205,17 @@ class ModulesJSONParser {
                         gallery = ModulesSeasonalStaticItemObject(
                             title = "",
                             albumKeyword = null,
+                            ytPlaylist = null,
+                            banner = "",
+                            isShown = 0,
+                            selectionTag = null,
+                            twibs = mutableListOf(),
+                            url = null,
+                        ),
+                        playlist = ModulesSeasonalStaticItemObject(
+                            title = "",
+                            albumKeyword = null,
+                            ytPlaylist = null,
                             banner = "",
                             isShown = 0,
                             selectionTag = null,
@@ -212,6 +225,7 @@ class ModulesJSONParser {
                         twibbon = ModulesSeasonalStaticItemObject(
                             title = "",
                             albumKeyword = null,
+                            ytPlaylist = null,
                             banner = "",
                             isShown = 0,
                             selectionTag = null,
@@ -314,6 +328,7 @@ class ModulesJSONParser {
                         "agenda" to api.seasonal.staticMenu.agenda,
                         "books" to api.seasonal.staticMenu.books,
                         "gallery" to api.seasonal.staticMenu.gallery,
+                        "playlist" to api.seasonal.staticMenu.playlist,
                         "twibbon" to api.seasonal.staticMenu.twibbon,
                     ).forEach { it1 ->
                         it1.value.let { it2 ->
@@ -323,6 +338,11 @@ class ModulesJSONParser {
                             it2.title = curNode.getString("title")
                             it2.albumKeyword = try {
                                 curNode.getString("album-keyword")
+                            } catch (e: Exception) {
+                                null
+                            }
+                            it2.ytPlaylist = try {
+                                curNode.getString("yt-playlist")
                             } catch (e: Exception) {
                                 null
                             }
@@ -340,12 +360,13 @@ class ModulesJSONParser {
                                 mutableListOf<ModulesSeasonalTwibbonItemObject>().let { it3 ->
                                     curNode.getJSONArray("twibs").let { it4 ->
                                         for (i in 0 until it4.length()) {
-                                            val curNode = it4[i] as JSONObject
+                                            @Suppress("SpellCheckingInspection")
+                                            val curTwibNode = it4[i] as JSONObject
                                             it3.add(
                                                 ModulesSeasonalTwibbonItemObject(
-                                                    title = curNode.getString("title"),
-                                                    url = curNode.getString("url"),
-                                                    postPage = curNode.getString("post-page"),
+                                                    title = curTwibNode.getString("title"),
+                                                    url = curTwibNode.getString("url"),
+                                                    postPage = curTwibNode.getString("post-page"),
                                                 )
                                             )
                                         }
