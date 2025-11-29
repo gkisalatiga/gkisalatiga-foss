@@ -6,6 +6,11 @@
 
 - Added seasonal YouTube playlist menu
 
+:hammer_and_wrench: **FIX**
+
+- Fixed YouTube player error due to new "origin header" policy
+- Removed unused `testImplementation` dependencies
+
 ## v0.8.3-rc 2025.10.11 (48)
 
 :hammer_and_wrench: **FIX**

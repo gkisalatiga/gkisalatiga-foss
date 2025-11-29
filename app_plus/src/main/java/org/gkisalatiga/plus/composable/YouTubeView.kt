@@ -27,6 +27,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Ful
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import org.gkisalatiga.plus.db.Main
+import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Logger
@@ -81,12 +83,14 @@ class YouTubeView {
                 .controls(0)
                 .fullscreen(0)
                 .modestBranding(1)
+                .origin(MainCompanion.api!!.backend.strings.youtubePlayerOrigin)
                 .build()
         } else {
             IFramePlayerOptions.Builder()
                 .controls(1)
                 .fullscreen(1)
                 .modestBranding(0)
+                .origin(MainCompanion.api!!.backend.strings.youtubePlayerOrigin)
                 .build()
         }
 

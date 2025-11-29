@@ -194,4 +194,5 @@ data class MainBackendStringsItemObject(
     var aboutSourceCodeUrl: String,
     var greetingsTop: String,
     var greetingsBottom: String,
+    var youtubePlayerOrigin: String,
 )

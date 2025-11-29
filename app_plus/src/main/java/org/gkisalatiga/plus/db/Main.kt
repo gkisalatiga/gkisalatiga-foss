@@ -216,6 +216,7 @@ class MainJSONParser {
                         aboutSourceCodeUrl = "",
                         greetingsBottom = "",
                         greetingsTop = "",
+                        youtubePlayerOrigin = "",
                     )
                 ),
                 carousel = mutableListOf(),
@@ -327,6 +328,7 @@ class MainJSONParser {
                         api.backend.strings.aboutSourceCodeUrl = it1.getString("about_source_code_url")
                         api.backend.strings.greetingsTop = it1.getString("greetings_top")
                         api.backend.strings.greetingsBottom = it1.getString("greetings_bottom")
+                        api.backend.strings.youtubePlayerOrigin = it1.getString("youtube_player_origin")
                     }
                 }
 
