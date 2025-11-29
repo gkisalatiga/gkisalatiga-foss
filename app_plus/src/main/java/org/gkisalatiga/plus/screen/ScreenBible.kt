@@ -78,8 +78,12 @@ import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors
+import org.gkisalatiga.plus.lib.LocalStorage
+import org.gkisalatiga.plus.lib.LocalStorageDataTypes
+import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.services.InternalFileManager
 
 
 class ScreenBible (private val current : ActivityData) : ComponentActivity() {
@@ -92,6 +96,17 @@ class ScreenBible (private val current : ActivityData) : ComponentActivity() {
         ) {
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
                 getMainContent()
+            }
+
+            // Init. the dialog.
+            FileDeleteDialog().let { fdg ->
+                fdg.draw(
+                    onConfirmRequest = {
+                        InternalFileManager(current.ctx).deleteBible(fdg.getFileUrlToDelete())
+                        AppNavigation.recomposeUi()
+                    },
+                    onDismissRequest = null
+                )
             }
         }
 
@@ -131,6 +146,8 @@ class ScreenBible (private val current : ActivityData) : ComponentActivity() {
             /* Add a visually dividing divider :D */
             HorizontalDivider(Modifier.padding(vertical = 20.dp))
 
+            Text("[LOREM IPSUM] Fitur ini masih dalam pengembangan. Disklaimer>>> Beberapa versi yang tersedia (AYT, BBE, dan WEB) merupakan Alkitab bersumber terbuka yang dapat diunduh tanpa memerlukan izin khusus. Sementara itu, Alkitab versi TB dan TB2 dalam bentuk elektronik masih dalam proses pengurusan administrasi.")
+
             // The list of bible versions.
             ModulesCompanion.api!!.bible.forEach {
 
@@ -138,20 +155,23 @@ class ScreenBible (private val current : ActivityData) : ComponentActivity() {
                 val abbr = it.abbr
                 val title = it.name
                 val author = it.author
+                val authorUrl = it.authorUrl
                 val lang = it.lang
                 val license = it.license
+                val licenseUrl = it.licenseUrl
                 val source = it.source
                 val size = it.sourceSize
                 val desc = it.description
+                val url = it.sourceJson
 
                 // Displaying the individual card.
                 Card(
                     onClick = {
-                        // if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
+                        if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You just clicked: $title that points to $url!", Toast.LENGTH_SHORT).show()
 
-                        // Navigate to the PDF viewer.
-                        // ScreenPDFViewerCompanion.putArguments(title, author, publisher, publisherLoc, year, thumbnail, url, source, size)
-                        // AppNavigation.navigate(NavigationRoutes.SCREEN_PDF_VIEWER)
+                        // Navigate to the Bible viewer.
+                        ScreenBibleViewerCompanion.putArguments(abbr, title, author, authorUrl, lang, license, licenseUrl, source, size, desc, url)
+                        AppNavigation.navigate(NavigationRoutes.SCREEN_BIBLE_VIEWER)
                     },
                     modifier = Modifier.padding(bottom = 10.dp)
                 ) {
@@ -177,7 +197,7 @@ class ScreenBible (private val current : ActivityData) : ComponentActivity() {
                             ) {
                                 // The publication title.
                                 Text(
-                                    title,
+                                    title + "($abbr)",
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     maxLines = 3,
@@ -220,10 +240,10 @@ class ScreenBible (private val current : ActivityData) : ComponentActivity() {
                                 }
 
                                 // The downloaded PDF badge.
+                                val isDownloaded = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_BIBLE_FILE_DOWNLOADED, LocalStorageDataTypes.BOOLEAN, url) as Boolean
                                 val isDownloadedTitle = stringResource(R.string.pdf_already_downloaded_localized)
                                 val badgeColor = Colors.MAIN_PDF_DOWNLOADED_BADGE_COLOR
-                                // if (isDownloaded) {
-                                if (false) {
+                                if (isDownloaded) {
                                     Row {
                                         Icon(Icons.Default.CheckCircle, "File downloaded icon", modifier = Modifier.scale(0.8f).padding(end = 5.dp), tint = badgeColor)
                                         Text(
@@ -250,15 +270,14 @@ class ScreenBible (private val current : ActivityData) : ComponentActivity() {
                                 }
 
                                 // The remove file button.
-                                // if (isDownloaded) {
-                                if (false) {
+                                if (isDownloaded) {
                                     TextButton(
                                         modifier = Modifier.padding(top = 8.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = Colors.SCREEN_YKB_ARCHIVE_BUTTON_COLOR
                                         ),
                                         onClick = {
-                                            // FileDeleteDialog().show(title, url)
+                                            FileDeleteDialog().show(title, url)
                                         }
                                     ) {
                                         Row (verticalAlignment = Alignment.CenterVertically) {

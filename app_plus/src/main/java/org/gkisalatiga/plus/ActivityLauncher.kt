@@ -127,6 +127,8 @@ import org.gkisalatiga.plus.screen.ScreenAttribution
 import org.gkisalatiga.plus.screen.ScreenAttributionCompanion
 import org.gkisalatiga.plus.screen.ScreenBible
 import org.gkisalatiga.plus.screen.ScreenBibleCompanion
+import org.gkisalatiga.plus.screen.ScreenBibleViewer
+import org.gkisalatiga.plus.screen.ScreenBibleViewerCompanion
 import org.gkisalatiga.plus.screen.ScreenBlank
 import org.gkisalatiga.plus.screen.ScreenContrib
 import org.gkisalatiga.plus.screen.ScreenContribCompanion
@@ -279,7 +281,7 @@ class ActivityLauncher : ComponentActivity() {
         // Unlocks the dev menu if the app is debuggable.
         val isDevModeUnlocked = LocalStorage(this@ActivityLauncher).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
         val currentClassName = "org.gkisalatiga.plus.ActivityLauncher"
-        fun x(y: () -> Unit): String { return "${y.javaClass.enclosingClass?.name}".strip() }
+        fun x(y: () -> Unit): String { return "${y.javaClass.enclosingClass?.name}".trim() }
         if (this@ActivityLauncher.packageName.endsWith(".debug") && !isDevModeUnlocked) {
             // Unlocks the dev menu.
             PersistentLogger(this@ActivityLauncher).write({}, "The developer menu automatically unlocks by debug package suffix!")
@@ -384,6 +386,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
             ScreenLiturgiCompanion.rememberedScrollState = rememberScrollState()
             ScreenMediaCompanion.rememberedScrollState = rememberScrollState()
+            ScreenBibleViewerCompanion.navigatorLazyListState = rememberLazyListState()
             ScreenPDFViewerCompanion.navigatorLazyListState = rememberLazyListState()
             ScreenPersembahanCompanion.rememberedScrollState = rememberScrollState()
             ScreenPrivacyCompanion.rememberedScrollState = rememberScrollState()
@@ -580,8 +583,9 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_ABOUT.name) { ScreenAbout(current).getComposable() }
             composable(NavigationRoutes.SCREEN_AGENDA.name) { ScreenAgenda(current).getComposable() }
             composable(NavigationRoutes.SCREEN_ATTRIBUTION.name) { ScreenAttribution(current).getComposable() }
-            composable(NavigationRoutes.SCREEN_BIBLE.name) {ScreenBible(current).getComposable()}
-            composable(NavigationRoutes.SCREEN_BLANK.name) {ScreenBlank(current).getComposable()}
+            composable(NavigationRoutes.SCREEN_BIBLE.name) { ScreenBible(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_BIBLE_VIEWER.name) { ScreenBibleViewer(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_BLANK.name) { ScreenBlank(current).getComposable() }
             composable(NavigationRoutes.SCREEN_CONTRIB.name) { ScreenContrib(current).getComposable() }
             composable(NavigationRoutes.SCREEN_DEV.name) { ScreenDev(current).getComposable(); /* You got no Easter egg, just some Christmas gift. */ LaunchedEffect(Unit) { Beacon(current).logScreenOpen(it.destination.route) } }
             composable(NavigationRoutes.SCREEN_FORMS.name) { ScreenForms(current).getComposable() }

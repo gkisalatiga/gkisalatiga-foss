@@ -176,6 +176,24 @@
     <string name="screen_about_license_confirm">Buka Teks Utuh</string>
     <string name="screen_persembahan_ok">OK</string>
 
+    <!-- Applicable in ScreenBibleViewer. -->
+    <string name="screen_bibleviewer_loading_dialog_btn_string">Batalkan</string>
+    <string name="screen_bibleviewer_info_dialog_title">Detil Alkitab</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_abbr">Singkatan</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_title">Nama Versi Alkitab</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_author">Penulis</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_lang">Bahasa</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_license">Lisensi</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_source">Sumber</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_local_path">Lokasi Unduhan</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_size">Ukuran</string>
+    <string name="screen_bibleviewer_info_dialog_content_name_doc_desc">Deskripsi</string>
+    <string name="screen_bibleviewer_info_dialog_delete_btn">Hapus</string>
+    <string name="screen_bibleviewer_info_dialog_ok_btn">OK</string>
+    <string name="screen_bibleviewer_nav_title">Navigasi Alkitab</string>
+    <string name="screen_bibleviewer_nav_book_string">Kitab</string>
+    <string name="screen_bibleviewer_nav_chapter_string">Pasal</string>
+
     <!-- Applicable in ScreenPDFViewer. -->
     <string name="screen_pdfviewer_loading_dialog_btn_string">Batalkan</string>
     <string name="screen_pdfviewer_info_dialog_title">Detil PDF</string>

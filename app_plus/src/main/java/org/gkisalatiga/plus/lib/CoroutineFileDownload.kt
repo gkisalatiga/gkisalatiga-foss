@@ -38,6 +38,7 @@ import java.net.SocketException
 import java.net.URL
 import java.net.UnknownHostException
 import java.util.concurrent.Executors
+import kotlin.math.absoluteValue
 
 @Keep
 class CoroutineFileDownload : CoroutineViewModel() {
@@ -117,7 +118,13 @@ class CoroutineFileDownload : CoroutineViewModel() {
                     downloadedFileSize += currentRead
                     outputStream.write(buffer, 0, currentRead)
                     currentRead = inputStream.read(buffer, 0, buffer.size)
-                    progress = (100f * (downloadedFileSize.toFloat() / contentLength.toFloat())).toInt()
+
+                    // For some reasons we don't know, downloading files from the GitHub's storage system
+                    // must be handled with extra care, otherwise negative download progress
+                    // would be reported.
+                    // Perhaps, because they don't report file length before proceeding download?
+                    progress = if (fileUrl.contains("raw.githubusercontent.com")) 51
+                        else (100f * (downloadedFileSize.toFloat() / contentLength.toFloat())).toInt()
 
                     // Negative download percentage means the link cannot be downloaded using this method.
                     if (progress < 0) throw FileNotDownloadableException("Negative download progress detected: $progress%. The remote link $fileUrl may not be downloadable!")

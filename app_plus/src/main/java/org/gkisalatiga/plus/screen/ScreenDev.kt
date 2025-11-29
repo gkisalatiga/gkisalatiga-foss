@@ -80,7 +80,6 @@ import org.gkisalatiga.plus.lib.LocalStorage
 import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.PersistentLogger
-import org.gkisalatiga.plus.lib.StringFormatter
 import org.gkisalatiga.plus.services.ClipManager
 import org.gkisalatiga.plus.services.EnableDevMode
 import org.gkisalatiga.plus.services.NotificationService
@@ -329,6 +328,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 "DEBUG_ENABLE_TOAST" to GlobalCompanion.DEBUG_ENABLE_TOAST,
                 "DEBUG_ENABLE_LOG_CAT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT,
                 "DEBUG_ENABLE_LOG_CAT_ANALYTICS" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_ANALYTICS,
+                "DEBUG_ENABLE_LOG_CAT_BIBLE" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BIBLE,
                 "DEBUG_ENABLE_LOG_CAT_BOOT" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BOOT,
                 "DEBUG_ENABLE_LOG_CAT_CONN_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_CONN_TEST,
                 "DEBUG_ENABLE_LOG_CAT_DOWNLOADER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_DOWNLOADER,
@@ -344,7 +344,7 @@ class ScreenDev (private val current : ActivityData) : ComponentActivity() {
                 "DEBUG_ENABLE_LOG_CAT_TEST" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_TEST,
                 "DEBUG_ENABLE_LOG_CAT_UPDATER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_UPDATER,
                 "DEBUG_ENABLE_LOG_CAT_WORKER" to GlobalCompanion.DEBUG_ENABLE_LOG_CAT_WORKER,
-                "DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO" to GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO,
+                "DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO" to GlobalCompanion.DEBUG_SHOW_INFO_DOC_LOCAL_PATH_INFO,
             )
 
             /* Displaying all of the app's debug flag values. */

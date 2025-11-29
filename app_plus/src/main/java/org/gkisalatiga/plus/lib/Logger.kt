@@ -66,6 +66,19 @@ class Logger {
         }
 
         /**
+         * Log messages sent for the Bible viewer of GKI Salatiga app.
+         * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
+         * @param msg The message to be logged to the terminal.
+         * @param type The logging message type to be displayed (whether "verbose", "debug", "info", "error", or "warning").
+         */
+        fun logBible (func: () -> Unit, msg: String, type: LoggerType = LoggerType.DEBUG) {
+            val tag = "$BASE_LOGGING_TAG-Bible"
+            val msgString = "[${func.javaClass.enclosingClass?.name}.${func.javaClass.enclosingMethod?.name}] ::: $msg"
+
+            if (GlobalCompanion.DEBUG_ENABLE_LOG_CAT_BIBLE) doLog(tag, msgString, type)
+        }
+
+        /**
          * Logging for "on boot signal received"-related operations.
          * @param func Must be set to "{}" in order to correctly back-trace the caller method's enclosing class and method names.
          * @param msg The message to be logged to the terminal.

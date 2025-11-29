@@ -95,7 +95,6 @@ import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.LoggerType
-import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.model.PdfPageUiEvent
 import org.gkisalatiga.plus.model.PdfViewModel
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion.Companion.eBookTitle
@@ -215,7 +214,7 @@ class ScreenPDFViewer(private val current: ActivityData) : ComponentActivity() {
                         })
                         Spacer(Modifier.fillMaxWidth().height(5.dp))
 
-                        if (GlobalCompanion.DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO) {
+                        if (GlobalCompanion.DEBUG_SHOW_INFO_DOC_LOCAL_PATH_INFO) {
                             val pdfLocalPath = LocalStorage(current.ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_PDF_FILE_LOCATION, LocalStorageDataTypes.STRING, eBookUrl) as String
                             Text(infoDialogContentNameDocLocalPath, fontWeight = FontWeight.Bold)
                             Text(pdfLocalPath)

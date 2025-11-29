@@ -51,6 +51,20 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
     }
 
     /**
+     * Track which Bibles are being opened.
+     */
+    fun logBibleOpen(title: String, sourceUrl: String) {
+        Logger.logAnalytics({}, "Reporting Bible open event: $title from $sourceUrl ...")
+        firebaseAnalytics.logEvent(BeaconLogEvents.BIBLE_OPEN.name,
+            Bundle().let {
+                it.putString(FirebaseAnalytics.Param.VALUE, title)
+                it.putString(FirebaseAnalytics.Param.ORIGIN, sourceUrl)
+                it
+            }
+        )
+    }
+
+    /**
      * Track which menus (screens) are being opened.
      */
     fun logScreenOpen(routes: NavigationRoutes) {
@@ -94,6 +108,7 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
 
 private enum class BeaconLogEvents {
     APP_LAUNCH,
+    BIBLE_OPEN,
     PDF_OPEN,
     SCREEN_OPEN,
     VIDEO_PLAY,

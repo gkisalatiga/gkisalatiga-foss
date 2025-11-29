@@ -35,6 +35,7 @@ class InternalFileManager (private val ctx: Context) {
     val CONTENT_PROVIDER_FILE_CREATOR = File(ctx.filesDir, "provider")
     val DATA_DIR_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_DATA_DIR, Context.MODE_PRIVATE)
     val PDF_POOL_PDF_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_PDF_POOL_DIR, Context.MODE_PRIVATE)
+    val BIBLE_POOL_FILE_CREATOR = ctx.getDir(InternalFileManagerCompanion.FILE_CREATOR_TARGET_BIBLE_POOL_DIR, Context.MODE_PRIVATE)
 
     // The string delimiter for encoding pdfAssociatedKey-pdfAbsolutePath pair as string.
     // (Chosen at random. DO NOT CHANGE IN FUTURE RELEASES!!!)
@@ -153,6 +154,28 @@ class InternalFileManager (private val ctx: Context) {
     }
 
     /**
+     * This function deletes individual Bible files from the internal Bible pool.
+     * @param url the source URL associated with a given Bible to be deleted.
+     */
+    fun deleteBible(url: String) {
+        val absolutePdfPath = LocalStorage(ctx).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_BIBLE_FILE_LOCATION, LocalStorageDataTypes.STRING, url) as String
+
+        // Actually deleting the PDF file.
+        File(absolutePdfPath).let { f -> if (f.exists()) f.delete() }
+
+        // Remove any reference to the PDF file in the LocalStorage.
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_CACHED_BIBLE_FILE_LOCATION, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_BIBLE_LAST_ACCESS_MILLIS, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_BIBLE_LAST_DOWNLOAD_MILLIS, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_GET_BIBLE_METADATA, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_BIBLE_FILE_DOWNLOADED, url)
+        LocalStorage(ctx).removeLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_BIBLE_FILE_MARKED_AS_FAVORITE, url)
+
+        // Log the removal message persistently.
+        PersistentLogger(ctx).write({}, "Manually removed PDF file: $url")
+    }
+
+    /**
      * This function deletes individual PDF files from the internal PDF pool.
      * @param url the source URL associated with a given PDF to be deleted.
      */
@@ -207,5 +230,6 @@ class InternalFileManagerCompanion {
         /* The "app_..." suffix name for downloading files. */
         const val FILE_CREATOR_TARGET_DATA_DIR = "data"
         const val FILE_CREATOR_TARGET_PDF_POOL_DIR = "pdf_pool"
+        const val FILE_CREATOR_TARGET_BIBLE_POOL_DIR = "bible_pool"
     }
 }

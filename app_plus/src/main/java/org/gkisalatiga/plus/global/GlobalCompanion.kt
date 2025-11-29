@@ -31,6 +31,7 @@ class GlobalCompanion : Application() {
         // Whether to display the debugger's logcat logging.
         var DEBUG_ENABLE_LOG_CAT = false
         var DEBUG_ENABLE_LOG_CAT_ANALYTICS = false
+        var DEBUG_ENABLE_LOG_CAT_BIBLE = false
         var DEBUG_ENABLE_LOG_CAT_BOOT = false
         var DEBUG_ENABLE_LOG_CAT_CONN_TEST = false
         var DEBUG_ENABLE_LOG_CAT_DOWNLOADER = false
@@ -48,7 +49,7 @@ class GlobalCompanion : Application() {
         var DEBUG_ENABLE_LOG_CAT_WORKER = false
 
         // Whether to display extraneous information in various screens.
-        var DEBUG_SHOW_INFO_PDF_LOCAL_PATH_INFO = false
+        var DEBUG_SHOW_INFO_DOC_LOCAL_PATH_INFO = false
 
         // Whether to display notification when updating the JSON data in the background.
         var DEBUG_SHOW_DATA_UPDATER_NOTIFICATION = false

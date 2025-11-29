@@ -471,7 +471,7 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
 
                             // Display the PIC.
                             val pic = it.pic
-                            if (pic.isNotEmpty() && pic.strip() != "-")
+                            if (pic.isNotEmpty() && pic.trim() != "-")
                                 Row (verticalAlignment = Alignment.Top, modifier = Modifier.padding(top = infoTopPadding)) {
                                     Icon(Icons.Default.Contacts, "", tint = current.colors.screenAgendaContentTintColor)
                                     Spacer(Modifier.width(10.dp))
@@ -490,7 +490,7 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
 
                             // Display additional note.
                             val note = it.note
-                            if (note.isNotEmpty() && note.strip() != "-")
+                            if (note.isNotEmpty() && note.trim() != "-")
                                 Row (verticalAlignment = Alignment.Top, modifier = Modifier.padding(top = infoTopPadding)) {
                                     Icon(Icons.AutoMirrored.Default.Article, "", tint = current.colors.screenAgendaContentTintColor)
                                     Spacer(Modifier.width(10.dp))
@@ -598,7 +598,7 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
                             Text(data.representative)
                             Spacer(Modifier.fillMaxWidth().height(10.dp))
 
-                            if (data.pic.isNotBlank() && data.pic.strip() != "-") {
+                            if (data.pic.isNotBlank() && data.pic.trim() != "-") {
                                 Text(infoDialogContentLabelPic, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                                 Text(data.pic)
                                 Spacer(Modifier.fillMaxWidth().height(10.dp))
@@ -612,7 +612,7 @@ class ScreenAgenda (private val current : ActivityData) : ComponentActivity() {
                             }
                             Spacer(Modifier.fillMaxWidth().height(10.dp))
 
-                            if (data.note.isNotBlank() && data.note.strip() != "-") {
+                            if (data.note.isNotBlank() && data.note.trim() != "-") {
                                 Text(infoDialogContentLabelNotes, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                                 Text(data.note)
                                 Spacer(Modifier.fillMaxWidth().height(10.dp))

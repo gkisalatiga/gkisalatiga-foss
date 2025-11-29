@@ -6,10 +6,14 @@
 
 - Added seasonal YouTube playlist menu
 
+:four_leaf_clover: **IMPROVEMENT**
+
+- Removed unused `testImplementation` dependencies
+- Removed deprecated `.strip()` String extension functions, and replaced it with `.trim()`
+
 :hammer_and_wrench: **FIX**
 
 - Fixed YouTube player error due to new "origin header" policy
-- Removed unused `testImplementation` dependencies
 
 ## v0.8.3-rc 2025.10.11 (48)
 
