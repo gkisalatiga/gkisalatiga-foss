@@ -7,14 +7,12 @@ plugins {
     // SOURCE: https://stackoverflow.com/a/77059278
     // Upgraded to version 8.5.1 on 2025-09-09 so that this app may support 16K memory paging size.
     // SOURCE: https://developer.android.com/guide/practices/page-sizes#agp_version_851_or_higher
-    //noinspection AndroidGradlePluginVersion
-    id "com.android.application" version '8.5.1' apply false
-    //noinspection AndroidGradlePluginVersion
-    id "com.android.library" version '8.5.1' apply false
+    id "com.android.application" version '8.13.1' apply false
+    id "com.android.library" version '8.13.1' apply false
 
     // Enabling Firebase support.
     // SOURCE: https://firebase.google.com/docs/android/setup?authuser=0
-    id "com.google.gms.google-services" version "4.4.3" apply false
+    id "com.google.gms.google-services" version "4.4.4" apply false
 
     // This version should fix "The binary version of its metadata is 1.9.9999, expected version is 1.7.1" error
     // during compilation of released-and-signed packages.
@@ -22,7 +20,12 @@ plugins {
 
     // This version seems to work with Coil.
     // SOURCE: https://www.perplexity.ai/search/what-version-of-kotlin-is-coil-N0fStb71SUuKPKl9bu.ZHQ
-    id "org.jetbrains.kotlin.android" version "1.9.23" apply false
+    // id "org.jetbrains.kotlin.android" version "1.9.23" apply false
+    id "org.jetbrains.kotlin.android" version "2.2.21" apply false
+
+    // Version must match Kotlin version.
+    // SOURCE: https://d.android.com/r/studio-ui/compose-compiler
+    // id "libs.plugins.compose.compiler" version "2.2.21" apply false
 
     // This version works with the rest of Composable features but Coil.
     // id 'org.jetbrains.kotlin.android' version '1.7.20' apply false

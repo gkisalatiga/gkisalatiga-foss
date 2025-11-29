@@ -77,13 +77,13 @@ class YouTubeView {
         // Enable full screen button.
         // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player?tab=readme-ov-file#full-screen
         val iFramePlayerOptions: IFramePlayerOptions = if (useCustomUi) {
-            IFramePlayerOptions.Builder()
+            IFramePlayerOptions.Builder(ctx)
                 .controls(0)
                 .fullscreen(0)
                 .modestBranding(1)
                 .build()
         } else {
-            IFramePlayerOptions.Builder()
+            IFramePlayerOptions.Builder(ctx)
                 .controls(1)
                 .fullscreen(1)
                 .modestBranding(0)

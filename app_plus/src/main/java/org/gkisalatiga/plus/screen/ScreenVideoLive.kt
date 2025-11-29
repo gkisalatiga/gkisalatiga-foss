@@ -130,8 +130,11 @@ class ScreenVideoLive (private val current : ActivityData) : ComponentActivity()
 
             // Exits the fullscreen mode.
             BackHandler {
-                if (useCustomUi) YouTubeView.handleFullscreenStateChange(current.ctx)
-                else YouTubeViewCompanion.player!!.toggleFullscreen()
+                YouTubeView.handleFullscreenStateChange(current.ctx)
+                // toggleFullscreen() is no longer available in version 13.0.0.
+                // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player/issues/1252#issuecomment-3317189527
+                // if (useCustomUi) YouTubeView.handleFullscreenStateChange(current.ctx)
+                // else YouTubeViewCompanion.player!!.toggleFullscreen()
             }
 
         } else {

@@ -37,6 +37,7 @@ import android.R.attr.name
 import android.R.attr.text
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ComponentCaller
 import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -213,8 +214,8 @@ class ActivityLauncher : ComponentActivity() {
         PermissionChecker(this@ActivityLauncher).checkNotificationPermission()
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
         handleDeepLink(intent, consumeAfterHandling = false)
     }
 
@@ -247,7 +248,7 @@ class ActivityLauncher : ComponentActivity() {
         // Enable edge-to-edge.
         // ---
         // WARNING!
-        // No matter wScreenBibleCompanionhat you think, do not call enableEdgeToEdge() outside the scope
+        // No matter what you think, do not call enableEdgeToEdge() outside the scope
         // of Jetpack Compose's setContent () -> Unit.
         // The Google Play Console edge-to-edge warning won't disappear anyway,
         // and a pesky default top bar would show up on higher Android devices instead.
@@ -279,7 +280,7 @@ class ActivityLauncher : ComponentActivity() {
         // Unlocks the dev menu if the app is debuggable.
         val isDevModeUnlocked = LocalStorage(this@ActivityLauncher).getLocalStorageValue(LocalStorageKeys.LOCAL_KEY_IS_DEVELOPER_MENU_UNLOCKED, LocalStorageDataTypes.BOOLEAN) as Boolean
         val currentClassName = "org.gkisalatiga.plus.ActivityLauncher"
-        fun x(y: () -> Unit): String { return "${y.javaClass.enclosingClass?.name}".strip() }
+        fun x(y: () -> Unit): String { return "${y.javaClass.enclosingClass?.name}".trim() }
         if (this@ActivityLauncher.packageName.endsWith(".debug") && !isDevModeUnlocked) {
             // Unlocks the dev menu.
             PersistentLogger(this@ActivityLauncher).write({}, "The developer menu automatically unlocks by debug package suffix!")
