@@ -53,7 +53,6 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -79,6 +78,7 @@ import org.gkisalatiga.plus.composable.FileDeleteDialog
 import org.gkisalatiga.plus.composable.FileDownloadDialog
 import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
+import org.gkisalatiga.plus.data.BibleVerseObject
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Beacon
@@ -92,7 +92,6 @@ import org.gkisalatiga.plus.model.BibleDataModel
 import org.gkisalatiga.plus.model.BibleDataModelCompanion
 import org.gkisalatiga.plus.services.InternalFileManager
 import org.json.JSONObject
-import java.util.concurrent.Executors
 
 @Keep
 class ScreenBibleViewer(private val current: ActivityData) : ComponentActivity() {
@@ -314,7 +313,7 @@ class ScreenBibleViewer(private val current: ActivityData) : ComponentActivity()
         Column (Modifier.fillMaxSize()) {
 
             // The page navigator.
-            Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
+            /*Row (Modifier.height(75.dp).padding(10.dp), horizontalArrangement = Arrangement.Start) {
                 Button(onClick = {
                     ScreenBibleViewerCompanion.mutableCurrentFieldPageNumberValue.value = (ScreenBibleViewerCompanion.mutableCurrentChapter.value + 1).toString()
                     ScreenBibleViewerCompanion.mutableShowNavigatorDialog.value = true
@@ -331,7 +330,7 @@ class ScreenBibleViewer(private val current: ActivityData) : ComponentActivity()
                         }
                     }
                 }
-            }
+            }*/
 
             // Redundant logging for debugging.
             val abbr = ScreenBibleViewerCompanion.bibleAbbr
@@ -354,6 +353,9 @@ class ScreenBibleViewer(private val current: ActivityData) : ComponentActivity()
                     // Trigger recompositioning.
                     ScreenBibleViewerCompanion.mutableTriggerBibleViewerRecomposition.value = !ScreenBibleViewerCompanion.mutableTriggerBibleViewerRecomposition.value
                 }
+
+                // Load the last set-up book.
+                loadBibleBook(ScreenBibleViewerCompanion.mutableCurrentBook.value)
             }
 
             key (ScreenBibleViewerCompanion.mutableTriggerBibleViewerRecomposition.value) {
@@ -362,37 +364,15 @@ class ScreenBibleViewer(private val current: ActivityData) : ComponentActivity()
                     initialPage = ScreenBibleViewerCompanion.mutableCurrentChapter.value - 1
                 ) { ScreenBibleViewerCompanion.mutableCurrentBookMaxChapter.value }
 
-                if (BibleDataModelCompanion.curData != null) {
-
-                    // Determining the maximum number of chapters.
-                    LaunchedEffect(Unit) {
-                        /*Executors.newSingleThreadExecutor().execute {
-                            var chSize = 0
-                            BibleDataModelCompanion.curData!!.verses.forEach { v ->
-                                Logger.logRapidTest({}, v.text)
-                                if (v.bookCode == ScreenBibleViewerCompanion.mutableCurrentBook.value) chSize = v.chapter
-                            }
-                            ScreenBibleViewerCompanion.mutableCurrentBookMaxChapter.value = chSize
-                        }*/
-                    }
-
-                    // Init. the pager state (again, for redundancy).
-                    ScreenBibleViewerCompanion.rememberedViewerPagerState = rememberPagerState (
-                        initialPage = ScreenBibleViewerCompanion.mutableCurrentChapter.value
-                    ) { ScreenBibleViewerCompanion.mutableCurrentBookMaxChapter.value }
-
+                if (ScreenBibleViewerCompanion.currentBookData.size >= ScreenBibleViewerCompanion.mutableCurrentBookMaxChapter.value) {
                     // Init. the horizontal pager.
-                    HorizontalPager(ScreenBibleViewerCompanion.rememberedViewerPagerState!!, modifier = Modifier.fillMaxSize(), beyondViewportPageCount = 3) {
+                    HorizontalPager(ScreenBibleViewerCompanion.rememberedViewerPagerState!!, modifier = Modifier.fillMaxSize(), beyondViewportPageCount = 3) { chapterPage ->
                         // Updating the state of the currently selected PDF page.
                         ScreenBibleViewerCompanion.mutableCurrentChapter.value = ScreenBibleViewerCompanion.rememberedViewerPagerState!!.currentPage
 
-                        Column (Modifier.fillMaxSize()) {
-                            BibleDataModelCompanion.curData!!.verses.forEach { v ->
-                                if (v.bookCode == ScreenBibleViewerCompanion.mutableCurrentBook.value
-                                    && v.chapter == it) {
-                                    Text(v.text)
-                                    Spacer(Modifier.height(5.dp).fillMaxWidth())
-                                }
+                        Column (Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                            ScreenBibleViewerCompanion.currentBookData[chapterPage + 1].forEach { verseData ->
+                                Text(verseData.text)
                             }
                             Text("${ScreenBibleViewerCompanion.mutableCurrentBookMaxChapter.value}")
                             Text("${ScreenBibleViewerCompanion.mutableCurrentBookMaxChapter.value}")
@@ -511,11 +491,51 @@ class ScreenBibleViewer(private val current: ActivityData) : ComponentActivity()
     }
 
     /**
-     * This function handles the Bible parsing.
+     * This function handles the Bible parsing (initial whole Bible JSON data).
      */
     private fun loadBibleJson(localPath: String) {
         BibleDataModelCompanion.curLocalBiblePath = localPath
         BibleDataModel().initBibleData()
+    }
+
+    private fun loadBibleBook(bookCode: String) {
+        // Reset.
+        Logger.logBible({}, "Resetting the current in-memory bible data...")
+        ScreenBibleViewerCompanion.currentBookData = mutableListOf<MutableList<BibleVerseObject>>()
+
+        if (BibleDataModelCompanion.curData != null) {
+            Logger.logBible({}, "Not null: the bible data.")
+
+            var lastChapterIndex = 1
+            var mutableChapterVerses = mutableListOf<BibleVerseObject>()
+            BibleDataModelCompanion.curData!!.verses.forEach { v ->
+                if (v.bookCode == bookCode) {
+                    val chapterIndex = v.chapter
+
+                    Logger.logBible({}, chapterIndex.toString())
+
+                    // Handle change of chapter index.
+                    if (lastChapterIndex != chapterIndex) {
+                        ScreenBibleViewerCompanion.currentBookData.add(lastChapterIndex, mutableChapterVerses)
+
+                        // Resetting the chapter count.
+                        mutableChapterVerses = mutableListOf<BibleVerseObject>()
+                        lastChapterIndex = chapterIndex
+                    }
+
+                    // Adding the current matching verse into the list.
+                    mutableChapterVerses.add(BibleVerseObject(
+                        text = v.text,
+                        chapter = v.chapter,
+                        bookCode = v.bookCode,
+                        verse = v.verse,
+                    ))
+                }
+            }
+
+            // Finally, determine the size of the current book.
+            ScreenBibleViewerCompanion.mutableCurrentBookMaxChapter.value = ScreenBibleViewerCompanion.currentBookData.size - 1
+        }
     }
 }
 
@@ -540,6 +560,9 @@ class ScreenBibleViewerCompanion : Application() {
         internal val mutableCurrentBook = mutableStateOf("GEN")
         internal val mutableCurrentBookMaxChapter = mutableStateOf(50)
         internal val mutableCurrentChapter = mutableStateOf(1)
+
+        /* The current Bible data. */
+        internal var currentBookData = mutableListOf<MutableList<BibleVerseObject>>()
 
         /* Displaying the download status message. */
         internal val mutableDownloadStatusMessage = mutableStateOf("")

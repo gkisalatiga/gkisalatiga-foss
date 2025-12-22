@@ -1,6 +1,6 @@
 # GKI Salatiga App Changelog
 
-## Next Major Release
+## v0.8.4 2025.12.21 (49)
 
 :star2: **NEW**
 
@@ -8,6 +8,7 @@
 
 :four_leaf_clover: **IMPROVEMENT**
 
+- Updated seasonal logo for Christmas 2025
 - Removed unused `testImplementation` dependencies
 - Removed deprecated `.strip()` String extension functions, and replaced it with `.trim()`
 
