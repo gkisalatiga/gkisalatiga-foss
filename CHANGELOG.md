@@ -4,6 +4,7 @@
 
 :hammer_and_wrench: **FIX**
 
+- Fixed division by zero error in `org.gkisalatiga.plus.fragment.FragmentHome$getComposable` as reported in Android Vitals
 - Fixed `java.io.FileNotFoundException` in `org.gkisalatiga.plus.db.Main.loadJSON` as reported by 13,173 Android Vitals events
 
 ## v0.8.4 2025.12.21 (49)

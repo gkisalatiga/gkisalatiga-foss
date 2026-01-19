@@ -229,116 +229,120 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                 .padding(20.dp)
         ) {
 
-            /* Show the "infinite" horizontal carousel for CTA. */
-            // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
-            // SOURCE: https://stackoverflow.com/a/75469260
-            // ---
-            // Create the box boundary.
-            Box (modifier = Modifier.fillMaxWidth().aspectRatio(1.77778f)) {
+            // Prevents java.lang.ArithmeticException reported in Android Vitals (division by zero).
+            // If actualPageCount == 0, there is no carousel to display!
+            if (actualPageCount > 0) {
+                /* Show the "infinite" horizontal carousel for CTA. */
+                // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
+                // SOURCE: https://stackoverflow.com/a/75469260
+                // ---
+                // Create the box boundary.
+                Box (modifier = Modifier.fillMaxWidth().aspectRatio(1.77778f)) {
 
-                /* Create the horizontal pager "carousel" */
-                HorizontalPager(
-                    state = carouselPagerState,
-                    beyondViewportPageCount = 7,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    // Navigate to the current iteration's JSON node.
-                    // val currentNode = GlobalCompanion.carouselJSONObject[it % actualPageCount]
-                    // val currentNode = MainCompanion.jsonRoot!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
-                    // ---
-                    // Only show poster carousels.
-                    val currentNode = filteredCarousels[it % actualPageCount]
-
-                    /* Display the carousel banner image. */
-                    Surface (
-                        shape = RoundedCornerShape(15.dp),
-                        modifier = Modifier.padding(current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
-                        onClick = {
-                            if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
-                            AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
-                            /* TODO: Remove this deprecated block after a major release.
-                            // Get the type of the current carousel banner.
-                            val currentType = currentNode.getString("type")
-
-                            /* Switch to a different screen or run a certain action based on the carousel banner type. */
-                            when (currentType) {
-                                "article" -> {
-                                    // Preparing the WebView arguments.
-                                    val url = currentNode.getString("article-url")
-                                    val title = currentNode.getString("title")
-
-                                    // Navigate to the WebView viewer.
-                                    ScreenWebViewCompanion.putArguments(url, title)
-                                    AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
-                                }
-                                "poster" -> {
-                                    ScreenPosterViewerLegacyCompanion.posterViewerTitle = currentNode.getString("title")
-                                    ScreenPosterViewerLegacyCompanion.posterViewerCaption = currentNode.getString("poster-caption")
-                                    ScreenPosterViewerLegacyCompanion.posterViewerImageSource = currentNode.getString("poster-image")
-                                    AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
-                                }
-                                "yt" -> {
-                                    // Preparing the YouTube player arguments.
-                                    val url = currentNode.getString("yt-link")
-                                    val title = currentNode.getString("yt-title")
-                                    val date = currentNode.getString("yt-date")
-                                    val desc = currentNode.getString("yt-desc")
-
-                                    // Trying to switch to the YouTube viewer and open the stream.
-                                    Logger.log({}, "Opening the YouTube stream: $url.")
-                                    YouTubeViewCompanion.seekToZero()
-                                    YouTubeViewCompanion.putArguments(
-                                        date = StringFormatter.convertDateFromJSON(date),
-                                        desc = desc,
-                                        thumbnail = StringFormatter.getYouTubeThumbnailFromUrl(url),
-                                        title = title,
-                                        yt_id = StringFormatter.getYouTubeIDFromUrl(url),
-                                        yt_link = url
-                                    )
-                                    AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
-                                }
-                            }*/
-                        }
+                    /* Create the horizontal pager "carousel" */
+                    HorizontalPager(
+                        state = carouselPagerState,
+                        beyondViewportPageCount = 7,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        AsyncImage(
-                            model = currentNode.banner,
-                            contentDescription = "Carousel Image ${it % actualPageCount}",
-                            error = painterResource(R.drawable.thumbnail_error_notext),
-                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                        // Navigate to the current iteration's JSON node.
+                        // val currentNode = GlobalCompanion.carouselJSONObject[it % actualPageCount]
+                        // val currentNode = MainCompanion.jsonRoot!!.getJSONArray("carousel").getJSONObject(it % actualPageCount)
+                        // ---
+                        // Only show poster carousels.
+                        val currentNode = filteredCarousels[it % actualPageCount]
+
+                        /* Display the carousel banner image. */
+                        Surface (
+                            shape = RoundedCornerShape(15.dp),
+                            modifier = Modifier.padding(current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(1.77778f),
+                            onClick = {
+                                if (GlobalCompanion.DEBUG_ENABLE_TOAST) Toast.makeText(current.ctx, "You are clicking carousel banner no. ${it % actualPageCount}!", Toast.LENGTH_SHORT).show()
+                                AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
+                                /* TODO: Remove this deprecated block after a major release.
+                                // Get the type of the current carousel banner.
+                                val currentType = currentNode.getString("type")
+
+                                /* Switch to a different screen or run a certain action based on the carousel banner type. */
+                                when (currentType) {
+                                    "article" -> {
+                                        // Preparing the WebView arguments.
+                                        val url = currentNode.getString("article-url")
+                                        val title = currentNode.getString("title")
+
+                                        // Navigate to the WebView viewer.
+                                        ScreenWebViewCompanion.putArguments(url, title)
+                                        AppNavigation.navigate(NavigationRoutes.SCREEN_WEBVIEW)
+                                    }
+                                    "poster" -> {
+                                        ScreenPosterViewerLegacyCompanion.posterViewerTitle = currentNode.getString("title")
+                                        ScreenPosterViewerLegacyCompanion.posterViewerCaption = currentNode.getString("poster-caption")
+                                        ScreenPosterViewerLegacyCompanion.posterViewerImageSource = currentNode.getString("poster-image")
+                                        AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER)
+                                    }
+                                    "yt" -> {
+                                        // Preparing the YouTube player arguments.
+                                        val url = currentNode.getString("yt-link")
+                                        val title = currentNode.getString("yt-title")
+                                        val date = currentNode.getString("yt-date")
+                                        val desc = currentNode.getString("yt-desc")
+
+                                        // Trying to switch to the YouTube viewer and open the stream.
+                                        Logger.log({}, "Opening the YouTube stream: $url.")
+                                        YouTubeViewCompanion.seekToZero()
+                                        YouTubeViewCompanion.putArguments(
+                                            date = StringFormatter.convertDateFromJSON(date),
+                                            desc = desc,
+                                            thumbnail = StringFormatter.getYouTubeThumbnailFromUrl(url),
+                                            title = title,
+                                            yt_id = StringFormatter.getYouTubeIDFromUrl(url),
+                                            yt_link = url
+                                        )
+                                        AppNavigation.navigate(NavigationRoutes.SCREEN_LIVE)
+                                    }
+                                }*/
+                            }
+                        ) {
+                            AsyncImage(
+                                model = currentNode.banner,
+                                contentDescription = "Carousel Image ${it % actualPageCount}",
+                                error = painterResource(R.drawable.thumbnail_error_notext),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                }
+
+                // Create the pager indicator.
+                // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
+                Row(
+                    modifier = Modifier.height(10.dp).fillMaxWidth().padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(actualPageCount) { iteration ->
+                        val color = if (carouselPagerState.currentPage % actualPageCount == iteration)
+                            current.colors.fragmentHomeCarouselPageIndicatorActiveColor else current.colors.fragmentHomeCarouselPageIndicatorInactiveColor
+                        val lineWeight = animateFloatAsState(
+                            targetValue = if (carouselPagerState.currentPage % actualPageCount == iteration) 1.5f else 0.5f,
+                            label = "weight",
+                            animationSpec = tween(300, easing = EaseInOut)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 4.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(color)
+                                .weight(lineWeight.value)
+                                .height(4.dp)
                         )
                     }
                 }
-            }
 
-            // Create the pager indicator.
-            // SOURCE: https://medium.com/androiddevelopers/customizing-compose-pager-with-fun-indicators-and-transitions-12b3b69af2cc
-            Row(
-                modifier = Modifier.height(10.dp).fillMaxWidth().padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(actualPageCount) { iteration ->
-                    val color = if (carouselPagerState.currentPage % actualPageCount == iteration)
-                        current.colors.fragmentHomeCarouselPageIndicatorActiveColor else current.colors.fragmentHomeCarouselPageIndicatorInactiveColor
-                    val lineWeight = animateFloatAsState(
-                        targetValue = if (carouselPagerState.currentPage % actualPageCount == iteration) 1.5f else 0.5f,
-                        label = "weight",
-                        animationSpec = tween(300, easing = EaseInOut)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(color)
-                            .weight(lineWeight.value)
-                            .height(4.dp)
-                    )
-                }
+                Spacer(Modifier.fillMaxWidth().height(10.dp))
             }
-
-            Spacer(Modifier.fillMaxWidth().height(10.dp))
 
             // The seasonal JSON node.
             // val seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
