@@ -32,6 +32,7 @@ import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppPreferences
 import org.gkisalatiga.plus.lib.Logger
+import org.gkisalatiga.plus.lib.LoggerType
 import org.gkisalatiga.plus.lib.PreferenceKeys
 
 class YouTubeView {
@@ -147,15 +148,22 @@ class YouTubeView {
 
                     // Using a custom UI.
                     // SOURCE: https://github.com/PierfrancescoSoffritti/android-youtube-player?tab=readme-ov-file#defaultplayeruicontroller
-                    if (useCustomUi) {
-                        val ytCustomController: DefaultPlayerUiController = DefaultPlayerUiController(
-                            YouTubeViewCompanion.view!!, youTubePlayer)
-                        ytCustomController.showYouTubeButton(false)
-                        ytCustomController.setFullscreenButtonClickListener {
-                            handleFullscreenStateChange(ctx)
-                        }
+                    // ---
+                    // Use try-catching to prevent OOB error on some devices, as reported in Android Vitals.
+                    try {
+                        if (useCustomUi) {
+                            val ytCustomController: DefaultPlayerUiController = DefaultPlayerUiController(
+                                YouTubeViewCompanion.view!!, youTubePlayer)
+                            ytCustomController.showYouTubeButton(false)
+                            ytCustomController.setFullscreenButtonClickListener {
+                                handleFullscreenStateChange(ctx)
+                            }
 
-                        YouTubeViewCompanion.view!!.setCustomPlayerUi(ytCustomController.rootView)
+                            YouTubeViewCompanion.view!!.setCustomPlayerUi(ytCustomController.rootView)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Logger.logTest({}, "Error when attempting to set the YouTube custom UI: ${e.message}", LoggerType.ERROR)
                     }
 
                     // Loads and plays the video.
