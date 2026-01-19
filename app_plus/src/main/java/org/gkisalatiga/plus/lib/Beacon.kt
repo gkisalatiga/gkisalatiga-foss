@@ -37,11 +37,24 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
     }
 
     /**
+     * Track app errors (back-end).
+     */
+    fun logErr(e: String) {
+        Logger.logAnalytics({}, "Reporting error: $e")
+        firebaseAnalytics.logEvent(BeaconLogEvents.ERR.name + "_$e",
+            Bundle().let {
+                it.putString(FirebaseAnalytics.Param.VALUE, e)
+                it
+            }
+        )
+    }
+
+    /**
      * Track which PDF files are being opened.
      */
     fun logPDFOpen(title: String, sourceUrl: String) {
         Logger.logAnalytics({}, "Reporting PDF open event: $title from $sourceUrl ...")
-        firebaseAnalytics.logEvent(BeaconLogEvents.PDF_OPEN.name,
+        firebaseAnalytics.logEvent(BeaconLogEvents.PDF_OPEN.name + "_$title",
             Bundle().let {
                 it.putString(FirebaseAnalytics.Param.VALUE, title)
                 it.putString(FirebaseAnalytics.Param.ORIGIN, sourceUrl)
@@ -55,7 +68,7 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
      */
     fun logBibleOpen(title: String, sourceUrl: String) {
         Logger.logAnalytics({}, "Reporting Bible open event: $title from $sourceUrl ...")
-        firebaseAnalytics.logEvent(BeaconLogEvents.BIBLE_OPEN.name,
+        firebaseAnalytics.logEvent(BeaconLogEvents.BIBLE_OPEN.name + "_$title",
             Bundle().let {
                 it.putString(FirebaseAnalytics.Param.VALUE, title)
                 it.putString(FirebaseAnalytics.Param.ORIGIN, sourceUrl)
@@ -69,7 +82,7 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
      */
     fun logScreenOpen(routes: NavigationRoutes) {
         Logger.logAnalytics({}, "Reporting menu/screen open event: ${routes.name} ...")
-        firebaseAnalytics.logEvent(BeaconLogEvents.SCREEN_OPEN.name,
+        firebaseAnalytics.logEvent(BeaconLogEvents.SCREEN_OPEN.name + "_${routes.name}",
             Bundle().let {
                 it.putString(FirebaseAnalytics.Param.VALUE, routes.name)
                 it
@@ -83,7 +96,7 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
     fun logScreenOpen(routeString: String?) {
         val route = routeString ?: ""
         Logger.logAnalytics({}, "Reporting menu/screen open event: $route ...")
-        firebaseAnalytics.logEvent(BeaconLogEvents.SCREEN_OPEN.name,
+        firebaseAnalytics.logEvent(BeaconLogEvents.SCREEN_OPEN.name + "_$route",
             Bundle().let {
                 it.putString(FirebaseAnalytics.Param.VALUE, route)
                 it
@@ -96,7 +109,7 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
      */
     fun logVideoPlay(title: String, url: String) {
         Logger.logAnalytics({}, "Reporting YouTube video play event: $title from $url ...")
-        firebaseAnalytics.logEvent(BeaconLogEvents.VIDEO_PLAY.name,
+        firebaseAnalytics.logEvent(BeaconLogEvents.VIDEO_PLAY.name + "_$title",
             Bundle().let {
                 it.putString(FirebaseAnalytics.Param.VALUE, title)
                 it.putString(FirebaseAnalytics.Param.SOURCE, url)
@@ -109,6 +122,7 @@ class Beacon(private val firebaseAnalytics: FirebaseAnalytics) {
 private enum class BeaconLogEvents {
     APP_LAUNCH,
     BIBLE_OPEN,
+    ERR,
     PDF_OPEN,
     SCREEN_OPEN,
     VIDEO_PLAY,
