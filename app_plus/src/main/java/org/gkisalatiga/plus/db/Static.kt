@@ -42,7 +42,13 @@ class Static(private val ctx: Context) {
     fun loadJSON(absolutePathToJSON: String) {
         // SOURCE: https://stackoverflow.com/a/45202002
         val file = File(absolutePathToJSON)
-        val inputAsString = FileInputStream(file).bufferedReader().use { it.readText() }
+        val inputAsString = try {
+            FileInputStream(file).bufferedReader().use { it.readText() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Logger.logTest({}, "Cannot load JSON buffered reader: ${e.message}", LoggerType.ERROR)
+            ""
+        }
 
         this._parsedJSONString = inputAsString
     }
