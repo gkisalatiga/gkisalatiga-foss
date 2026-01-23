@@ -1,6 +1,10 @@
 # GKI Salatiga App Changelog
 
-## Next release
+## v0.8.5 2026.01.23 (50)
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- Updated seasonal logo for "HUT GKI Salatiga Ke-83" event
 
 :hammer_and_wrench: **FIX**
 
