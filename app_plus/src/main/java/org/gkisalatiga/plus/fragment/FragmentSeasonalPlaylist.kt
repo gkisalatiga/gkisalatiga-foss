@@ -38,8 +38,6 @@ import coil.compose.AsyncImage
 import org.gkisalatiga.plus.R
 import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
-import org.gkisalatiga.plus.data.GalleryAlbumObject
-import org.gkisalatiga.plus.db.GalleryCompanion
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
@@ -47,7 +45,6 @@ import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
-import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 
 class FragmentSeasonalPlaylist (private val current : ActivityData) : ComponentActivity() {
 

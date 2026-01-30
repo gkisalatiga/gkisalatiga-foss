@@ -10,8 +10,6 @@
 
 package org.gkisalatiga.plus.fragment
 
-import android.content.ContentResolver.MimeTypeInfo
-import android.net.Uri
 import android.webkit.MimeTypeMap
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
