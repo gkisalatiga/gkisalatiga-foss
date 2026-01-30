@@ -44,7 +44,7 @@ import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 class FragmentSeasonalMain (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
-    private val seasonalNode = ModulesCompanion.api!!.seasonal
+    private val seasonalNode = ScreenSeasonalCompanion.seasonalData
 
     private val itemTargetTitle = listOf(
         seasonalNode.staticMenu.agenda.title,

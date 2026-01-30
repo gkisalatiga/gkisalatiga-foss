@@ -1,5 +1,11 @@
 # GKI Salatiga App Changelog
 
+## Next Major Release
+
+:four_leaf_clover: **IMPROVEMENT**
+
+- Updated the back-end JSON API to v2.3
+
 ## v0.8.5 2026.01.23 (50)
 
 :four_leaf_clover: **IMPROVEMENT**

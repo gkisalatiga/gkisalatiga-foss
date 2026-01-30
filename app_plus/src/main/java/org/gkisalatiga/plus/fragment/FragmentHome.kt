@@ -63,7 +63,6 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.gkisalatiga.plus.R
-import org.gkisalatiga.plus.composable.YouTubeViewCompanion
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.MainCarouselItemObject
 import org.gkisalatiga.plus.db.MainCompanion
@@ -71,12 +70,8 @@ import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.global.GlobalCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Colors
-import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
-import org.gkisalatiga.plus.lib.StringFormatter
-import org.gkisalatiga.plus.screen.ScreenPosterViewerLegacyCompanion
-import org.gkisalatiga.plus.screen.ScreenWebViewCompanion
-import org.json.JSONObject
+import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 import kotlin.math.ceil
 
 class FragmentHome (private val current : ActivityData) : ComponentActivity() {
@@ -165,6 +160,14 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_library))
             btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_library))
             btnIcons.add(R.drawable.ph__books_bold)
+            btnEnabledState.add(true)
+        }
+
+        if (appFlags.isFeatureInspirationShown == 1) {
+            btnRoutes.add(NavigationRoutes.SCREEN_INSPIRATION)
+            btnLabels.add(current.ctx.resources.getString(R.string.btn_mainmenu_inspiration))
+            btnDescriptions.add(current.ctx.resources.getString(R.string.btn_desc_mainmenu_inspiration))
+            btnIcons.add(R.drawable.ph__lightbulb_bold)
             btnEnabledState.add(true)
         }
 
@@ -344,6 +347,7 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                 Spacer(Modifier.fillMaxWidth().height(10.dp))
             }
 
+            /** TODO: Remove this deprecated block. Succeeded by Seasonal v2.3.
             // The seasonal JSON node.
             // val seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
             val seasonalData = ModulesCompanion.api!!.seasonal
@@ -363,6 +367,36 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
+                }
+            }
+            */
+
+            // The seasonal JSON node.
+            // val seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
+            val seasonalData = ModulesCompanion.api!!.seasonalV23
+
+            // Displaying the seasonal menu button.
+            if (appFlags.isFeatureSeasonal23Shown == 1) {
+                seasonalData.forEachIndexed { idx, it ->
+                    Surface(
+                        shape = RoundedCornerShape(15.dp),
+                        modifier = Modifier.padding(horizontal = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).padding(top = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(4.0f),
+                        onClick = {
+                            ScreenSeasonalCompanion.seasonalData = it
+                            AppNavigation.navigate(NavigationRoutes.SCREEN_SEASONAL)
+                        }
+                    ) {
+                        AsyncImage(
+                            model = it.bannerFront,
+                            contentDescription = "Seasonal main/front banner for seasonal ${it.title}",
+                            error = painterResource(R.drawable.thumbnail_error_notext),
+                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    if (idx < seasonalData.size) { Spacer(Modifier.fillMaxWidth().height(5.dp)) }
                 }
             }
 

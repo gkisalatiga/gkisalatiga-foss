@@ -205,13 +205,16 @@ class MainJSONParser {
                         isEasterEggDevmodeEnabled = 0,
                         isFeatureAgendaShown = 0,
                         isFeatureBibleShown = 0,
+                        isFeatureBibleNewShown = 0,
                         isFeatureEnglishServiceLiturgyShown = 0,
                         isFeatureFormulirShown = 0,
                         isFeatureGaleriShown = 0,
+                        isFeatureInspirationShown = 0,
                         isFeatureLapakShown = 0,
                         isFeatureLibraryShown = 0,
                         isFeaturePersembahanShown = 0,
                         isFeatureSeasonalShown = 0,
+                        isFeatureSeasonal23Shown = 0,
                         isFeatureYKBShown = 0,
                     ),
                     strings = MainBackendStringsItemObject(
@@ -321,10 +324,13 @@ class MainJSONParser {
                         api.backend.flags.isFeatureFormulirShown = it1.getInt("is_feature_formulir_shown")
                         api.backend.flags.isFeatureGaleriShown = it1.getInt("is_feature_galeri_shown")
                         api.backend.flags.isFeatureBibleShown = it1.getInt("is_feature_bible_shown")
+                        api.backend.flags.isFeatureBibleNewShown = it1.getInt("is_feature_bible_new_shown")
                         api.backend.flags.isFeatureEnglishServiceLiturgyShown = it1.getInt("is_feature_esliturgy_shown")
                         api.backend.flags.isFeatureLibraryShown = it1.getInt("is_feature_library_shown")
                         api.backend.flags.isFeatureLapakShown = it1.getInt("is_feature_lapak_shown")
                         api.backend.flags.isFeatureSeasonalShown = it1.getInt("is_feature_seasonal_shown")
+                        api.backend.flags.isFeatureSeasonal23Shown = it1.getInt("is_feature_seasonal_v2_3_shown")
+                        api.backend.flags.isFeatureInspirationShown = it1.getInt("is_feature_inspirations_shown")
                     }
                     it0.getJSONObject("strings").let { it1 ->
                         api.backend.strings.address = it1.getString("address")

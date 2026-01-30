@@ -143,6 +143,8 @@ import org.gkisalatiga.plus.screen.ScreenGaleriListCompanion
 import org.gkisalatiga.plus.screen.ScreenGaleriView
 import org.gkisalatiga.plus.screen.ScreenGaleriYear
 import org.gkisalatiga.plus.screen.ScreenGaleriYearCompanion
+import org.gkisalatiga.plus.screen.ScreenInspiration
+import org.gkisalatiga.plus.screen.ScreenInspirationCompanion
 import org.gkisalatiga.plus.screen.ScreenInternalHTML
 import org.gkisalatiga.plus.screen.ScreenLibrary
 import org.gkisalatiga.plus.screen.ScreenLibraryCompanion
@@ -382,6 +384,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenGaleriCompanion.rememberedScrollState = rememberScrollState()
             ScreenGaleriYearCompanion.rememberedScrollState = rememberScrollState()
             ScreenGaleriListCompanion.rememberedLazyGridState = rememberLazyGridState()
+            ScreenInspirationCompanion.rememberedScrollState = rememberScrollState()
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
             ScreenLiturgiCompanion.rememberedScrollState = rememberScrollState()
@@ -593,6 +596,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_GALERI_LIST.name) { ScreenGaleriList(current).getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView(current).getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_INSPIRATION.name) { ScreenInspiration(current).getComposable() }
             composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML(current).getComposable() }
             composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary(current).getComposable()}
             composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense(current).getComposable() }

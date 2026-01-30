@@ -48,13 +48,14 @@ import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenPosterViewerLegacyCompanion
+import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 import org.gkisalatiga.plus.services.InternalFileManager
 
 class FragmentSeasonalAgenda (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
     // private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
-    private val seasonalNode = ModulesCompanion.api!!.seasonal
+    private val seasonalNode = ScreenSeasonalCompanion.seasonalData
 
     @Composable
     fun getComposable() {

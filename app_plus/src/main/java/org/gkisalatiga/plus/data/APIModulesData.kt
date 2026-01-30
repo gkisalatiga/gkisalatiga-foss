@@ -13,6 +13,8 @@ data class APIModulesData(
     var library: MutableList<ModulesLibraryItemObject>,
     var attributions: ModulesAttributionsRootObject,
     var seasonal: ModulesSeasonalObject,
+    var seasonalV23: MutableList<ModulesSeasonalObject>,
+    var inspirations: MutableList<ModulesInspirationObject>,
 )
 
 data class ModulesBibleItemObject(
@@ -59,9 +61,12 @@ data class ModulesAttributionsItemObject(
 )
 
 data class ModulesSeasonalObject(
+    var id: Int,
     var title: String,
+    var active: Int,
     var bannerFront: String,
     var bannerInside: String,
+    var inspirationsShown: MutableList<String>,
     var staticMenu: ModulesSeasonalStaticObject,
 )
 
@@ -91,4 +96,22 @@ data class ModulesSeasonalTwibbonItemObject(
     var title: String,
     var url: String,
     var postPage: String,
+)
+
+data class ModulesInspirationObject(
+    var title: String,
+    var desc: String,
+    var type: String,
+    var banner: String,
+    var uuid: String,
+    var tags: MutableList<String>,
+    var date: Int,
+    var isShown: Int,
+    var content: MutableList<ModulesInspirationContentItemObject>,
+)
+
+data class ModulesInspirationContentItemObject(
+    var id: Int,
+    var pictureUrl: String,
+    var string: String,
 )

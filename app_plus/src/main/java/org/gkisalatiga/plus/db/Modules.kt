@@ -19,6 +19,8 @@ import org.gkisalatiga.plus.data.APIModulesData
 import org.gkisalatiga.plus.data.ModulesAttributionsItemObject
 import org.gkisalatiga.plus.data.ModulesAttributionsRootObject
 import org.gkisalatiga.plus.data.ModulesBibleItemObject
+import org.gkisalatiga.plus.data.ModulesInspirationContentItemObject
+import org.gkisalatiga.plus.data.ModulesInspirationObject
 import org.gkisalatiga.plus.data.ModulesLibraryItemObject
 import org.gkisalatiga.plus.data.ModulesSeasonalObject
 import org.gkisalatiga.plus.data.ModulesSeasonalStaticItemObject
@@ -32,6 +34,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
+import kotlin.String
 
 class Modules(private val ctx: Context) {
 
@@ -184,9 +187,12 @@ class ModulesJSONParser {
                 bible = mutableListOf(),
                 library = mutableListOf(),
                 seasonal = ModulesSeasonalObject(
+                    id = 0,
                     title = "",
+                    active = 0,
                     bannerFront = "",
                     bannerInside = "",
+                    inspirationsShown = mutableListOf(),
                     staticMenu = ModulesSeasonalStaticObject(
                         agenda = ModulesSeasonalStaticItemObject(
                             title = "",
@@ -239,7 +245,9 @@ class ModulesJSONParser {
                             url = null,
                         )
                     )
-                )
+                ),
+                seasonalV23 = mutableListOf(),
+                inspirations = mutableListOf(),
             )
         }
 
@@ -383,6 +391,123 @@ class ModulesJSONParser {
                                 null
                             }
                         }
+                    }
+                }
+
+                obj.getJSONArray("seasonal-v2-3").let { it0 ->
+                    for (i in 0 until it0.length()) {
+                        val curNode = it0[i] as JSONObject
+                        val curStaticMenu = curNode.getJSONObject("static-menu")
+                        api.seasonalV23.add(
+                            ModulesSeasonalObject(
+                                id = curNode.getInt("id"),
+                                title = curNode.getString("title"),
+                                active = curNode.getInt("active"),
+                                bannerFront = curNode.getString("banner-front"),
+                                bannerInside = curNode.getString("banner-inside"),
+                                inspirationsShown = mutableListOf<String>().let { it1 ->
+                                    curNode.getJSONArray("inspirations-shown").let { it2 ->
+                                        for (j in 0 until it2.length()) {
+                                            it1.add(it2.getString(j))
+                                        }
+                                    }
+                                    it1
+                                },
+                                staticMenu = ModulesSeasonalStaticObject(
+                                    agenda = ModulesSeasonalStaticItemObject(
+                                        title = curStaticMenu.getJSONObject("agenda").getString("title"),
+                                        banner = curStaticMenu.getJSONObject("agenda").getString("banner"),
+                                        isShown = curStaticMenu.getJSONObject("agenda").getInt("is_shown"),
+                                        url = curStaticMenu.getJSONObject("agenda").getString("url"),
+                                        selectionTag = "",
+                                        albumKeyword = "",
+                                        ytPlaylist = "",
+                                        twibs = mutableListOf(),
+                                    ),
+                                    books = ModulesSeasonalStaticItemObject(
+                                        title = curStaticMenu.getJSONObject("books").getString("title"),
+                                        banner = curStaticMenu.getJSONObject("books").getString("banner"),
+                                        isShown = curStaticMenu.getJSONObject("books").getInt("is_shown"),
+                                        url = "",
+                                        selectionTag = curStaticMenu.getJSONObject("books").getString("selection-tag"),
+                                        albumKeyword = "",
+                                        ytPlaylist = "",
+                                        twibs = mutableListOf(),
+                                    ),
+                                    gallery = ModulesSeasonalStaticItemObject(
+                                        title = curStaticMenu.getJSONObject("gallery").getString("title"),
+                                        banner = curStaticMenu.getJSONObject("gallery").getString("banner"),
+                                        isShown = curStaticMenu.getJSONObject("gallery").getInt("is_shown"),
+                                        url = "",
+                                        selectionTag = "",
+                                        albumKeyword = curStaticMenu.getJSONObject("gallery").getString("album-keyword"),
+                                        ytPlaylist = "",
+                                        twibs = mutableListOf(),
+                                    ),
+                                    playlist = ModulesSeasonalStaticItemObject(
+                                        title = curStaticMenu.getJSONObject("playlist").getString("title"),
+                                        banner = curStaticMenu.getJSONObject("playlist").getString("banner"),
+                                        isShown = curStaticMenu.getJSONObject("playlist").getInt("is_shown"),
+                                        url = "",
+                                        selectionTag = "",
+                                        albumKeyword = "",
+                                        ytPlaylist = curStaticMenu.getJSONObject("playlist").getString("yt-playlist"),
+                                        twibs = mutableListOf(),
+                                    ),
+                                    // TODO: Implement the twibbon functionality.
+                                    twibbon = ModulesSeasonalStaticItemObject(
+                                        title = "",
+                                        banner = "",
+                                        isShown = 0,
+                                        url = "",
+                                        selectionTag = "",
+                                        albumKeyword = "",
+                                        ytPlaylist = "",
+                                        twibs = mutableListOf(),
+                                    )
+                                )
+                            )
+
+                        )
+                    }
+                }
+
+                obj.getJSONArray("inspirations").let { it0 ->
+                    for (i in 0 until it0.length()) {
+                        val curNode = it0[i] as JSONObject
+                        api.inspirations.add(
+                            ModulesInspirationObject(
+                                title = curNode.getString("title"),
+                                desc = curNode.getString("desc"),
+                                type = curNode.getString("type"),
+                                banner = curNode.getString("banner"),
+                                uuid = curNode.getString("uuid"),
+                                tags = mutableListOf<String>().let { it1 ->
+                                    curNode.getJSONArray("tags").let { it2 ->
+                                        for (j in 0 until it2.length()) {
+                                            it1.add(it2.getString(j))
+                                        }
+                                    }
+                                    it1
+                                },
+                                date = curNode.getInt("date"),
+                                isShown = curNode.getInt("is_shown"),
+                                content = mutableListOf<ModulesInspirationContentItemObject>().let { it1 ->
+                                    curNode.getJSONArray("content").let { it2 ->
+                                        for (j in 0 until it2.length()) {
+                                            it1.add(
+                                                ModulesInspirationContentItemObject(
+                                                    id = it2.getJSONObject(j).getInt("i"),
+                                                    pictureUrl = it2.getJSONObject(j).getString("p"),
+                                                    string = it2.getJSONObject(j).getString("s"),
+                                                )
+                                            )
+                                        }
+                                    }
+                                    it1
+                                }
+                            )
+                        )
                     }
                 }
 

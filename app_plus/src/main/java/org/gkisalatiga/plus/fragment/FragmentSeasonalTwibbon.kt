@@ -28,12 +28,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.ModulesCompanion
+import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 
 class FragmentSeasonalTwibbon (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
     // private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
-    private val seasonalNode = ModulesCompanion.api!!.seasonal
+    private val seasonalNode = ScreenSeasonalCompanion.seasonalData
 
     @Composable
     fun getComposable() {

@@ -60,13 +60,14 @@ import org.gkisalatiga.plus.lib.LocalStorageDataTypes
 import org.gkisalatiga.plus.lib.LocalStorageKeys
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.screen.ScreenPDFViewerCompanion
+import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 import org.gkisalatiga.plus.services.InternalFileManager
 
 class FragmentSeasonalBook (private val current : ActivityData) : ComponentActivity() {
 
     // The root seasonal node.
     // private val seasonalNode = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
-    private val seasonalNode = ModulesCompanion.api!!.seasonal
+    private val seasonalNode = ScreenSeasonalCompanion.seasonalData
 
     @Composable
     fun getComposable() {

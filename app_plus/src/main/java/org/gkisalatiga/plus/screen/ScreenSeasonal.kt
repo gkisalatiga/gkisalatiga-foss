@@ -52,6 +52,8 @@ import org.gkisalatiga.plus.composable.TopAppBarColorScheme
 import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.data.MainBackendFlagsItemObject
 import org.gkisalatiga.plus.data.ModulesSeasonalObject
+import org.gkisalatiga.plus.data.ModulesSeasonalStaticItemObject
+import org.gkisalatiga.plus.data.ModulesSeasonalStaticObject
 import org.gkisalatiga.plus.db.MainCompanion
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.fragment.FragmentSeasonalAgenda
@@ -63,6 +65,67 @@ import org.gkisalatiga.plus.fragment.FragmentSeasonalTwibbon
 import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Beacon
 import org.gkisalatiga.plus.lib.NavigationRoutes
+
+private val emptyModulesSeasonalObject = ModulesSeasonalObject(
+    id = 0,
+    title = "",
+    active = 0,
+    bannerFront = "",
+    bannerInside = "",
+    inspirationsShown = mutableListOf(),
+    staticMenu = ModulesSeasonalStaticObject(
+        agenda = ModulesSeasonalStaticItemObject(
+            title = "",
+            banner = "",
+            isShown = 0,
+            url = "",
+            selectionTag = "",
+            albumKeyword = "",
+            ytPlaylist = "",
+            twibs = mutableListOf(),
+        ),
+        books = ModulesSeasonalStaticItemObject(
+            title = "",
+            banner = "",
+            isShown = 0,
+            url = "",
+            selectionTag = "",
+            albumKeyword = "",
+            ytPlaylist = "",
+            twibs = mutableListOf(),
+        ),
+        gallery = ModulesSeasonalStaticItemObject(
+            title = "",
+            banner = "",
+            isShown = 0,
+            url = "",
+            selectionTag = "",
+            albumKeyword = "",
+            ytPlaylist = "",
+            twibs = mutableListOf(),
+        ),
+        playlist = ModulesSeasonalStaticItemObject(
+            title = "",
+            banner = "",
+            isShown = 0,
+            url = "",
+            selectionTag = "",
+            albumKeyword = "",
+            ytPlaylist = "",
+            twibs = mutableListOf(),
+        ),
+        twibbon = ModulesSeasonalStaticItemObject(
+            title = "",
+            banner = "",
+            isShown = 0,
+            url = "",
+            selectionTag = "",
+            albumKeyword = "",
+            ytPlaylist = "",
+            twibs = mutableListOf(),
+        )
+    )
+)
 
 /**
  * TODO: Remove all references to [ScreenForms]. (Use Ctrl+F).
@@ -82,9 +145,10 @@ class ScreenSeasonal (private val current : ActivityData) : ComponentActivity() 
         // appFlags = MainCompanion.jsonRoot!!.getJSONObject("backend").getJSONObject("flags")
         appFlags = MainCompanion.api!!.backend.flags
         // seasonalData = ModulesCompanion.jsonRoot!!.getJSONObject("seasonal")
-        seasonalData = ModulesCompanion.api!!.seasonal
+        // seasonalData = ModulesCompanion.api!!.seasonal
+        seasonalData = ScreenSeasonalCompanion.seasonalData
 
-        Scaffold (
+            Scaffold (
             topBar = { getTopBar() }
                 ) {
             Box ( Modifier.padding(top = it.calculateTopPadding(), bottom = it.calculateBottomPadding()) ) {
@@ -196,6 +260,9 @@ class ScreenSeasonalCompanion : Application() {
 
         /* The last visited pager page (representing fragment) in ScreenMain. */
         var mutableLastPage = mutableStateOf(DEFAULT_MAIN_FRAGMENT)
+
+        /* The seasonal data. */
+        var seasonalData: ModulesSeasonalObject = emptyModulesSeasonalObject
 
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null

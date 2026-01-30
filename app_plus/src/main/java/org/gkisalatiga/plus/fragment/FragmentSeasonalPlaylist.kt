@@ -45,6 +45,7 @@ import org.gkisalatiga.plus.lib.AppNavigation
 import org.gkisalatiga.plus.lib.Logger
 import org.gkisalatiga.plus.lib.NavigationRoutes
 import org.gkisalatiga.plus.lib.StringFormatter
+import org.gkisalatiga.plus.screen.ScreenSeasonalCompanion
 
 class FragmentSeasonalPlaylist (private val current : ActivityData) : ComponentActivity() {
 
@@ -52,7 +53,7 @@ class FragmentSeasonalPlaylist (private val current : ActivityData) : ComponentA
     fun getComposable() {
 
         // Enumerate the list of seasonal YouTube playlist.
-        val keyword = ModulesCompanion.api!!.seasonal.staticMenu.playlist.ytPlaylist.let { if (it.isNullOrBlank()) "" else it }
+        val keyword = ScreenSeasonalCompanion.seasonalData.staticMenu.playlist.ytPlaylist.let { if (it.isNullOrBlank()) "" else it }
         val filteredPlaylist = MainCompanion.api!!.yt.filter { it.playlistId == keyword }
 
         // Display the list of seasonal videos.

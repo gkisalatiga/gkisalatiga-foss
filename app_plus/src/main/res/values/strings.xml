@@ -40,6 +40,7 @@
     <string name="screenforms_title">Formulir</string>
     <string name="screenoffertory_title">Persembahan</string>
     <string name="screengallery_title">Galeri GKI Salatiga</string>
+    <string name="screeninspiration_title">Inspirasi</string>
     <string name="screenagenda_title">Agenda Gereja</string>
     <string name="screenykb_title">Yayasan Komunikasi Bersama</string>
     <string name="screenmedia_title">Video Lainnya</string>
@@ -67,6 +68,7 @@
     <string name="btn_mainmenu_media">Media</string>
     <string name="btn_mainmenu_bible">Alkitab</string>
     <string name="btn_mainmenu_library">E-Perpus</string>
+    <string name="btn_mainmenu_inspiration">Inspirasi</string>
     <string name="btn_mainmenu_pukatberkat">Lapak Jemaat</string>
 
     <!-- Constant strings for image description of the main menu's action buttons -->
@@ -82,6 +84,7 @@
     <string name="btn_desc_mainmenu_media">Buka menu media</string>
     <string name="btn_desc_mainmenu_bible">Buka menu Alkitab</string>
     <string name="btn_desc_mainmenu_library">Buka menu E-Perpus</string>
+    <string name="btn_desc_mainmenu_inspiration">Buka menu Inspirasi</string>
     <string name="btn_desc_mainmenu_pukatberkat">Buka menu Lapak Jemaat</string>
 
     <!-- Constant string for describing the banner image in the "Info/About Church" fragment. -->

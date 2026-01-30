@@ -180,10 +180,13 @@ data class MainBackendFlagsItemObject(
     var isFeatureFormulirShown: Int,
     var isFeatureGaleriShown: Int,
     var isFeatureBibleShown: Int,
+    var isFeatureBibleNewShown: Int,
     var isFeatureEnglishServiceLiturgyShown: Int,
     var isFeatureLibraryShown: Int,
     var isFeatureLapakShown: Int,
     var isFeatureSeasonalShown: Int,
+    var isFeatureSeasonal23Shown: Int,
+    var isFeatureInspirationShown: Int,
 )
 
 data class MainBackendStringsItemObject(
