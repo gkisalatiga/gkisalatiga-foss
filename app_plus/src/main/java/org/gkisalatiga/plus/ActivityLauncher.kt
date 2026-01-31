@@ -65,6 +65,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -145,6 +146,8 @@ import org.gkisalatiga.plus.screen.ScreenGaleriYear
 import org.gkisalatiga.plus.screen.ScreenGaleriYearCompanion
 import org.gkisalatiga.plus.screen.ScreenInspiration
 import org.gkisalatiga.plus.screen.ScreenInspirationCompanion
+import org.gkisalatiga.plus.screen.ScreenInspirationSpinwheelCompanion
+import org.gkisalatiga.plus.screen.ScreenInspirationSpinwheel
 import org.gkisalatiga.plus.screen.ScreenInternalHTML
 import org.gkisalatiga.plus.screen.ScreenLibrary
 import org.gkisalatiga.plus.screen.ScreenLibraryCompanion
@@ -385,6 +388,7 @@ class ActivityLauncher : ComponentActivity() {
             ScreenGaleriYearCompanion.rememberedScrollState = rememberScrollState()
             ScreenGaleriListCompanion.rememberedLazyGridState = rememberLazyGridState()
             ScreenInspirationCompanion.rememberedScrollState = rememberScrollState()
+            ScreenInspirationSpinwheelCompanion.rememberedScrollState = rememberScrollState()
             ScreenLibraryCompanion.rememberedScrollState = rememberScrollState()
             ScreenLicenseCompanion.rememberedScrollState = rememberScrollState()
             ScreenLiturgiCompanion.rememberedScrollState = rememberScrollState()
@@ -419,6 +423,10 @@ class ActivityLauncher : ComponentActivity() {
 
             // Prepare the pull-to-refresh (PTR) state globally.
             MainPTRCompanion.mainPTRState = rememberPullToRefreshState()
+
+            // Mutable state for spin wheels.
+            ScreenInspirationSpinwheelCompanion.mutableShuffledIconData = mutableStateOf(ScreenInspirationSpinwheel.defaultIconPools)
+            ScreenInspirationSpinwheelCompanion.mutableShuffledSpinWheelData = mutableStateOf(mutableListOf())
 
             // Listen to the request to hide the phone's bars.
             // SOURCE: https://developer.android.com/develop/ui/views/layout/immersive
@@ -597,6 +605,7 @@ class ActivityLauncher : ComponentActivity() {
             composable(NavigationRoutes.SCREEN_GALERI_VIEW.name) { ScreenGaleriView(current).getComposable() }
             composable(NavigationRoutes.SCREEN_GALERI_YEAR.name) { ScreenGaleriYear(current).getComposable() }
             composable(NavigationRoutes.SCREEN_INSPIRATION.name) { ScreenInspiration(current).getComposable() }
+            composable(NavigationRoutes.SCREEN_INSPIRATION_SPINWHEEL.name) { ScreenInspirationSpinwheel(current).getComposable() }
             composable(NavigationRoutes.SCREEN_INTERNAL_HTML.name) { ScreenInternalHTML(current).getComposable() }
             composable(NavigationRoutes.SCREEN_LIBRARY.name) {ScreenLibrary(current).getComposable()}
             composable(NavigationRoutes.SCREEN_LICENSE.name) { ScreenLicense(current).getComposable() }

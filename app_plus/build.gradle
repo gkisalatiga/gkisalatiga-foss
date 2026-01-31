@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId "org.gkisalatiga.plus"
-        minSdk 21
+        minSdk 23
         //noinspection OldTargetApi
         targetSdk 35
         versionCode 50
@@ -193,4 +193,13 @@ dependencies {
     // SOURCE: https://firebase.blog/posts/2023/08/adding-fcm-to-jetpack-compose-app
     implementation("com.google.firebase:firebase-messaging-ktx")
 
+    // Dependency for SpinWheelCompose.
+    // SOURCE: https://github.com/commandiron/SpinWheelCompose
+    implementation("com.github.commandiron:SpinWheelCompose:1.1.1")
+
+    /** TODO: Remove.
+    // Dependency for the spinwheel.
+    // SOURCE: https://github.com/caneryilmaz52/LuckyWheelViewCompose
+    implementation("com.github.caneryilmaz52:LuckyWheelViewCompose:1.0.3")
+    */
 }

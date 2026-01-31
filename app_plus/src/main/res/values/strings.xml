@@ -298,6 +298,9 @@
     <string name="screen_agenda_info_dialog_label_notes">Catatan</string>
     <string name="screen_agenda_info_dialog_label_status">Status Proposal</string>
 
+    <!-- Applicable in ScreenInspirationSpinwheel. -->
+    <string name="screen_inspiration_spinwheel_spinwheel_button_label">Putar Roda!</string>
+
     <!-- Applicable in ScreenAttribution. -->
     <string name="screen_attrib_section_hardcoded">Kode</string>
     <string name="screen_attrib_section_webview">WebView</string>

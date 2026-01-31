@@ -2,9 +2,6 @@
  * AGPL-3.0-licensed
  * Copyright (C) GKI Salatiga 2024
  * Written by Samarthya Lykamanuella (github.com/groaking)
- *
- * ---
- * A dummy page used for developer's testings.
  */
 
 package org.gkisalatiga.plus.screen
@@ -62,6 +59,7 @@ import org.gkisalatiga.plus.data.ActivityData
 import org.gkisalatiga.plus.db.Modules
 import org.gkisalatiga.plus.db.ModulesCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.NavigationRoutes
 
 
 class ScreenInspiration (private val current : ActivityData) : ComponentActivity() {
@@ -122,7 +120,10 @@ class ScreenInspiration (private val current : ActivityData) : ComponentActivity
             inspirationData.forEachIndexed { idx, it ->
                 if (it.isShown == 1) {
                     Card(
-                        onClick = {},
+                        onClick = {
+                            ScreenInspirationSpinwheelCompanion.inspirationData = it
+                            AppNavigation.navigate(NavigationRoutes.SCREEN_INSPIRATION_SPINWHEEL)
+                        },
                         modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth()
                     ) {
                         // The card title, thumbnail, etc.

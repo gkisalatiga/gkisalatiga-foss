@@ -2,9 +2,15 @@
 
 ## Next Major Release
 
+:star2: **NEW**
+
+- Added "Inspirations" menu
+- Added spinwheel functionality for seasonal events
+
 :four_leaf_clover: **IMPROVEMENT**
 
 - Updated the back-end JSON API to v2.3
+- Upgraded `minSdk` from API level 21 to API level 23 (backward-incompatible)
 
 ## v0.8.5 2026.01.23 (50)
 
