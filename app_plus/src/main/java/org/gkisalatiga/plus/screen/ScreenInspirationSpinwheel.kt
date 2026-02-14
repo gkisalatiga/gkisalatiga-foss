@@ -98,6 +98,7 @@ import org.gkisalatiga.plus.data.ModulesInspirationContentItemObject
 import org.gkisalatiga.plus.data.ModulesInspirationObject
 import org.gkisalatiga.plus.fragment.FragmentInfoCompanion
 import org.gkisalatiga.plus.lib.AppNavigation
+import org.gkisalatiga.plus.lib.NavigationRoutes
 import kotlin.math.round
 
 private val emptyModulesInspirationObject = ModulesInspirationObject(
@@ -192,72 +193,10 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                 .verticalScroll(state = scrollState)
                 .padding(20.dp)
         ) {
-            /** TODO: Remove.
-            val wheelData: MutableList<WheelData> = mutableListOf()
-
-            ScreenInspirationSpinwheelCompanion.inspirationData.content.forEach {
-            Text(it.string)
-            val item = WheelData(
-            text = it.id.toString(),
-            textColor = listOf(Color.Black),
-            backgroundColor = listOf(Color.White),
-            )
-            wheelData.add(item)
-            }
-
-            val context = current.ctx
-
-            var startRotate = mutableStateOf(false)
-            val wheelViewState = mutableStateOf(WheelViewState(startRotate.value))
-
-            Column(
-            modifier = Modifier
-            .fillMaxSize()
-            .background(Color(170, 170, 170)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-            LuckyWheelView(
-            modifier = Modifier
-            .width(350.dp)
-            .height(350.dp)
-            .padding(vertical = 30.dp),
-            wheelItems = wheelData,
-            target = 3,
-            onRotationComplete = { wheelData ->
-            // do something with winner wheel data
-            Toast.makeText(context, wheelData.text, Toast.LENGTH_LONG).show()
-            },
-            onRotationStatus = { status ->
-            when (status) {
-            RotationStatus.ROTATING -> { // do something
-            }
-
-            RotationStatus.IDLE -> { // do something
-            }
-
-            RotationStatus.COMPLETED -> { // do something
-            }
-
-            RotationStatus.CANCELED -> { // do something
-            }
-            }
-            },
-            wheelViewState = wheelViewState.value
-            )
-
-            Button(modifier = Modifier.padding(top = 20.dp), onClick = {
-            startRotate.value = true
-            }) {
-            Text("Spin!")
-            }
-            }
-             */
-
-            // TESTING.
+            // The spinwheel.
             val spinWheelState = rememberSpinWheelState(
                 pieCount = ScreenInspirationSpinwheelCompanion.pieSlices,
-                durationMillis = 10000,
+                durationMillis = 5000,
                 delayMillis = 200,
                 rotationPerSecond = 2f,
                 easing = LinearOutSlowInEasing,
@@ -276,12 +215,14 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                 colors = SpinWheelDefaults.spinWheelColors(
                     frameColor = Color(0xFF403d39),
                     dividerColor = Color(0xFFfffcf2),
-                    selectorColor = Color(0xFFdc0073),
+                    selectorColor = Color(0xffbd8c75),
                     pieColors = listOf(
-                        Color(0xFFdabfff),
-                        Color(0xFF907ad6),
-                        Color(0xFF4f518c),
-                        Color(0xFF2c2a4a)
+                        Color(0xff482505),
+                        Color(0xff825303),
+                        Color(0xff482505),
+                        Color(0xff825303),
+                        Color(0xff482505),
+                        Color(0xff825303),
                     )
                 ),
                 modifier = Modifier.fillMaxWidth()
@@ -304,10 +245,10 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                 IconButton(onClick = { handleShuffleData() }) {
                     Icon(
                         imageVector = Icons.Default.Shuffle,
-                        tint = Color.White,
-                        contentDescription = "Shuffle the pie"
+                        contentDescription = "Shuffle the pie",
                     )
                 }
+                val btnSuccessToast = stringResource(R.string.screen_inspiration_spinwheel_toast_notify_success)
                 Button(
                     onClick = {
                         current.scope.launch {
@@ -317,7 +258,7 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                                     ScreenInspirationSpinwheelCompanion.mutableShowItemDetailDialog.value = false  // --- in case it is still opened.
                                     ScreenInspirationSpinwheelCompanion.mutableSelectedItemDetailData = ScreenInspirationSpinwheelCompanion.mutableShuffledSpinWheelData!!.value[it]
                                     ScreenInspirationSpinwheelCompanion.mutableShowItemDetailDialog.value = true
-                                    Toast.makeText(current.ctx, "[EXPORT] 40 Hari Niat baik telah terpilih!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(current.ctx, btnSuccessToast, Toast.LENGTH_SHORT).show()
                                 }
                             )
                         }
@@ -333,8 +274,7 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.LibraryBooks,
-                        tint = Color.White,
-                        contentDescription = "List all items"
+                        contentDescription = "List all items",
                     )
                 }
             }
@@ -355,7 +295,6 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                         Row {
                             Icon(
                                 imageVector = ScreenInspirationSpinwheelCompanion.mutableShuffledIconData!!.value[idx],
-                                tint = Color.White,
                                 contentDescription = "List all items"
                             )
                             Spacer(Modifier.width(10.dp))
@@ -366,33 +305,6 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
             }
         }
     }
-
-    /**
-     * For detailed.
-    Card(
-    onClick = {},
-    modifier = Modifier.padding(bottom = 5.dp)
-    ) {
-    Column ( modifier = Modifier.fillMaxWidth().padding(5.dp), verticalArrangement = Arrangement.Center ) {
-    Row {
-    // The first post thumbnail.
-    Surface (shape = RoundedCornerShape(10.dp), modifier = Modifier.weight(1.0f).fillMaxHeight().padding(start = 5.dp)) {
-    AsyncImage(
-    it.pictureUrl,
-    contentDescription = "",
-    error = painterResource(R.drawable.thumbnail_error),
-    placeholder = painterResource(R.drawable.thumbnail_placeholder),
-    modifier = Modifier.aspectRatio(1f).width(7.5.dp),
-    contentScale = ContentScale.Crop
-    )
-    }
-    Column(modifier = Modifier.weight(5.0f).padding(start = 10.dp), verticalArrangement = Arrangement.Center) {
-    Text(it.string, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-    }
-    }
-    }
-    }
-     */
 
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
@@ -428,7 +340,7 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
     private fun getSpinWheelItemDetailDialog() {
         // The button strings.
         val cancelBtnLabel = stringResource(R.string.fragment_info_dialog_cancel_btn)
-        val okBtnLabel = stringResource(R.string.fragment_info_dialog_ok_btn)
+        val okBtnLabel = stringResource(R.string.screen_inspiration_spinwheel_do_inspiration)
 
         if (ScreenInspirationSpinwheelCompanion.mutableShowItemDetailDialog.value) {
             // The data.
@@ -444,7 +356,16 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                 },
                 title = {
                     Column (horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        Surface (shape = RoundedCornerShape(10.dp), modifier = Modifier.width(200.dp).padding(bottom = 10.dp)) {
+                        Surface (
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.width(200.dp).padding(bottom = 10.dp),
+                            onClick = {
+                                ScreenPosterViewerLegacyCompanion.posterViewerImageSource = data.pictureUrl
+                                ScreenPosterViewerLegacyCompanion.posterViewerTitle = data.string
+                                ScreenPosterViewerLegacyCompanion.posterViewerCaption = "$grandTitle #${data.id + 1}"
+                                AppNavigation.navigate(NavigationRoutes.SCREEN_POSTER_VIEWER_LEGACY)
+                            }
+                        ) {
                             AsyncImage(
                                 data.pictureUrl,
                                 "",
@@ -452,7 +373,7 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                                 contentScale = ContentScale.Crop,
                             )
                         }
-                        Text("$grandTitle #${data.id + 1}", color = current.colors.fragmentInfoIconTintColor, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(data.string, color = current.colors.fragmentInfoIconTintColor, fontWeight = FontWeight.Bold, fontSize = 24.sp, overflow = TextOverflow.Ellipsis, maxLines = 4, textAlign = TextAlign.Center)
                     }
                 },
                 text = {
@@ -461,15 +382,11 @@ class ScreenInspirationSpinwheel (private val current : ActivityData) : Componen
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(data.string, color = current.colors.fragmentInfoIconTintColor, textAlign = TextAlign.Center, overflow = TextOverflow.Visible)
+                        Text("$grandTitle #${data.id + 1}", color = current.colors.fragmentInfoIconTintColor, textAlign = TextAlign.Center, overflow = TextOverflow.Visible)
                     }
                 },
                 confirmButton = {
                     Row {
-                        TextButton(onClick = { ScreenInspirationSpinwheelCompanion.mutableShowItemDetailDialog.value = false }) {
-                            Text(cancelBtnLabel)
-                        }
-                        Spacer(Modifier.width(10.dp))
                         Button(onClick = { ScreenInspirationSpinwheelCompanion.mutableShowItemDetailDialog.value = false }) {
                             Text(okBtnLabel, color = Color.White)
                         }
@@ -620,7 +537,7 @@ class ScreenInspirationSpinwheelCompanion : Application() {
         var mutableSelectedItemDetailData: ModulesInspirationContentItemObject? = null
 
         /* The number of slices per spin wheel. */
-        val pieSlices = 7
+        val pieSlices = 6
 
         /* The screen's remembered scroll state. */
         var rememberedScrollState: ScrollState? = null

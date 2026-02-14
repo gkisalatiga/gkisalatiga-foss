@@ -159,7 +159,7 @@
     <string name="exit_confirmation_toast_string">Tekan sekali lagi untuk keluar dari aplikasi.</string>
 
     <!-- The app copyright notice. -->
-    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGereja Kristen Indonesia Salatiga 2025</string>
+    <string name="about_copyright_notice">Hak Cipta \u00A9 Komisi Sarana Prasarana dan Multimedia\nGereja Kristen Indonesia Salatiga 2026</string>
 
     <!-- Email chooser intent. -->
     <string name="email_chooser_title">Kirim surel dengan &#8230;</string>
@@ -300,6 +300,8 @@
 
     <!-- Applicable in ScreenInspirationSpinwheel. -->
     <string name="screen_inspiration_spinwheel_spinwheel_button_label">Putar Roda!</string>
+    <string name="screen_inspiration_spinwheel_toast_notify_success">Inspirasi berhasil dipilih!</string>
+    <string name="screen_inspiration_spinwheel_do_inspiration">Lakukan!</string>
 
     <!-- Applicable in ScreenAttribution. -->
     <string name="screen_attrib_section_hardcoded">Kode</string>

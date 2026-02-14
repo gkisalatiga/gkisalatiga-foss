@@ -81,6 +81,14 @@
             "link": "https://github.com/Remix-Design/RemixIcon"
         },
         {
+            "title": "SpinWheelCompose",
+            "license": "Unlicensed",
+            "license-url": "https://github.com/commandiron/SpinWheelCompose",
+            "year": "2022",
+            "author": "Emir Demirli",
+            "link": "https://github.com/commandiron/SpinWheelCompose"
+        },
+        {
             "title": "WorkManager Kotlin Extensions",
             "license": "Apache License 2.0",
             "license-url": "https://spdx.org/licenses/Apache-2.0.html",
