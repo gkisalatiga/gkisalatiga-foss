@@ -83,7 +83,8 @@ class FragmentSeasonalBook (private val current : ActivityData) : ComponentActiv
         }
 
         // Enumerate the list of e-books that correspond to the seasonal tag.
-        val seasonalBookTag = ModulesCompanion.api!!.seasonal.staticMenu.books.selectionTag.let { if (it.isNullOrBlank()) "" else it }
+        // val seasonalBookTag = ModulesCompanion.api!!.seasonal.staticMenu.books.selectionTag.let { if (it.isNullOrBlank()) "" else it }
+        val seasonalBookTag = seasonalNode.staticMenu.books.selectionTag.let { if (it.isNullOrBlank()) "" else it }
         // val seasonalBookTag = ModulesCompanion.jsonRoot!!
         //     .getJSONObject("seasonal")
         //     .getJSONObject("static-menu")

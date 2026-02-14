@@ -56,7 +56,7 @@ class FragmentSeasonalGaleri (private val current : ActivityData) : ComponentAct
     fun getComposable() {
 
         // Enumerate the list of gallery albums that correspond to the seasonal keyword.
-        val seasonalGalleryKeyword = ModulesCompanion.api!!.seasonal.staticMenu.gallery.albumKeyword.let { if (it.isNullOrBlank()) "" else it }
+        val seasonalGalleryKeyword = seasonalNode.staticMenu.gallery.albumKeyword.let { if (it.isNullOrBlank()) "" else it }
         /*val seasonalGalleryKeyword = ModulesCompanion.jsonRoot!!
             .getJSONObject("seasonal")
             .getJSONObject("static-menu")

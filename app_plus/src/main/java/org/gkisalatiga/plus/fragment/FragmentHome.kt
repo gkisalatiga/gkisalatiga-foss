@@ -378,22 +378,24 @@ class FragmentHome (private val current : ActivityData) : ComponentActivity() {
             // Displaying the seasonal menu button.
             if (appFlags.isFeatureSeasonal23Shown == 1) {
                 seasonalData.forEachIndexed { idx, it ->
-                    Surface(
-                        shape = RoundedCornerShape(15.dp),
-                        modifier = Modifier.padding(horizontal = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).padding(top = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(4.0f),
-                        onClick = {
-                            ScreenSeasonalCompanion.seasonalData = it
-                            AppNavigation.navigate(NavigationRoutes.SCREEN_SEASONAL)
+                    if (it.active == 1) {
+                        Surface(
+                            shape = RoundedCornerShape(15.dp),
+                            modifier = Modifier.padding(horizontal = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).padding(top = current.ctx.resources.getDimension(R.dimen.banner_inner_padding).dp).fillMaxWidth().aspectRatio(4.0f),
+                            onClick = {
+                                ScreenSeasonalCompanion.seasonalData = it
+                                AppNavigation.navigate(NavigationRoutes.SCREEN_SEASONAL)
+                            }
+                        ) {
+                            AsyncImage(
+                                model = it.bannerFront,
+                                contentDescription = "Seasonal main/front banner for seasonal ${it.title}",
+                                error = painterResource(R.drawable.thumbnail_error_notext),
+                                placeholder = painterResource(R.drawable.thumbnail_placeholder),
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
                         }
-                    ) {
-                        AsyncImage(
-                            model = it.bannerFront,
-                            contentDescription = "Seasonal main/front banner for seasonal ${it.title}",
-                            error = painterResource(R.drawable.thumbnail_error_notext),
-                            placeholder = painterResource(R.drawable.thumbnail_placeholder),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
                     }
 
                     if (idx < seasonalData.size) { Spacer(Modifier.fillMaxWidth().height(5.dp)) }

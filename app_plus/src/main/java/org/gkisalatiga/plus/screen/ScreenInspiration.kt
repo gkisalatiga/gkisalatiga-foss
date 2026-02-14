@@ -99,7 +99,7 @@ class ScreenInspiration (private val current : ActivityData) : ComponentActivity
                 .padding(20.dp)
         ) {
             /* Display the banner image. */
-            val imgSource = R.drawable.banner_inspiration
+            val imgSource = R.drawable.banner_inspirasi
             val imgDescription = "Menu banner"
             Surface (
                 shape = RoundedCornerShape(20.dp),

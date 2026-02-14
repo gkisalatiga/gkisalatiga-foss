@@ -322,6 +322,9 @@
     <string name="fragment_seasonal_agenda_image_caption_zoom">Ketuk pada agenda untuk memperbesar gambar.</string>
     <string name="fragment_seasonal_agenda_share_sheet_text">%%%TITLE%%%.\n\nDibagikan dari GKI Salatiga+ (https://plus.gkisalatiga.org)</string>
 
+    <!-- Applicable in FragmentSeasonalMain -->
+    <string name="fragment_seasonal_main_inspiration">Inspirasi</string>
+
     <!-- Applicable in most screens. -->
     <string name="pdf_already_downloaded_localized">Terunduh</string>
 
