@@ -2,6 +2,10 @@
 
 ## Next Major Release
 
+:information_source: **INFO**
+
+- The license has been changed from AGPLv3.0 to MIT; this project now partially depends on non-OSI-compliant softwares
+
 :star2: **NEW**
 
 - Added "Inspirations" menu
