@@ -185,6 +185,10 @@ The latest privacy policy document of GKI Salatiga can be read in this [GitHub r
 - Bible in Basic English; Samuel Henry Hooke, Cambridge Press (Public Domain) [Link](https://ebible.org/find/show.php?id=engBBE)
 - World English Bible; Michael Paul Johnson (Public Domain) [Link 1](https://ebible.org/find/show.php?id=engwebp) [Link 2](https://worldenglish.bible)
 
+### Other materials used in this project
+
+- SpinWheelCompose; Emir Demirli (C) 2022 (Unlicensed) [Link](https://github.com/commandiron/SpinWheelCompose)
+
 ## E. Credits and Contributions
 
 We thank all the people who have contributed gratefully to the development of GKI Salatiga app. This project was started on **July 12, 2024** and would not be possible without the help of these amazing people.

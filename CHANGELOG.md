@@ -1,6 +1,6 @@
 # GKI Salatiga App Changelog
 
-## Next Major Release
+## v0.9.0 2026.02.14 (51)
 
 :information_source: **INFO**
 
